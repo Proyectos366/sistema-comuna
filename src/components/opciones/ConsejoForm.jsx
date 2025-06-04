@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CircuitoFormMostrar from "./CircuitoFormMostrar";
 
-export default function CircuitoForm() {
-  const [nombreCircuito, setNombreCircuito] = useState("");
-  const [rifCircuito, setRifCircuito] = useState("");
+export default function ConsejoForm() {
+  const [nombreConsejo, setNombreConsejo] = useState("");
+  const [rifConsejo, setRifConsejo] = useState("");
   const [idParroquia, setIdParroquia] = useState(0);
 
   const [nombres, setNombres] = useState([]);
@@ -18,14 +17,12 @@ export default function CircuitoForm() {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const responseCircuitos = await axios.get(
-          "/api/circuitos/todos-circuitos"
-        );
+        const responseConsejos = await axios.get("/api/consejos/todos-consejos-comunales");
         const responseParroquias = await axios.get(
           "/api/parroquias/todas-parroquias"
         );
 
-        setNombres(responseCircuitos.data.circuitos || []);
+        setNombres(responseConsejos.data.consejos || []);
         setParroquias(responseParroquias.data.parroquias || []);
       } catch (error) {
         console.log("Error, al obtener los datos: " + error);
@@ -38,21 +35,21 @@ export default function CircuitoForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nombreCircuito.trim()) {
+    if (nombreConsejo.trim() && rifConsejo.trim()) {
       try {
-        const response = await axios.post("/api/circuitos/crear-circuito", {
-          nombre: nombreCircuito,
-          rif: rifCircuito,
+        const response = await axios.post("/api/consejos/crear-consejo-comunal", {
+          nombre: nombreConsejo,
+          rif: rifConsejo,
           id_parroquia: idParroquia,
         });
 
-        setNombres([...nombres, response.data.circuito]); // Suponiendo que la API devuelve el nombre guardado
-        setNombreCircuito("");
-        setRifCircuito("");
+        setNombres([...nombres, response.data.comuna]); // Suponiendo que la API devuelve el nombre guardado
+        setNombreConsejo("");
+        setRifConsejo("");
         setIdParroquia(""); // Cambié 0 por una cadena vacía en caso de que `idParroquia` sea un string
       } catch (error) {
         console.log(
-          "Error, al crear el circuito:",
+          "Error al crear la comuna:",
           error.response ? error.response.data : error.message
         );
       }
@@ -74,8 +71,8 @@ export default function CircuitoForm() {
     );
   };
 
-  const circuitosAgrupados = nombres.reduce((acc, circuito) => {
-    const parroquia = parroquias.find((p) => p.id === circuito.id_parroquia);
+  const comunasAgrupadas = nombres.reduce((acc, comuna) => {
+    const parroquia = parroquias.find((p) => p.id === comuna.id_parroquia);
     const nombreParroquia = parroquia
       ? parroquia.nombre
       : "Parroquia desconocida";
@@ -84,7 +81,7 @@ export default function CircuitoForm() {
       acc[nombreParroquia] = [];
     }
 
-    acc[nombreParroquia].push(circuito);
+    acc[nombreParroquia].push(comuna);
     return acc;
   }, {});
 
@@ -92,7 +89,7 @@ export default function CircuitoForm() {
     <section className="rounded-md p-6 min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900">
       <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-          Crear circuito
+          Crear comuna
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* <label className="block">
@@ -132,30 +129,30 @@ export default function CircuitoForm() {
           </label>
 
           <label className="block">
-            <span className="text-gray-700 font-medium">Nombre circuito:</span>
+            <span className="text-gray-700 font-medium">Nombre comuna:</span>
             <input
               type="text"
-              value={nombreCircuito}
-              onChange={(e) => setNombreCircuito(e.target.value)}
+              value={nombreConsejo}
+              onChange={(e) => setNombreConsejo(e.target.value)}
               className="mt-1 uppercase block w-full p-3 borde-fondo rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none transition-all"
             />
           </label>
 
           <label className="block">
-            <span className="text-gray-700 font-medium">Rif circuito:</span>
+            <span className="text-gray-700 font-medium">Rif comuna:</span>
             <input
               type="text"
-              value={rifCircuito}
-              onChange={(e) => setRifCircuito(e.target.value)}
+              value={rifConsejo}
+              onChange={(e) => setRifConsejo(e.target.value)}
               className="mt-1 uppercase block w-full p-3 borde-fondo rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none transition-all"
             />
           </label>
 
           <button
-            disabled={!nombreCircuito}
+            disabled={!nombreConsejo}
             type="submit"
             className={`${
-              !nombreCircuito ? "cursor-not-allowed" : "cursor-pointer"
+              !nombreConsejo ? "cursor-not-allowed" : "cursor-pointer"
             } w-full color-fondo hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
           >
             Guardar
@@ -163,8 +160,8 @@ export default function CircuitoForm() {
         </form>
       </div>
 
-      <CircuitoFormMostrar
-        circuitosAgrupados={circuitosAgrupados}
+      <ComunaFormMostrar
+        comunasAgrupadas={comunasAgrupadas}
         nombreParroquiaSeleccionada={nombreParroquiaSeleccionada}
         setNombreParroquiaSeleccionada={setNombreParroquiaSeleccionada}
       />
@@ -174,7 +171,7 @@ export default function CircuitoForm() {
           Comunas
         </h3>
         <div className="">
-          {Object.entries(circuitosAgrupados).map(
+          {Object.entries(comunasAgrupadas).map(
             ([nombreParroquia, comunas]) => (
               <div key={nombreParroquia} className="mb-4">
                 <h4 className="text-xl font-semibold text-gray-700">

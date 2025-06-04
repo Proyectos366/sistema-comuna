@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function CircuitoFormMostrar({
-  circuitosAgrupadas,
+  circuitosAgrupados,
   nombreParroquiaSeleccionada,
   setNombreParroquiaSeleccionada,
 }) {
@@ -22,32 +22,34 @@ export default function CircuitoFormMostrar({
         Circuitos por parroquia
       </h3>
       <div className="">
-        {Object.entries(circuitosAgrupadas).map(([nombreParroquia, circuitos]) => (
-          <div key={nombreParroquia} className="mb-2">
-            <h4
-              className={`text-lg font-semibold bg-gray-100 hover:bg-gray-300 p-2 rounded-md cursor-pointer ${
-                nombreParroquia === nombreParroquiaSeleccionada
-                  ? "borde-fondo"
-                  : ""
-              }`}
-              onClick={() => toggleParroquia(nombreParroquia)}
-            >
-              {nombreParroquia}
-            </h4>
-            {parroquiasVisibles[nombreParroquia] && (
-              <div className="mt-2 ps-5">
-                {circuitos.map((circuito) => (
-                  <div
-                    key={circuito.id}
-                    className="hover:bg-gray-200 border border-gray-300 rounded-md transition-colors flex flex-col"
-                  >
-                    <span className="rounded-md p-3">{circuito.nombre}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+        {Object.entries(circuitosAgrupados).map(
+          ([nombreParroquia, circuitos]) => (
+            <div key={nombreParroquia} className="mb-2">
+              <h4
+                className={`text-lg font-semibold bg-gray-100 hover:bg-gray-300 p-2 rounded-md cursor-pointer ${
+                  nombreParroquia === nombreParroquiaSeleccionada
+                    ? "borde-fondo"
+                    : ""
+                }`}
+                onClick={() => toggleParroquia(nombreParroquia)}
+              >
+                {nombreParroquia}
+              </h4>
+              {parroquiasVisibles[nombreParroquia] && (
+                <div className="mt-2 ps-5">
+                  {circuitos.map((circuito) => (
+                    <div
+                      key={circuito.id}
+                      className="hover:bg-gray-200 mb-2 border border-gray-300 rounded-md transition-colors flex flex-col"
+                    >
+                      <span className="rounded-md p-3">{circuito.nombre}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        )}
       </div>
     </div>
   );

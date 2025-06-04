@@ -32,7 +32,7 @@ export async function GET() {
     } else {
       return generarRespuesta(
         "ok",
-        "Todas las las comunes...",
+        "Todas las comunas...",
         {
           comunas: todasComunas,
         },

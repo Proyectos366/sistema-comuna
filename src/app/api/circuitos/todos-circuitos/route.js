@@ -20,31 +20,31 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
-    const todasComunas = await prisma.comuna.findMany();
+    const todosCircuitos = await prisma.circuito.findMany();
 
-    if (!todasComunas) {
+    if (!todosCircuitos) {
       return generarRespuesta(
         "error",
-        "Error, al consultar comunas...",
+        "Error, al consultar circuitos...",
         {},
         400
       );
     } else {
       return generarRespuesta(
         "ok",
-        "Todas las comunas...",
+        "Todas los circuitos...",
         {
-          comunas: todasComunas,
+          circuitos: todosCircuitos,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno consultar (comunas): ` + error);
+    console.log(`Error interno consultar (circuitos): ` + error);
 
     return generarRespuesta(
       "error",
-      "Error, interno consultar (comunas)",
+      "Error, interno consultar (circuitos)",
       {},
       500
     );

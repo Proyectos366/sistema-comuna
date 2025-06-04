@@ -4,7 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 
-export default async function validarCrearComuna(
+export default async function validarCrearConsejoComunal(
   nombre,
   direccion,
   norte,
@@ -73,10 +73,10 @@ export default async function validarCrearComuna(
       rif: rifMayuscula,
     });
   } catch (error) {
-    console.log(`Error, interno al crear comuna: ` + error);
+    console.log(`Error, interno al crear circuito: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear comuna"
+      "Error, interno al crear circuito"
     );
   }
 }

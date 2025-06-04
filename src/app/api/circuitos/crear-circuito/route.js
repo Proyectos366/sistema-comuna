@@ -1,24 +1,26 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearComuna from "@/services/validarCrearComuna";
+import validarCrearCircuito from "@/services/validarCrearCircuito";
 
 export async function POST(request) {
   try {
     //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
 
-    const { nombre, rif, id_parroquia } = await request.json();
-
-    const { direccion, latitud, longitud, punto } = "";
-
-    const validaciones = await validarCrearComuna(
-      nombre,
-      direccion,
-      latitud,
-      longitud,
-      punto,
-      rif,
-      id_parroquia
-    );
+   const { nombre, rif, id_parroquia } = await request.json();
+   
+       const { direccion, norte, sur, este, oeste, punto } = "";
+   
+       const validaciones = await validarCrearComuna(
+         nombre,
+         direccion,
+         norte,
+         sur,
+         este,
+         oeste,
+         punto,
+         rif,
+         id_parroquia
+       );
 
     if (validaciones.status === "error") {
       return generarRespuesta(
@@ -29,7 +31,7 @@ export async function POST(request) {
       );
     }
 
-    const nuevaComuna = await prisma.comuna.create({
+    const nuevoCircuito = await prisma.circuito.create({
       data: {
         nombre: validaciones.nombre,
         direccion: validaciones.direccion,
@@ -42,21 +44,26 @@ export async function POST(request) {
       },
     });
 
-    if (!nuevaComuna) {
-      return generarRespuesta("error", "Error, no se creo la comuna", {}, 400);
+    if (!nuevoCircuito) {
+      return generarRespuesta(
+        "error",
+        "Error, no se creo el circuito",
+        {},
+        400
+      );
     } else {
       return generarRespuesta(
         "ok",
-        "Comuna creada...",
+        "Circuito creada...",
         {
-          comuna: nuevaComuna,
+          circuito: nuevoCircuito,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (comunas): ` + error);
+    console.log(`Error interno (circuitos): ` + error);
 
-    return generarRespuesta("error", "Error, interno (comunas)", {}, 500);
+    return generarRespuesta("error", "Error, interno (circuitos)", {}, 500);
   }
 }

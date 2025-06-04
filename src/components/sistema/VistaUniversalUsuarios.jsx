@@ -12,6 +12,7 @@ import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 import ParroquiasForm from "../opciones/ParroquiasForm";
 import CargosForm from "../opciones/CargosForm";
 import ComunasForm from "../opciones/ComunasForm";
+import CircuitoForm from "../opciones/CircuitosForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const { usuarioActivo, screenSize } = useUser();
@@ -341,6 +342,15 @@ export default function VistaUniversalUsuarios({ children }) {
               {vista === "comunas" && (
                 <ComunasForm />
               )}
+
+              {vista === "circuitos-comunales" && (
+                <CircuitoForm />
+              )}
+
+              {/* {vista === "consejos-comunales" && (
+                
+              )} */}
+              
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario abrirPanel={abrirPanel} />

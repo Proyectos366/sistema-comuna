@@ -27,6 +27,7 @@ CREATE TABLE "parroquia" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
     "id_usuario" INTEGER NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "parroquia_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -37,6 +38,7 @@ CREATE TABLE "cargo" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
     "id_usuario" INTEGER NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "cargo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -46,11 +48,14 @@ CREATE TABLE "cargo" (
 CREATE TABLE "comuna" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
+    "norte" TEXT NOT NULL,
+    "sur" TEXT NOT NULL,
+    "este" TEXT NOT NULL,
+    "oeste" TEXT NOT NULL,
     "direccion" TEXT NOT NULL,
-    "latitud" TEXT NOT NULL,
-    "longitud" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
-    "rif" TEXT NOT NULL,
+    "rif" TEXT,
+    "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_parroquia" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,11 +68,14 @@ CREATE TABLE "comuna" (
 CREATE TABLE "circuito" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
+    "norte" TEXT NOT NULL,
+    "sur" TEXT NOT NULL,
+    "este" TEXT NOT NULL,
+    "oeste" TEXT NOT NULL,
     "direccion" TEXT NOT NULL,
-    "latitud" TEXT NOT NULL,
-    "longitud" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
-    "rif" TEXT NOT NULL,
+    "rif" TEXT,
+    "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_parroquia" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -80,11 +88,14 @@ CREATE TABLE "circuito" (
 CREATE TABLE "consejo" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
+    "norte" TEXT NOT NULL,
+    "sur" TEXT NOT NULL,
+    "este" TEXT NOT NULL,
+    "oeste" TEXT NOT NULL,
     "direccion" TEXT NOT NULL,
-    "latitud" TEXT NOT NULL,
-    "longitud" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
-    "rif" TEXT NOT NULL,
+    "rif" TEXT,
+    "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,
     "id_circuito" INTEGER,
@@ -114,6 +125,7 @@ CREATE TABLE "vocero" (
     "proyecto" BOOLEAN NOT NULL,
     "certificado" BOOLEAN NOT NULL,
     "verificado" BOOLEAN NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,
     "id_consejo" INTEGER,
@@ -137,10 +149,28 @@ CREATE TABLE "_cargoTovocero" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "role_nombre_key" ON "role"("nombre");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "usuario_correo_key" ON "usuario"("correo");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "usuario_token_key" ON "usuario"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "comuna_rif_key" ON "comuna"("rif");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "circuito_rif_key" ON "circuito"("rif");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "consejo_rif_key" ON "consejo"("rif");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "vocero_cedula_key" ON "vocero"("cedula");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "vocero_correo_key" ON "vocero"("correo");

@@ -6,21 +6,21 @@ export async function POST(request) {
   try {
     //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
 
-    const { nombre, rif, id_parroquia } = await request.json();
-
-    const { direccion, norte, sur, este, oeste, punto } = "";
-
-    const validaciones = await validarCrearComuna(
-      nombre,
-      direccion,
-      norte,
-      sur,
-      este,
-      oeste,
-      punto,
-      rif,
-      id_parroquia
-    );
+   const { nombre, rif, id_parroquia } = await request.json();
+   
+       const { direccion, norte, sur, este, oeste, punto } = "";
+   
+       const validaciones = await validarCrearComuna(
+         nombre,
+         direccion,
+         norte,
+         sur,
+         este,
+         oeste,
+         punto,
+         rif,
+         id_parroquia
+       );
 
     if (validaciones.status === "error") {
       return generarRespuesta(
@@ -35,13 +35,10 @@ export async function POST(request) {
       data: {
         nombre: validaciones.nombre,
         direccion: validaciones.direccion,
-        norte: validaciones.norte,
-        sur: validaciones.sur,
-        este: validaciones.este,
-        oeste: validaciones.oeste,
+        latitud: validaciones.latitud,
+        longitud: validaciones.longitud,
         punto: validaciones.punto,
         rif: validaciones.rif,
-        borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,
       },

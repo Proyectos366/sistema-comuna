@@ -36,7 +36,7 @@ export default function ComunasForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nombreComuna.trim() && rifComuna.trim()) {
+    if (nombreComuna.trim()) {
       try {
         const response = await axios.post("/api/comunas/crear-comuna", {
           nombre: nombreComuna,
@@ -139,7 +139,7 @@ export default function ComunasForm() {
             />
           </label>
 
-          <label className="block">
+          <label className="hidden">
             <span className="text-gray-700 font-medium">Rif comuna:</span>
             <input
               type="text"
@@ -150,10 +150,10 @@ export default function ComunasForm() {
           </label>
 
           <button
-            disabled={!nombreComuna}
+            disabled={!nombreComuna || !idParroquia}
             type="submit"
             className={`${
-              !nombreComuna ? "cursor-not-allowed" : "cursor-pointer"
+              !nombreComuna || !idParroquia ? "cursor-not-allowed" : "cursor-pointer"
             } w-full color-fondo hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
           >
             Guardar
