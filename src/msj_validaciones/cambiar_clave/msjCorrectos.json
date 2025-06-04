@@ -1,0 +1,12 @@
+{
+  "ok": "ok",
+  "okCambioClave": {
+    "encriptarCorrecto": "Clave encriptada con exito...",
+    "cambioExitoso": "Clave cambiada con exito..."
+  },
+  "okMixto": "Correcto con las claves...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

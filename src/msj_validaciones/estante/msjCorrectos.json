@@ -1,0 +1,14 @@
+{
+  "ok": "ok",
+  "okCrearEstante": {
+    "creandoEstante": "Estante creado con exito..."
+  },
+  "okConsultarEstantesPorDepartamento": {
+    "estantesEncontrados": "Estantes encontrados..."
+  },
+  "okMixto": "Exito...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "error": "error",
+  "errorCorreo": {
+    "campoVacio": "Correo en blanco...",
+    "formatoInvalido": "Formato de correo invalido...",
+    "internoValidando": "Error, validando correo"
+  },
+  "errorClave": {
+    "campoVacio": "Clave en blanco...",
+    "campoVacioConfirmar": "Clave confirmar vacia...",
+    "clavesNoCoinciden": "Claves no coinciden...",
+    "formatoInvalido": "Formato de clave invalida...",
+    "internoValidando": "Error, interno validando campo clave"
+  },
+  "errorCedula": {
+    "campoVacio": "Cedula en blanco...",
+    "formatoInvalido": "Formato de clave invalida...",
+    "internoValidando": "Error, interno validando campo clave"
+  },
+  "errorNombre": {
+    "campoVacio": "Nombre en blanco...",
+    "formatoInvalido": "Formato de nombre invalido...",
+    "internoValidando": "Error, interno validando campo nombre"
+  },
+  "errorDescripcion": {
+    "campoVacio": "Descripcion en blanco...",
+    "formatoInvalido": "Formato de descripcion invalido...",
+    "internoValidando": "Error, interno validando campo descripcion"
+  },
+  "errorAlias": {
+    "campoVacio": "Alias en blanco...",
+    "formatoInvalido": "Formato de alias invalido...",
+    "internoValidando": "Error, interno validando campo alias"
+  },
+  "errorNiveles": {
+    "campoVacio": "Niveles en blanco...",
+    "formatoInvalido": "Niveles debe ser numero...",
+    "numeroPositivo": "Niveles debe ser un número positivo",
+    "menorCero": "Niveles no puede ser cero",
+    "internoValidando": "Error, interno validando campo niveles"
+  },
+  "errorSecciones": {
+    "campoVacio": "Secciones en blanco...",
+    "formatoInvalido": "Secciones debe ser numero...",
+    "numeroPositivo": "Secciones debe ser un número positivo",
+    "internoValidando": "Error, interno validando campo secciones"
+  },
+  "errorArchivo": {
+    "campoVacio": "Archivo en blanco...",
+    "internoValidando": "Error, interno validando campo archivo"
+  },
+  "errorLogin": "Error, validando campos login",
+  "errorMixto": "Error, validando campos",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

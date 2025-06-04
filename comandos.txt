@@ -1,0 +1,76 @@
+// Instalar sqlite
+npm i sqlite3
+
+// Instalar prisma
+npm install prisma --save-dev
+npm install @prisma/client
+
+// Inicializar prisma
+npx prisma init
+
+// Crear un archivo .env en la raiz del proyecto y agregar:
+DATABASE_URL="file:./prisma/dev.db"
+JWT_SECRET = miTextoSecreto
+JWT_EXPIRATION = 12h
+JWT_COOKIE_EXPIRES = 1
+DATABASE_URL = "file:./prisma/dev.db"
+
+// Edita el archivo prisma/schema.prisma para definir tus modelos. Por ejemplo:
+// Ejemplo de usuario:
+model Usuario {
+  id    Int     @id @default(autoincrement())
+  name  String
+  email String  @unique
+}
+
+// Crear una migracion:
+npx prisma migrate dev --name inicial
+
+// Correr prisma studio:
+npx prisma studio
+
+// Crear un archivo, puede ser en libs, ejemplo:
+prisma.js
+// Y dentro lo siguiente:
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+export default prisma;
+
+// Si se crean nuevos modelos o actualizan se debe hacer esto:
+npx prisma migrate dev --name nombre-descripcion-del-cambio
+
+// Actualizar prisma:
+npx prisma generate
+
+// Crear el usuario por defecto con los sedeers:
+npx prisma db seed
+
+// Eliminar todas las migraciones:
+rm -rf prisma/migrations
+
+// Eliminar los node_modules
+rm -rf node_modules
+
+
+// Usuarios del sistema
+
+// Rol 1
+master@gmail.com
+Admin-1234
+
+// Rol 2
+admin@gmail.com
+Admin-1234
+
+// Rol 3
+empleado@gmail.com
+Admin-1234
+
+
+// Configurar el package.json con esto: 
+"start": "next start -H 192.168.0.130",
+
+
+// Usuario
+token: qfr42dw5rit5w1v8
+clave: $2b$05$DhTLzYeILlXISknpXrWI7ehlc2jrVd8PbmpUgzCo5YUwUnTb8yplu

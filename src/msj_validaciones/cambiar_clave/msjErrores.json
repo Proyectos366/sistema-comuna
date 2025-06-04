@@ -1,0 +1,13 @@
+{
+  "error": "error",
+  "errorCambioClave": {
+    "cambioFallido": "Error, al cambiar clave...",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno al cambiar clave logueado",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

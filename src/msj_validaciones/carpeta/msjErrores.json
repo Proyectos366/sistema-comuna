@@ -1,0 +1,19 @@
+{
+  "error": "error",
+  "errorCrearCarpeta": {
+    "carpetaExiste": "Error, carpeta existe...",
+    "creandoCarpeta": "Error, creando carpeta...",
+    "internoValidando": "Error, interno"
+  },
+  "errorConsultarCarpetaPorDepartamento": {
+    "carpetasNoEncontrados": "Error, al consultar las carpetas por departamento...",
+    "internoLog": "Error, al obtener carpeta por departamento",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno no se creo la carpeta",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

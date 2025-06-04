@@ -1,0 +1,20 @@
+{
+  "ok": "ok",
+  "okCorreo": {
+    "campoValido": "Campo de correo valido..."
+  },
+  "okClave": {
+    "campoValido": "Campo clave válido..."
+  },
+  "okCedula": {
+    "campoValido": "Campo cedula válido..."
+  },
+  "okNombre": {
+    "campoValido": "Campo nombre válido..."
+  },
+  "okMixto": "Campos validados...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

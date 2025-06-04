@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+.degradado {
+  background-image: linear-gradient(to right, #3b82f6, #9333ea);
+}
+
+.fuente-arial-black {
+  font-family: 'Arial Black', sans-serif;
+}
+
+.color-fondo {
+  background-color: #082158;
+}
+
+.borde-fondo {
+  border: 1px solid #082158;
+}

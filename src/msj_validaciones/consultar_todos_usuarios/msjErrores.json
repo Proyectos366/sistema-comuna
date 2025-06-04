@@ -1,0 +1,13 @@
+{
+  "error": "error",
+  "errorConsultarTodosUsuarios": {
+    "usuariosNoEncontrados": "Error, al consultar todos los usuarios...",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, al consultar todos los usuarios",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

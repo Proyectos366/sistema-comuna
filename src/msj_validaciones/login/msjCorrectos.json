@@ -1,0 +1,13 @@
+{
+  "ok": "ok",
+  "okLogin": {
+    "validacionCorrecta": "Validaciones completadas con éxito...",
+    "iniciandoSesion": "Iniciando sesion...",
+    "cerrandoSesion": "Cerrando sesion..."
+  },
+  "okMixto": "Validaciones completadas con éxito...",
+ "codigo": {
+  "codigo200": 200,
+  "codigo201": 201
+ }
+}

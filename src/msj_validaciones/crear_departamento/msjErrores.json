@@ -1,0 +1,14 @@
+{
+  "error": "error",
+  "errorCrearDepartamento": {
+    "departamentoExiste": "Error, departamento existe...",
+    "creandoDepartamento": "Error, creando departamento...",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno no se creo el departamento",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

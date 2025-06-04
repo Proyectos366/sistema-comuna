@@ -1,0 +1,11 @@
+{
+  "ok": "ok",
+  "okConsultarTodosUsuarios": {
+    "usuariosEncontrados": "Clave encriptada con exito..."
+  },
+  "okMixto": "Correcto con el usuario activo...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

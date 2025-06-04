@@ -1,0 +1,14 @@
+{
+  "ok": "ok",
+  "okCrearCarpeta": {
+    "creandoCarpeta": "Carpeta creado con exito..."
+  },
+  "okConsultarCarpetasPorDepartamento": {
+    "carpetasEncontrados": "Carpetas encontradas..."
+  },
+  "okMixto": "Exito...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "ok": "ok",
+  "okCrearDepartamento": {
+    "creandoDepartamento": "Departamento creado con exito..."
+  },
+  "okTodoContenidoDepartamento": {
+    "consultarTodoContedido": "Todo el contenido de los departamentos..."
+  },
+  "okMixto": "Exito...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

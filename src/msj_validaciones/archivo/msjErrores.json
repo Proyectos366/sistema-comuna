@@ -1,0 +1,25 @@
+{
+  "error": "error",
+  "errorCrearArchivo": {
+    "archivoExiste": "Error, archivo existe...",
+    "creandoArchivo": "Error, no se creo el archivo...",
+    "internoValidando": "Error, interno",
+    "nombreArchivoExisteMismaCarpeta": "Error, nombre repetido..."
+  },
+  "errorConsultarArchivos": {
+    "archivosNoEncontrados": "Error, al consultar las archivos...",
+    "internoValidando": "Error, interno"
+  },
+  "errorConsultarArchivoPorCarpeta": {
+    "archivosNoEncontrados": "Error, archivos no encontrados...",
+    "internoValidando": "Error, interno"
+  },
+  "errorInterno": "Error, interno...",
+  "errorMixto": "Error, interno no se creo el archivo...",
+  "errorInternoMixto": "Error, interno consultar archivo por carpeta...",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

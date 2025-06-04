@@ -1,0 +1,14 @@
+{
+  "error": "error",
+  "errorCrearUsuario": {
+    "usuarioExiste": "Error, usuario existe...",
+    "creandoUsuario": "Error, creando usuario...",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno no se creo el usuario",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

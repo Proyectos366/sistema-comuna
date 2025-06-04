@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model role {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  usuarios usuario[] @relation(name: "UsuarioRole")
+}
+
+model usuario {
+  id        Int      @id @default(autoincrement())
+  cedula    String
+  nombre    String
+  correo    String   @unique
+  token     String   @unique
+  clave     String
+  borrado   Boolean
+  id_rol    Int // Clave foránea hacia role
+  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  // Relaciones
+  role               role        @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  creadorDeComunas   comuna[]    @relation(name: "CreadorComuna")
+  creadorDeCircuitos circuito[]  @relation(name: "CreadorCircuito")
+  creadorDeConsejos  consejo[]   @relation(name: "CreadorConsejo")
+  voceros            vocero[]    @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  parroquias         parroquia[] @relation(name: "UsuarioParroquia")
+  cargos             cargo[]     @relation(name: "CreadorCargo")
+}
+
+model parroquia {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  id_usuario Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  // Relaciones
+  usuario  usuario    @relation("UsuarioParroquia", fields: [id_usuario], references: [id])
+  comuna   comuna[]   @relation("ComunaParroquia")
+  circuito circuito[] @relation("CircuitoParroquia")
+  consejo  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
+  vocero   vocero[]   @relation("VoceroParroquia")
+}
+
+model cargo {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  id_usuario Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuario usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+  voceros vocero[]
+}
+
+model comuna {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  norte        String
+  sur          String
+  este         String
+  oeste        String
+  direccion    String
+  punto        String
+  rif          String
+  borrado      Boolean
+  id_usuario   Int // Clave foránea hacia usuario (administrador que crea la comuna)
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  usuario   usuario   @relation(name: "CreadorComuna", fields: [id_usuario], references: [id])
+  voceros   vocero[] // Voceros que pertenecen directamente a la comuna
+  consejos  consejo[] // Consejos que están dentro de la comuna
+  parroquia parroquia @relation("ComunaParroquia", fields: [id_parroquia], references: [id])
+}
+
+model circuito {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  direccion    String
+  latitud      String
+  longitud     String
+  punto        String
+  rif          String
+  borrado      Boolean
+  id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  usuario   usuario   @relation(name: "CreadorCircuito", fields: [id_usuario], references: [id])
+  consejos  consejo[] // Consejos que pueden estar dentro de un circuito
+  voceros   vocero[] // Voceros que pertenecen directamente a un circuito
+  parroquia parroquia @relation("CircuitoParroquia", fields: [id_parroquia], references: [id])
+}
+
+model consejo {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  direccion    String
+  latitud      String
+  longitud     String
+  punto        String
+  rif          String
+  borrado      Boolean
+  id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
+  id_comuna    Int? // Este consejo pertenece a una comuna
+  id_circuito  Int? // Este consejo puede estar vinculado a un circuito
+  id_parroquia Int // Nueva clave foránea para relacionar con parroquia
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  usuario   usuario   @relation(name: "CreadorConsejo", fields: [id_usuario], references: [id])
+  comuna    comuna?   @relation(fields: [id_comuna], references: [id])
+  circuito  circuito? @relation(fields: [id_circuito], references: [id])
+  voceros   vocero[] // Voceros que pertenecen a este consejo
+  parroquia parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
+}
+
+model vocero {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  nombre_dos   String
+  apellido     String
+  apellido_dos String
+  cedula       Int
+  genero       Boolean
+  edad         Int
+  telefono     Int
+  direccion    String
+  correo       String   @unique
+  token        String   @unique
+  proyecto     Boolean
+  certificado  Boolean
+  verificado   Boolean
+  borrado      Boolean
+  id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
+  id_comuna    Int? // Puede pertenecer directamente a una comuna
+  id_consejo   Int? // También puede pertenecer a un consejo, que está en una comuna
+  id_circuito  Int? // Puede pertenecer a un circuito
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  usuario   usuario   @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
+  comuna    comuna?   @relation(fields: [id_comuna], references: [id])
+  consejo   consejo?  @relation(fields: [id_consejo], references: [id])
+  circuito  circuito? @relation(fields: [id_circuito], references: [id])
+  parroquia parroquia @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
+  cargos    cargo[]
+}

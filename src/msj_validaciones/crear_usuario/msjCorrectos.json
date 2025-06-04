@@ -1,0 +1,12 @@
+{
+  "ok": "ok",
+  "okCrearUsuario": {
+    "creandoUsuario": "Usuario creado con exito...",
+    "encriptarCorrecto": "Clave encriptada con exito..."
+  },
+  "okMixto": "Exito...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

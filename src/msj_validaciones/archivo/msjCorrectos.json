@@ -1,0 +1,17 @@
+{
+  "ok": "ok",
+  "okCrearArchivo": {
+    "creandoArchivo": "Archivo creado con exito..."
+  },
+  "okConsultarArchivosPorDepartamento": {
+    "archivosEncontrados": "Archivos encontrados..."
+  },
+  "okConsultarArchivoPorCarpeta": {
+    "archivosEncontrados": "Archivos encontrados..."
+  },
+  "okMixto": "Exito...",
+  "codigo": {
+    "codigo200": 200,
+    "codigo201": 201
+  }
+}

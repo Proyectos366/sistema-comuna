@@ -1,0 +1,13 @@
+{
+  "error": "error",
+  "errorLogin": {
+    "credencialesInvalidas": "Error, credenciales invalidas...",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno iniciando sesion",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "error": "error",
+  "errorCrearEstante": {
+    "estanteExiste": "Error, estante existe...",
+    "creandoEstante": "Error, creando estante...",
+    "internoValidando": "Error, interno"
+  },
+  "errorConsultarEstantePorDepartamento": {
+    "estantesNoEncontrados": "Error, al consultar los estantes por departamento...",
+    "internoLog": "Error, al obtener estante por departamento",
+    "internoValidando": "Error, interno"
+  },
+  "errorMixto": "Error, interno no se creo el estante",
+  "codigo": {
+    "codigo400": 400,
+    "codigo404": 404,
+    "codigo500": 500
+  }
+}
