@@ -1,16 +1,16 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearComuna from "@/services/validarCrearComuna";
+import validarCrearConsejoComunal from "@/services/validarCrearConsejoComunal";
 
 export async function POST(request) {
   try {
     //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
 
-   const { nombre, rif, id_parroquia } = await request.json();
+   const { nombre, rif, id_parroquia, id_comuna } = await request.json();
    
        const { direccion, norte, sur, este, oeste, punto } = "";
    
-       const validaciones = await validarCrearComuna(
+       const validaciones = await validarCrearConsejoComunal(
          nombre,
          direccion,
          norte,
@@ -19,7 +19,8 @@ export async function POST(request) {
          oeste,
          punto,
          rif,
-         id_parroquia
+         id_parroquia,
+         id_comuna
        );
 
     if (validaciones.status === "error") {
@@ -31,27 +32,31 @@ export async function POST(request) {
       );
     }
 
-    const nuevaComuna = await prisma.comuna.create({
+    const nuevoConsejoComunal = await prisma.consejo.create({
       data: {
         nombre: validaciones.nombre,
         direccion: validaciones.direccion,
-        latitud: validaciones.latitud,
-        longitud: validaciones.longitud,
+        norte: validaciones.norte,
+        sur: validaciones.sur,
+        este: validaciones.este,
+        oeste: validaciones.oeste,
         punto: validaciones.punto,
-        rif: validaciones.rif,
+        rif: `j-${Date.now()}`,
+        borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,
+        id_comuna: validaciones.id_comuna,
       },
     });
 
-    if (!nuevaComuna) {
+    if (!nuevoConsejoComunal) {
       return generarRespuesta("error", "Error, no se creo la comuna", {}, 400);
     } else {
       return generarRespuesta(
         "ok",
         "Comuna creada...",
         {
-          comuna: nuevaComuna,
+          consejo: nuevoConsejoComunal,
         },
         201
       );

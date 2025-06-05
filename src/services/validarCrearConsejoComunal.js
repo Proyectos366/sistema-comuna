@@ -13,7 +13,8 @@ export default async function validarCrearConsejoComunal(
   oeste,
   punto,
   rif,
-  id_parroquia
+  id_parroquia,
+  id_comuna
 ) {
   try {
     const cookieStore = await cookies();
@@ -45,6 +46,7 @@ export default async function validarCrearConsejoComunal(
 
     const usuario_id = Number(idUsuario.id);
     const parroquia_id = Number(id_parroquia);
+    const comuna_id = Number(id_comuna);
 
     if (typeof usuario_id !== "number") {
       return retornarRespuestaFunciones(
@@ -60,9 +62,17 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
+    if (typeof comuna_id != "number") {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, id_comuna no es un numero..."
+      );
+    }
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: usuario_id,
       id_parroquia: parroquia_id,
+      id_comuna: comuna_id,
       nombre: nombreMayuscula,
       direccion: direccionMayuscula,
       norte: norteMayuscula,

@@ -40,7 +40,7 @@ export async function POST(request) {
         este: validaciones.este,
         oeste: validaciones.oeste,
         punto: validaciones.punto,
-        rif: validaciones.rif,
+        rif: `${new Date().getTime()}`,
         borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,

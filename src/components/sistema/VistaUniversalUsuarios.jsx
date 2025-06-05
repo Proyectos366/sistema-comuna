@@ -13,6 +13,7 @@ import ParroquiasForm from "../opciones/ParroquiasForm";
 import CargosForm from "../opciones/CargosForm";
 import ComunasForm from "../opciones/ComunasForm";
 import CircuitoForm from "../opciones/CircuitosForm";
+import ConsejoForm from "../opciones/ConsejoForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const { usuarioActivo, screenSize } = useUser();
@@ -347,9 +348,9 @@ export default function VistaUniversalUsuarios({ children }) {
                 <CircuitoForm />
               )}
 
-              {/* {vista === "consejos-comunales" && (
-                
-              )} */}
+              {vista === "consejos-comunales" && (
+                <ConsejoForm />
+              )} 
               
 
               {vista === "perfil" && (

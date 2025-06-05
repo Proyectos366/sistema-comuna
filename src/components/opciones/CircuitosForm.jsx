@@ -12,6 +12,9 @@ export default function CircuitoForm() {
   const [nombres, setNombres] = useState([]);
   const [parroquias, setParroquias] = useState([]);
 
+  console.log(nombreCircuito);
+  
+
   const [nombreParroquiaSeleccionada, setNombreParroquiaSeleccionada] =
     useState("");
 

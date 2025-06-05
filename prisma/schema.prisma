@@ -173,3 +173,5 @@ model vocero {
   parroquia parroquia @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
   cargos    cargo[]
 }
+
+//Tenemos que agregarle a comuna y c. comunal un campo codigo
