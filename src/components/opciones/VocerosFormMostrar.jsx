@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ConsejoFormMostrar({
+export default function VocerosFormMostrar({
   idParroquia,
   idComuna,
   consejoPorComuna,

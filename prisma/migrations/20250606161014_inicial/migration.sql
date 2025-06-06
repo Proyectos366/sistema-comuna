@@ -55,6 +55,7 @@ CREATE TABLE "comuna" (
     "direccion" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
     "rif" TEXT,
+    "codigo" TEXT NOT NULL,
     "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_parroquia" INTEGER NOT NULL,
@@ -74,8 +75,8 @@ CREATE TABLE "circuito" (
     "oeste" TEXT NOT NULL,
     "direccion" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
-    "rif" TEXT,
     "borrado" BOOLEAN NOT NULL,
+    "validado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_parroquia" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -95,6 +96,7 @@ CREATE TABLE "consejo" (
     "direccion" TEXT NOT NULL,
     "punto" TEXT NOT NULL,
     "rif" TEXT,
+    "codigo" TEXT NOT NULL,
     "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,
@@ -164,10 +166,13 @@ CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");
 CREATE UNIQUE INDEX "comuna_rif_key" ON "comuna"("rif");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "circuito_rif_key" ON "circuito"("rif");
+CREATE UNIQUE INDEX "comuna_codigo_key" ON "comuna"("codigo");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "consejo_rif_key" ON "consejo"("rif");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "consejo_codigo_key" ON "consejo"("codigo");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "vocero_cedula_key" ON "vocero"("cedula");

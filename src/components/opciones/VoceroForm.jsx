@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ConsejoFormMostrar from "./ConsejoFormMostrar";
+import VocerosFormMostrar from "./VocerosFormMostrar";
 
 export default function ConsejoForm() {
   // Estados para los selectores
@@ -17,6 +17,10 @@ export default function ConsejoForm() {
   const [consejoPorComuna, setConsejoPorComuna] = useState([]);
 
   const [circuitoComuna, setCircuitoComuna] = useState(0);
+
+
+  const [idCrearEnComunaCircuito, setIdCrearEnComunaCircuito] = useState(0);
+
 
   // Consultar parroquias al cargar el componente
   useEffect(() => {
@@ -37,28 +41,34 @@ export default function ConsejoForm() {
     setIdComuna("");
   }, [circuitoComuna]);
 
+  console.log(comunas);
+  
+
   const fetchComunas = async (parroquiaId) => {
     try {
       setIdParroquia(parroquiaId);
       setIdComuna(""); // Resetear comuna cuando cambia la parroquia
 
-      if (!parroquiaId || circuitoComuna === 0) {
+      console.log(parroquiaId);
+      
+
+      if (!parroquiaId) {
         setComunas([]);
         return;
       }
 
-      let response;
-      if (circuitoComuna === 1) {
-        response = await axios.get(`/api/comunas/comunas-id`, {
-          params: { idParroquia: parroquiaId },
-        });
-      } else if (circuitoComuna === 2) {
-        response = await axios.get(`/api/circuitos/circuitos-id`, {
-          params: { idParroquia: parroquiaId },
-        });
-      }
+       let response;
+       if (circuitoComuna === 1) {
+         response = await axios.get(`/api/comunas/comunas-id`, {
+           params: { idParroquia: parroquiaId },
+         });
+       } else if (circuitoComuna === 1) {
+         response = await axios.get(`/api/circuitos/circuitos-id`, {
+           params: { idParroquia: parroquiaId },
+         });
+       }
 
-      setComunas(response?.data?.comunas || response?.data?.circuitos);
+       setComunas(response?.data?.comunas || response?.data?.circuitos);
     } catch (error) {
       console.log("Error al obtener comunas o circuitos:", error);
     }
@@ -104,11 +114,11 @@ export default function ConsejoForm() {
     <section className="rounded-md p-6 min-h-screen flex flex-col items-center justify-center space-y-4 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900">
       <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-          Crear consejo comunal
+          Crear vocero
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block">
-            <span className="text-gray-700 font-medium">Selecciona:</span>
+            <span className="text-gray-700 font-medium">Selecciona donde crearlo</span>
             <div className="flex gap-4 mt-2">
               <label className="flex items-center gap-2">
                 <input
@@ -135,14 +145,55 @@ export default function ConsejoForm() {
                 />
                 <span>Circuito comunal</span>
               </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value="2"
+                  checked={circuitoComuna === 3}
+                  onChange={() =>
+                    setCircuitoComuna(circuitoComuna === 3 ? 0 : 3)
+                  }
+                  className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-400"
+                />
+                <span>Consejo comunal</span>
+              </label>
             </div>
           </label>
 
-          {/* Selector de Parroquias */}
-          {circuitoComuna !== 0 && (
+           {circuitoComuna === 3 && (
             <>
               <label className="block">
-                <span className="text-gray-700 font-medium">Parroquia:</span>
+                <span className="text-gray-700 font-medium">Comuna o circuito</span>
+                <select
+                  value={idCrearEnComunaCircuito}
+                  onChange={(e) => setIdCrearEnComunaCircuito(e.target.value)}
+                  className="mt-1 uppercase block w-full p-3 borde-fondo rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none transition-all"
+                >
+                  <option value="">Selecciona donde guardar</option>
+                  
+                    <option key={1}>
+                      Comuna
+                    </option>
+                    <option key={2}>
+                      Circuito
+                    </option>
+                  
+                </select>
+              </label>
+            </>
+          )}
+
+
+
+
+
+
+          {/* Selector de Parroquias */}
+          {(circuitoComuna !== 0 && idCrearEnComunaCircuito !== 0) && (
+            <>
+              <label className="block">
+                <span className="text-gray-700 font-medium">Parroquiasds:</span>
                 <select
                   value={idParroquia}
                   onChange={(e) => fetchComunas(e.target.value)}
@@ -159,8 +210,10 @@ export default function ConsejoForm() {
             </>
           )}
 
+          
+
           {/* Selector de Comunas (Solo se muestra si hay parroquia seleccionada) */}
-          {idParroquia && (
+          {/* {idParroquia && (
             <label className="block mt-4">
               <span className="text-gray-700 font-medium">
                 {`${
@@ -188,7 +241,7 @@ export default function ConsejoForm() {
                 ))}
               </select>
             </label>
-          )}
+          )} */}
 
           {/* Campo para ingresar el nombre del consejo comunal */}
           {idComuna && (
@@ -220,7 +273,7 @@ export default function ConsejoForm() {
       </div>
 
       <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl">
-        <ConsejoFormMostrar
+        <VocerosFormMostrar
           idComuna={idComuna}
           idParroquia={idParroquia}
           consejoPorComuna={consejoPorComuna}

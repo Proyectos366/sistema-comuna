@@ -6,7 +6,7 @@ export async function POST(request) {
   try {
     //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
 
-    const { nombre, rif, id_parroquia } = await request.json();
+    const { nombre, rif, codigo, id_parroquia } = await request.json();
 
     const { direccion, norte, sur, este, oeste, punto } = "";
 
@@ -19,6 +19,7 @@ export async function POST(request) {
       oeste,
       punto,
       rif,
+      codigo,
       id_parroquia
     );
 
@@ -41,6 +42,7 @@ export async function POST(request) {
         oeste: validaciones.oeste,
         punto: validaciones.punto,
         rif: `${new Date().getTime()}`,
+        codigo: `${new Date().getTime()}`,
         borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,

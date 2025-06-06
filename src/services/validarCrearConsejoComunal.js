@@ -13,6 +13,7 @@ export default async function validarCrearConsejoComunal(
   oeste,
   punto,
   rif,
+  codigo,
   id_parroquia,
   id_comuna
 ) {
@@ -81,6 +82,7 @@ export default async function validarCrearConsejoComunal(
       oeste: oesteMayuscula,
       punto: puntoMayuscula,
       rif: rifMayuscula,
+      codigo: codigo,
     });
   } catch (error) {
     console.log(`Error, interno al crear circuito: ` + error);

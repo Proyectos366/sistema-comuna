@@ -9,7 +9,7 @@ datasource db {
 
 model role {
   id          Int      @id @default(autoincrement())
-  nombre      String @unique
+  nombre      String   @unique
   descripcion String
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -77,7 +77,8 @@ model comuna {
   oeste        String
   direccion    String
   punto        String
-  rif          String?   @unique
+  rif          String?  @unique
+  codigo       String   @unique
   borrado      Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que crea la comuna)
   id_parroquia Int
@@ -92,7 +93,7 @@ model comuna {
 }
 
 model circuito {
- id           Int      @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   nombre       String
   norte        String
   sur          String
@@ -100,8 +101,8 @@ model circuito {
   oeste        String
   direccion    String
   punto        String
-  rif          String?   @unique
   borrado      Boolean
+  validado     Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
   id_parroquia Int
   updatedAt    DateTime @default(now())
@@ -123,7 +124,8 @@ model consejo {
   oeste        String
   direccion    String
   punto        String
-  rif          String?   @unique
+  rif          String?  @unique
+  codigo       String   @unique
   borrado      Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
   id_comuna    Int? // Este consejo pertenece a una comuna

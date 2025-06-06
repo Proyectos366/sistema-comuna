@@ -1,54 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function ComunaFormMostrar({
-  comunasAgrupadas,
-  nombreParroquiaSeleccionada,
-  setNombreParroquiaSeleccionada,
-}) {
-  const [parroquiasVisibles, setParroquiasVisibles] = useState({});
+export default function ComunaFormMostrar({ idParroquia, nuevaComuna }) {
+  const [comunas, setComunas] = useState([]);
+  const [comunalesVisibles, setComunasVisibles] = useState({});
 
-  const toggleParroquia = (nombreParroquia) => {
-    setNombreParroquiaSeleccionada(nombreParroquia);
-    setParroquiasVisibles((prev) => ({
-      [nombreParroquia]: !prev[nombreParroquia], // Abre la seleccionada y cierra las demás
-    }));
-  };
+  useEffect(() => {
+    const fetchComunas = async () => {
+      if (!idParroquia) {
+        setComunas([]); // Limpiar comunas si no hay parroquia seleccionada
+        return;
+      }
+
+      try {
+        const response = await axios.get("/api/comunas/comunas-id", {
+          params: { idParroquia },
+        });
+        setComunas(response.data.comunas || []);
+      } catch (error) {
+        console.error("Error al obtener las comunas:", error);
+      }
+    };
+
+    fetchComunas();
+  }, [idParroquia]); // Se ejecuta cada vez que `idParroquia` cambia
+
+  useEffect(() => {
+    if (nuevaComuna) {
+      setComunas((prevComunas) => [...prevComunas, nuevaComuna]); // Agregar nueva comuna a la lista
+      setComunasVisibles((prev) => ({
+        ...prev,
+        [nuevaComuna.nombre]: true, // Mostrar nueva comuna automáticamente
+      }));
+    }
+  }, [nuevaComuna]);
 
   return (
-    <div className="w-full max-w-xl mt-6 bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
+    <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
       <h3 className="text-2xl font-bold mb-3 text-center text-gray-800">
-        Comunas por parroquia
+        Comunas
       </h3>
-      <div className="">
-        {Object.entries(comunasAgrupadas).map(([nombreParroquia, comunas]) => (
-          <div key={nombreParroquia} className="mb-2">
-            <h4
-              className={`text-lg font-semibold bg-gray-100 hover:bg-gray-300 p-2 rounded-md cursor-pointer ${
-                nombreParroquia === nombreParroquiaSeleccionada
-                  ? "borde-fondo"
-                  : ""
-              }`}
-              onClick={() => toggleParroquia(nombreParroquia)}
-            >
-              {nombreParroquia}
-            </h4>
-            {parroquiasVisibles[nombreParroquia] && (
-              <div className="mt-2 ps-5">
-                {comunas.map((comuna) => (
-                  <div
-                    key={comuna.id}
-                    className="hover:bg-gray-200 border border-gray-300 rounded-md transition-colors flex flex-col"
-                  >
-                    <span className="rounded-md p-3">{comuna.nombre}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+
+      {idParroquia && comunas.length > 0 ? (
+        <div>
+          {comunas.map((consejo, index) => (
+            <div key={index} className="mb-2">
+              <h4
+                className={`text-lg  text-center sm:text-justify font-semibold bg-gray-100 hover:bg-gray-300 p-2
+                  rounded-md`}
+              >
+                {consejo.nombre}
+              </h4>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-600">
+          No hay comunas disponibles para esta parroquia.
+        </p>
+      )}
     </div>
   );
 }

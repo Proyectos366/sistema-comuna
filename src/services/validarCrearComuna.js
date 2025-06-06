@@ -13,6 +13,7 @@ export default async function validarCrearComuna(
   oeste,
   punto,
   rif,
+  codigo,
   id_parroquia
 ) {
   try {
@@ -46,6 +47,14 @@ export default async function validarCrearComuna(
     const usuario_id = Number(idUsuario.id);
     const parroquia_id = Number(id_parroquia);
 
+    /** 
+      if (!codigo) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo codigo vacio"
+        );
+      }
+    */
     if (typeof usuario_id !== "number") {
       return retornarRespuestaFunciones(
         "error",
@@ -71,6 +80,7 @@ export default async function validarCrearComuna(
       oeste: oesteMayuscula,
       punto: puntoMayuscula,
       rif: rifMayuscula,
+      codigo: codigo
     });
   } catch (error) {
     console.log(`Error, interno al crear comuna: ` + error);

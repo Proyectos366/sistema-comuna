@@ -12,7 +12,6 @@ export default async function validarCrearCircuito(
   este,
   oeste,
   punto,
-  rif,
   id_parroquia
 ) {
   try {
@@ -36,7 +35,6 @@ export default async function validarCrearCircuito(
     const esteMayuscula = este ? este.toUpperCase() : "";
     const oesteMayuscula = oeste ? oeste.toUpperCase() : "";
     const puntoMayuscula = punto ? punto.toUpperCase() : "";
-    const rifMayuscula = rif ? rif.toUpperCase() : "";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -70,7 +68,6 @@ export default async function validarCrearCircuito(
       este: esteMayuscula,
       oeste: oesteMayuscula,
       punto: puntoMayuscula,
-      rif: rifMayuscula,
     });
   } catch (error) {
     console.log(`Error, interno al crear circuito: ` + error);

@@ -14,6 +14,7 @@ import CargosForm from "../opciones/CargosForm";
 import ComunasForm from "../opciones/ComunasForm";
 import CircuitoForm from "../opciones/CircuitosForm";
 import ConsejoForm from "../opciones/ConsejoForm";
+import VoceroForm from "../opciones/VoceroForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const { usuarioActivo, screenSize } = useUser();
@@ -352,6 +353,9 @@ export default function VistaUniversalUsuarios({ children }) {
                 <ConsejoForm />
               )} 
               
+              {vista === "voceros" && (
+                <VoceroForm />
+              )}
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario abrirPanel={abrirPanel} />

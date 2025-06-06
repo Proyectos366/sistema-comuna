@@ -6,27 +6,43 @@ export async function POST(request) {
   try {
     //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
 
-   const { nombre, rif, id_parroquia, id_comuna } = await request.json();
-   
-       const { direccion, norte, sur, este, oeste, punto } = "";
-   
-       const validaciones = await validarCrearConsejoComunal(
-         nombre,
-         direccion,
-         norte,
-         sur,
-         este,
-         oeste,
-         punto,
-         rif,
-         id_parroquia,
-         id_comuna
-       );
+    const { nombre, id_parroquia, id_comuna, comunaCircuito } =
+      await request.json();
+
+    const { direccion, norte, sur, este, oeste, punto, rif, codigo } = "";
+
+    /**
+     cuando se vaya a guardar el rif debemos agregarle ejemplo: C-
+     es decir algo asi: C-5003648
+     */
+
+    const validaciones = await validarCrearConsejoComunal(
+      nombre,
+      direccion,
+      norte,
+      sur,
+      este,
+      oeste,
+      punto,
+      rif,
+      codigo,
+      id_parroquia,
+      id_comuna
+    );
 
     if (validaciones.status === "error") {
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
+        {},
+        400
+      );
+    }
+
+    if (!["comuna", "circuito"].includes(comunaCircuito)) {
+      return generarRespuesta(
+        "error",
+        "Tipo de comuna/circuito inválido",
         {},
         400
       );
@@ -42,10 +58,13 @@ export async function POST(request) {
         oeste: validaciones.oeste,
         punto: validaciones.punto,
         rif: `j-${Date.now()}`,
+        codigo: `${new Date().getTime()}`,
         borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,
-        id_comuna: validaciones.id_comuna,
+        ...(comunaCircuito === "comuna"
+          ? { id_comuna: validaciones.id_comuna }
+          : { id_circuito: validaciones.id_comuna }),
       },
     });
 

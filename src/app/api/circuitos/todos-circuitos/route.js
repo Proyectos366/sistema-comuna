@@ -20,7 +20,11 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
-    const todosCircuitos = await prisma.circuito.findMany();
+    const todosCircuitos = await prisma.circuito.findMany({
+      where: {
+        borrado: false, validado: false
+      }
+    });
 
     if (!todosCircuitos) {
       return generarRespuesta(
