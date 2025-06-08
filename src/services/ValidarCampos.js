@@ -68,6 +68,69 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoNombreApellidoDos(nombre, opcion) {
+    try {
+      if (nombre) {
+        if (!nombreRegex.test(nombre)) {
+          return retornarRespuestaFunciones(
+            "error",
+            `Error, segundo ${
+              opcion === "apellido" ? "apellido" : "nombre"
+            } solo letras`
+          );
+        }
+      }
+
+      return retornarRespuestaFunciones(
+        "ok",
+        `Campo segundo ${
+          opcion === "apellido" ? "apellido" : "nombre"
+        } valido...`
+      );
+    } catch (error) {
+      console.log(
+        `Error, interno validando segundo ${
+          opcion === "apellido" ? "apellido" : "nombre"
+        }: ` + error
+      );
+      return retornarRespuestaFunciones(
+        "error",
+        `Error, interno validadndo segundo ${
+          opcion === "apellido" ? "apellido" : "nombre"
+        }...`
+      );
+    }
+  }
+
+  static validarCampoCedula(cedula) {
+    try {
+      if (!cedula) {
+        return retornarRespuestaFunciones(
+          msjErrores.error,
+          msjErrores.errorCedula.campoVacio
+        );
+      }
+
+      if (!cedulaRegex.test(cedula)) {
+        return retornarRespuestaFunciones(
+          msjErrores.error,
+          msjErrores.errorCedula.formatoInvalido
+        );
+      }
+
+      return retornarRespuestaFunciones(
+        msjCorrectos.ok,
+        msjCorrectos.okCedula.campoValido
+      );
+    } catch (error) {
+      console.log(`${msjErrores.errorCedula.internoValidando}: ` + error);
+      return retornarRespuestaFunciones(
+        msjErrores.error,
+        msjErrores.errorCedula.internoValidando
+      );
+    }
+  }
+
   static validarCampoClave(claveUno, claveDos) {
     try {
       if (!claveUno) {
@@ -107,6 +170,32 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         msjErrores.error,
         msjErrores.errorCorreo.internoValidando
+      );
+    }
+  }
+
+  static validarCampoGenero(genero) {
+    try {
+      if (!genero) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo genero vacio..."
+        );
+      }
+
+      if (typeof genero !== "boolean") {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo debe ser hombre o mujer..."
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", "Campo genero validado...");
+    } catch (error) {
+      console.log(`Error, interno validando genero: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando genero..."
       );
     }
   }
@@ -181,331 +270,52 @@ export default class ValidarCampos {
     }
   }
 
-  static validarCamposRegistroDepartamento(nombre, descripcion, alias) {
-    try {
-      // Validar que nombre, descripción y alias no estén vacíos
-      if (!nombre) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
-        );
-      }
-
-      if (!descripcion) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorDescripcion.campoVacio
-        );
-      }
-
-      if (!alias) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.campoVacio
-        );
-      }
-
-      if (!nombreRegex.test(alias)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.formatoInvalido
-        );
-      }
-
-      const nombreMinuscula = nombre.toLowerCase();
-
-      return retornarRespuestaFunciones(msjCorrectos.ok, msjCorrectos.okMixto, {
-        nombre: nombreMinuscula,
-      });
-    } catch (error) {
-      console.log(`${msjErrores.errorMixto}: `, error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorMixto
-      );
-    }
-  }
-
-  static validarCamposEstante(nombre, descripcion, niveles, secciones, alias) {
-    try {
-      // Validar que nombre, descripción y alias no estén vacíos
-      if (!nombre) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
-        );
-      }
-
-      if (!descripcion) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorDescripcion.campoVacio
-        );
-      }
-
-      // Validar que niveles y secciones sean números positivos
-      if (!niveles) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.campoVacio
-        );
-      }
-
-      const nivel = Number(niveles);
-
-      if (typeof nivel !== "number") {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.formatoInvalido
-        );
-      }
-
-      if (nivel < 1) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.menorCero
-        );
-      }
-
-      if (typeof nivel !== "number" || nivel <= 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.numeroPositivo
-        );
-      }
-
-      if (!secciones) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.campoVacio
-        );
-      }
-
-      const seccion = Number(secciones);
-
-      if (typeof seccion !== "number") {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.formatoInvalido
-        );
-      }
-
-      if (typeof seccion !== "number" || seccion <= 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.numeroPositivo
-        );
-      }
-
-      if (!alias) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.campoVacio
-        );
-      }
-
-      if (!nombreRegex.test(alias)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.formatoInvalido
-        );
-      }
-
-      const nombreMinuscula = nombre.toLowerCase();
-
-      return retornarRespuestaFunciones(msjCorrectos.ok, msjCorrectos.okMixto, {
-        secciones: seccion,
-        niveles: nivel,
-        nombre: nombreMinuscula,
-      });
-    } catch (error) {
-      console.log(`${msjErrores.errorMixto}: `, error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorMixto
-      );
-    }
-  }
-
-  static validarCamposCarpeta(
+  static validarCamposRegistroVocero(
     nombre,
-    descripcion,
-    nivel,
-    seccion,
-    alias,
-    id_usuario,
-    id_departamento,
-    id_estante
+    nombre_dos,
+    apellido,
+    apellido_dos,
+    cedula,
+    correo,
+    genero,
+    edad
   ) {
     try {
-      const usuario_id = Number(id_usuario);
-      const departamento_id = Number(id_departamento);
-      const estante_id = Number(id_estante);
-      // Validar que nombre, descripción y alias no estén vacíos
-      if (!nombre) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
-        );
-      }
-
-      if (!descripcion) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorDescripcion.campoVacio
-        );
-      }
-
-      // Validar que niveles y secciones sean números positivos
-      if (nivel < 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.campoVacio
-        );
-      }
-
-      const niveles = Number(nivel);
-
-      if (typeof niveles !== "number") {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.formatoInvalido
-        );
-      }
-
-      if (niveles < 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.menorCero
-        );
-      }
-
-      if (typeof niveles !== "number" || niveles < 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNiveles.numeroPositivo
-        );
-      }
-
-      if (!seccion) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.campoVacio
-        );
-      }
-
-      const secciones = Number(seccion);
-
-      if (typeof secciones !== "number") {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.formatoInvalido
-        );
-      }
-
-      if (typeof secciones !== "number" || secciones <= 0) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorSecciones.numeroPositivo
-        );
-      }
-
-      if (!alias) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.campoVacio
-        );
-      }
-
-      if (!nombreRegex.test(alias)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.formatoInvalido
-        );
-      }
-
-      return retornarRespuestaFunciones(msjCorrectos.ok, msjCorrectos.okMixto, {
-        seccion: secciones,
-        nivel: niveles,
-        id_usuario: usuario_id,
-        id_departamento: departamento_id,
-        id_estante: estante_id,
-      });
-    } catch (error) {
-      console.log(`${msjErrores.errorMixto}: `, error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorMixto
+      const validarCorreo = this.validarCampoCorreo(correo);
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarNombreDos = this.validarCampoNombreApellidoDos(
+        nombre_dos,
+        "nombre"
       );
-    }
-  }
+      const validarApellido = this.validarCampoNombre(apellido);
+      const validarApellidoDos = this.validarCampoNombreApellidoDos(
+        apellido_dos,
+        "apellido"
+      );
+      const validarCedula = this.validarCampoCedula(cedula);
+      const validarGenero = this.validarCampoGenero(genero);
 
-  static validarCamposArchivo(
-    archivo,
-    nombre,
-    descripcion,
-    alias,
-    id_usuario,
-    id_departamento,
-    id_estante,
-    id_carpeta
-  ) {
-    try {
-      const usuario_id = Number(id_usuario);
-      const departamento_id = Number(id_departamento);
-      const estante_id = Number(id_estante);
-      const carpeta_id = Number(id_carpeta);
+      if (validarCorreo.status === "error") return validarCorreo;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarNombreDos.status === "error") return validarNombreDos;
+      if (validarApellido.status === "error") return validarApellido;
+      if (validarApellidoDos.status === "error") return validarApellidoDos;
+      if (validarCedula.status === "error") return validarCedula;
+      if (validarGenero.status === "error") return validarGenero;
 
-      // Validar que nombre, descripción y alias no estén vacíos
-      if (!nombre) {
+      if (!edad) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
+          "error",
+          "Error, campo edad vacio..."
         );
       }
 
-      const nombreMinuscula = nombre.toLowerCase();
-
-      if (!archivo) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorArchivo.campoVacio
-        );
-      }
-
-      if (!descripcion) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorDescripcion.campoVacio
-        );
-      }
-
-      if (!alias) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.campoVacio
-        );
-      }
-
-      if (!nombreRegex.test(alias)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorAlias.formatoInvalido
-        );
-      }
-
-      return retornarRespuestaFunciones(msjCorrectos.ok, msjCorrectos.okMixto, {
-        nombreArchivo: nombreMinuscula,
-        id_usuario: usuario_id,
-        id_departamento: departamento_id,
-        id_estante: estante_id,
-        id_carpeta: carpeta_id,
-      });
+      return retornarRespuestaFunciones("ok", "Campos validados...");
     } catch (error) {
-      console.log(`${msjErrores.errorMixto}: `, error);
+      console.log(`Error, interno validando campos vocero: ` + error);
       return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorMixto
+        "error",
+        "Error, interno validando campos vocero..."
       );
     }
   }

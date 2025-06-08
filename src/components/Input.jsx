@@ -1,12 +1,12 @@
 "use client";
 
 import { fechaLimite } from "@/utils/Fechas";
+import { phoneRegex } from "@/utils/constantes";
 
 const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const cedulaRegex = /^[1-9][0-9]{6,7}$/;
-const phoneRegex = /^0[0-9]{10}$/;
 const textRegex = /^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/;
 const numeroRegex = /^[1-9]$/;
 

@@ -14,8 +14,8 @@
   },
   "errorCedula": {
     "campoVacio": "Cedula en blanco...",
-    "formatoInvalido": "Formato de clave invalida...",
-    "internoValidando": "Error, interno validando campo clave"
+    "formatoInvalido": "Formato de cedula invalido...",
+    "internoValidando": "Error, interno validando campo cedula"
   },
   "errorNombre": {
     "campoVacio": "Nombre en blanco...",

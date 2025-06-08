@@ -4,30 +4,44 @@ import validarCrearVocero from "@/services/validarCrearVocero";
 
 export async function POST(request) {
   try {
-    //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
-
-    const { nombre, id_parroquia, id_comuna, comunaCircuito } =
-      await request.json();
-
-    const { direccion, norte, sur, este, oeste, punto, rif, codigo } = "";
-
-    /**
-     cuando se vaya a guardar el rif debemos agregarle ejemplo: C-
-     es decir algo asi: C-5003648
-     */
+    const {
+      nombre,
+      nombre_dos,
+      apellido,
+      apellido_dos,
+      cedula,
+      correo,
+      genero,
+      edad,
+      telefono,
+      direccion,
+      proyecto,
+      certificado,
+      verificado,
+      id_parroquia,
+      id_comuna,
+      id_consejo,
+      id_circuito,
+    } = await request.json();
 
     const validaciones = await validarCrearVocero(
       nombre,
+      nombre_dos,
+      apellido,
+      apellido_dos,
+      cedula,
+      correo,
+      genero,
+      edad,
+      telefono,
       direccion,
-      norte,
-      sur,
-      este,
-      oeste,
-      punto,
-      rif,
-      codigo,
+      proyecto,
+      certificado,
+      verificado,
       id_parroquia,
-      id_comuna
+      id_comuna,
+      id_consejo,
+      id_circuito
     );
 
     if (validaciones.status === "error") {
@@ -39,50 +53,51 @@ export async function POST(request) {
       );
     }
 
-    if (!["comuna", "circuito"].includes(comunaCircuito)) {
-      return generarRespuesta(
-        "error",
-        "Tipo de comuna/circuito inválido",
-        {},
-        400
-      );
-    }
-
-    const nuevoConsejoComunal = await prisma.consejo.create({
+    const nuevoVocero = await prisma.vocero.create({
       data: {
         nombre: validaciones.nombre,
+        nombre_dos: validaciones.nombreDos,
+        apellido: validaciones.apellido,
+        apellido_dos: validaciones.apellidoDos,
+        cedula: validaciones.cedula,
+        genero: validaciones.genero,
+        edad: validaciones.edad,
+        telefono: validaciones.telefono,
         direccion: validaciones.direccion,
-        norte: validaciones.norte,
-        sur: validaciones.sur,
-        este: validaciones.este,
-        oeste: validaciones.oeste,
-        punto: validaciones.punto,
-        rif: `j-${Date.now()}`,
-        codigo: `${new Date().getTime()}`,
-        borrado: false,
+        correo: validaciones.correo,
+        token: validaciones.token,
+        proyecto: validaciones.proyecto,
+        certificado: validaciones.certificado,
+        verificado: validaciones.verificado,
+        borrado: validaciones.borrado,
         id_usuario: validaciones.id_usuario,
+        id_comuna: validaciones.id_comuna,
+        id_consejo: validaciones.id_consejo,
+        id_circuito: validaciones.id_circuito,
         id_parroquia: validaciones.id_parroquia,
-        ...(comunaCircuito === "comuna"
-          ? { id_comuna: validaciones.id_comuna }
-          : { id_circuito: validaciones.id_comuna }),
       },
     });
 
-    if (!nuevoConsejoComunal) {
-      return generarRespuesta("error", "Error, no se creo la comuna", {}, 400);
+    if (!nuevoVocero) {
+      return generarRespuesta(
+        "error",
+        "Error, no se creo el vocero...",
+        {},
+        400
+      );
     } else {
       return generarRespuesta(
         "ok",
-        "Comuna creada...",
+        "Vocero creado...",
         {
-          consejo: nuevoConsejoComunal,
+          vocero: nuevoVocero,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (comunas): ` + error);
+    console.log(`Error interno (crear vocero): ` + error);
 
-    return generarRespuesta("error", "Error, interno (comunas)", {}, 500);
+    return generarRespuesta("error", "Error, interno (crear vocero)", {}, 500);
   }
 }
