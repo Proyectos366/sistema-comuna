@@ -16,15 +16,15 @@ export default function VoceroForm() {
   const [apellidoVocero, setApellidoVocero] = useState("");
   const [apellidoDosVocero, setApellidoDosVocero] = useState("");
   const [cedulaVocero, setCedulaVocero] = useState("");
-  const [generoVocero, setGeneroVocero] = useState(null);
+  const [generoVocero, setGeneroVocero] = useState("");
   const [edadVocero, setEdadVocero] = useState("");
   const [telefonoVocero, setTelefonoVocero] = useState("");
   const [direccionVocero, setDireccionVocero] = useState("");
   const [correoVocero, setCorreoVocero] = useState("");
 
-  const [proyectoVocero, setProyectoVocero] = useState(null);
-  const [verificadoVocero, setVerificadoVocero] = useState(null);
-  const [certificadoVocero, setCertificadoVocero] = useState(null);
+  const [proyectoVocero, setProyectoVocero] = useState("");
+  const [verificadoVocero, setVerificadoVocero] = useState("");
+  const [certificadoVocero, setCertificadoVocero] = useState("");
 
   const [idParroquia, setIdParroquia] = useState("");
   const [idComuna, setIdComuna] = useState("");

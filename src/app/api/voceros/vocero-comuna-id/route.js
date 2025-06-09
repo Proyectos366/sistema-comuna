@@ -35,7 +35,10 @@ export async function GET(req) {
 
     // Consultar los consejos comunales de la comuna específica
     const vocerosPorComuna = await prisma.vocero.findMany({
-      where: { id_comuna: id_comuna },
+      where: {
+        id_comuna: id_comuna,
+        id_consejo: null, // Solo traer registros donde id_consejo es NULL
+      },
       include: {
         cargos: true, // Incluir los cargos relacionados
       },

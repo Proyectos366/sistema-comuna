@@ -64,7 +64,7 @@ export async function POST(request) {
         cedula: validaciones.cedula,
         genero: validaciones.genero,
         edad: validaciones.edad,
-        telefono: Number(validaciones.telefono),
+        telefono: validaciones.telefono,
         direccion: validaciones.direccion,
         correo: validaciones.correo,
         token: validaciones.token,
