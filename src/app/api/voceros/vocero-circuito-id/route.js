@@ -8,9 +8,9 @@ export async function GET(req) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
     const { searchParams } = new URL(req.url);
-    const idComuna = searchParams.get("idComuna");
+    const idCircuito = searchParams.get("idCircuito");
 
-    const id_comuna = Number(idComuna);
+    const id_circuito = Number(idCircuito);
 
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -24,41 +24,44 @@ export async function GET(req) {
       );
     }
 
-    if (!idComuna) {
+    if (!idCircuito) {
       return generarRespuesta(
         "error",
-        "El ID de circuito es obligatorio.",
+        "El ID de circuito comunal es obligatorio.",
         {},
         400
       );
     }
 
     // Consultar los consejos comunales de la comuna específica
-    const consejosComunales = await prisma.consejo.findMany({
-      where: { id_circuito: id_comuna },
+    const vocerosPorCircuitoComunal = await prisma.vocero.findMany({
+      where: { id_circuito: id_circuito },
+      include: {
+        cargos: true, // Incluir los cargos relacionados
+      },
     });
 
-    if (!consejosComunales) {
+    if (!vocerosPorCircuitoComunal) {
       return generarRespuesta(
         "ok",
-        "No hay consejos comunales en este circuito.",
-        { consejos: [] },
+        "No hay voceros en este circuito comunal.",
+        { voceros: [] },
         200
       );
     }
 
     return generarRespuesta(
       "ok",
-      "Consejos comunales encontrados.",
-      { consejos: consejosComunales },
+      "Voceros encontrados.",
+      { voceros: vocerosPorCircuitoComunal },
       200
     );
   } catch (error) {
-    console.log(`Error, interno al consultar consejos comunales: ${error}`);
+    console.log(`Error, interno al consultar voceros circuito: ${error}`);
 
     return generarRespuesta(
       "error",
-      "Error interno al consultar consejos comunales.",
+      "Error, interno al consultar voceros circuito...",
       {},
       500
     );

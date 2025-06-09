@@ -183,7 +183,7 @@ export default class ValidarCampos {
         );
       }
 
-      if (typeof genero !== "boolean") {
+      if (genero !== "1" && genero !== "2") {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo debe ser hombre o mujer..."

@@ -7,6 +7,7 @@ export default function ConsejoFormMostrar({
   idParroquia,
   idComuna,
   consejoPorComuna,
+  circuitoComuna,
 }) {
   const [consejosComunales, setConsejosComunales] = useState([]);
   const [consejosComunalesVisibles, setConsejosComunalesVisibles] = useState(
@@ -29,7 +30,9 @@ export default function ConsejoFormMostrar({
 
       try {
         const response = await axios.get(
-          `/api/consejos/consejos-comunales-id`,
+          `/api/consejos/consejos-comunales-id-${
+            circuitoComuna === 1 ? "comuna" : "circuito"
+          }`,
           {
             params: {
               idComuna: idComuna,

@@ -27,38 +27,41 @@ export async function GET(req) {
     if (!idComuna) {
       return generarRespuesta(
         "error",
-        "El ID de circuito es obligatorio.",
+        "El ID de comuna es obligatorio.",
         {},
         400
       );
     }
 
     // Consultar los consejos comunales de la comuna específica
-    const consejosComunales = await prisma.consejo.findMany({
-      where: { id_circuito: id_comuna },
+    const vocerosPorComuna = await prisma.vocero.findMany({
+      where: { id_comuna: id_comuna },
+      include: {
+        cargos: true, // Incluir los cargos relacionados
+      },
     });
 
-    if (!consejosComunales) {
+    if (!vocerosPorComuna) {
       return generarRespuesta(
         "ok",
-        "No hay consejos comunales en este circuito.",
-        { consejos: [] },
+        "No hay voceros en esta comuna...",
+        { voceros: [] },
         200
       );
     }
 
     return generarRespuesta(
       "ok",
-      "Consejos comunales encontrados.",
-      { consejos: consejosComunales },
+      "Voceros encontrados.",
+      { voceros: vocerosPorComuna },
       200
     );
   } catch (error) {
-    console.log(`Error, interno al consultar consejos comunales: ${error}`);
+    console.log(`Error, interno al consultar voceros comuna: ${error}`);
 
     return generarRespuesta(
       "error",
-      "Error interno al consultar consejos comunales.",
+      "Error, interno al consultar voceros comuna...",
       {},
       500
     );

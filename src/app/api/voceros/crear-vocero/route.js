@@ -18,10 +18,12 @@ export async function POST(request) {
       proyecto,
       certificado,
       verificado,
+      cargos,
       id_parroquia,
       id_comuna,
       id_consejo,
       id_circuito,
+      pertenece,
     } = await request.json();
 
     const validaciones = await validarCrearVocero(
@@ -62,19 +64,22 @@ export async function POST(request) {
         cedula: validaciones.cedula,
         genero: validaciones.genero,
         edad: validaciones.edad,
-        telefono: validaciones.telefono,
+        telefono: Number(validaciones.telefono),
         direccion: validaciones.direccion,
         correo: validaciones.correo,
         token: validaciones.token,
-        proyecto: validaciones.proyecto,
-        certificado: validaciones.certificado,
-        verificado: validaciones.verificado,
-        borrado: validaciones.borrado,
+        proyecto: Boolean(validaciones.proyecto),
+        certificado: Boolean(validaciones.certificado),
+        verificado: Boolean(validaciones.verificado),
+        borrado: Boolean(validaciones.borrado),
         id_usuario: validaciones.id_usuario,
         id_comuna: validaciones.id_comuna,
         id_consejo: validaciones.id_consejo,
         id_circuito: validaciones.id_circuito,
         id_parroquia: validaciones.id_parroquia,
+        cargos: {
+          connect: cargos.map(({ id }) => ({ id })), // Conectar cargos correctamente
+        },
       },
     });
 

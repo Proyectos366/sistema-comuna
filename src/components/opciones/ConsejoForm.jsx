@@ -224,6 +224,7 @@ export default function ConsejoForm() {
           idComuna={idComuna}
           idParroquia={idParroquia}
           consejoPorComuna={consejoPorComuna}
+          circuitoComuna={circuitoComuna}
         />
       </div>
     </section>

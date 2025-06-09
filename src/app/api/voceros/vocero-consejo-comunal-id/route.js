@@ -33,16 +33,18 @@ export async function GET(req) {
       );
     }
 
-    // Consultar los consejos comunales de la comuna específica
     const vocerosPorConsejoComunal = await prisma.vocero.findMany({
       where: { id_consejo: id_consejo },
+      include: {
+        cargos: true, // Incluir los cargos relacionados
+      },
     });
 
     if (!vocerosPorConsejoComunal) {
       return generarRespuesta(
         "ok",
         "No hay voceros en este consejo comunal.",
-        { consejos: [] },
+        { voceros: [] },
         200
       );
     }
