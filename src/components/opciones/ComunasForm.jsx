@@ -2,9 +2,25 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Modal from "../Modal";
+import ModalDatos from "../ModalDatos";
 import ComunaFormMostrar from "./ComunaFormMostrar";
+import SectionRegistroMostrar from "../SectionRegistroMostrar";
+import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
+import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
+import MostarMsjEnModal from "../MostrarMsjEnModal";
+import BotonesModal from "../BotonesModal";
+import FormCrearComuna from "../formularios/FormCrearComuna";
 
-export default function ComunasForm() {
+export default function ComunasForm({
+  mostrar,
+  abrirModal,
+  cerrarModal,
+  mensaje,
+  mostrarMensaje,
+  abrirMensaje,
+  limpiarCampos,
+}) {
   const [nombreComuna, setNombreComuna] = useState("");
   const [rifComuna, setRifComuna] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
@@ -25,13 +41,11 @@ export default function ComunasForm() {
     fetchParroquias();
   }, []);
 
-  const handleChange = (e) => {
+  const cambiarSeleccionParroquia = (e) => {
     setIdParroquia(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const crearComuna = async () => {
     if (!nombreComuna.trim() || !idParroquia) {
       console.log("Todos los campos son obligatorios.");
       return;
@@ -45,76 +59,64 @@ export default function ComunasForm() {
       });
 
       setNuevaComuna(response.data.comuna);
-      setNombreComuna("");
-      setRifComuna("");
+      abrirMensaje(response.data.message);
+      setTimeout(() => {
+        setNombreComuna("");
+        setRifComuna("");
+        cerrarModal();
+      }, 3000);
     } catch (error) {
-      console.error(
-        "Error al crear la comuna:",
+      console.log(
+        "Error,  al crear la comuna:",
         error.response ? error.response.data : error.message
       );
     }
   };
 
   return (
-    <section className="rounded-md p-2 sm:p-6 min-h-screen flex flex-col items-center sm:justify-center space-y-4 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900">
-      
-      <div className="w-full sm:max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-          Crear comuna
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block">
-            <span className="text-gray-700 font-medium">Parroquia:</span>
-            <select
-              value={idParroquia}
-              onChange={handleChange}
-              className="mt-1 cursor-pointer uppercase block w-full p-3 rounded-lg shadow-sm"
-            >
-              <option value="">Selecciona una parroquia</option>
-              {parroquias.map((parroquia) => (
-                <option key={parroquia.id} value={parroquia.id}>
-                  {parroquia.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {idParroquia && (
-            <>
-              <label className="block">
-                <span className="text-gray-700 font-medium">
-                  Nombre comuna:
-                </span>
-                <input
-                  type="text"
-                  value={nombreComuna}
-                  onChange={(e) => setNombreComuna(e.target.value)}
-                  className="mt-1 uppercase block w-full p-3 borde-fondo rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none transition-all"
-                />
-              </label>
-
-              <button
-                disabled={!nombreComuna || !idParroquia}
-                type="submit"
-                className={`${
-                  !nombreComuna || !idParroquia
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer"
-                } w-full color-fondo hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
-              >
-                Guardar
-              </button>
-            </>
-          )}
-        </form>
-      </div>
-
-      <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl">
-        <ComunaFormMostrar
-          idParroquia={idParroquia}
-          nuevaComuna={nuevaComuna}
+    <>
+      <Modal
+        isVisible={mostrar}
+        onClose={cerrarModal}
+        titulo={"¿Crear esta comuna?"}
+      >
+        <div className="flex flex-col justify-center items-center space-y-1">
+          <ModalDatos titulo={"Nombre"} descripcion={nombreComuna} />
+        </div>
+        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+        <BotonesModal
+          aceptar={crearComuna}
+          cancelar={cerrarModal}
+          indiceUno={"crear"}
+          indiceDos={"cancelar"}
+          nombreUno={"Aceptar"}
+          nombreDos={"Cancelar"}
+          campos={{
+            nombreComuna,
+            idParroquia,
+          }}
         />
-      </div>
-    </section>
+      </Modal>
+      <SectionRegistroMostrar>
+        <DivUnoDentroSectionRegistroMostrar nombre={"Crear comuna"}>
+          <FormCrearComuna
+            idParroquia={idParroquia}
+            cambiarSeleccionParroquia={cambiarSeleccionParroquia}
+            parroquias={parroquias}
+            nombre={nombreComuna}
+            setNombre={setNombreComuna}
+            abrirModal={abrirModal}
+            limpiarCampos={limpiarCampos}
+          />
+        </DivUnoDentroSectionRegistroMostrar>
+
+        <DivDosDentroSectionRegistroMostrar>
+          <ComunaFormMostrar
+            idParroquia={idParroquia}
+            nuevaComuna={nuevaComuna}
+          />
+        </DivDosDentroSectionRegistroMostrar>
+      </SectionRegistroMostrar>
+    </>
   );
 }

@@ -129,12 +129,7 @@ export default function Input({
     }
   };
 
-  const clasePorDefecto = `${
-    indice === "email" ? "lowercase" : ""
-  } shadow-md pl-10 py-2 rounded-md text-xl font-semibold border border-black w-full
-                  outline-none focus:border-2 hover:border-2
-                   placeholder:text-[gray]  placeholder:opacity-50
-                  transition-all duration-300 ease-in-out`;
+  const clasePorDefecto = `mt-1 uppercase block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-[#082158] focus:border-0 hover:border hover:border-[#082158] focus:outline-none transition-all`;
   const nuevaClase = className
     ? `${clasePorDefecto} ${className}`
     : clasePorDefecto;

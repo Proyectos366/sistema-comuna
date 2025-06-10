@@ -17,7 +17,12 @@ import ConsejoForm from "../opciones/ConsejoForm";
 import VoceroForm from "../opciones/VoceroForm";
 
 export default function VistaUniversalUsuarios({ children }) {
-  const { usuarioActivo, screenSize } = useUser();
+  const { usuarioActivo, screenSize, mostrarModal,
+        abrirModal,
+        cerrarModal, mensaje,
+        mostrarMensaje,
+        abrirMensaje, limpiarCampos } =
+    useUser();
 
   const [buscador, setBuscador] = useState("");
   const [vista, setVista] = useState("");
@@ -282,8 +287,6 @@ export default function VistaUniversalUsuarios({ children }) {
     localStorage.removeItem("dondeGuardar");
   };
 
-  console.log(vista);
-  
   return (
     <>
       {usuarioActivo && (
@@ -332,30 +335,27 @@ export default function VistaUniversalUsuarios({ children }) {
             </header>
 
             <main className={`bg-[#faf5f8] rounded-md`}>
+              {vista === "parroquias" && <ParroquiasForm />}
 
-              {vista === "parroquias" && (
-                <ParroquiasForm />
-              )}
-
-              {vista === "cargos" && (
-                <CargosForm />
-              )}
+              {vista === "cargos" && <CargosForm />}
 
               {vista === "comunas" && (
-                <ComunasForm />
+                <ComunasForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                />
               )}
 
-              {vista === "circuitos-comunales" && (
-                <CircuitoForm />
-              )}
+              {vista === "circuitos-comunales" && <CircuitoForm />}
 
-              {vista === "consejos-comunales" && (
-                <ConsejoForm />
-              )} 
-              
-              {vista === "voceros" && (
-                <VoceroForm />
-              )}
+              {vista === "consejos-comunales" && <ConsejoForm />}
+
+              {vista === "voceros" && <VoceroForm />}
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario abrirPanel={abrirPanel} />
