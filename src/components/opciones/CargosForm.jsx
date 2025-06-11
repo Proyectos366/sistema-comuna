@@ -3,7 +3,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function CargosForm() {
+export default function CargosForm({
+  mostrar,
+  abrirModal,
+  cerrarModal,
+  mensaje,
+  mostrarMensaje,
+  abrirMensaje,
+  limpiarCampos,
+}) {
   const [nombreCargo, setNombreCargo] = useState("");
   const [nombres, setNombres] = useState([]);
 
@@ -36,7 +44,6 @@ export default function CargosForm() {
   };
 
   return (
-
     <section className="rounded-md p-6 min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900">
       <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">

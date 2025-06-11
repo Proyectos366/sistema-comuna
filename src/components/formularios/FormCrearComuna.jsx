@@ -1,4 +1,4 @@
-import SelectParroquia from "../SelectParroquia";
+import SelectOpcion from "../SelectOpcion";
 import LabelInput from "../LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 
@@ -18,11 +18,11 @@ export default function FormCrearComuna({
       }}
       className="space-y-4"
     >
-      <SelectParroquia
+      <SelectOpcion
+        idOpcion={idParroquia}
         nombre={"Parroquias"}
-        idParroquia={idParroquia}
         handleChange={cambiarSeleccionParroquia}
-        parroquias={parroquias}
+        opciones={parroquias}
         seleccione={"Seleccione"}
       />
 

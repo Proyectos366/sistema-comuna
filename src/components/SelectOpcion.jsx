@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from "react";
 
-export default function SelectParroquia({
+export default function SelectOpcion({
   nombre,
-  idParroquia,
+  idOpcion,
   handleChange,
-  parroquias,
+  opciones,
   seleccione,
 }) {
   const [abierto, setAbierto] = useState(false);
   const [seleccionado, setSeleccionado] = useState("");
 
-  // Actualizar estado cuando idParroquia cambie (por props o reset)
+  // Actualizar estado cuando idOpcion cambie (por props o reset)
   useEffect(() => {
-    const parroquiaSeleccionada = parroquias.find((p) => p.id === idParroquia);
+    const opcionSeleccionada = opciones.find((p) => p.id === idOpcion);
     setSeleccionado(
-      parroquiaSeleccionada ? parroquiaSeleccionada.nombre : seleccione
+      opcionSeleccionada ? opcionSeleccionada.nombre : seleccione
     );
-  }, [idParroquia, parroquias]);
+  }, [idOpcion, opciones]);
 
   const manejarSeleccion = (id, nombre) => {
     setSeleccionado(nombre);
@@ -31,15 +31,27 @@ export default function SelectParroquia({
       <label className="block">
         <span className="text-gray-800 font-semibold">{nombre}:</span>
         <div
-          className={`${abierto ? "border-[#082158]" : "border-gray-300"} 
-              mt-1 uppercase flex justify-between items-center w-full p-2 
-              border rounded-md shadow-sm 
-              focus:ring focus:ring-[#082158] hover:border-[#082158] 
-              focus:outline-none transition-all cursor-pointer`}
+          className={`mt-1 uppercase flex justify-between items-center w-full p-2 
+      rounded-md shadow-sm transition-all cursor-pointer 
+      focus:outline-none hover:border-[#082158] 
+      ${
+        seleccionado === "Seleccione"
+          ? "border border-gray-300"
+          : "border border-[#082158]"
+      } 
+      ${abierto ? "focus:ring focus:ring-[#082158]" : ""}`}
           onClick={() => setAbierto(!abierto)}
         >
-          <span className="uppercase">{seleccionado}</span>
-          <span className="transform pointer-events-none flex items-center">
+          <span
+            className={`uppercase ${abierto ? "opacity-60" : "opacity-90"}`}
+          >
+            {seleccionado}
+          </span>
+          <span
+            className={`transform pointer-events-none flex items-center ${
+              abierto ? "opacity-60" : "opacity-90"
+            }`}
+          >
             {abierto ? "▲" : "▼"}
           </span>
         </div>
@@ -57,14 +69,14 @@ export default function SelectParroquia({
           >
             {seleccione}
           </li>
-          {parroquias.map((parroquia, index) => (
+          {opciones.map((opc, index) => (
             <li
-              key={parroquia.id}
+              key={opc.id}
               className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 
-                          ${index === parroquias.length - 1 ? "mb-2" : ""}`}
-              onClick={() => manejarSeleccion(parroquia.id, parroquia.nombre)}
+                          ${index === opciones.length - 1 ? "mb-2" : ""}`}
+              onClick={() => manejarSeleccion(opc.id, opc.nombre)}
             >
-              {parroquia.nombre}
+              {opc.nombre}
             </li>
           ))}
         </ul>

@@ -4,7 +4,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ConsejoFormMostrar from "./ConsejoFormMostrar";
 
-export default function ConsejoForm() {
+export default function ConsejoForm({
+  mostrar,
+  abrirModal,
+  cerrarModal,
+  mensaje,
+  mostrarMensaje,
+  abrirMensaje,
+  limpiarCampos,
+}) {
   // Estados para los selectores
   const [nombreConsejo, setNombreConsejo] = useState("");
   const [idParroquia, setIdParroquia] = useState("");

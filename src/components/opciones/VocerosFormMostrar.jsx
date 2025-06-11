@@ -7,7 +7,7 @@ export default function VocerosFormMostrar({
   idParroquia,
   idComuna,
   idConsejo,
-  vocerosPorConsejo,
+  nuevoVocero,
   pertenece,
 }) {
   const [voceros, setVoceros] = useState([]);
@@ -67,10 +67,10 @@ export default function VocerosFormMostrar({
   }, [pertenece === 3 ? idConsejo : idComuna]);
 
   useEffect(() => {
-    if (vocerosPorConsejo) {
-      setVoceros((prevConsejos) => [...prevConsejos, vocerosPorConsejo]);
+    if (nuevoVocero) {
+      setVoceros((prevConsejos) => [...prevConsejos, nuevoVocero]);
     }
-  }, [vocerosPorConsejo]);
+  }, [nuevoVocero]);
 
   const toggleVocero = (nombreVocero) => {
     setVocerosVisibles((prev) => ({

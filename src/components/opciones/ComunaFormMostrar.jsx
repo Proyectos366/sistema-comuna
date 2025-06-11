@@ -5,7 +5,6 @@ import axios from "axios";
 
 export default function ComunaFormMostrar({ idParroquia, nuevaComuna }) {
   const [comunas, setComunas] = useState([]);
-  const [comunalesVisibles, setComunasVisibles] = useState({});
 
   useEffect(() => {
     const fetchComunas = async () => {
@@ -30,10 +29,6 @@ export default function ComunaFormMostrar({ idParroquia, nuevaComuna }) {
   useEffect(() => {
     if (nuevaComuna) {
       setComunas((prevComunas) => [...prevComunas, nuevaComuna]); // Agregar nueva comuna a la lista
-      setComunasVisibles((prev) => ({
-        ...prev,
-        [nuevaComuna.nombre]: true, // Mostrar nueva comuna automáticamente
-      }));
     }
   }, [nuevaComuna]);
 
@@ -43,7 +38,7 @@ export default function ComunaFormMostrar({ idParroquia, nuevaComuna }) {
         Comunas
       </h3>
 
-      {idParroquia && comunas.length > 0 ? (
+      {comunas.length > 0 ? (
         <div>
           {comunas.map((consejo, index) => (
             <div key={index} className="mb-2">

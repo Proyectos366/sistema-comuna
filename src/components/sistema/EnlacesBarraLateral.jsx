@@ -5,7 +5,6 @@ export default function EnlacesBarraLateral({
   nombre,
   id_rol,
   indice,
-  volverInicio,
 }) {
   return (
     <>
@@ -16,7 +15,6 @@ export default function EnlacesBarraLateral({
             vistaActual,
             id_rol
           );
-          volverInicio();
         }}
         className={`px-4 py-2 w-full bg-amber-300 rounded hover:bg-red-400 cursor-pointer ${
           vista === vistaActual

@@ -8,7 +8,15 @@ import ModalDatosCargos from "../ModalDatosCargos";
 import Boton from "../Boton";
 import VocerosFormMostrar from "./VocerosFormMostrar";
 
-export default function VoceroForm() {
+export default function VoceroForm({
+  mostrar,
+  abrirModal,
+  cerrarModal,
+  mensaje,
+  mostrarMensaje,
+  abrirMensaje,
+  limpiarCampos,
+}) {
   // Estados para los selectores
   const [nombreVocero, setNombreVocero] = useState("");
 
@@ -41,7 +49,6 @@ export default function VoceroForm() {
   const [circuitoComuna, setCircuitoComuna] = useState(0);
 
   const [idCrearEnComunaCircuito, setIdCrearEnComunaCircuito] = useState("");
-  const [mostrar, setMostrar] = useState(false);
 
   const [selectedCargos, setSelectedCargos] = useState([]);
 
@@ -247,14 +254,6 @@ export default function VoceroForm() {
     } else {
       console.warn("Todos los campos son obligatorios.");
     }
-  };
-
-  const mostrarModal = () => {
-    setMostrar(true);
-  };
-
-  const cerrarModal = () => {
-    setMostrar(false);
   };
 
   return (

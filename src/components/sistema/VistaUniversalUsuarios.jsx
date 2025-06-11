@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
@@ -15,113 +14,87 @@ import ComunasForm from "../opciones/ComunasForm";
 import CircuitoForm from "../opciones/CircuitosForm";
 import ConsejoForm from "../opciones/ConsejoForm";
 import VoceroForm from "../opciones/VoceroForm";
+import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 
 export default function VistaUniversalUsuarios({ children }) {
-  const { usuarioActivo, screenSize, mostrarModal,
-        abrirModal,
-        cerrarModal, mensaje,
-        mostrarMensaje,
-        abrirMensaje, limpiarCampos } =
-    useUser();
+  const {
+    usuarioActivo,
+    screenSize,
+    mostrarModal,
+    abrirModal,
+    cerrarModal,
+    mensaje,
+    mostrarMensaje,
+    abrirMensaje,
+    limpiarCampos,
+  } = useUser();
 
-  const [buscador, setBuscador] = useState("");
   const [vista, setVista] = useState("");
-
+  const [cargandoVista, setCargandoVista] = useState(false);
   const [abrirPanel, setAbrirPanel] = useState(true);
-  const [abrirModalCarpetas, setAbrirModalCarpetas] = useState(false);
 
-  //Esto es para el header, donde esta el icono de notificaciones y el de usuario
-  const [menuOpcionesUsuario, setMenuOpcionesUsuario] = useState(false);
-  const [menuNotificaciones, setMenuNotificaciones] = useState(false);
-
-  //Carpetas y rutas que se usan  en las carpetas
-  const [carpetaActual, setCarpetaActual] = useState(null);
-  const [rutaCarpetas, setRutaCarpetas] = useState(null);
-  const [haRetrocedido, setHaRetrocedido] = useState(null);
-  const [historialRutas, setHistorialRutas] = useState([]);
-  const [indiceHistorial, setIndiceHistorial] = useState(-1);
-
-  const [resultados, setResultados] = useState([]);
-
-  const refMenuPerfil = useRef(null);
-  const refMenuNotificaciones = useRef(null);
-  const refMenuCarpetas = useRef(null);
+  const [vistaCargando, setVistaCargando] = useState("");
 
   const router = useRouter();
   const pathname = usePathname();
-
   const userType = usuarioActivo?.id_rol;
 
   useEffect(() => {
-    if (screenSize?.width > 640) {
-      setAbrirPanel(true);
-    } else {
-      setAbrirPanel(false);
-    }
+    setAbrirPanel(screenSize?.width > 640);
   }, [screenSize]);
 
+  // **Función para cambiar la ruta correctamente**
+  const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
+    let baseRuta = [
+      null,
+      "/dashboard/master",
+      "/dashboard/administrador",
+      "/dashboard/director",
+      "/dashboard/empleados",
+    ][id_rol];
+
+    if (!baseRuta) {
+      console.error("ID de rol inválido o no especificado.");
+      return;
+    }
+
+    setCargandoVista(true);
+    setVistaCargando(nuevaVista);
+
+    // **Primero cambiar la URL**
+    router.push(`${baseRuta}/${subRuta || "inicio"}`, { shallow: true });
+
+    // **Luego actualizar la vista después de que la URL cambie**
+    setTimeout(() => {
+      setVista(nuevaVista);
+      setCargandoVista(false);
+    }, 3000);
+  };
+
+  // **Sincronizar URL antes de la vista**
   useEffect(() => {
     const subRuta = pathname.split("/").pop();
 
     if (
       !subRuta ||
-      subRuta === "empleados" ||
-      subRuta === "director" ||
-      subRuta === "administrador" ||
-      subRuta === "master"
+      ["empleados", "director", "administrador", "master"].includes(subRuta)
     ) {
-      setVista("inicio");
-      if (!subRuta || subRuta === "empleados") {
-        router.push("/dashboard/empleados", { shallow: true }); // Redirige a la principal
-      } else if (subRuta === "director") {
-        router.push("/dashboard/director", { shallow: true }); // Redirige a la principal
-      } else if (subRuta === "administrador") {
-        router.push("/dashboard/administrador", { shallow: true }); // Redirige a la principal
-      } else if (subRuta === "master") {
-        router.push("/dashboard/master", { shallow: true }); // Redirige a la principal
+      if (vista !== "inicio") {
+        router.push(`/dashboard/${subRuta || "empleados"}`, { shallow: true });
+        setVista("inicio");
       }
-    } else if (
-      subRuta === "parroquias" ||
-      subRuta === "comunas" ||
-      subRuta === "circuitos-comunales" ||
-      subRuta === "usuarios" ||
-      subRuta === "consejos-comunales" ||
-      subRuta === "perfil" ||
-      subRuta === "cambiar-clave" ||
-      subRuta === "voceros" ||
-      subRuta === "cargos"
-    ) {
+    } else if (vista !== subRuta) {
+      router.push(`/dashboard/${pathname.split("/")[2]}/${subRuta}`, {
+        shallow: true,
+      });
       setVista(subRuta);
-    } else {
-      console.log(subRuta);
-
-      setVista("inicio");
-      router.push("/", { shallow: true }); // Redirige a la principal
     }
+  }, [pathname]);
 
-    const clickListener = (event) => {
-      clickFueraCierraMenu(event);
-    };
-
-    document.addEventListener("mousedown", clickListener);
-
-    return () => {
-      document.removeEventListener("mousedown", clickListener);
-    };
-  }, [pathname, router]);
-
+  // **Evitar redirecciones innecesarias**
   useEffect(() => {
-    if (!pathname || typeof pathname !== "string") {
-      console.warn("No se detectó un pathname válido.");
-      return;
-    }
+    if (!userType) return;
 
-    if (!userType) {
-      //console.warn("No se detectó un tipo de usuario válido.");
-      return;
-    }
-
-    // Define los permisos para cada tipo de usuario
     const permisos = {
       1: [
         "parroquias",
@@ -133,7 +106,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-      ], // Rol 1: Master
+      ],
       2: [
         "parroquias",
         "comunas",
@@ -144,7 +117,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-      ], // Rol 2: Administrador
+      ],
       3: [
         "consejos-comunales",
         "circuitos-comunales",
@@ -152,7 +125,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-      ], // Rol 3: Director
+      ],
       4: [
         "consejos-comunales",
         "circuitos-comunales",
@@ -160,212 +133,145 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-      ], // Rol 4: Empleados
+      ],
     };
 
-    // Define las rutas por defecto para cada tipo de usuario
-    const rutasPorDefecto = {
-      1: "/dashboard/master", // Ruta por defecto para Master
-      2: "/dashboard/administrador", // Ruta por defecto para Administrador
-      3: "/dashboard/director", // Ruta por defecto para Directores
-      4: "/dashboard/empleados", // Ruta por defecto para Empleados
-    };
-
-    // Obtén la última parte de la ruta
+    const rutasPorDefecto = [
+      null,
+      "/dashboard/master",
+      "/dashboard/administrador",
+      "/dashboard/director",
+      "/dashboard/empleados",
+    ];
     const subRuta = pathname.split("/").pop();
 
-    // Verifica si la subruta pertenece a los permisos del usuario
-    const tienePermiso = (ruta) => {
-      const permisosUsuario = permisos[userType] || []; // Obtén los permisos según el tipo de usuario
-      return permisosUsuario.includes(ruta); // Devuelve true si tiene permiso para la ruta
-    };
-
-    // Ruta predeterminada basada en el tipo de usuario
-    const redireccion = rutasPorDefecto[userType];
-
-    // Redirige solo si la subruta no está permitida
-    if (!tienePermiso(subRuta)) {
-      if (pathname !== redireccion) {
-        // Evita redirecciones innecesarias
-        router.replace(redireccion, { shallow: true });
-      }
-      return; // Termina la ejecución después de redirigir
-    }
-  }, [pathname, router, userType]);
-
-  const toggleModalCarpetas = (id) => {
-    //console.log("ID recibido:" + id); // Verifica el ID que llega
-    setAbrirModalCarpetas((prevId) => {
-      return prevId === id ? null : id; // Alterna entre abrir/cerrar
-    });
-  };
-
-  /**
-    useEffect(() => {
-      // Registrar cada tecla presionada en la consola
-    const detectarTecla = (event) => {
-      console.log(`Tecla presionada: ${event.key}`);
-    };
-
-    document.addEventListener("keydown", detectarTecla);
-
-    return () => {
-      document.removeEventListener("keydown", detectarTecla);
-    };
-    }, []);
-  */
-
-  const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
-    // Determinar la base de la ruta según el id_rol
-    let baseRuta = ""; // Por defecto, no hay ninguna ruta
-    if (id_rol === 1) {
-      baseRuta = "/dashboard/master";
-    } else if (id_rol === 2) {
-      baseRuta = "/dashboard/administrador";
-    } else if (id_rol === 3) {
-      baseRuta = "/dashboard/director";
-    } else if (id_rol === 4) {
-      baseRuta = "/dashboard/empleados";
-    } else {
-      console.log("ID de rol inválido o no especificado.");
-      return; // Detener si el rol no es válido
-    }
-
-    // Construir la ruta completa
-    router.push(`${baseRuta}${subRuta ? `/${subRuta}` : ""}`, {
-      shallow: true,
-    });
-
-    // Actualizar la vista
-    setVista(nuevaVista);
-  };
-
-  const clickFueraCierraMenu = (event) => {
     if (
-      refMenuPerfil.current &&
-      !refMenuPerfil.current.contains(event.target)
+      !permisos[userType]?.includes(subRuta) &&
+      pathname !== rutasPorDefecto[userType]
     ) {
-      setMenuOpcionesUsuario(false);
+      router.replace(rutasPorDefecto[userType], { shallow: true });
     }
+  }, [pathname, userType]);
 
-    if (
-      refMenuNotificaciones.current &&
-      !refMenuNotificaciones.current.contains(event.target)
-    ) {
-      setMenuNotificaciones(false);
-    }
-
-    if (
-      refMenuCarpetas.current &&
-      !refMenuCarpetas.current.contains(event.target)
-    ) {
-      setAbrirModalCarpetas(false);
-    }
-  };
-
-  const abrirDashboar = () => {
-    setAbrirPanel(!abrirPanel);
-  };
-
-  const toggleMenu = (setFunctionToToggle, setFunctionsToClose = []) => {
-    setFunctionToToggle((prevState) => !prevState); // Cambia el estado del menú objetivo
-    setFunctionsToClose.forEach((setFunction) => setFunction(false)); // Cierra otros menús si están abiertos
-  };
-
-  const volverInicio = () => {
-    setRutaCarpetas(null); // Limpiar la ruta porque volvemos al nivel principal
-    setCarpetaActual(null); // Opcional: Limpiar carpeta actual
-    setHaRetrocedido(null);
-    setHistorialRutas([]);
-    setIndiceHistorial(-1);
-
-    // Limpiar localStorage
-    localStorage.removeItem("rutaCarpeta"); // Eliminar la ruta almacenada
-    localStorage.removeItem("carpetaActual"); // Eliminar la carpeta almacenada
-    localStorage.removeItem("estadoCarpeta");
-    localStorage.removeItem("historialRutas");
-    localStorage.removeItem("dondeGuardar");
-  };
+  const abrirDashboar = () => setAbrirPanel(!abrirPanel);
 
   return (
     <>
       {usuarioActivo && (
         <div
-          className={`flex flex-col  ${
+          className={`flex flex-col ${
             abrirPanel ? "" : "container mx-auto px-2"
-          } `}
+          }`}
         >
           <div
             className={`fixed inset-y-0 left-0 transform ${
               abrirPanel ? "translate-x-0" : "-translate-x-full"
-            } transition-transform duration-1000 ease-in-out w-48 z-30`}
+            } transition-transform duration-500 ease-in-out w-48 z-30`}
           >
             <MenuLateralUsuario
               vista={vista}
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
-              volverInicio={volverInicio}
             />
           </div>
-
           <div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 ${
-              abrirPanel ? "ml-48 px-2 " : "ml-0"
-            } transition-all duration-1000 ease-in-out`}
+              abrirPanel ? "ml-48 px-2" : "ml-0"
+            } transition-all duration-500 ease-in-out`}
           >
             <header>
               <HeaderUsuarios
                 abrirDashboar={abrirDashboar}
                 abrirPanel={abrirPanel}
                 usuarioActivo={usuarioActivo}
-                cambiarRuta={cambiarRuta}
                 vista={vista}
-                id_rol={usuarioActivo.id_rol}
-                toggleMenu={toggleMenu}
-                menuNotificaciones={menuNotificaciones}
-                menuOpcionesUsuario={menuOpcionesUsuario}
-                setMenuNotificaciones={setMenuNotificaciones}
-                setMenuOpcionesUsuario={setMenuOpcionesUsuario}
-                setAbrirModalCarpetas={setAbrirModalCarpetas}
-                refMenuPerfil={refMenuPerfil}
-                refMenuNotificaciones={refMenuNotificaciones}
-                volverInicio={volverInicio}
+                cambiarRuta={cambiarRuta}
               />
             </header>
-
-            <main className={`bg-[#faf5f8] rounded-md`}>
-              {vista === "parroquias" && <ParroquiasForm />}
-
-              {vista === "cargos" && <CargosForm />}
-
-              {vista === "comunas" && (
-                <ComunasForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                />
-              )}
-
-              {vista === "circuitos-comunales" && <CircuitoForm />}
-
-              {vista === "consejos-comunales" && <ConsejoForm />}
-
-              {vista === "voceros" && <VoceroForm />}
-
-              {vista === "perfil" && (
-                <MostrarPerfilUsuario abrirPanel={abrirPanel} />
-              )}
-
-              {vista === "cambiar-clave" && (
-                <MostrarCambiarClaveUsuario abrirPanel={abrirPanel} />
+            <main className="bg-[#faf5f8] rounded-md">
+              {cargandoVista ? (
+                <p className="text-center text-gray-600 text-xl">
+                  Cargando vista {vistaCargando}...
+                </p>
+              ) : (
+                <>
+                  {vista === "inicio" && <MostrarAlInicioUsuarios />}
+                  {vista === "parroquias" && (
+                    <ParroquiasForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "cargos" && (
+                    <CargosForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "comunas" && (
+                    <ComunasForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "circuitos-comunales" && (
+                    <CircuitoForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "consejos-comunales" && (
+                    <ConsejoForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "voceros" && (
+                    <VoceroForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                    />
+                  )}
+                  {vista === "perfil" && (
+                    <MostrarPerfilUsuario abrirPanel={abrirPanel} />
+                  )}
+                  {vista === "cambiar-clave" && (
+                    <MostrarCambiarClaveUsuario abrirPanel={abrirPanel} />
+                  )}
+                </>
               )}
             </main>
-
             <Footer />
           </div>
         </div>

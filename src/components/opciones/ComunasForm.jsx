@@ -11,6 +11,7 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearComuna from "../formularios/FormCrearComuna";
+import ListadoDinamico from "../ListadoDinamico";
 
 export default function ComunasForm({
   mostrar,
@@ -111,10 +112,10 @@ export default function ComunasForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ComunaFormMostrar
+          {/* <ComunaFormMostrar
             idParroquia={idParroquia}
             nuevaComuna={nuevaComuna}
-          />
+          /> */}
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>
