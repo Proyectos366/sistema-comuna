@@ -45,6 +45,29 @@ CREATE TABLE "cargo" (
 );
 
 -- CreateTable
+CREATE TABLE "modulo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "modulo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "formacion" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
+    "culminada" BOOLEAN NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "formacion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "comuna" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
@@ -124,6 +147,7 @@ CREATE TABLE "vocero" (
     "direccion" TEXT NOT NULL,
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
+    "laboral" TEXT NOT NULL,
     "proyecto" BOOLEAN NOT NULL,
     "certificado" BOOLEAN NOT NULL,
     "verificado" BOOLEAN NOT NULL,
@@ -150,6 +174,22 @@ CREATE TABLE "_cargoTovocero" (
     CONSTRAINT "_cargoTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "_moduloTovocero" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_moduloTovocero_A_fkey" FOREIGN KEY ("A") REFERENCES "modulo" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_moduloTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "_formacionTovocero" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_formacionTovocero_A_fkey" FOREIGN KEY ("A") REFERENCES "formacion" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_formacionTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "role_nombre_key" ON "role"("nombre");
 
@@ -161,6 +201,12 @@ CREATE UNIQUE INDEX "usuario_token_key" ON "usuario"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "modulo_nombre_key" ON "modulo"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "comuna_rif_key" ON "comuna"("rif");
@@ -188,3 +234,15 @@ CREATE UNIQUE INDEX "_cargoTovocero_AB_unique" ON "_cargoTovocero"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_cargoTovocero_B_index" ON "_cargoTovocero"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_moduloTovocero_AB_unique" ON "_moduloTovocero"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_moduloTovocero_B_index" ON "_moduloTovocero"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_formacionTovocero_AB_unique" ON "_formacionTovocero"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_formacionTovocero_B_index" ON "_formacionTovocero"("B");

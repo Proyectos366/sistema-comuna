@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CircuitoFormMostrar from "./CircuitoFormMostrar";
+import Modal from "../Modal";
+import ModalDatos from "../ModalDatos";
+import SectionRegistroMostrar from "../SectionRegistroMostrar";
+import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
+import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
+import MostarMsjEnModal from "../MostrarMsjEnModal";
+import BotonesModal from "../BotonesModal";
+import FormCrearCircuito from "../formularios/FormCrearCircuito";
+import ListadoGenaral from "../ListadoGeneral";
 
 export default function CircuitosForm({
   mostrar,
@@ -12,13 +20,15 @@ export default function CircuitosForm({
   mostrarMensaje,
   abrirMensaje,
   limpiarCampos,
+  ejecutarAccionesConRetraso,
 }) {
   const [nombreCircuito, setNombreCircuito] = useState("");
-  const [rifCircuito, setRifCircuito] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
 
-  const [nuevoCircuito, setNuevoCircuito] = useState([]);
+  const [todosCircuitos, setTodosCircuitos] = useState([]);
   const [parroquias, setParroquias] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
     const fetchParroquias = async () => {
@@ -26,20 +36,44 @@ export default function CircuitosForm({
         const response = await axios.get("/api/parroquias/todas-parroquias");
         setParroquias(response.data.parroquias || []);
       } catch (error) {
-        console.log("Error, al obtener las parroquias: " + error);
+        console.error("Error al obtener las parroquias:", error);
       }
     };
 
     fetchParroquias();
   }, []);
 
-  const handleChange = (e) => {
-    setIdParroquia(e.target.value);
+  useEffect(() => {
+    if (!idParroquia) {
+      setTodosCircuitos([]); // Vacía comunas si no hay parroquia seleccionada
+      return;
+    }
+
+    const fetchCircuitosPorParroquia = async () => {
+      setIsLoading(true); // Activa la carga antes de la consulta
+
+      try {
+        const response = await axios.get(`/api/circuitos/circuitos-id`, {
+          params: { idParroquia: idParroquia },
+        });
+
+        setTodosCircuitos(response.data.circuitos || []); // Guarda la respuesta correctamente
+      } catch (error) {
+        console.log("Error, al obtener los circuitos por parroquia:", error);
+      } finally {
+        setIsLoading(false); // Solo desactiva la carga después de obtener los datos
+      }
+    };
+
+    fetchCircuitosPorParroquia();
+  }, [idParroquia]);
+
+  const cambiarSeleccionParroquia = (e) => {
+    const valor = e.target.value;
+    setIdParroquia(valor);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const crearCircuito = async () => {
     if (!nombreCircuito.trim() || !idParroquia) {
       console.log("Todos los campos son obligatorios.");
       return;
@@ -48,81 +82,74 @@ export default function CircuitosForm({
     try {
       const response = await axios.post("/api/circuitos/crear-circuito", {
         nombre: nombreCircuito,
-        rif: rifCircuito,
         id_parroquia: idParroquia,
       });
 
-      setNuevoCircuito(response.data.circuito);
-      setNombreCircuito("");
-      setRifCircuito("");
+      setTodosCircuitos((prevComunas) => [
+        ...prevComunas,
+        response.data.circuito,
+      ]);
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setNombreCircuito(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     } catch (error) {
       console.log(
-        "Error, al crear el circuito: " + error.response
-          ? error.response.data
-          : error.message
+        "Error,  al crear el circuito:",
+        error.response ? error.response.data : error.message
       );
     }
   };
 
   return (
-    <section className="rounded-md p-2 sm:p-6 min-h-screen flex flex-col items-center sm:justify-center space-y-4 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 text-gray-900">
-      <div className="w-full sm:max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
-          Crear circuito
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block">
-            <span className="text-gray-700 font-medium">Parroquia:</span>
-            <select
-              value={idParroquia}
-              onChange={handleChange}
-              className="mt-1 cursor-pointer uppercase block w-full p-3 rounded-lg shadow-sm"
-            >
-              <option value="">Selecciona una parroquia</option>
-              {parroquias.map((parroquia) => (
-                <option key={parroquia.id} value={parroquia.id}>
-                  {parroquia.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {idParroquia && (
-            <>
-              <label className="block">
-                <span className="text-gray-700 font-medium">
-                  Nombre circuito:
-                </span>
-                <input
-                  type="text"
-                  value={nombreCircuito}
-                  onChange={(e) => setNombreCircuito(e.target.value)}
-                  className="mt-1 uppercase block w-full p-3 borde-fondo rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:outline-none transition-all"
-                />
-              </label>
-
-              <button
-                disabled={!nombreCircuito || !idParroquia}
-                type="submit"
-                className={`${
-                  !nombreCircuito || !idParroquia
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer"
-                } w-full color-fondo hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105`}
-              >
-                Guardar
-              </button>
-            </>
-          )}
-        </form>
-      </div>
-
-      <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl">
-        <CircuitoFormMostrar
-          idParroquia={idParroquia}
-          nuevoCircuito={nuevoCircuito}
+    <>
+      <Modal
+        isVisible={mostrar}
+        onClose={cerrarModal}
+        titulo={"¿Crear este circuito?"}
+      >
+        <div className="flex flex-col justify-center items-center space-y-1">
+          <ModalDatos titulo={"Nombre"} descripcion={nombreCircuito} />
+        </div>
+        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+        <BotonesModal
+          aceptar={crearCircuito}
+          cancelar={cerrarModal}
+          indiceUno={"crear"}
+          indiceDos={"cancelar"}
+          nombreUno={"Aceptar"}
+          nombreDos={"Cancelar"}
+          campos={{
+            nombreCircuito,
+            idParroquia,
+          }}
         />
-      </div>
-    </section>
+      </Modal>
+      <SectionRegistroMostrar>
+        <DivUnoDentroSectionRegistroMostrar nombre={"Crear circuito"}>
+          <FormCrearCircuito
+            idParroquia={idParroquia}
+            cambiarSeleccionParroquia={cambiarSeleccionParroquia}
+            parroquias={parroquias}
+            nombre={nombreCircuito}
+            setNombre={setNombreCircuito}
+            abrirModal={abrirModal}
+            limpiarCampos={limpiarCampos}
+          />
+        </DivUnoDentroSectionRegistroMostrar>
+
+        <DivDosDentroSectionRegistroMostrar>
+          <ListadoGenaral
+            isLoading={isLoading}
+            listado={todosCircuitos}
+            nombreListado={"Circuitos"}
+            mensajeVacio={"No hay circuitos disponibles..."}
+          />
+        </DivDosDentroSectionRegistroMostrar>
+      </SectionRegistroMostrar>
+    </>
   );
 }

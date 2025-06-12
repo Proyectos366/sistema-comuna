@@ -65,49 +65,85 @@ export default function CrearManuales() {
     }
   };
 
+  const crearModulos = async () => {
+    try {
+      const responseModulos = await axios.get(
+        `/api/crear-manuales/crear-modulos`
+      );
+
+      if (responseModulos?.data.status === "ok") {
+        router.push("/", { shallow: true });
+      } else {
+        alert("Error, al crear modulos");
+      }
+    } catch (error) {
+      console.log("Error, al crear modulos: " + error);
+    }
+  };
+
+  const crearFormaciones = async () => {
+    try {
+      const responseFormaciones = await axios.get(
+        `/api/crear-manuales/crear-formaciones`
+      );
+
+      if (responseFormaciones?.data.status === "ok") {
+        router.push("/", { shallow: true });
+      } else {
+        alert("Error, al crear formaciones");
+      }
+    } catch (error) {
+      console.log("Error, al crear formaciones: " + error);
+    }
+  };
+
   return (
     <div className="grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 container mx-auto">
       <header></header>
-      <main className="border bg-white flex items-center justify-center">
-        <section className="flex space-x-10">
-          <div>
-            <button
-              className="cursor-pointer borde-fondo px-6 py-2 rounded-md bg-red-300 hover:bg-red-400 hover:px-8"
-              onClick={() => crearRoles()}
-            >
-              Crear roles
-            </button>
-          </div>
+      <main className="bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen flex items-center justify-center p-10">
+        <section className="grid grid-cols-3 gap-6">
+          <BotonCreacionesManuales nombre={"Crear roles"} crear={crearRoles} />
 
-          <div>
-            <button
-              className="cursor-pointer borde-fondo px-6 py-2 rounded-md bg-red-300 hover:bg-red-400 hover:px-8"
-              onClick={() => crearParroquias()}
-            >
-              Crear parroquias
-            </button>
-          </div>
+          <BotonCreacionesManuales
+            nombre={"Crear parroquias"}
+            crear={crearParroquias}
+          />
 
-          <div>
-            <button
-              className="cursor-pointer borde-fondo px-6 py-2 rounded-md bg-red-300 hover:bg-red-400 hover:px-8"
-              onClick={() => crearComunasVillaDeCura()}
-            >
-              Crear comunas
-            </button>
-          </div>
+          <BotonCreacionesManuales
+            nombre={"Crear comunas villa de cura"}
+            crear={crearComunasVillaDeCura}
+          />
 
-          <div>
-            <button
-              className="cursor-pointer borde-fondo px-6 py-2 rounded-md bg-red-300 hover:bg-red-400 hover:px-8"
-              onClick={() => crearCargos()}
-            >
-              Crear cargo
-            </button>
-          </div>
+          <BotonCreacionesManuales
+            nombre={"Crear cargos"}
+            crear={crearCargos}
+          />
+
+          <BotonCreacionesManuales
+            nombre={"Crear modulos"}
+            crear={crearModulos}
+          />
+
+          <BotonCreacionesManuales
+            nombre={"Crear formaciones"}
+            crear={crearFormaciones}
+          />
         </section>
-        <footer></footer>
       </main>
+      <footer className="text-white mt-10">© 2025 - Tu Proyecto</footer>
+    </div>
+  );
+}
+
+function BotonCreacionesManuales({ nombre, crear }) {
+  return (
+    <div className="bg-white shadow-lg rounded-md p-6 flex justify-center items-center">
+      <button
+        className="cursor-pointer borde-fondo px-6 py-2 rounded-md bg-red-300 hover:bg-red-400 hover:px-8"
+        onClick={() => crear()}
+      >
+        {nombre}
+      </button>
     </div>
   );
 }

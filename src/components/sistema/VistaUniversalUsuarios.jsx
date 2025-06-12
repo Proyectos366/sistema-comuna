@@ -27,6 +27,7 @@ export default function VistaUniversalUsuarios({ children }) {
     mostrarMensaje,
     abrirMensaje,
     limpiarCampos,
+    ejecutarAccionesConRetraso,
   } = useUser();
 
   const [vista, setVista] = useState("");
@@ -175,6 +176,7 @@ export default function VistaUniversalUsuarios({ children }) {
               id_rol={usuarioActivo.id_rol}
             />
           </div>
+
           <div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 ${
               abrirPanel ? "ml-48 px-2" : "ml-0"
@@ -189,6 +191,7 @@ export default function VistaUniversalUsuarios({ children }) {
                 cambiarRuta={cambiarRuta}
               />
             </header>
+
             <main className="bg-[#faf5f8] rounded-md">
               {cargandoVista ? (
                 <p className="text-center text-gray-600 text-xl">
@@ -196,7 +199,6 @@ export default function VistaUniversalUsuarios({ children }) {
                 </p>
               ) : (
                 <>
-                  {vista === "inicio" && <MostrarAlInicioUsuarios />}
                   {vista === "parroquias" && (
                     <ParroquiasForm
                       mostrar={mostrarModal}
@@ -206,6 +208,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "cargos" && (
@@ -217,6 +220,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "comunas" && (
@@ -228,6 +232,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "circuitos-comunales" && (
@@ -239,6 +244,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "consejos-comunales" && (
@@ -250,6 +256,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "voceros" && (
@@ -261,6 +268,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       mostrarMensaje={mostrarMensaje}
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
                   {vista === "perfil" && (

@@ -174,6 +174,14 @@ export const UserProvider = ({ children }) => {
     });
   };
 
+  const ejecutarAccionesConRetraso = (acciones) => {
+    acciones.forEach(({ accion, tiempo }) => {
+      setTimeout(() => {
+        accion();
+      }, tiempo);
+    });
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -186,6 +194,7 @@ export const UserProvider = ({ children }) => {
         mostrarMensaje,
         abrirMensaje,
         limpiarCampos,
+        ejecutarAccionesConRetraso,
       }}
     >
       {children}
@@ -194,29 +203,3 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => useContext(UserContext);
-
-// import { createContext, useContext, useState } from "react";
-
-// const LimpiarContext = createContext();
-
-// export const LimpiarProvider = ({ children }) => {
-//   const [estado, setEstado] = useState({});
-
-//   // Función universal para limpiar campos dinámicos
-//   const limpiarCampos = (objetoEstados) => {
-//     const nuevoEstado = Object.keys(objetoEstados).reduce((acc, key) => {
-//       acc[key] = ""; // Resetea cada estado a una cadena vacía
-//       return acc;
-//     }, {});
-
-//     setEstado(nuevoEstado);
-//   };
-
-//   return (
-//     <LimpiarContext.Provider value={{ estado, setEstado, limpiarCampos }}>
-//       {children}
-//     </LimpiarContext.Provider>
-//   );
-// };
-
-// export const useLimpiar = () => useContext(LimpiarContext);

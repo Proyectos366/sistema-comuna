@@ -38,6 +38,8 @@ model usuario {
   voceros            vocero[]    @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
   parroquias         parroquia[] @relation(name: "UsuarioParroquia")
   cargos             cargo[]     @relation(name: "CreadorCargo")
+  modulos            modulo[]    @relation(name: "CreadorModulo")
+  formaciones        formacion[] @relation(name: "CreadorFormacion")
 }
 
 model parroquia {
@@ -65,6 +67,31 @@ model cargo {
   createdAt  DateTime @default(now())
 
   usuario usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+  voceros vocero[]
+}
+
+model modulo {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  id_usuario Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuario usuario  @relation(name: "CreadorModulo", fields: [id_usuario], references: [id])
+  voceros vocero[]
+}
+
+model formacion {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  id_usuario Int
+  borrado    Boolean
+  culminada  Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuario usuario  @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
   voceros vocero[]
 }
 
@@ -155,6 +182,7 @@ model vocero {
   direccion    String
   correo       String   @unique
   token        String   @unique
+  laboral      String
   proyecto     Boolean
   certificado  Boolean
   verificado   Boolean
@@ -168,10 +196,12 @@ model vocero {
   createdAt    DateTime @default(now())
 
   // Relaciones
-  usuario   usuario   @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
-  comuna    comuna?   @relation(fields: [id_comuna], references: [id])
-  consejo   consejo?  @relation(fields: [id_consejo], references: [id])
-  circuito  circuito? @relation(fields: [id_circuito], references: [id])
-  parroquia parroquia @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
-  cargos    cargo[]
+  usuario     usuario     @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
+  comuna      comuna?     @relation(fields: [id_comuna], references: [id])
+  consejo     consejo?    @relation(fields: [id_consejo], references: [id])
+  circuito    circuito?   @relation(fields: [id_circuito], references: [id])
+  parroquia   parroquia   @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
+  cargos      cargo[]
+  modulos     modulo[]
+  formaciones formacion[]
 }

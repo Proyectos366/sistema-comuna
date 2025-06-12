@@ -2,7 +2,7 @@ import LabelInput from "../LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 
-export default function FormCrearParroquia({
+export default function FormCrearCargo({
   nombre,
   setNombre,
   abrirModal,

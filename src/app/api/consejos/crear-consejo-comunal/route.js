@@ -4,17 +4,10 @@ import validarCrearConsejoComunal from "@/services/validarCrearConsejoComunal";
 
 export async function POST(request) {
   try {
-    //const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
-
-    const { nombre, id_parroquia, id_comuna, comunaCircuito } =
+    const { nombre, id_parroquia, id_comuna, id_circuito, comunaCircuito } =
       await request.json();
 
     const { direccion, norte, sur, este, oeste, punto, rif, codigo } = "";
-
-    /**
-     cuando se vaya a guardar el rif debemos agregarle ejemplo: C-
-     es decir algo asi: C-5003648
-     */
 
     const validaciones = await validarCrearConsejoComunal(
       nombre,
@@ -27,7 +20,8 @@ export async function POST(request) {
       rif,
       codigo,
       id_parroquia,
-      id_comuna
+      id_comuna,
+      id_circuito
     );
 
     if (validaciones.status === "error") {
@@ -42,7 +36,9 @@ export async function POST(request) {
     if (!["comuna", "circuito"].includes(comunaCircuito)) {
       return generarRespuesta(
         "error",
-        "Tipo de comuna/circuito inválido",
+        `Tipo de ${
+          comunaCircuito === "comuna" ? "comuna inválida" : "circuito inválido"
+        }`,
         {},
         400
       );
@@ -57,23 +53,22 @@ export async function POST(request) {
         este: validaciones.este,
         oeste: validaciones.oeste,
         punto: validaciones.punto,
-        rif: `j-${Date.now()}`,
+        rif: `C-${Date.now()}`,
         codigo: `${new Date().getTime()}`,
         borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,
-        ...(comunaCircuito === "comuna"
-          ? { id_comuna: validaciones.id_comuna }
-          : { id_circuito: validaciones.id_comuna }),
+        id_comuna: validaciones.id_comuna,
+        id_circuito: validaciones.id_circuito,
       },
     });
 
     if (!nuevoConsejoComunal) {
-      return generarRespuesta("error", "Error, no se creo la comuna", {}, 400);
+      return generarRespuesta("error", "Error, no se creo el consejo comunal...", {}, 400);
     } else {
       return generarRespuesta(
         "ok",
-        "Comuna creada...",
+        "Consejo comunal creado...",
         {
           consejo: nuevoConsejoComunal,
         },
@@ -81,8 +76,8 @@ export async function POST(request) {
       );
     }
   } catch (error) {
-    console.log(`Error interno (comunas): ` + error);
+    console.log(`Error interno (consejo comunal): ` + error);
 
-    return generarRespuesta("error", "Error, interno (comunas)", {}, 500);
+    return generarRespuesta("error", "Error, interno (consejo comunal)", {}, 500);
   }
 }
