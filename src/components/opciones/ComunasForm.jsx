@@ -69,8 +69,6 @@ export default function ComunasForm({
     fetchComunasPorParroquia();
   }, [idParroquia]);
 
-  
-
   const cambiarSeleccionParroquia = (e) => {
     const valor = e.target.value;
     setIdParroquia(valor);

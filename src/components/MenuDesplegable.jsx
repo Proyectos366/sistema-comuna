@@ -9,10 +9,10 @@ export default function MenuDesplegable({ children }) {
     <div className="rounded-md shadow-md w-full ">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left p-3 color-fondo text-white font-semibold rounded-md flex justify-between items-center"
+        className="w-full text-left p-3 color-fondo text-white font-semibold rounded-md flex justify-between items-center cursor-pointer"
       >
         <span>Menú de opciones</span>
-        <span>{isOpen ? "▲" : "▼"}</span> {/* Ícono cambia según estado */}
+        <span>{isOpen ? "▲" : "▼"}</span>
       </button>
 
       {isOpen && (
