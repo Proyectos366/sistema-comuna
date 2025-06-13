@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import ValidarCampos from "./ValidarCampos";
 
 export default async function validarCrearCircuito(
   nombre,
@@ -27,19 +28,32 @@ export default async function validarCrearCircuito(
       );
     }
 
+    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
+
+    if (validarNombre.status === "error") {
+      return retornarRespuestaFunciones(
+        validarNombre.status,
+        validarNombre.message
+      );
+    }
+
     const correo = descifrarToken.correo;
-    const nombreMayuscula = nombre.toUpperCase();
-    const direccionMayuscula = direccion ? direccion.toUpperCase() : "";
-    const norteMayuscula = norte ? norte.toUpperCase() : "";
-    const surMayuscula = sur ? sur.toUpperCase() : "";
-    const esteMayuscula = este ? este.toUpperCase() : "";
-    const oesteMayuscula = oeste ? oeste.toUpperCase() : "";
-    const puntoMayuscula = punto ? punto.toUpperCase() : "";
+    const nombreMinuscula = nombre.toLowerCase();
+    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+    const norteMinuscula = norte ? norte.toLowerCase() : "";
+    const surMinuscula = sur ? sur.toLowerCase() : "";
+    const esteMinuscula = este ? este.toLowerCase() : "";
+    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+    const puntoMinuscula = punto ? punto.toLowerCase() : "";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: { id: true },
     });
+
+    if (!idUsuario) {
+      return retornarRespuestaFunciones("error", "Error, usuario no existe...");
+    }
 
     const usuario_id = Number(idUsuario.id);
     const parroquia_id = Number(id_parroquia);
@@ -58,16 +72,30 @@ export default async function validarCrearCircuito(
       );
     }
 
+    const nombreRepetido = await prisma.circuito.findFirst({
+      where: {
+        nombre: nombreMinuscula,
+        id_parroquia: parroquia_id,
+      },
+    });
+
+    if (nombreRepetido) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, circuito comunal ya existe..."
+      );
+    }
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: usuario_id,
       id_parroquia: parroquia_id,
-      nombre: nombreMayuscula,
-      direccion: direccionMayuscula,
-      norte: norteMayuscula,
-      sur: surMayuscula,
-      este: esteMayuscula,
-      oeste: oesteMayuscula,
-      punto: puntoMayuscula,
+      nombre: nombreMinuscula,
+      direccion: direccionMinuscula,
+      norte: norteMinuscula,
+      sur: surMinuscula,
+      este: esteMinuscula,
+      oeste: oesteMinuscula,
+      punto: puntoMinuscula,
     });
   } catch (error) {
     console.log(`Error, interno al crear circuito: ` + error);

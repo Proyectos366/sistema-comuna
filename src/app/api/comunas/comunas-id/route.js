@@ -33,9 +33,9 @@ export async function GET(req) {
       );
     }
 
-    // Consultar los consejos comunales de la comuna específica
+    // Consultar las comunas por parroquia
     const comunas = await prisma.comuna.findMany({
-      where: { id_parroquia: id_parroquia },
+      where: { id_parroquia: id_parroquia, borrado: false },
     });
 
     if (!comunas) {

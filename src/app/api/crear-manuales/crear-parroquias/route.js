@@ -4,11 +4,11 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function GET() {
   try {
     const parroquias = [
-      { nombre: "VILLA DE CURA", id_usuario: 1, borrado: false },
-      { nombre: "MAGDALENO", id_usuario: 1, borrado: false },
-      { nombre: "VALLE DE TUCUTUNEMO", id_usuario: 1, borrado: false },
-      { nombre: "SAN FRANCISCO", id_usuario: 1, borrado: false },
-      { nombre: "AUGUSTO MIJARES", id_usuario: 1, borrado: false },
+      { nombre: "villa de cura", id_usuario: 1, borrado: false },
+      { nombre: "magdaleno", id_usuario: 1, borrado: false },
+      { nombre: "valle de tucutunemo", id_usuario: 1, borrado: false },
+      { nombre: "san francisco", id_usuario: 1, borrado: false },
+      { nombre: "augusto mijares", id_usuario: 1, borrado: false },
     ];
 
     for (const parroquia of parroquias) {
@@ -30,9 +30,19 @@ export async function GET() {
       }
     }
 
-    return generarRespuesta("ok", "Parroquias creadas o actualizadas correctamente.", {}, 201);
+    return generarRespuesta(
+      "ok",
+      "Parroquias creadas o actualizadas correctamente.",
+      {},
+      201
+    );
   } catch (error) {
     console.error("Error al guardar parroquias:", error);
-    return generarRespuesta("error", "Error interno al guardar parroquias.", {}, 500);
+    return generarRespuesta(
+      "error",
+      "Error interno al guardar parroquias.",
+      {},
+      500
+    );
   }
 }

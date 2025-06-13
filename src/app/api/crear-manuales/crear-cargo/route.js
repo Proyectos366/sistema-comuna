@@ -4,9 +4,9 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function GET() {
   try {
     const cargos = [
-      { nombre: "EJECUTIVO", id_usuario: 1, borrado: false },
-      { nombre: "FINANZA", id_usuario: 1, borrado: false },
-      { nombre: "CONTRALORIA", id_usuario: 1, borrado: false },
+      { nombre: "ejecutivo", id_usuario: 1, borrado: false },
+      { nombre: "finanza", id_usuario: 1, borrado: false },
+      { nombre: "contraloria", id_usuario: 1, borrado: false },
     ];
 
     for (const cargo of cargos) {

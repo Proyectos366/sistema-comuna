@@ -17,6 +17,7 @@ export default async function validarCrearVocero(
   edad,
   telefono,
   direccion,
+  laboral,
   proyecto,
   certificado,
   verificado,
@@ -72,7 +73,18 @@ export default async function validarCrearVocero(
     const circuitoId = id_circuito ? Number(id_circuito) : null;
     const consejoId = id_consejo ? Number(id_consejo) : null;
 
-    const edadNumero = Number(edad);
+    const nombreMinuscula = nombre ? nombre.toLowerCase() : null;
+    const nombre_dosMinuscula = nombre_dos ? nombre_dos.toLowerCase() : null;
+    const apellidoMinuscula = apellido ? apellido.toLowerCase() : null;
+    const apellido_dosMinuscula = apellido_dos
+      ? apellido_dos.toLowerCase()
+      : null;
+    const cedulaNumero = cedula ? Number(cedula) : null;
+    const correoMinuscula = correo ? correo.toLowerCase() : null;
+    const generoMinuscula = genero ? genero.toLowerCase() : null;
+    const edadNumero = edad ? Number(edad) : null;
+    const direccionMinuscula = direccion ? direccion.toLowerCase() : null;
+    const laboralMinuscula = laboral ? laboral.toLowerCase() : null;
 
     if (isNaN(edadNumero) || edadNumero <= 0) {
       // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
@@ -123,17 +135,18 @@ export default async function validarCrearVocero(
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
-      nombre: (nombre = nombre.toLowerCase()),
-      nombreDos: nombre_dos ? nombre_dos.toLowerCase() : "",
-      apellido: apellido.toLowerCase(),
-      apellidoDos: apellido_dos ? apellido_dos.toLowerCase() : "",
-      cedula: cedula,
+      nombre: nombreMinuscula,
+      nombreDos: nombre_dosMinuscula,
+      apellido: apellidoMinuscula,
+      apellidoDos: apellido_dosMinuscula,
+      cedula: cedulaNumero,
       genero: genero && genero === "1" ? true : false,
       edad: edadNumero,
       telefono: telefono,
-      direccion: direccion,
-      correo: correo ? correo.toLowerCase() : "",
+      direccion: direccionMinuscula,
+      correo: correoMinuscula,
       token: tokenVocero,
+      laboral: laboralMinuscula,
       proyecto: proyecto && proyecto === "1" ? true : false,
       certificado: certificado && certificado === "1" ? true : false,
       verificado: verificado && verificado === "1" ? true : false,

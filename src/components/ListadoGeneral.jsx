@@ -13,7 +13,7 @@ export default function ListadoGenaral({
       {isLoading ? (
         <p className="text-center text-gray-600 animate-pulse">Cargando...</p>
       ) : listado?.length === 0 ? (
-        <p className="text-center text-gray-600">{mensajeVacio}</p>
+        <p className="text-center text-gray-600 uppercase">{mensajeVacio}</p>
       ) : (
         <div>
           {listado?.map((lista, index) => (
@@ -21,9 +21,9 @@ export default function ListadoGenaral({
               key={index}
               className="mt-2 bg-gray-100 rounded-md transition-all duration-700 ease-in-out 
                  hover:bg-gray-200 hover:border hover:border-gray-300 
-                 hover:shadow-md hover:scale-101 flex flex-col"
+                 hover:shadow-md hover:scale-101 flex flex-col uppercase"
             >
-              <span className="rounded-md p-3">{lista.nombre}</span>
+              <span className="rounded-md p-3 uppercase">{lista.nombre}</span>
             </div>
           ))}
         </div>

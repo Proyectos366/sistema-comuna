@@ -11,6 +11,7 @@ import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCircuito from "../formularios/FormCrearCircuito";
 import ListadoGenaral from "../ListadoGeneral";
+import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function CircuitosForm({
   mostrar,
@@ -36,7 +37,7 @@ export default function CircuitosForm({
         const response = await axios.get("/api/parroquias/todas-parroquias");
         setParroquias(response.data.parroquias || []);
       } catch (error) {
-        console.error("Error al obtener las parroquias:", error);
+        console.log("Error, al obtener las parroquias: " + error);
       }
     };
 
@@ -59,7 +60,7 @@ export default function CircuitosForm({
 
         setTodosCircuitos(response.data.circuitos || []); // Guarda la respuesta correctamente
       } catch (error) {
-        console.log("Error, al obtener los circuitos por parroquia:", error);
+        console.log("Error, al obtener los circuitos por parroquia: " + error);
       } finally {
         setIsLoading(false); // Solo desactiva la carga después de obtener los datos
       }
@@ -97,10 +98,11 @@ export default function CircuitosForm({
         { accion: () => setNombreCircuito(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
-      console.log(
-        "Error,  al crear el circuito:",
-        error.response ? error.response.data : error.message
-      );
+      console.log("Error, al crear el circuito comunal: " + error);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     }
   };
 
@@ -111,9 +113,10 @@ export default function CircuitosForm({
         onClose={cerrarModal}
         titulo={"¿Crear este circuito?"}
       >
-        <div className="flex flex-col justify-center items-center space-y-1">
+        <ModalDatosContenedor>
           <ModalDatos titulo={"Nombre"} descripcion={nombreCircuito} />
-        </div>
+        </ModalDatosContenedor>
+
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
         <BotonesModal
           aceptar={crearCircuito}

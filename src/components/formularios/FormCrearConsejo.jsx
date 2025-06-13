@@ -28,11 +28,11 @@ export default function FormCrearConsejo({
     >
       <SelectOpcion
         idOpcion={dondeGuardar}
-        nombre={"Donde crear el consejo comunal"}
+        nombre={"Pertenece a"}
         handleChange={cambiarDondeGuardar}
         opciones={[
-          { id: 1, nombre: "Comuna" },
-          { id: 2, nombre: "Circuito" },
+          { id: 1, nombre: "COMUNA" },
+          { id: 2, nombre: "CIRCUITO COMUNAL" },
         ]}
         seleccione={"Seleccione"}
       />

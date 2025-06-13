@@ -11,6 +11,7 @@ import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearParroquia from "../formularios/FormCrearParroquia";
 import ListadoGenaral from "../ListadoGeneral";
+import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function ParroquiasForm({
   mostrar,
@@ -59,7 +60,11 @@ export default function ParroquiasForm({
           { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 5 segundos
         ]);
       } catch (error) {
-        console.error("Error al crear la parroquia:", error);
+        console.log("Error, al crear parroquia: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
       }
     }
   };
@@ -71,9 +76,10 @@ export default function ParroquiasForm({
         onClose={cerrarModal}
         titulo={"¿Crear esta parroquia?"}
       >
-        <div className="flex flex-col justify-center items-center space-y-1">
+        <ModalDatosContenedor>
           <ModalDatos titulo={"Nombre"} descripcion={nombreParroquia} />
-        </div>
+        </ModalDatosContenedor>
+
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
         <BotonesModal
           aceptar={crearParroquia}

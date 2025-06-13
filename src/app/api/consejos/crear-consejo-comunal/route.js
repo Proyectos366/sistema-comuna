@@ -21,7 +21,8 @@ export async function POST(request) {
       codigo,
       id_parroquia,
       id_comuna,
-      id_circuito
+      id_circuito,
+      comunaCircuito
     );
 
     if (validaciones.status === "error") {
@@ -64,7 +65,12 @@ export async function POST(request) {
     });
 
     if (!nuevoConsejoComunal) {
-      return generarRespuesta("error", "Error, no se creo el consejo comunal...", {}, 400);
+      return generarRespuesta(
+        "error",
+        "Error, no se creo el consejo comunal...",
+        {},
+        400
+      );
     } else {
       return generarRespuesta(
         "ok",
@@ -78,6 +84,11 @@ export async function POST(request) {
   } catch (error) {
     console.log(`Error interno (consejo comunal): ` + error);
 
-    return generarRespuesta("error", "Error, interno (consejo comunal)", {}, 500);
+    return generarRespuesta(
+      "error",
+      "Error, interno (consejo comunal)",
+      {},
+      500
+    );
   }
 }

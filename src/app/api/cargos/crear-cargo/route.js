@@ -13,7 +13,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-       400
+        400
       );
     }
 
@@ -21,21 +21,21 @@ export async function POST(request) {
       data: {
         nombre: validaciones.nombre,
         id_usuario: validaciones.id_usuario,
-        borrado: false
+        borrado: false,
       },
     });
 
     if (!nuevoCargo) {
-      return generarRespuesta(
-        "error",
-        "Error, no se creo el cargo",
-        {},
-        400
-      );
+      return generarRespuesta("error", "Error, no se creo el cargo", {}, 400);
     } else {
-      return generarRespuesta("ok", "Cargo creado...", {
-        cargo: nuevoCargo
-      }, 201);
+      return generarRespuesta(
+        "ok",
+        "Cargo creado...",
+        {
+          cargo: nuevoCargo,
+        },
+        201
+      );
     }
   } catch (error) {
     console.log(`Error interno (cargos): ` + error);

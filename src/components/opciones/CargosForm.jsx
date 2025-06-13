@@ -11,6 +11,7 @@ import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCargo from "../formularios/FormCrearCargo";
 import ListadoGenaral from "../ListadoGeneral";
+import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function CargosForm({
   mostrar,
@@ -56,6 +57,10 @@ export default function CargosForm({
         ]);
       } catch (error) {
         console.log("Error, al crear el cargo: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
       }
     }
   };
@@ -67,9 +72,10 @@ export default function CargosForm({
         onClose={cerrarModal}
         titulo={"¿Crear este cargo?"}
       >
-        <div className="flex flex-col justify-center items-center space-y-1">
+        <ModalDatosContenedor>
           <ModalDatos titulo={"Nombre"} descripcion={nombreCargo} />
-        </div>
+        </ModalDatosContenedor>
+
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
         <BotonesModal
           aceptar={crearCargo}

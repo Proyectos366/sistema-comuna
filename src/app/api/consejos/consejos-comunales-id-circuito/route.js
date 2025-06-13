@@ -8,9 +8,9 @@ export async function GET(req) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
     const { searchParams } = new URL(req.url);
-    const idComuna = searchParams.get("idComuna");
+    const idCircuito = searchParams.get("idCircuito");
 
-    const id_comuna = Number(idComuna);
+    const id_circuito = Number(idCircuito);
 
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -24,7 +24,7 @@ export async function GET(req) {
       );
     }
 
-    if (!idComuna) {
+    if (!idCircuito) {
       return generarRespuesta(
         "error",
         "El ID de circuito es obligatorio.",
@@ -35,7 +35,7 @@ export async function GET(req) {
 
     // Consultar los consejos comunales de la comuna específica
     const consejosComunales = await prisma.consejo.findMany({
-      where: { id_circuito: id_comuna },
+      where: { id_circuito: id_circuito },
     });
 
     if (!consejosComunales) {

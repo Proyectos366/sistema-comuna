@@ -15,10 +15,13 @@ export async function POST(request) {
       edad,
       telefono,
       direccion,
+      laboral,
       proyecto,
       certificado,
       verificado,
       cargos,
+      formaciones,
+      modulos,
       id_parroquia,
       id_comuna,
       id_consejo,
@@ -37,6 +40,7 @@ export async function POST(request) {
       edad,
       telefono,
       direccion,
+      laboral,
       proyecto,
       certificado,
       verificado,
@@ -68,6 +72,7 @@ export async function POST(request) {
         direccion: validaciones.direccion,
         correo: validaciones.correo,
         token: validaciones.token,
+        laboral: validaciones.laboral,
         proyecto: Boolean(validaciones.proyecto),
         certificado: Boolean(validaciones.certificado),
         verificado: Boolean(validaciones.verificado),
@@ -79,6 +84,12 @@ export async function POST(request) {
         id_parroquia: validaciones.id_parroquia,
         cargos: {
           connect: cargos.map(({ id }) => ({ id })), // Conectar cargos correctamente
+        },
+        formaciones: {
+          connect: formaciones.map(({ id }) => ({ id })), // Conectar formaciones correctamente
+        },
+        modulos: {
+          connect: modulos.map(({ id }) => ({ id })), // Conectar modulos correctamente
         },
       },
     });

@@ -33,12 +33,11 @@ export async function GET(req) {
       );
     }
 
-    // Consultar los consejos comunales de la comuna específica
+    // Consultar los circuitos comunales por parroquia
     const circuitos = await prisma.circuito.findMany({
       where: {
         id_parroquia: id_parroquia,
         borrado: false,
-        validado: false,
       },
     });
 

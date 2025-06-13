@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import ValidarCampos from "./ValidarCampos";
 
 export default async function validarCrearConsejoComunal(
   nombre,
@@ -16,7 +17,8 @@ export default async function validarCrearConsejoComunal(
   codigo,
   id_parroquia,
   id_comuna,
-  id_circuito
+  id_circuito,
+  comunaCircuito
 ) {
   try {
     const cookieStore = await cookies();
@@ -31,20 +33,36 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
+    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
+
+    if (validarNombre.status === "error") {
+      return retornarRespuestaFunciones(
+        validarNombre.status,
+        validarNombre.message
+      );
+    }
+
     const correo = descifrarToken.correo;
-    const nombreMayuscula = nombre.toUpperCase();
-    const direccionMayuscula = direccion ? direccion.toUpperCase() : "";
-    const norteMayuscula = norte ? norte.toUpperCase() : "";
-    const surMayuscula = sur ? sur.toUpperCase() : "";
-    const esteMayuscula = este ? este.toUpperCase() : "";
-    const oesteMayuscula = oeste ? oeste.toUpperCase() : "";
-    const puntoMayuscula = punto ? punto.toUpperCase() : "";
-    const rifMayuscula = rif ? rif.toUpperCase() : "";
+    const nombreMinuscula = nombre.toLowerCase();
+    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+    const norteMinuscula = norte ? norte.toLowerCase() : "";
+    const surMinuscula = sur ? sur.toLowerCase() : "";
+    const esteMinuscula = este ? este.toLowerCase() : "";
+    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+    const puntoMinuscula = punto ? punto.toLowerCase() : "";
+    const rifMinuscula = rif ? rif.toLowerCase() : "";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: { id: true },
     });
+
+    if (!idUsuario) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, usuario no encontrado"
+      );
+    }
 
     const usuario_id = Number(idUsuario.id);
     const parroquia_id = Number(id_parroquia);
@@ -65,10 +83,21 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
-    if (typeof comuna_id != "number") {
+    const whereClause = {
+      nombre: nombreMinuscula,
+      id_parroquia: parroquia_id,
+      id_comuna: comunaCircuito === "comuna" ? comuna_id : null,
+      id_circuito: comunaCircuito === "circuito" ? circuito_id : null,
+    };
+
+    const consejoExistente = await prisma.consejo.findFirst({
+      where: whereClause,
+    });
+
+    if (consejoExistente) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, id_comuna no es un numero..."
+        "Error, consejo comunal ya existe...."
       );
     }
 
@@ -77,14 +106,14 @@ export default async function validarCrearConsejoComunal(
       id_parroquia: parroquia_id,
       id_comuna: comuna_id,
       id_circuito: circuito_id,
-      nombre: nombreMayuscula,
-      direccion: direccionMayuscula,
-      norte: norteMayuscula,
-      sur: surMayuscula,
-      este: esteMayuscula,
-      oeste: oesteMayuscula,
-      punto: puntoMayuscula,
-      rif: rifMayuscula,
+      nombre: nombreMinuscula,
+      direccion: direccionMinuscula,
+      norte: norteMinuscula,
+      sur: surMinuscula,
+      este: esteMinuscula,
+      oeste: oesteMinuscula,
+      punto: puntoMinuscula,
+      rif: rifMinuscula,
       codigo: codigo,
     });
   } catch (error) {

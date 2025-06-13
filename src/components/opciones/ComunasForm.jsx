@@ -11,6 +11,7 @@ import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearComuna from "../formularios/FormCrearComuna";
 import ListadoGenaral from "../ListadoGeneral";
+import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function ComunasForm({
   mostrar,
@@ -37,7 +38,7 @@ export default function ComunasForm({
         const response = await axios.get("/api/parroquias/todas-parroquias");
         setParroquias(response.data.parroquias || []);
       } catch (error) {
-        console.error("Error al obtener las parroquias:", error);
+        console.log("Error, al obtener las parroquias: " + error);
       }
     };
 
@@ -60,7 +61,7 @@ export default function ComunasForm({
 
         setTodasComunas(response.data.comunas || []); // Guarda la respuesta correctamente
       } catch (error) {
-        console.log("Error al obtener las comunas por parroquia:", error);
+        console.log("Error, al obtener las comunas por parroquia: " + error);
       } finally {
         setIsLoading(false); // Solo desactiva la carga después de obtener los datos
       }
@@ -97,10 +98,11 @@ export default function ComunasForm({
         { accion: () => setRifComuna(""), tiempo: 3000 },
       ]);
     } catch (error) {
-      console.log(
-        "Error,  al crear la comuna:",
-        error.response ? error.response.data : error.message
-      );
+      console.log("Error, al crear la comuna: " + error);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     }
   };
 
@@ -111,9 +113,10 @@ export default function ComunasForm({
         onClose={cerrarModal}
         titulo={"¿Crear esta comuna?"}
       >
-        <div className="flex flex-col justify-center items-center space-y-1">
+        <ModalDatosContenedor>
           <ModalDatos titulo={"Nombre"} descripcion={nombreComuna} />
-        </div>
+        </ModalDatosContenedor>
+
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
         <BotonesModal
           aceptar={crearComuna}
