@@ -112,7 +112,6 @@ export default function FormCrearVocero({
                 ? "Comunas"
                 : "Circuitos"
             }
-            //nombre={dondeGuardar === 1 ? "Comuna" : dondeGuardar === 2 ? "Circuito comunal" : "Consejo Comunal"}
             handleChange={cambiarSeleccionComunaCircuito}
             opciones={comunasCircuitos}
             seleccione={"Seleccione"}
@@ -135,6 +134,7 @@ export default function FormCrearVocero({
         idComunaCircuito &&
         (dondeGuardar === 3 ? idConsejo : true) && (
           <>
+
             <LabelInput
               nombre={"Primer nombre"}
               value={nombre}
@@ -167,6 +167,7 @@ export default function FormCrearVocero({
                 nombre={"Limpiar"}
                 campos={{
                   nombre,
+                  nombreDos,
                   idParroquia,
                   idComunaCircuito,
                   idConsejo: 0,

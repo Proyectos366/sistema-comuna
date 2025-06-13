@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function MenuDesplegable({ children }) {
+export default function MenuDesplegable({ children, titulo }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -11,12 +11,12 @@ export default function MenuDesplegable({ children }) {
         onClick={() => setIsOpen(!isOpen)}
         className="w-full text-left p-3 color-fondo text-white font-semibold rounded-md flex justify-between items-center cursor-pointer"
       >
-        <span>Menú de opciones</span>
+        <span>{!titulo ? 'Menú de opciones' : titulo}</span>
         <span>{isOpen ? "▲" : "▼"}</span>
       </button>
 
       {isOpen && (
-        <div className="p-4 bg-white rounded-b-lg transition-all duration-300">
+        <div className="flex flex-col space-y-2 p-4 bg-white rounded-b-lg transition-all duration-300">
           {children}
         </div>
       )}
