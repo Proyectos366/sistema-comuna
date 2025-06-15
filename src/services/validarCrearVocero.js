@@ -18,9 +18,6 @@ export default async function validarCrearVocero(
   telefono,
   direccion,
   laboral,
-  proyecto,
-  certificado,
-  verificado,
   id_parroquia,
   id_comuna,
   id_consejo,
@@ -81,7 +78,6 @@ export default async function validarCrearVocero(
       : null;
     const cedulaNumero = cedula ? Number(cedula) : null;
     const correoMinuscula = correo ? correo.toLowerCase() : null;
-    const generoMinuscula = genero ? genero.toLowerCase() : null;
     const edadNumero = edad ? Number(edad) : null;
     const direccionMinuscula = direccion ? direccion.toLowerCase() : null;
     const laboralMinuscula = laboral ? laboral.toLowerCase() : null;
@@ -147,10 +143,6 @@ export default async function validarCrearVocero(
       correo: correoMinuscula,
       token: tokenVocero,
       laboral: laboralMinuscula,
-      proyecto: proyecto && proyecto === "1" ? true : false,
-      certificado: certificado && certificado === "1" ? true : false,
-      verificado: verificado && verificado === "1" ? true : false,
-      borrado: false,
       id_usuario: usuarioId,
       id_comuna: comunaId,
       id_consejo: consejoId,

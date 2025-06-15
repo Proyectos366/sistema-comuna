@@ -34,27 +34,9 @@ export default function VoceroForm({
   const [direccionVocero, setDireccionVocero] = useState("");
   const [correoVocero, setCorreoVocero] = useState("");
   const [actividadLaboralVocero, setActividadLaboralVocero] = useState("");
-  const [proyectoVocero, setProyectoVocero] = useState("");
-  const [verificadoVocero, setVerificadoVocero] = useState("");
-  const [certificadoVocero, setCertificadoVocero] = useState("");
 
   const [seleccionarCargo, setSeleccionarCargo] = useState([]);
   const [seleccionarFormacion, setSeleccionarFormacion] = useState([]);
-  const [seleccionarModulos, setSeleccionarModulos] = useState([]);
-
-  const toggleModulos = (id) => {
-    setSeleccionarModulos((prev) =>
-      prev.includes(id) ? prev.filter((modulo) => modulo !== id) : [...prev, id]
-    );
-  };
-
-  const toggleFormacion = (id) => {
-    setSeleccionarFormacion((prev) => (prev === id ? null : id));
-  };
-
-  const toggleCargo = (id) => {
-    setSeleccionarCargo((prev) => (prev === id ? null : id));
-  };
 
   const [idParroquia, setIdParroquia] = useState("");
   const [idComunaCircuito, setIdComunaCircuito] = useState("");
@@ -63,7 +45,6 @@ export default function VoceroForm({
   const [parroquias, setParroquias] = useState([]);
   const [cargos, setCargos] = useState([]);
   const [formaciones, setFormaciones] = useState([]);
-  const [modulos, setModulos] = useState([]);
 
   const [todasComunasCircuitos, setTodasComunasCircuitos] = useState([]);
   const [todosConsejos, setTodosConsejos] = useState([]);
@@ -78,18 +59,15 @@ export default function VoceroForm({
   useEffect(() => {
     const fetchParroquias = async () => {
       try {
-        const [parroquiasRes, cargosRes, formacionesRes, modulosRes] =
-          await Promise.all([
-            axios.get("/api/parroquias/todas-parroquias"),
-            axios.get("/api/cargos/todos-cargos"),
-            axios.get("/api/formaciones/todas-formaciones"),
-            axios.get("/api/modulos/todos-modulos"),
-          ]);
+        const [parroquiasRes, cargosRes, formacionesRes] = await Promise.all([
+          axios.get("/api/parroquias/todas-parroquias"),
+          axios.get("/api/cargos/todos-cargos"),
+          axios.get("/api/formaciones/todas-formaciones"),
+        ]);
 
         setParroquias(parroquiasRes.data.parroquias || []);
         setCargos(cargosRes.data.cargos || []);
         setFormaciones(formacionesRes.data.formaciones || []);
-        setModulos(modulosRes.data.modulos || []);
       } catch (error) {
         console.log("Error, al obtener las parroquias: " + error);
       }
@@ -296,6 +274,16 @@ export default function VoceroForm({
     setIdConsejoComunal(valor);
   };
 
+  const toggleCargos = (id) => {
+    setSeleccionarCargo((prev) =>
+      prev.includes(id) ? prev.filter((cargo) => cargo !== id) : [...prev, id]
+    );
+  };
+
+  const toggleFormacion = (id) => {
+    setSeleccionarFormacion((formacion) => (formacion === id ? null : id));
+  };
+
   const crearVocero = async () => {
     if (nombreVocero.trim()) {
       try {
@@ -341,17 +329,9 @@ export default function VoceroForm({
           direccion: direccionVocero || "No especificada",
           correo: correoVocero.trim(),
           laboral: actividadLaboralVocero,
-          proyecto: proyectoVocero === "1" ? "1" : "2",
-          certificado: certificadoVocero === "1" ? "1" : "2",
-          verificado: verificadoVocero === "1" ? "1" : "2",
-          borrado: false,
           cargos:
             seleccionarCargo.length > 0
               ? seleccionarCargo.map((id) => ({ id }))
-              : [],
-          modulos:
-            seleccionarModulos.length > 0
-              ? seleccionarModulos.map((id) => ({ id }))
               : [],
           formaciones:
             seleccionarFormacion.length > 0
@@ -360,6 +340,7 @@ export default function VoceroForm({
           id_parroquia: idParroquia,
           ...config[circuitoComuna], // Asignar valores específicos según `circuitoComuna`
         };
+        
 
         const response = await axios.post("/api/voceros/crear-vocero", data);
 
@@ -447,18 +428,10 @@ export default function VoceroForm({
             setCorreo={setCorreoVocero}
             actividadLaboral={actividadLaboralVocero}
             setActividadLaboral={setActividadLaboralVocero}
-            proyecto={proyectoVocero}
-            setProyecto={setProyectoVocero}
-            verificado={verificadoVocero}
-            setVerificado={setVerificadoVocero}
-            certificado={certificadoVocero}
-            setCertificado={setCertificadoVocero}
             seleccionarCargo={seleccionarCargo}
             setSeleccionarCargo={setSeleccionarCargo}
             seleccionarFormacion={seleccionarFormacion}
-            setSeleccionarFormacion={setSeleccionarFormacion}
-            seleccionarModulos={seleccionarModulos}
-            setSeleccionarModulos={setSeleccionarModulos}
+            setSeleccionarCurso={setSeleccionarCurso}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
           />

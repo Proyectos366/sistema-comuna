@@ -16,12 +16,8 @@ export async function POST(request) {
       telefono,
       direccion,
       laboral,
-      proyecto,
-      certificado,
-      verificado,
       cargos,
       formaciones,
-      modulos,
       id_parroquia,
       id_comuna,
       id_consejo,
@@ -41,9 +37,6 @@ export async function POST(request) {
       telefono,
       direccion,
       laboral,
-      proyecto,
-      certificado,
-      verificado,
       id_parroquia,
       id_comuna,
       id_consejo,
@@ -59,6 +52,7 @@ export async function POST(request) {
       );
     }
 
+    /**
     const nuevoVocero = await prisma.vocero.create({
       data: {
         nombre: validaciones.nombre,
@@ -73,10 +67,6 @@ export async function POST(request) {
         correo: validaciones.correo,
         token: validaciones.token,
         laboral: validaciones.laboral,
-        proyecto: Boolean(validaciones.proyecto),
-        certificado: Boolean(validaciones.certificado),
-        verificado: Boolean(validaciones.verificado),
-        borrado: Boolean(validaciones.borrado),
         id_usuario: validaciones.id_usuario,
         id_comuna: validaciones.id_comuna,
         id_consejo: validaciones.id_consejo,
@@ -85,13 +75,64 @@ export async function POST(request) {
         cargos: {
           connect: cargos.map(({ id }) => ({ id })), // Conectar cargos correctamente
         },
-        formaciones: {
-          connect: formaciones.map(({ id }) => ({ id })), // Conectar formaciones correctamente
-        },
-        modulos: {
-          connect: modulos.map(({ id }) => ({ id })), // Conectar modulos correctamente
-        },
       },
+    });
+
+    for (const { id: id } of formaciones) {
+      await prisma.curso.create({
+        data: {
+          id_vocero: nuevoVocero.id,
+          id_formacion: id,
+          id_usuario: validaciones.id_usuario,
+          verificado: false,
+          certificado: false,
+        },
+      });
+    }
+
+    */
+
+    const nuevoVocero = await prisma.$transaction(async (tx) => {
+      const vocero = await tx.vocero.create({
+        data: {
+          nombre: validaciones.nombre,
+          nombre_dos: validaciones.nombreDos,
+          apellido: validaciones.apellido,
+          apellido_dos: validaciones.apellidoDos,
+          cedula: validaciones.cedula,
+          genero: validaciones.genero,
+          edad: validaciones.edad,
+          telefono: validaciones.telefono,
+          direccion: validaciones.direccion,
+          correo: validaciones.correo,
+          token: validaciones.token,
+          laboral: validaciones.laboral,
+          id_usuario: validaciones.id_usuario,
+          id_comuna: validaciones.id_comuna,
+          id_consejo: validaciones.id_consejo,
+          id_circuito: validaciones.id_circuito,
+          id_parroquia: validaciones.id_parroquia,
+          cargos: {
+            connect: cargos.map(({ id }) => ({ id })),
+          },
+        },
+      });
+
+      if (Array.isArray(formaciones) && formaciones.length > 0) {
+        for (const { id: id } of formaciones) {
+          await tx.curso.create({
+            data: {
+              id_vocero: vocero.id,
+              id_formacion: id,
+              id_usuario: validaciones.id_usuario,
+              verificado: false,
+              certificado: false,
+            },
+          });
+        }
+      }
+
+      return vocero;
     });
 
     if (!nuevoVocero) {

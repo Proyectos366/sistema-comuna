@@ -23,6 +23,18 @@ CREATE TABLE "usuario" (
 );
 
 -- CreateTable
+CREATE TABLE "cargo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "descripcion" TEXT NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "cargo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "parroquia" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
@@ -31,40 +43,6 @@ CREATE TABLE "parroquia" (
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "parroquia_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "cargo" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "id_usuario" INTEGER NOT NULL,
-    "borrado" BOOLEAN NOT NULL,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "cargo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "modulo" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "id_usuario" INTEGER NOT NULL,
-    "borrado" BOOLEAN NOT NULL,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "modulo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "formacion" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "id_usuario" INTEGER NOT NULL,
-    "borrado" BOOLEAN NOT NULL,
-    "culminada" BOOLEAN NOT NULL,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "formacion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -148,9 +126,6 @@ CREATE TABLE "vocero" (
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "laboral" TEXT NOT NULL,
-    "proyecto" BOOLEAN NOT NULL,
-    "certificado" BOOLEAN NOT NULL,
-    "verificado" BOOLEAN NOT NULL,
     "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,
@@ -160,10 +135,66 @@ CREATE TABLE "vocero" (
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "vocero_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "vocero_id_parroquia_fkey" FOREIGN KEY ("id_parroquia") REFERENCES "parroquia" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "vocero_id_comuna_fkey" FOREIGN KEY ("id_comuna") REFERENCES "comuna" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "vocero_id_consejo_fkey" FOREIGN KEY ("id_consejo") REFERENCES "consejo" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "vocero_id_circuito_fkey" FOREIGN KEY ("id_circuito") REFERENCES "circuito" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "vocero_id_parroquia_fkey" FOREIGN KEY ("id_parroquia") REFERENCES "parroquia" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "vocero_id_circuito_fkey" FOREIGN KEY ("id_circuito") REFERENCES "circuito" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "curso" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_vocero" INTEGER NOT NULL,
+    "id_formacion" INTEGER NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "fecha_completado" DATETIME,
+    "verificado" BOOLEAN NOT NULL DEFAULT false,
+    "certificado" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "curso_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "curso_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "curso_id_formacion_fkey" FOREIGN KEY ("id_formacion") REFERENCES "formacion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "formacion" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "culminada" BOOLEAN NOT NULL DEFAULT false,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "formacion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "modulo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_usuario" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "modulo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "asistencia" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_vocero" INTEGER NOT NULL,
+    "id_modulo" INTEGER NOT NULL,
+    "id_curso" INTEGER NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "presente" BOOLEAN NOT NULL,
+    "fecha_registro" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "asistencia_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "asistencia_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "asistencia_id_modulo_fkey" FOREIGN KEY ("id_modulo") REFERENCES "modulo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "asistencia_id_curso_fkey" FOREIGN KEY ("id_curso") REFERENCES "curso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -175,19 +206,11 @@ CREATE TABLE "_cargoTovocero" (
 );
 
 -- CreateTable
-CREATE TABLE "_moduloTovocero" (
+CREATE TABLE "_formacionTomodulo" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
-    CONSTRAINT "_moduloTovocero_A_fkey" FOREIGN KEY ("A") REFERENCES "modulo" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_moduloTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "_formacionTovocero" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
-    CONSTRAINT "_formacionTovocero_A_fkey" FOREIGN KEY ("A") REFERENCES "formacion" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_formacionTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_formacionTomodulo_A_fkey" FOREIGN KEY ("A") REFERENCES "formacion" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_formacionTomodulo_B_fkey" FOREIGN KEY ("B") REFERENCES "modulo" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -201,12 +224,6 @@ CREATE UNIQUE INDEX "usuario_token_key" ON "usuario"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");
-
--- CreateIndex
-CREATE UNIQUE INDEX "modulo_nombre_key" ON "modulo"("nombre");
-
--- CreateIndex
-CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "comuna_rif_key" ON "comuna"("rif");
@@ -230,19 +247,19 @@ CREATE UNIQUE INDEX "vocero_correo_key" ON "vocero"("correo");
 CREATE UNIQUE INDEX "vocero_token_key" ON "vocero"("token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "modulo_nombre_key" ON "modulo"("nombre");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_cargoTovocero_AB_unique" ON "_cargoTovocero"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_cargoTovocero_B_index" ON "_cargoTovocero"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_moduloTovocero_AB_unique" ON "_moduloTovocero"("A", "B");
+CREATE UNIQUE INDEX "_formacionTomodulo_AB_unique" ON "_formacionTomodulo"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_moduloTovocero_B_index" ON "_moduloTovocero"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_formacionTovocero_AB_unique" ON "_formacionTovocero"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_formacionTovocero_B_index" ON "_formacionTovocero"("B");
+CREATE INDEX "_formacionTomodulo_B_index" ON "_formacionTomodulo"("B");
