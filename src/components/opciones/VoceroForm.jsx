@@ -281,8 +281,18 @@ export default function VoceroForm({
   };
 
   const toggleFormacion = (id) => {
-    setSeleccionarFormacion((formacion) => (formacion === id ? null : id));
+    setSeleccionarFormacion((prev) =>
+      prev.includes(id) ? prev.filter((formacion) => formacion !== id) : [...prev, id]
+    );
   };
+
+
+  /**
+    // esto es en caso que solo se vaya a seleccionar una formacion
+    const toggleFormacion = (id) => {
+      setSeleccionarFormacion((formacion) => (formacion === id ? null : id));
+    };
+  */
 
   const crearVocero = async () => {
     if (nombreVocero.trim()) {
@@ -326,7 +336,7 @@ export default function VoceroForm({
           genero: generoVocero,
           edad: Number(edadVocero),
           telefono: telefonoVocero,
-          direccion: direccionVocero || "No especificada",
+          direccion: "No especificada",
           correo: correoVocero.trim(),
           laboral: actividadLaboralVocero,
           cargos:
@@ -430,8 +440,11 @@ export default function VoceroForm({
             setActividadLaboral={setActividadLaboralVocero}
             seleccionarCargo={seleccionarCargo}
             setSeleccionarCargo={setSeleccionarCargo}
+            cargos={cargos}
+            toggleCargo={toggleCargos}
             seleccionarFormacion={seleccionarFormacion}
-            setSeleccionarCurso={setSeleccionarCurso}
+            formaciones={formaciones}
+            toggleFormaciones={toggleFormacion}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
           />

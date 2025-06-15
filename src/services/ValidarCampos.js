@@ -319,4 +319,54 @@ export default class ValidarCampos {
       );
     }
   }
+
+  static validarCamposCrearFormacion(nombre, modulos) {
+    try {
+
+      const validarNombre = this.validarCampoNombre(nombre);
+
+      if (validarNombre.status === "error") return validarNombre;
+
+      if (!modulos) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo modulos vacio..."
+        );
+      }
+      const moduloNumero = Number(modulos);
+
+      if (isNaN(moduloNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo modulo debe ser un numero..."
+        );
+      }
+
+      if (!Number.isInteger(moduloNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, debe ser unnumero entero..."
+        );
+      }
+
+      if (moduloNumero < 1) {
+        return retornarRespuestaFunciones("error", "Error, minimo 1 modulo...");
+      }
+
+      const MAX_MODULOS = 3;
+
+      if (moduloNumero > MAX_MODULOS) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, maximo ${MAX_MODULOS} módulos`
+        );
+      }
+    } catch (error) {
+      console.log(`Error, interno validando campos formaciones: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos formaciones..."
+      );
+    }
+  }
 }

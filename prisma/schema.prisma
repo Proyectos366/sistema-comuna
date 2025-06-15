@@ -147,16 +147,6 @@ model consejo {
   parroquias parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
 }
 
-
-
-
-
-
-
-
-
-
-
 model vocero {
   id           Int      @id @default(autoincrement())
   nombre       String
@@ -251,32 +241,6 @@ model asistencia {
   modulos  modulo  @relation(fields: [id_modulo], references: [id])
   cursos   curso   @relation(fields: [id_curso], references: [id])
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * generator client {
