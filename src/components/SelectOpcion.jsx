@@ -43,8 +43,6 @@ export default function SelectOpcion({
 
   return (
     <div className="w-full" ref={selectRef}>
-      {" "}
-      {/* Se asigna la referencia */}
       <label className="block">
         <span className="text-gray-800 font-semibold">{nombre}:</span>
         <div

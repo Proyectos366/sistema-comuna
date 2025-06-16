@@ -124,10 +124,10 @@ export default function CrearManuales() {
             crear={crearModulos}
           />
 
-          <BotonCreacionesManuales
+          {/* <BotonCreacionesManuales
             nombre={"Crear formaciones"}
             crear={crearFormaciones}
-          />
+          /> */}
         </section>
       </main>
       <footer className="text-white mt-10">© 2025 - Tu Proyecto</footer>

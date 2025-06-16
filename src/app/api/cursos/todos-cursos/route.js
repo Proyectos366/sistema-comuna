@@ -20,36 +20,45 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
-    const todasFormaciones = await prisma.formacion.findMany({
-      where: {
-        borrado: false,
-        culminada: false,
+    //const todosCursos = await prisma.curso.findMany();
+
+    const todosCursos = await prisma.curso.findMany({
+      where: { verificado: false }, // Filtrar cursos aún no verificados
+      include: {
+        voceros: true, // Obtener datos del vocero
+        formaciones: {
+          where: { culminada: false },
+          include: { modulos: true }, // Obtener módulos de la formación
+        },
+        asistencias: {
+          where: { presente: true }, // Filtrar módulos aprobados
+        },
       },
     });
 
-    if (!todasFormaciones) {
+    if (!todosCursos) {
       return generarRespuesta(
         "error",
-        "Error, al consultar formaciones...",
+        "Error, al consultar cursos...",
         {},
         400
       );
     } else {
       return generarRespuesta(
         "ok",
-        "Todas las formaciones...",
+        "Todas los cursos...",
         {
-          formaciones: todasFormaciones,
+          cursos: todosCursos,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno consultar (formaciones): ` + error);
+    console.log(`Error interno consultar (cursos): ` + error);
 
     return generarRespuesta(
       "error",
-      "Error, interno consultar (formaciones)",
+      "Error, interno consultar (cursos)",
       {},
       500
     );

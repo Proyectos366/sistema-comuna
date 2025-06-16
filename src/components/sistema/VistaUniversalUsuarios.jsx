@@ -15,6 +15,7 @@ import CircuitoForm from "../opciones/CircuitosForm";
 import ConsejoForm from "../opciones/ConsejoForm";
 import VoceroForm from "../opciones/VoceroForm";
 import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
+import FormacionesForm from "../opciones/FormacionesForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -104,6 +105,8 @@ export default function VistaUniversalUsuarios({ children }) {
         "usuarios",
         "circuitos-comunales",
         "cargos",
+        "modulos",
+        "formaciones",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -115,6 +118,8 @@ export default function VistaUniversalUsuarios({ children }) {
         "usuarios",
         "circuitos-comunales",
         "cargos",
+        "modulos",
+        "formaciones",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -223,6 +228,20 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
+                  {vista === "formaciones" && (
+                    <FormacionesForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
+                  )}
+
                   {vista === "comunas" && (
                     <ComunasForm
                       mostrar={mostrarModal}

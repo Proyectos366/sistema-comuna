@@ -52,46 +52,6 @@ export async function POST(request) {
       );
     }
 
-    /**
-    const nuevoVocero = await prisma.vocero.create({
-      data: {
-        nombre: validaciones.nombre,
-        nombre_dos: validaciones.nombreDos,
-        apellido: validaciones.apellido,
-        apellido_dos: validaciones.apellidoDos,
-        cedula: validaciones.cedula,
-        genero: validaciones.genero,
-        edad: validaciones.edad,
-        telefono: validaciones.telefono,
-        direccion: validaciones.direccion,
-        correo: validaciones.correo,
-        token: validaciones.token,
-        laboral: validaciones.laboral,
-        id_usuario: validaciones.id_usuario,
-        id_comuna: validaciones.id_comuna,
-        id_consejo: validaciones.id_consejo,
-        id_circuito: validaciones.id_circuito,
-        id_parroquia: validaciones.id_parroquia,
-        cargos: {
-          connect: cargos.map(({ id }) => ({ id })), // Conectar cargos correctamente
-        },
-      },
-    });
-
-    for (const { id: id } of formaciones) {
-      await prisma.curso.create({
-        data: {
-          id_vocero: nuevoVocero.id,
-          id_formacion: id,
-          id_usuario: validaciones.id_usuario,
-          verificado: false,
-          certificado: false,
-        },
-      });
-    }
-
-    */
-
     const nuevoVocero = await prisma.$transaction(async (tx) => {
       const vocero = await tx.vocero.create({
         data: {
@@ -107,6 +67,7 @@ export async function POST(request) {
           correo: validaciones.correo,
           token: validaciones.token,
           laboral: validaciones.laboral,
+          borrado: false,
           id_usuario: validaciones.id_usuario,
           id_comuna: validaciones.id_comuna,
           id_consejo: validaciones.id_consejo,
@@ -134,6 +95,8 @@ export async function POST(request) {
 
       return vocero;
     });
+
+    //const nuevoVocero = false;
 
     if (!nuevoVocero) {
       return generarRespuesta(

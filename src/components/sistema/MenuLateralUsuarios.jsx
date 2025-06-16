@@ -31,7 +31,7 @@ export default function MenuLateralUsuario({
               </p>
             </div>
 
-            <div className="mt-10 flex flex-col space-y-4">
+            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[500px]">
               {id_rol === 1 && (
                 <>
                   <EnlacesBarraLateral
@@ -66,6 +66,16 @@ export default function MenuLateralUsuario({
                     nombre={"Cargos"}
                     volverInicio={volverInicio}
                   />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"formaciones"}
+                    nombre={"Formaciones"}
+                    volverInicio={volverInicio}
+                  />
+
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -133,6 +143,14 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"cargos"}
                     nombre={"Cargos"}
+                    volverInicio={volverInicio}
+                  />
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"formaciones"}
+                    nombre={"Formaciones"}
                     volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral

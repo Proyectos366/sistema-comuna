@@ -3,6 +3,7 @@ export default function InputCheckBox({
   nombre,
   isChecked,
   onToggle,
+  altura,
 }) {
   return (
     <label key={id} className="flex items-center gap-2">
@@ -10,26 +11,33 @@ export default function InputCheckBox({
         type="checkbox"
         checked={isChecked}
         onChange={() => onToggle(id)}
-        className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-400"
+        className={`form-checkbox border w-${altura ? altura : 5} h-${
+          altura ? altura : 5
+        } text-blue-600 border-gray-300 rounded focus:ring-blue-400`}
       />
       <span>{nombre}</span>
     </label>
   );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+// export default function InputCheckBox({
+//   id,
+//   nombre,
+//   isChecked,
+//   onToggle,
+// }) {
+//   return (
+//     <label key={id} className="flex items-center gap-2">
+//       <input
+//         type="checkbox"
+//         checked={isChecked}
+//         onChange={() => onToggle(id)}
+//         className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-400"
+//       />
+//       <span>{nombre}</span>
+//     </label>
+//   );
+// }
 
 // import Label from "./Label";
 
@@ -61,7 +69,7 @@ export default function InputCheckBox({
 //         onChange={onChange}
 //         className={`appearance-none w-5 h-5 border rounded-full ${
 //           isChecked ? "checked:bg-[red] checked:border-[blue]" : ""
-//         } rounded-sm 
+//         } rounded-sm
 //          checked:border-[black] focus:outline-none`}
 //       />
 //     </div>

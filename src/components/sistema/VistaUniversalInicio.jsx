@@ -25,6 +25,12 @@ export default function VistaUniversalInicio() {
   const [historialRutas, setHistorialRutas] = useState([]);
   const [indiceHistorial, setIndiceHistorial] = useState(-1);
 
+
+  const [cursos, setCursos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
   const refMenuPerfil = useRef(null);
   const refMenuNotificaciones = useRef(null);
 
@@ -73,7 +79,9 @@ export default function VistaUniversalInicio() {
       subRuta === "perfil" ||
       subRuta === "cambiar-clave" ||
       subRuta === "voceros" ||
-      subRuta === "cargos"
+      subRuta === "cargos" ||
+      subRuta === "formaciones" ||
+      subRuta === "modulos"
     ) {
       setVista(subRuta);
     } else {
@@ -113,6 +121,8 @@ export default function VistaUniversalInicio() {
         "usuarios",
         "circuitos-comunales",
         "cargos",
+        "modulos",
+        "formaciones",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -124,6 +134,8 @@ export default function VistaUniversalInicio() {
         "usuarios",
         "circuitos-comunales",
         "cargos",
+        "modulos",
+        "formaciones",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -175,6 +187,30 @@ export default function VistaUniversalInicio() {
       return; // Termina la ejecución después de redirigir
     }
   }, [pathname, router, userType]);
+
+
+  useEffect(() => {
+  const fetchCursos = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/cursos/todos-cursos"); // Consulta todos los cursos
+      setCursos(response.data.cursos);
+    } catch (err) {
+      setError("Error, al obtener los cursos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCursos();
+}, []);
+
+
+console.log(cursos);
+
+
+
+
 
   const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
     // Determinar la base de la ruta según el id_rol

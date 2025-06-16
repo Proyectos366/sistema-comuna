@@ -121,34 +121,6 @@ export default function VoceroForm({
       return;
     }
 
-    /**
-    const fetchConsejosPorComunaCircuito = async () => {
-      try {
-        let response;
-        if (circuitoComuna === 1 && perteneceComunaCircuito === 1) {
-          response = await axios.get(
-            `/api/consejos/consejos-comunales-id-comuna`,
-            {
-              params: { idComuna: idComunaCircuito },
-            }
-          );
-        } else if (circuitoComuna === 2 && perteneceComunaCircuito === 2) {
-          response = await axios.get(
-            `/api/consejos/consejos-comunales-id-circuito`,
-            {
-              params: { idCircuito: idComunaCircuito },
-            }
-          );
-        }
-        setTodosConsejos(response?.data?.consejos);
-      } catch (error) {
-        console.log(
-          "Error, al obtener las comunas/circuitos por parroquia: " + error
-        );
-      }
-    };
-    */
-
     const fetchConsejosPorComunaCircuito = async () => {
       try {
         let response;
@@ -249,6 +221,10 @@ export default function VoceroForm({
     setNombreVocero("");
   }, [perteneceComunaCircuito]);
 
+  const toggleGenero = (id) => {
+    setGeneroVocero(generoVocero === id ? null : id); // Cambia el estado, permitiendo deselección
+  };
+
   const cambiarDondeGuardar = (e) => {
     const valor = e.target.value;
     setCircuitoComuna(valor);
@@ -282,10 +258,11 @@ export default function VoceroForm({
 
   const toggleFormacion = (id) => {
     setSeleccionarFormacion((prev) =>
-      prev.includes(id) ? prev.filter((formacion) => formacion !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((formacion) => formacion !== id)
+        : [...prev, id]
     );
   };
-
 
   /**
     // esto es en caso que solo se vaya a seleccionar una formacion
@@ -350,7 +327,6 @@ export default function VoceroForm({
           id_parroquia: idParroquia,
           ...config[circuitoComuna], // Asignar valores específicos según `circuitoComuna`
         };
-        
 
         const response = await axios.post("/api/voceros/crear-vocero", data);
 
@@ -412,6 +388,7 @@ export default function VoceroForm({
             cambiarSeleccionConsejo={cambiarSeleccionConsejo}
             cambiarDondeGuardar={cambiarDondeGuardar}
             cambiarDondeCrear={cambiarDondeCrear}
+            toggleGenero={toggleGenero}
             parroquias={parroquias}
             comunasCircuitos={todasComunasCircuitos}
             consejos={todosConsejos}
@@ -423,7 +400,9 @@ export default function VoceroForm({
             nombreDos={nombreDosVocero}
             setNombreDos={setNombreDosVocero}
             apellido={apellidoVocero}
+            setApellido={setApellidoVocero}
             apellidoDos={apellidoDosVocero}
+            setApellidoDos={setApellidoDosVocero}
             cedula={cedulaVocero}
             setCedula={setCedulaVocero}
             genero={generoVocero}

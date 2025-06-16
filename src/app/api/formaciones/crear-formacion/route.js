@@ -4,9 +4,9 @@ import validarCrearFormacion from "@/services/validarCrearFormacion";
 
 export async function POST(request) {
   try {
-    const { nombre, modulos } = await request.json();
+    const { nombre, cantidadModulos } = await request.json();
 
-    const validaciones = await validarCrearFormacion(nombre, modulos);
+    const validaciones = await validarCrearFormacion(nombre, cantidadModulos);
 
     if (validaciones.status === "error") {
       return generarRespuesta(
@@ -22,7 +22,7 @@ export async function POST(request) {
         nombre: validaciones.nombre,
         id_usuario: validaciones.id_usuario,
         modulos: {
-          connect: validaciones.modulos.map(({ id }) => ({ id })),
+          connect: validaciones.todosModulos.map(({ id }) => ({ id })),
         },
       },
     });
@@ -52,12 +52,12 @@ export async function POST(request) {
 }
 
 /**
-  // Recibiendo por parametro los modulos que quiero puedo usar esta consulta
-  const todosModulos = await prisma.modulo.findMany({
+  // Recibiendo por parametro los cantidadModulos que quiero puedo usar esta consulta
+  const todoscantidadModulos = await prisma.modulo.findMany({
     where: {
       borrado: false,
         id: {
-          in: modulos, // modulos debe ser un array de IDs que tú escojas
+          in: cantidadModulos, // cantidadModulos debe ser un array de IDs que tú escojas
         },
     },
     select: { id: true },

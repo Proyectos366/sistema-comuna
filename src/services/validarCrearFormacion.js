@@ -5,7 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarCrearFormacion(nombre, modulos) {
+export default async function validarCrearFormacion(nombre, cantidadModulos) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -19,14 +19,15 @@ export default async function validarCrearFormacion(nombre, modulos) {
       );
     }
 
-    const validarCampos = ValidarCampos.validarCamposCrearFormacion(
+    const validandoCampos = ValidarCampos.validarCamposCrearFormacion(
       nombre,
-      modulos
+      cantidadModulos
     );
-    if (validarCampos.status === "error") {
+
+    if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
-        validarCampos.status,
-        validarCampos.message
+        validandoCampos.status,
+        validandoCampos.message
       );
     }
 
@@ -45,23 +46,27 @@ export default async function validarCrearFormacion(nombre, modulos) {
       );
     }
 
-    const todosModulos = await prisma.modulo.findMany({
+    const todoscantidadModulos = await prisma.modulo.findMany({
       where: { borrado: false },
       select: { id: true },
-      take: modulos,
+      take: validandoCampos.cantidadModulos,
       orderBy: {
         id: "asc",
       },
     });
 
-    if (!todosModulos || todosModulos.length === 0) {
-      return retornarRespuestaFunciones("error", "Error, no hay modulos...");
+    if (!todoscantidadModulos || todoscantidadModulos.length === 0) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, no hay cantidadModulos..."
+      );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: idUsuario.id,
       nombre: nombreMayuscula,
-      modulos: todosModulos,
+      cantidadModulos: todoscantidadModulos,
+      todosModulos: todoscantidadModulos,
     });
   } catch (error) {
     console.log(`Error, interno al validar crear formacion: ` + error);

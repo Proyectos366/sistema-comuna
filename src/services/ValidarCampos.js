@@ -176,6 +176,22 @@ export default class ValidarCampos {
 
   static validarCampoGenero(genero) {
     try {
+      const moduloNumero = Number(genero);
+
+      if (isNaN(moduloNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo genero invalido..."
+        );
+      }
+
+      if (!Number.isInteger(moduloNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo genero invalido..."
+        );
+      }
+
       if (!genero) {
         return retornarRespuestaFunciones(
           "error",
@@ -183,7 +199,7 @@ export default class ValidarCampos {
         );
       }
 
-      if (genero !== "1" && genero !== "2") {
+      if (!(genero === 1 || genero === 2 || genero === "1" || genero === "2")) {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo debe ser hombre o mujer..."
@@ -322,7 +338,6 @@ export default class ValidarCampos {
 
   static validarCamposCrearFormacion(nombre, modulos) {
     try {
-
       const validarNombre = this.validarCampoNombre(nombre);
 
       if (validarNombre.status === "error") return validarNombre;
@@ -361,6 +376,10 @@ export default class ValidarCampos {
           `Error, maximo ${MAX_MODULOS} módulos`
         );
       }
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        cantidadModulos: moduloNumero,
+      });
     } catch (error) {
       console.log(`Error, interno validando campos formaciones: ` + error);
       return retornarRespuestaFunciones(

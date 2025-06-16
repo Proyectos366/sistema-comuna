@@ -49,7 +49,6 @@ export default function FormCrearComuna({
               nombre={"Limpiar"}
               campos={{
                 nombre,
-                idParroquia,
               }}
             />
           </div>

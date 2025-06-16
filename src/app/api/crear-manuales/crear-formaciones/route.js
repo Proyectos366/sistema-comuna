@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const formaciones = [
       {
-        nombre: "PARTICIPACIÓN POPULAR Y CONTRALORÍA SOCIAL",
+        nombre: "participacion popular y contraloria social",
         id_usuario: 1,
         culminada: false,
         borrado: false,

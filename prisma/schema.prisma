@@ -181,23 +181,6 @@ model vocero {
   cargos      cargo[]
 }
 
-model curso {
-  id               Int       @id @default(autoincrement())
-  id_vocero        Int
-  id_formacion     Int
-  id_usuario       Int
-  fecha_completado DateTime?
-  verificado       Boolean   @default(false)
-  certificado      Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @default(now()) @updatedAt
-
-  usuarios    usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
-  voceros     vocero       @relation(fields: [id_vocero], references: [id])
-  formaciones formacion    @relation(fields: [id_formacion], references: [id])
-  asistencias asistencia[]
-}
-
 model formacion {
   id         Int      @id @default(autoincrement())
   nombre     String   @unique
@@ -225,6 +208,23 @@ model modulo {
   asistencias asistencia[]
 }
 
+model curso {
+  id               Int       @id @default(autoincrement())
+  id_vocero        Int
+  id_formacion     Int
+  id_usuario       Int
+  fecha_completado DateTime?
+  verificado       Boolean   @default(false)
+  certificado      Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now()) @updatedAt
+
+  usuarios    usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
+  voceros     vocero       @relation(fields: [id_vocero], references: [id])
+  formaciones formacion    @relation(fields: [id_formacion], references: [id])
+  asistencias asistencia[]
+}
+
 model asistencia {
   id             Int      @id @default(autoincrement())
   id_vocero      Int
@@ -241,6 +241,8 @@ model asistencia {
   modulos  modulo  @relation(fields: [id_modulo], references: [id])
   cursos   curso   @relation(fields: [id_curso], references: [id])
 }
+
+
 
 /**
  * generator client {

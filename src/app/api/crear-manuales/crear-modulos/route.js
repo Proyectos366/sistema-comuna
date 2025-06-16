@@ -4,9 +4,15 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function GET() {
   try {
     const modulos = [
-      { nombre: "MODULO I", id_usuario: 1, borrado: false },
-      { nombre: "MODULO II", id_usuario: 1, borrado: false },
-      { nombre: "MODULO III", id_usuario: 1, borrado: false },
+      { nombre: "modulo i", id_usuario: 1, borrado: false },
+      { nombre: "modulo ii", id_usuario: 1, borrado: false },
+      { nombre: "modulo iii", id_usuario: 1, borrado: false },
+      { nombre: "modulo iv", id_usuario: 1, borrado: false },
+      { nombre: "modulo v", id_usuario: 1, borrado: false },
+      { nombre: "modulo vi", id_usuario: 1, borrado: false },
+      { nombre: "modulo vii", id_usuario: 1, borrado: false },
+      { nombre: "modulo viii", id_usuario: 1, borrado: false },
+      { nombre: "modulo ix", id_usuario: 1, borrado: false },
     ];
 
     for (const modulo of modulos) {

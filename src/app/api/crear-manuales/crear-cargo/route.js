@@ -4,9 +4,9 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function GET() {
   try {
     const cargos = [
-      { nombre: "ejecutivo", id_usuario: 1, descripcion: 'sin descripcion' borrado: false },
-      { nombre: "finanza", id_usuario: 1, descripcion: 'sin descripcion' borrado: false },
-      { nombre: "contraloria", id_usuario: 1, descripcion: 'sin descripcion' borrado: false },
+      { nombre: "ejecutivo", id_usuario: 1, descripcion: 'sin descripcion', borrado: false },
+      { nombre: "finanza", id_usuario: 1, descripcion: 'sin descripcion', borrado: false },
+      { nombre: "contraloria", id_usuario: 1, descripcion: 'sin descripcion', borrado: false },
     ];
 
     for (const cargo of cargos) {
@@ -14,12 +14,14 @@ export async function GET() {
         where: {
           nombre: cargo.nombre,
           id_usuario: cargo.id_usuario,
+          descripcion: cargo.descripcion,
           borrado: false,
         },
         update: {}, // Aquí puedes especificar los valores a actualizar si el registro existe
         create: {
           nombre: cargo.nombre,
           id_usuario: cargo.id_usuario,
+          descripcion: cargo.descripcion,
           borrado: false,
         }, // Aquí se definen los valores para crear el registro si no existe
       });
