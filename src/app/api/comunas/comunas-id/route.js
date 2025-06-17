@@ -33,9 +33,24 @@ export async function GET(req) {
       );
     }
 
-    // Consultar las comunas por parroquia
     const comunas = await prisma.comuna.findMany({
       where: { id_parroquia: id_parroquia, borrado: false },
+      include: {
+        voceros: {
+          select: {
+            id: true,
+            nombre: true,
+            nombre_dos: true,
+            apellido: true,
+            apellido_dos: true,
+            cedula: true,
+            telefono: true,
+            correo: true,
+            edad: true,
+            genero: true,
+          },
+        },
+      },
     });
 
     if (!comunas) {

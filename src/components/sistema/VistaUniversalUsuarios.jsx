@@ -16,6 +16,7 @@ import ConsejoForm from "../opciones/ConsejoForm";
 import VoceroForm from "../opciones/VoceroForm";
 import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
+import ParticipantesForm from "../opciones/ParticipantesForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -107,6 +108,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "cargos",
         "modulos",
         "formaciones",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -120,6 +122,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "cargos",
         "modulos",
         "formaciones",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -128,6 +131,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "consejos-comunales",
         "circuitos-comunales",
         "cargos",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -231,6 +235,19 @@ export default function VistaUniversalUsuarios({ children }) {
 
                   {vista === "formaciones" && (
                     <FormacionesForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
+                  )}
+
+                  {vista === "participantes" && (
+                    <ParticipantesForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

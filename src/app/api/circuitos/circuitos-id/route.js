@@ -39,6 +39,22 @@ export async function GET(req) {
         id_parroquia: id_parroquia,
         borrado: false,
       },
+      include: {
+        voceros: {
+          select: {
+            id: true,
+            nombre: true,
+            nombre_dos: true,
+            apellido: true,
+            apellido_dos: true,
+            cedula: true,
+            telefono: true,
+            correo: true,
+            edad: true,
+            genero: true,
+          },
+        },
+      },
     });
 
     if (!circuitos) {

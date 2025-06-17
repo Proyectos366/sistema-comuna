@@ -22,17 +22,69 @@ export async function GET() {
 
     //const todosCursos = await prisma.curso.findMany();
 
+    /**
     const todosCursos = await prisma.curso.findMany({
-      where: { verificado: false }, // Filtrar cursos aún no verificados
+      where: { verificado: false },
       include: {
-        voceros: true, // Obtener datos del vocero
+        voceros: {
+          select: {
+            nombre: true,
+            nombre_dos: true,
+            apellido: true,
+            apellido_dos: true,
+            cedula: true,
+            telefono: true,
+            correo: true,
+            edad: true,
+            genero: true,
+            comunas: {
+              select: {
+                nombre: true, // Trae el nombre de la comuna
+              },
+            },
+          },
+        },
         formaciones: {
-          where: { culminada: false },
-          include: { modulos: true }, // Obtener módulos de la formación
+          include: {
+            modulos: true,
+          },
         },
-        asistencias: {
-          where: { presente: true }, // Filtrar módulos aprobados
+        asistencias: true,
+      },
+    });
+    */
+
+    const todosCursos = await prisma.curso.findMany({
+      where: { verificado: false },
+      include: {
+        voceros: {
+          select: {
+            nombre: true,
+            nombre_dos: true,
+            apellido: true,
+            apellido_dos: true,
+            cedula: true,
+            telefono: true,
+            correo: true,
+            edad: true,
+            genero: true,
+            comunas: {
+              select: {
+                nombre: true, // Trae el nombre de la comuna
+              },
+            },
+          },
         },
+        formaciones: {
+          include: {
+            modulos: {
+              include: {
+                asistencias: true, // Relaciona módulos con asistencias
+              },
+            },
+          },
+        },
+        asistencias: true,
       },
     });
 

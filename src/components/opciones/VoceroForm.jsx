@@ -240,9 +240,24 @@ export default function VoceroForm({
     setIdParroquia(valor);
   };
 
+  /**
   const cambiarSeleccionComunaCircuito = (e) => {
     const valor = e.target.value;
     setIdComunaCircuito(valor);
+  };
+ */
+
+  const cambiarSeleccionComunaCircuito = (e) => {
+    const valor = e.target.value; // ID de la comuna seleccionada
+
+    setIdComunaCircuito(valor);
+
+    // Filtrar voceros por ID de la comuna
+    const vocerosSeleccionados =
+      todasComunasCircuitos.find((comuna) => comuna.id === Number(valor))
+        ?.voceros || [];
+
+    setTodosVoceros(vocerosSeleccionados);
   };
 
   const cambiarSeleccionConsejo = (e) => {

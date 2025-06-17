@@ -4,7 +4,7 @@ export default function MostarMsjEnModal({ mostrarMensaje, mensaje }) {
   return (
     <>
       {mostrarMensaje && (
-        <div className="px-10 mb-3">
+        <div className="mb-3 w-full">
           <MostrarMsj mensaje={mensaje} />
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
@@ -24,12 +25,6 @@ export default function VistaUniversalInicio() {
   const [haRetrocedido, setHaRetrocedido] = useState(null);
   const [historialRutas, setHistorialRutas] = useState([]);
   const [indiceHistorial, setIndiceHistorial] = useState(-1);
-
-
-  const [cursos, setCursos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
 
   const refMenuPerfil = useRef(null);
   const refMenuNotificaciones = useRef(null);
@@ -81,7 +76,8 @@ export default function VistaUniversalInicio() {
       subRuta === "voceros" ||
       subRuta === "cargos" ||
       subRuta === "formaciones" ||
-      subRuta === "modulos"
+      subRuta === "modulos" ||
+      subRuta === "participantes"
     ) {
       setVista(subRuta);
     } else {
@@ -123,6 +119,7 @@ export default function VistaUniversalInicio() {
         "cargos",
         "modulos",
         "formaciones",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -136,6 +133,7 @@ export default function VistaUniversalInicio() {
         "cargos",
         "modulos",
         "formaciones",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -144,6 +142,7 @@ export default function VistaUniversalInicio() {
         "consejos-comunales",
         "circuitos-comunales",
         "cargos",
+        "participantes",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -188,29 +187,22 @@ export default function VistaUniversalInicio() {
     }
   }, [pathname, router, userType]);
 
+  // useEffect(() => {
+  //   const fetchCursos = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await axios.get("/api/cursos/todos-cursos"); // Consulta todos los cursos
+  //       setCursos(response.data.cursos);
+  //     } catch (error) {
+  //       console.log("Error, al consultar cursos: " + error);
+  //       setError("Error, al obtener los cursos");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  useEffect(() => {
-  const fetchCursos = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/cursos/todos-cursos"); // Consulta todos los cursos
-      setCursos(response.data.cursos);
-    } catch (err) {
-      setError("Error, al obtener los cursos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchCursos();
-}, []);
-
-
-console.log(cursos);
-
-
-
-
+  //   fetchCursos();
+  // }, []);
 
   const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
     // Determinar la base de la ruta según el id_rol
