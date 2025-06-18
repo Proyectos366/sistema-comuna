@@ -36,6 +36,10 @@ export default function ParticipantesForm({
   const [idModulo, setIdModulo] = useState("");
 
   const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
+  const [datosVerificar, setDatosVerificar] = useState([]);
+  const [estadoUsuarios, setEstadoUsuarios] = useState({});
+
+  const [opciones, setOpciones] = useState("");
 
   const actualizarFechaModulo = (moduloId, fecha, asistenciaId) => {
     setDatosActualizar({
@@ -48,6 +52,41 @@ export default function ParticipantesForm({
       ...prev,
       [moduloId]: fecha, // Guarda solo la fecha del módulo seleccionado
     }));
+  };
+
+  const verificarParticipante = async (id_curso, id_vocero) => {
+     try {
+      // Enviar actualización a la API
+      const response = await axios.patch(
+        `/api/cursos/verificar-curso`,
+        {
+          id_curso: id_curso,
+          id_vocero: id_vocero
+        }
+      );
+      setCursos((prevCursos) =>
+        prevCursos.map((curso) =>
+          curso.id === response.data.curso.id // Encuentra el curso afectado
+            ? {
+                ...curso,
+                asistencias: response.data.curso.asistencias, // Solo actualiza asistencias
+                formaciones: response.data.curso.formaciones, // También actualiza los módulos y formación
+              }
+            : curso
+        )
+      );
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, verificar participante: " + error);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    }
   };
 
   const toggleExpand = (cursoId) => {
@@ -71,47 +110,31 @@ export default function ParticipantesForm({
     fetchCursos();
   }, []);
 
-  const aprobarModulo = (cursoId, moduloId) => {
-    setCursos((prevCursos) =>
-      prevCursos.map((curso) =>
-        curso.id === cursoId
-          ? {
-              ...curso,
-              formaciones: {
-                ...curso.formaciones,
-                modulos: curso.formaciones.modulos.map((m) =>
-                  m.id === moduloId ? { ...m, aprobado: true } : m
-                ),
-              },
-            }
-          : curso
-      )
-    );
-  };
+  useEffect(() => {
+    const nuevoEstadoUsuarios = {};
 
-  const aprobarTodosModulos = (cursoId) => {
-    setCursos((prevCursos) =>
-      prevCursos.map((curso) =>
-        curso.id === cursoId
-          ? {
-              ...curso,
-              formaciones: {
-                ...curso.formaciones,
-                modulos: curso.formaciones.modulos.map((m) => ({
-                  ...m,
-                  aprobado: true,
-                })),
-              },
-              verificado: true,
-            }
-          : curso
-      )
-    );
-  };
+    cursos.forEach((curso) => {
+      // Contamos cuántos módulos de asistencia tiene cada usuario
+      const totalAsistencias = curso.asistencias.length;
 
-  const moduloAprobar = () => {
-    console.log("aprobando modulo...");
-  };
+      // Verificamos si al menos una asistencia tiene `presente === false`
+      const tieneAsistenciasPendientes = curso.asistencias.some(
+        (asistencia) => !asistencia.presente
+      );
+
+      const estaVerificado = curso.verificado; //curso.some((item) => item.verificado);
+
+      // Guardamos `false` en `puedeCertificar` si hay asistencias sin aprobar
+      nuevoEstadoUsuarios[curso.id] = {
+        totalAsistencias,
+        puedeVerificar: !tieneAsistenciasPendientes,
+        puedeCertificar: !tieneAsistenciasPendientes && curso.verificado,
+        estaVerificado: estaVerificado,
+      };
+    });
+
+    setEstadoUsuarios(nuevoEstadoUsuarios);
+  }, [cursos]); // Se ejecuta cada vez que `cursos` cambia
 
   const validarModulo = async () => {
     try {
@@ -144,7 +167,7 @@ export default function ParticipantesForm({
         { accion: () => setDatosActualizar([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
-      console.log("Error, al crear parroquia: " + error);
+      console.log("Error, al validar modulo: " + error);
       abrirMensaje(error?.response?.data?.message);
       ejecutarAccionesConRetraso([
         { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
@@ -152,28 +175,48 @@ export default function ParticipantesForm({
     }
   };
 
+  
+
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>;
 
+
+  /**
+   debo arreglar la modal para que pueda enviar los datos correspondientes
+   
+   */
   return (
     <>
       <Modal
         isVisible={mostrar}
         onClose={cerrarModal}
-        titulo={"¿Aprobar este modulo?"}
+        titulo={
+          opciones === "modulo"
+            ? "¿Aprobar este módulo?"
+            : opciones === "verificado"
+            ? "¿Verificar este participante?"
+            : opciones === "certificado"
+            ? "¿Certificar este participante?"
+            : "Acción no definida"
+        }
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo={"Modulo"} descripcion={idModulo} />
-          <ModalDatos
-            titulo={"Fecha aprobado"}
-            descripcion={formatearFecha(
-              fechaAprobacionModulo[idModulo] + "T00:00:00Z"
-            )}
-          />
+          {opciones === "modulo" && (
+            <>
+              <ModalDatos titulo={"Modulo"} descripcion={idModulo} />
+              <ModalDatos
+                titulo={"Fecha aprobado"}
+                descripcion={formatearFecha(
+                  fechaAprobacionModulo[idModulo] + "T00:00:00Z"
+                )}
+              />
+            </>
+          )}
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
+        {opciones === "modulo" &&
+          <BotonesModal
           aceptar={validarModulo}
           cancelar={cerrarModal}
           indiceUno={"crear"}
@@ -182,327 +225,200 @@ export default function ParticipantesForm({
           nombreDos={"Cancelar"}
           campos={{}}
         />
+        }
       </Modal>
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Certificar participantes"}>
-          {cursos.map((curso) => (
-            <div
-              key={curso.id}
-              className="border border-gray-300 rounded-lg shadow-md p-4 mb-4"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="">
-                    <b>Cédula: </b>
-                    <span>{curso.voceros.cedula}</span>
+          {cursos.map((curso, index) => {
+            //const puedeVerificar = estadoUsuarios[curso.id]; // `false` si faltan módulos
+            //const puedeCertificar = puedeVerificar && curso.verificado;
+
+            const usuario = estadoUsuarios[curso.id] || {};
+
+            return (
+              <div
+                key={curso.id}
+                className="border border-gray-300 rounded-lg shadow-md p-4 mb-4"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="">
+                      <b>Cédula: </b>
+                      <span>{curso.voceros.cedula}</span>
+                    </div>
+                    <div className="">
+                      <b>Nombre: </b>
+                      <span>
+                        {curso.voceros.nombre} {curso.voceros.nombre_dos + " "}
+                        {curso.voceros.apellido} {curso.voceros.apellido_dos}
+                      </span>
+                    </div>
                   </div>
-                  <div className="">
-                    <b>Nombre: </b>
-                    <span>
-                      {curso.voceros.nombre} {curso.voceros.nombre_dos + " "}
-                      {curso.voceros.apellido} {curso.voceros.apellido_dos}
-                    </span>
-                  </div>
+
+                  <button
+                    onClick={() => toggleExpand(curso.id)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    {expanded[curso.id]
+                      ? "▲ Ocultar detalles"
+                      : "▼ Mostrar detalles"}
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => toggleExpand(curso.id)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                >
-                  {expanded[curso.id]
-                    ? "▲ Ocultar detalles"
-                    : "▼ Mostrar detalles"}
-                </button>
-              </div>
+                {expanded === curso.id && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+                    <p className="text-gray-700">
+                      <strong>Comuna: </strong>
+                      {curso.voceros.comunas?.nombre || "No asignada"}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Correo: </strong>
+                      {curso.voceros.correo}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Formación: </strong>
+                      {curso.formaciones.nombre}
+                    </p>
 
-              {expanded === curso.id && (
-                <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                  <p className="text-gray-700">
-                    <strong>Comuna: </strong>
-                    {curso.voceros.comunas?.nombre || "No asignada"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Correo: </strong>
-                    {curso.voceros.correo}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Formación: </strong>
-                    {curso.formaciones.nombre}
-                  </p>
+                    <div className="mt-2 border border-gray-500 rounded-md p-2">
+                      <p className="font-semibold">Módulos (asistencias):</p>
+                      <div className="flex flex-col space-y-2">
+                        {curso.asistencias.map((asistencia) => {
+                          return (
+                            <div
+                              key={asistencia.id_modulo}
+                              className="flex justify-between items-center space-x-3"
+                            >
+                              <div className="w-full border border-gray-100 rounded-md shadow-sm py-2 text-center">
+                                {curso.formaciones.modulos.find(
+                                  (m) => m.id === asistencia.id_modulo
+                                )?.nombre || "Módulo desconocido"}
+                              </div>
 
-                  <div className="mt-2 border border-gray-500 rounded-md p-2">
-                    <p className="font-semibold">Módulos (asistencias):</p>
-                    <div className="flex flex-col space-y-2">
-                      {curso.asistencias.map((asistencia) => {
-                        return (
-                          <div
-                            key={asistencia.id_modulo}
-                            className="flex justify-between items-center space-x-3"
-                          >
-                            <div className="w-full border border-gray-100 rounded-md shadow-sm py-2 text-center">
-                              {curso.formaciones.modulos.find(
-                                (m) => m.id === asistencia.id_modulo
-                              )?.nombre || "Módulo desconocido"}
-                            </div>
+                              <div className="w-full -mt-1">
+                                {asistencia.presente ? (
+                                  <div className="w-full py-2 text-center border border-gray-300 rounded-md shadow-sm">
+                                    {formatearFecha(asistencia.fecha_registro)}
+                                  </div>
+                                ) : (
+                                  <Input
+                                    type="date"
+                                    disabled={asistencia.presente}
+                                    value={
+                                      fechaAprobacionModulo[
+                                        asistencia.id_modulo
+                                      ] || ""
+                                    }
+                                    onChange={(e) =>
+                                      actualizarFechaModulo(
+                                        asistencia.id_modulo,
+                                        e.target.value,
+                                        asistencia.id
+                                      )
+                                    }
+                                  />
+                                )}
+                              </div>
 
-                            <div className="w-full -mt-1">
-                              {asistencia.presente ? (
-                                <div className="w-full py-2 text-center border border-gray-300 rounded-md shadow-sm">
-                                  {formatearFecha(asistencia.fecha_registro)}
-                                </div>
-                              ) : (
-                                <Input
-                                  type="date"
-                                  disabled={asistencia.presente}
-                                  value={
-                                    fechaAprobacionModulo[
+                              <div className={`w-full`}>
+                                <Boton
+                                  nombre={
+                                    asistencia.presente
+                                      ? "✔ Aprobado"
+                                      : "Aprobar"
+                                  }
+                                  disabled={
+                                    !fechaAprobacionModulo[
                                       asistencia.id_modulo
-                                    ] || ""
-                                  }
-                                  onChange={(e) =>
-                                    actualizarFechaModulo(
-                                      asistencia.id_modulo,
-                                      e.target.value,
-                                      asistencia.id
-                                    )
-                                  }
+                                    ] || asistencia.presente
+                                  } // Solo se activa el botón con fecha
+                                  onClick={() => {
+                                    setOpciones("modulo");
+                                    abrirModal();
+                                    setIdModulo(asistencia.id_modulo);
+                                    console.log(
+                                      "Fecha seleccionada:",
+                                      fechaAprobacionModulo[
+                                        asistencia.id_modulo
+                                      ]
+                                    ); // Captura solo la fecha del módulo correspondiente
+                                  }}
+                                  className={`py-2 ${
+                                    !fechaAprobacionModulo[asistencia.id_modulo]
+                                      ? "cursor-not-allowed bg-gray-400 text-black"
+                                      : asistencia.presente
+                                      ? "cursor-not-allowed bg-gray-400 text-black"
+                                      : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                                  }`}
                                 />
-                              )}
+                              </div>
                             </div>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-                            <div className={`w-full`}>
-                              <Boton
-                                nombre={
-                                  asistencia.presente ? "✔ Aprobado" : "Aprobar"
-                                }
-                                disabled={
-                                  !fechaAprobacionModulo[
-                                    asistencia.id_modulo
-                                  ] || asistencia.presente
-                                } // Solo se activa el botón con fecha
-                                onClick={() => {
-                                  abrirModal();
-                                  setIdModulo(asistencia.id_modulo);
-                                  console.log(
-                                    "Fecha seleccionada:",
-                                    fechaAprobacionModulo[asistencia.id_modulo]
-                                  ); // Captura solo la fecha del módulo correspondiente
-                                }}
-                                className={`py-2 ${
-                                  !fechaAprobacionModulo[asistencia.id_modulo]
-                                    ? "cursor-not-allowed bg-gray-400 text-black"
-                                    : asistencia.presente
-                                    ? "cursor-not-allowed bg-gray-400 text-black"
-                                    : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
-                                }`}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
+                    <div className="mt-4 flex gap-2">
+                      <Boton
+                        title={
+                          !usuario.puedeVerificar
+                            ? "Para verificar perimero debe validar todos los modulos"
+                            : !usuario.estaVerificado
+                            ? "Puede verificar"
+                            : "Ya esta verificado"
+                        }
+                        nombre={
+                          usuario.estaVerificado ? "✔ Verificado" : "Verificar"
+                        }
+                        disabled={
+                          !usuario.puedeVerificar || usuario.estaVerificado
+                        }
+                        onClick={() => {
+                          setOpciones("verificado");
+                          abrirModal();
+                          verificarParticipante(curso.id, curso.id_vocero)
+                        }}
+                        className={`py-2 ${
+                          !usuario.puedeVerificar
+                            ? "bg-red-600 hover:bg-red-700 text-white"
+                            : usuario.estaVerificado
+                            ? "cursor-not-allowed bg-gray-400 text-black"
+                            : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                        }`}
+                      />
+
+                      <Boton
+                        title={
+                          !usuario.puedeCertificar
+                            ? "Para certificar primero debe estar verificado"
+                            : usuario.estaVerificado
+                            ? "Puede certificar"
+                            : "Ya esta certificado"
+                        }
+                        nombre={
+                          !usuario.estaVerificado
+                            ? "Certificado"
+                            : "🎓 Certificar"
+                        }
+                        disabled={!usuario.puedeCertificar}
+                        onClick={() => {
+                          setOpciones("certificado");
+                          abrirModal();
+                        }}
+                        className={`py-2 ${
+                          usuario.puedeCertificar
+                            ? "cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+                            : !usuario.puedeCertificar
+                            ? "cursor-not-allowed bg-gray-400 text-black"
+                            : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                        }`}
+                      />
                     </div>
                   </div>
-
-                  <div className="mt-4 flex gap-2">
-                    <button className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-                      ✔ Verificado
-                    </button>
-                    <button className="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600">
-                      🎓 Certificar
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* {cursos.map((curso) => (
-            <div
-              key={curso.id}
-              className="border border-gray-300 rounded-lg shadow-md p-4 mb-4"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="">
-                    <b>Cédula: </b>
-                    <span>{curso.voceros.cedula}</span>
-                  </div>
-                  <div className="">
-                    <b>Nombre: </b>
-                    <span>
-                      {curso.voceros.nombre} {curso.voceros.nombre_dos + " "}
-                      {curso.voceros.apellido} {curso.voceros.apellido_dos}
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => toggleExpand(curso.id)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                >
-                  {expanded[curso.id]
-                    ? "▲ Ocultar detalles"
-                    : "▼ Mostrar detalles"}
-                </button>
+                )}
               </div>
-
-              {expanded === curso.id && (
-                <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                  <p className="text-gray-700">
-                    <strong>Comuna: </strong>
-                    {curso.voceros.comunas?.nombre || "No asignada"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Correo: </strong>
-                    {curso.voceros.correo}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Formación: </strong>
-                    {curso.formaciones.nombre}
-                  </p>
-
-                  <div className="mt-2 border border-gray-500 rounded-md p-2">
-                    <p className="font-semibold">Módulos (asistencias):</p>
-                    <div className="flex flex-col space-y-2">
-                      {curso.asistencias.map((asistencia) => (
-                        <div
-                          key={asistencia.id_modulo}
-                          className="flex justify-between items-center space-x-3"
-                        >
-                          <div className="w-full border border-gray-100 rounded-md shadow-sm py-2 text-center">
-                            {curso.formaciones.modulos.find(
-                              (m) => m.id === asistencia.id_modulo
-                            )?.nombre || "Módulo desconocido"}
-                          </div>
-
-                          <div className="w-full -mt-1">
-                            <Input
-                              type="date"
-                              disabled={asistencia.presente}
-                              onChange={(e) =>
-                                setFechaAprobacionModulo(e.target.value)
-                              }
-                            />
-                          </div>
-
-                          <div className={`w-full`}>
-                            <Boton
-                              nombre={
-                                asistencia.presente ? "✔ Aprobado" : "Aprobar"
-                              }
-                              onClick={() => {
-                                abrirModal();
-                                setIdModulo(asistencia.id_modulo);
-                              }}
-                              className={`cursor-pointer color-fondo hover:bg-blue-700 py-2 ${
-                                asistencia.presente
-                                  ? "bg-amber-400"
-                                  : "color-fondo text-white"
-                              }`}
-                            />
-                            
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex gap-2">
-                    <button className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-                      ✔ Verificado
-                    </button>
-                    <button className="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600">
-                      🎓 Certificar
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))} */}
-
-          {/* {cursos.map((curso) => (
-            <div
-              key={curso.id}
-              className="border border-gray-300 rounded-lg shadow-md p-4 mb-4"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-gray-500">
-                    <b>Cédula:</b> <span>{curso.voceros.cedula}</span>
-                  </div>
-                  <div className="text-gray-500">
-                    <b>Nombre:</b>
-                    <span>
-                      {curso.voceros.nombre} {curso.voceros.nombre_dos + " "}
-                      {curso.voceros.apellido} {curso.voceros.apellido_dos}
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => toggleExpand(curso.id)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                >
-                  {expanded[curso.id]
-                    ? "▲ Ocultar detalles"
-                    : "▼ Mostrar detalles"}
-                </button>
-              </div>
-
-              {expanded === curso.id && (
-                <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                  <p className="text-gray-700">
-                    <strong>Comuna: </strong>
-                    {curso.voceros.comunas?.nombre || "No asignada"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Correo: </strong>
-                    {curso.voceros.correo}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Formación: </strong>
-                    {curso.formaciones.nombre}
-                  </p>
-
-                  <div className="mt-2 border rounded-md p-2">
-                    <p className="font-semibold">Módulos:</p>
-                    <div className="flex flex-col">
-                      {curso.formaciones.modulos.map((modulo) => (
-                        <div
-                          key={modulo.id}
-                          className="flex items-center justify-between gap-2 mt-1"
-                        >
-                          <span className="w-full">{modulo.nombre}</span>
-                          <div className="w-full flex items-center justify-center">
-                            <Input
-                              type={"date"}
-                              onChange={(e) =>
-                                setFechaAprobacionModulo(e.target.value)
-                              }
-                            />
-                          </div>
-                          <div className="w-full flex justify-end">
-                            <button className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
-                              Aprobar
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex gap-2">
-                    <button className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-                      ✔ Verificado
-                    </button>
-                    <button className="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600">
-                      🎓 Certificar
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))} */}
+            );
+          })}
         </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>

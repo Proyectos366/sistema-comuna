@@ -46,7 +46,7 @@ export async function PATCH(request) {
 
     // Solo ejecuta la consulta si la asistencia fue actualizada con éxito
     const nuevaAsistencia = await prisma.curso.findFirst({
-      where: { id: moduloEnAsistenciaValidado.id_curso, verificado: false }, // Filtra solo el curso afectado
+      where: { id: moduloEnAsistenciaValidado.id_curso, borrado: false }, // Filtra solo el curso afectado
       include: {
         voceros: {
           select: {

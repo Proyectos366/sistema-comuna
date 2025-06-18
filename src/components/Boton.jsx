@@ -1,4 +1,11 @@
-export default function Boton({ type, nombre, className, disabled, onClick }) {
+export default function Boton({
+  type,
+  nombre,
+  className,
+  disabled,
+  onClick,
+  title,
+}) {
   const clasePorDefecto = `${
     !disabled ? "cursor-pointer" : "cursor-not-allowed"
   } w-full font-semibold py-2 px-4 rounded-md shadow-md transition-transform transform hover:scale-105`;
@@ -8,6 +15,7 @@ export default function Boton({ type, nombre, className, disabled, onClick }) {
 
   return (
     <button
+      title={title}
       onClick={onClick}
       disabled={disabled}
       type={type}

@@ -54,8 +54,9 @@ export async function GET() {
     });
     */
 
+    
     const todosCursos = await prisma.curso.findMany({
-      where: { verificado: false },
+      where: { borrado: false },
       include: {
         voceros: {
           select: {

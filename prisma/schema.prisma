@@ -11,6 +11,7 @@ model role {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
   descripcion String
+  borrado     Boolean  @default(false)
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
 
@@ -216,6 +217,8 @@ model curso {
   fecha_completado DateTime?
   verificado       Boolean   @default(false)
   certificado      Boolean   @default(false)
+  culminado        Boolean   @default(false)
+  borrado          Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @default(now()) @updatedAt
 
@@ -232,6 +235,7 @@ model asistencia {
   id_curso       Int
   id_usuario     Int
   presente       Boolean
+  borrado        Boolean  @default(false)
   fecha_registro DateTime @default(now())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
@@ -241,8 +245,6 @@ model asistencia {
   modulos  modulo  @relation(fields: [id_modulo], references: [id])
   cursos   curso   @relation(fields: [id_curso], references: [id])
 }
-
-
 
 /**
  * generator client {

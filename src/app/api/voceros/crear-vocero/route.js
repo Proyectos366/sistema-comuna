@@ -125,6 +125,7 @@ export async function POST(request) {
         },
       });
 
+      /**
       if (Array.isArray(formaciones) && formaciones.length > 0) {
         for (const { id: id_formacion } of formaciones) {
           // Crear el curso asociado al vocero
@@ -144,6 +145,47 @@ export async function POST(request) {
           });
 
           // Crear las asistencias para cada módulo
+          for (const modulo of modulos) {
+            await tx.asistencia.create({
+              data: {
+                id_vocero: vocero.id,
+                id_modulo: modulo.id,
+                id_curso: curso.id,
+                id_usuario: validaciones.id_usuario,
+                presente: false, // Inicialmente no aprobado
+                fecha_registro: new Date(),
+              },
+            });
+          }
+        }
+      }
+ */
+
+      if (Array.isArray(formaciones) && formaciones.length > 0) {
+        for (const { id: id_formacion } of formaciones) {
+          // Crear el curso asociado al vocero
+          const curso = await tx.curso.create({
+            data: {
+              id_vocero: vocero.id,
+              id_formacion: id_formacion,
+              id_usuario: validaciones.id_usuario,
+              verificado: false,
+              certificado: false,
+            },
+          });
+
+          // Obtener los módulos de la formación actual (filtrando por `id_formacion`)
+          const formacionConModulos = await tx.formacion.findUnique({
+            where: { id: id_formacion },
+            include: {
+              modulos: true, // Esto traerá solo los módulos de esta formación
+            },
+          });
+
+          // Extraer los módulos correctamente
+          const modulos = formacionConModulos?.modulos || [];
+
+          // Crear las asistencias solo para los módulos de esta formación
           for (const modulo of modulos) {
             await tx.asistencia.create({
               data: {
