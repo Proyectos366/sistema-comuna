@@ -81,6 +81,7 @@ export default async function validarCrearVocero(
     const edadNumero = edad ? Number(edad) : null;
     const direccionMinuscula = direccion ? direccion.toLowerCase() : null;
     const laboralMinuscula = laboral ? laboral.toLowerCase() : null;
+    const generoNumero = genero ? Number(genero) : null;
 
     if (isNaN(edadNumero) || edadNumero <= 0) {
       // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
@@ -136,7 +137,7 @@ export default async function validarCrearVocero(
       apellido: apellidoMinuscula,
       apellidoDos: apellido_dosMinuscula,
       cedula: cedulaNumero,
-      genero: genero && genero === "1" ? true : false,
+      genero: generoNumero === 1 ? true : false,
       edad: edadNumero,
       telefono: telefono,
       direccion: direccionMinuscula,

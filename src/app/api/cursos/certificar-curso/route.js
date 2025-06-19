@@ -8,19 +8,20 @@ export async function PATCH(request) {
     const cursoId = Number(id_curso);
     const voceroId = Number(id_vocero);
 
-    const verificarCurso = await prisma.curso.update({
+    const certificandoCurso = await prisma.curso.update({
       where: {
         id: cursoId,
         id_vocero: voceroId,
       },
       data: {
-        verificado: true,
-        updatedAt: new Date(),
+        certificado: true,
+        fecha_completado: new Date(),
+        culminado: true,
       },
     });
 
-    const nuevaAsistencia = await prisma.curso.findFirst({
-      where: { id: verificarCurso.id, borrado: false }, // Filtra solo el curso afectado
+    const cursoCertificado = await prisma.curso.findFirst({
+      where: { id: certificandoCurso.id, borrado: false }, // Filtra solo el curso afectado
       include: {
         voceros: {
           select: {
@@ -49,21 +50,21 @@ export async function PATCH(request) {
       },
     });
 
-    if (!nuevaAsistencia) {
-      return generarRespuesta("error", "Error, no se verifico...", {}, 400);
+    if (!cursoCertificado) {
+      return generarRespuesta("error", "Error, no se certifico...", {}, 400);
     } else {
       return generarRespuesta(
         "ok",
-        "Verificado con exito...",
+        "Certificado con exito...",
         {
-          curso: nuevaAsistencia,
+          curso: cursoCertificado,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (validar curso): ` + error);
+    console.log(`Error interno (certificar curso): ` + error);
 
-    return generarRespuesta("error", "Error, interno (validar curso)", {}, 500);
+    return generarRespuesta("error", "Error, interno (certificar curso)", {}, 500);
   }
 }

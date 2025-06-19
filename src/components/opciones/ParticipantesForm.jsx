@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Modal from "../Modal";
 import ModalDatos from "../ModalDatos";
@@ -37,61 +37,12 @@ export default function ParticipantesForm({
 
   const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
   const [datosVerificar, setDatosVerificar] = useState([]);
+  const [datosCertificar, setDatosCertificar] = useState([]);
   const [estadoUsuarios, setEstadoUsuarios] = useState({});
 
+  const inputRefs = useRef({});
+
   const [opciones, setOpciones] = useState("");
-
-  const actualizarFechaModulo = (moduloId, fecha, asistenciaId) => {
-    setDatosActualizar({
-      modulo: moduloId,
-      fecha: fecha,
-      id_asistencia: asistenciaId,
-    });
-
-    setFechaAprobacionModulo((prev) => ({
-      ...prev,
-      [moduloId]: fecha, // Guarda solo la fecha del módulo seleccionado
-    }));
-  };
-
-  const verificarParticipante = async (id_curso, id_vocero) => {
-     try {
-      // Enviar actualización a la API
-      const response = await axios.patch(
-        `/api/cursos/verificar-curso`,
-        {
-          id_curso: id_curso,
-          id_vocero: id_vocero
-        }
-      );
-      setCursos((prevCursos) =>
-        prevCursos.map((curso) =>
-          curso.id === response.data.curso.id // Encuentra el curso afectado
-            ? {
-                ...curso,
-                asistencias: response.data.curso.asistencias, // Solo actualiza asistencias
-                formaciones: response.data.curso.formaciones, // También actualiza los módulos y formación
-              }
-            : curso
-        )
-      );
-      abrirMensaje(response.data.message);
-
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-    } catch (error) {
-      console.log("Error, verificar participante: " + error);
-      abrirMensaje(error?.response?.data?.message);
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-    }
-  };
-
-  const toggleExpand = (cursoId) => {
-    setExpanded((prev) => (prev === cursoId ? {} : cursoId));
-  };
 
   useEffect(() => {
     const fetchCursos = async () => {
@@ -136,6 +87,31 @@ export default function ParticipantesForm({
     setEstadoUsuarios(nuevoEstadoUsuarios);
   }, [cursos]); // Se ejecuta cada vez que `cursos` cambia
 
+  const handleContainerClick = (idAsistencia) => {
+    const targetInput = inputRefs.current[idAsistencia];
+    if (targetInput && !targetInput.disabled) {
+      targetInput.showPicker?.();
+      targetInput.focus();
+    }
+  };
+
+  const actualizarFechaModulo = (moduloId, fecha, asistenciaId) => {
+    setDatosActualizar({
+      modulo: moduloId,
+      fecha: fecha,
+      id_asistencia: asistenciaId,
+    });
+
+    setFechaAprobacionModulo((prev) => ({
+      ...prev,
+      [moduloId]: fecha, // Guarda solo la fecha del módulo seleccionado
+    }));
+  };
+
+  const toggleExpand = (cursoId) => {
+    setExpanded((prev) => (prev === cursoId ? {} : cursoId));
+  };
+
   const validarModulo = async () => {
     try {
       // Enviar actualización a la API
@@ -175,16 +151,78 @@ export default function ParticipantesForm({
     }
   };
 
-  
+  const verificarParticipante = async () => {
+    try {
+      const response = await axios.patch(`/api/cursos/verificar-curso`, {
+        id_curso: datosVerificar.id,
+        id_vocero: datosVerificar.id_vocero,
+      });
+
+      setCursos((prevCursos) =>
+        prevCursos.map((curso) =>
+          curso.id === response.data.curso.id
+            ? {
+                ...curso,
+                asistencias: response.data.curso.asistencias,
+                formaciones: response.data.curso.formaciones,
+                verificado: true, // Aquí se marca como verificado
+              }
+            : curso
+        )
+      );
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, verificar participante: " + error);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    }
+  };
+
+  const certificarParticipante = async (id_curso, id_vocero) => {
+    try {
+      // Enviar actualización a la API
+      const response = await axios.patch(`/api/cursos/certificar-curso`, {
+        id_curso: datosCertificar.id,
+        id_vocero: datosCertificar.id_vocero,
+      });
+      setCursos((prevCursos) =>
+        prevCursos.map((curso) =>
+          curso.id === response.data.curso.id
+            ? {
+                ...curso,
+                asistencias: response.data.curso.asistencias,
+                formaciones: response.data.curso.formaciones,
+                verificado: true, // Aquí se marca como verificado
+                certificado: true,
+                culminado: true,
+                fecha_completado: true,
+              }
+            : curso
+        )
+      );
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, verificar participante: " + error);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    }
+  };
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>;
 
-
-  /**
-   debo arreglar la modal para que pueda enviar los datos correspondientes
-   
-   */
   return (
     <>
       <Modal
@@ -203,49 +241,166 @@ export default function ParticipantesForm({
         <ModalDatosContenedor>
           {opciones === "modulo" && (
             <>
-              <ModalDatos titulo={"Modulo"} descripcion={idModulo} />
+              <ModalDatos titulo="Modulo" descripcion={idModulo} />
               <ModalDatos
-                titulo={"Fecha aprobado"}
+                titulo="Fecha aprobado"
                 descripcion={formatearFecha(
                   fechaAprobacionModulo[idModulo] + "T00:00:00Z"
                 )}
               />
             </>
           )}
+
+          {opciones === "verificado" && (
+            <>
+              <div className="-mt-5 border-l-4 border-red-500 bg-green-100 p-2 shadow-sm rounded-md mb-2">
+                <h2 className="text-red-700 font-bold text-md sm:text-lg mb-1">
+                  ⚠️ Aviso importante
+                </h2>
+                <p className="text-red-600 text-xs sm:text-sm text-justify">
+                  Revise cuidadosamente todos los datos.{" "}
+                  <strong>Una vez verificados, no se podrán modificar.</strong>
+                </p>
+              </div>
+              <ModalDatos
+                titulo={"Cédula"}
+                descripcion={datosVerificar.voceros.cedula}
+              />
+              <ModalDatos
+                titulo={"Edad"}
+                descripcion={datosVerificar.voceros.edad}
+              />
+              <ModalDatos
+                titulo={"Primer nombre"}
+                descripcion={datosVerificar.voceros.nombre}
+              />
+              <ModalDatos
+                titulo={"Segundo nombre"}
+                descripcion={datosVerificar.voceros.nombre_dos}
+              />
+
+              <ModalDatos
+                titulo={"Primer apellido"}
+                descripcion={datosVerificar.voceros.apellido}
+              />
+              <ModalDatos
+                titulo={"Segundo apellido"}
+                descripcion={datosVerificar.voceros.apellido_dos}
+              />
+
+              <ModalDatos
+                titulo={"Género"}
+                descripcion={
+                  datosVerificar.voceros.genero ? "Masculino" : "Femenino"
+                }
+              />
+              <ModalDatos
+                titulo={"Correo"}
+                descripcion={datosVerificar.voceros.correo}
+              />
+
+              <ModalDatos
+                titulo={"Teléfono"}
+                descripcion={datosVerificar.voceros.telefono}
+              />
+
+              <ModalDatos
+                titulo={"Comuna"}
+                descripcion={datosVerificar.voceros.comunas.nombre}
+              />
+
+              <ModalDatos
+                titulo={"Formación"}
+                descripcion={datosVerificar.formaciones.nombre}
+              />
+            </>
+          )}
+
+          {opciones === "certificado" && (
+            <>
+              {" "}
+              <div className="-mt-4 border-l-4 border-red-500 bg-green-100 p-2 shadow-sm rounded-md">
+                <h2 className="text-red-700 font-bold text-lg mb-1">
+                  ⚠️ Aviso importante
+                </h2>
+                <p className="text-red-600 text-sm text-justify">
+                  Revise cuidadosamente todos los datos.{" "}
+                  <strong>Solo se podra certificar 1 vez por formación.</strong>
+                </p>
+              </div>
+              <ModalDatos
+                titulo={"Cédula"}
+                descripcion={datosCertificar.voceros.cedula}
+              />
+              <ModalDatos
+                titulo={"Nombres"}
+                descripcion={`${datosCertificar.voceros.nombre} ${datosCertificar.voceros.nombre_dos}`}
+              />
+              <ModalDatos
+                titulo={"Apellidos"}
+                descripcion={`${datosCertificar.voceros.apellido} ${datosCertificar.voceros.apellido_dos}`}
+              />
+              <ModalDatos
+                titulo={"Comuna"}
+                descripcion={datosCertificar.voceros.comunas.nombre}
+              />
+              <ModalDatos
+                titulo={"Formación"}
+                descripcion={datosCertificar.formaciones.nombre}
+              />
+            </>
+          )}
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        {opciones === "modulo" &&
-          <BotonesModal
-          aceptar={validarModulo}
+
+        <BotonesModal
+          aceptar={() => {
+            switch (opciones) {
+              case "modulo":
+                return validarModulo();
+              case "verificado":
+                return verificarParticipante();
+              case "certificado":
+                return certificarParticipante();
+              default:
+                return null;
+            }
+          }}
           cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
+          indiceUno="crear"
+          indiceDos="cancelar"
+          nombreUno="Aceptar"
+          nombreDos="Cancelar"
           campos={{}}
         />
-        }
       </Modal>
+
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Certificar participantes"}>
           {cursos.map((curso, index) => {
-            //const puedeVerificar = estadoUsuarios[curso.id]; // `false` si faltan módulos
-            //const puedeCertificar = puedeVerificar && curso.verificado;
-
             const usuario = estadoUsuarios[curso.id] || {};
 
             return (
               <div
                 key={curso.id}
-                className="border border-gray-300 rounded-lg shadow-md p-4 mb-4"
+                className={`border ${
+                  !curso.verificado
+                    ? !usuario.puedeVerificar
+                      ? "border-gray-300"
+                      : ""
+                    : !curso.certificado
+                    ? "border-green-500"
+                    : "border-red-500"
+                } rounded-md shadow-md p-1 sm:p-4 mb-4`}
               >
-                <div className="flex justify-between items-center">
-                  <div>
+                <div className="flex justify-between items-center space-x-5">
+                  <div className="w-2/3">
                     <div className="">
                       <b>Cédula: </b>
                       <span>{curso.voceros.cedula}</span>
                     </div>
+
                     <div className="">
                       <b>Nombre: </b>
                       <span>
@@ -257,100 +412,140 @@ export default function ParticipantesForm({
 
                   <button
                     onClick={() => toggleExpand(curso.id)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className={`border w-1/3 ${
+                      !curso.verificado
+                        ? !usuario.puedeVerificar
+                          ? "bg-gray-300 text-black border-gray-400"
+                          : "color-fondo text-white "
+                        : !curso.certificado
+                        ? "border-green-500 bg-green-500 text-white"
+                        : "border-red-500 bg-red-500 text-white"
+                    } cursor-pointer rounded-md shadow-md p-2 hover:font-semibold transition-transform transform hover:scale-105`}
                   >
-                    {expanded[curso.id]
+                    {expanded === curso.id
                       ? "▲ Ocultar detalles"
                       : "▼ Mostrar detalles"}
                   </button>
                 </div>
 
                 {expanded === curso.id && (
-                  <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                    <p className="text-gray-700">
+                  <div className="mt-4 p-2 sm:p-4 bg-gray-100 rounded-md">
+                    <p className="">
                       <strong>Comuna: </strong>
                       {curso.voceros.comunas?.nombre || "No asignada"}
                     </p>
-                    <p className="text-gray-700">
+                    <p className="">
                       <strong>Correo: </strong>
                       {curso.voceros.correo}
                     </p>
-                    <p className="text-gray-700">
+                    <p className="">
                       <strong>Formación: </strong>
                       {curso.formaciones.nombre}
                     </p>
 
-                    <div className="mt-2 border border-gray-500 rounded-md p-2">
+                    <div
+                      className={`border ${
+                        !curso.verificado
+                          ? !usuario.puedeVerificar
+                            ? " text-black border-gray-400"
+                            : "borde-fondo"
+                          : !curso.certificado
+                          ? "border-green-500"
+                          : "border-red-500"
+                      } rounded-md shadow-md p-2 mt-2`}
+                    >
                       <p className="font-semibold">Módulos (asistencias):</p>
                       <div className="flex flex-col space-y-2">
                         {curso.asistencias.map((asistencia) => {
                           return (
                             <div
                               key={asistencia.id_modulo}
-                              className="flex justify-between items-center space-x-3"
+                              className="flex flex-wrap justify-between items-center gap-3 mt-1"
                             >
-                              <div className="w-full border border-gray-100 rounded-md shadow-sm py-2 text-center">
+                              <div className="flex-1 text-sm sm:text-lg py-2 text-center uppercase border border-gray-300 rounded-md shadow-sm min-w-0">
                                 {curso.formaciones.modulos.find(
                                   (m) => m.id === asistencia.id_modulo
                                 )?.nombre || "Módulo desconocido"}
                               </div>
 
-                              <div className="w-full -mt-1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              <div className="flex-1 min-w-0">
                                 {asistencia.presente ? (
-                                  <div className="w-full py-2 text-center border border-gray-300 rounded-md shadow-sm">
+                                  <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-gray-400 rounded-md shadow-sm">
                                     {formatearFecha(asistencia.fecha_registro)}
                                   </div>
                                 ) : (
-                                  <Input
-                                    type="date"
-                                    disabled={asistencia.presente}
-                                    value={
-                                      fechaAprobacionModulo[
-                                        asistencia.id_modulo
-                                      ] || ""
+                                  <div
+                                    onClick={() =>
+                                      handleContainerClick(asistencia.id)
                                     }
-                                    onChange={(e) =>
-                                      actualizarFechaModulo(
-                                        asistencia.id_modulo,
-                                        e.target.value,
-                                        asistencia.id
-                                      )
-                                    }
-                                  />
+                                    className="w-full cursor-pointer"
+                                  >
+                                    <Input
+                                      ref={(el) => {
+                                        if (el)
+                                          inputRefs.current[asistencia.id] = el;
+                                      }}
+                                      max={new Date().toISOString().split("T")[0]}
+                                      type="date"
+                                      disabled={asistencia.presente}
+                                      value={
+                                        fechaAprobacionModulo[
+                                          asistencia.id_modulo
+                                        ] || ""
+                                      }
+                                      onChange={(e) =>
+                                        actualizarFechaModulo(
+                                          asistencia.id_modulo,
+                                          e.target.value,
+                                          asistencia.id
+                                        )
+                                      }
+                                      className="w-full cursor-pointer"
+                                    />
+                                  </div>
                                 )}
                               </div>
 
-                              <div className={`w-full`}>
-                                <Boton
-                                  nombre={
-                                    asistencia.presente
-                                      ? "✔ Aprobado"
-                                      : "Aprobar"
-                                  }
-                                  disabled={
-                                    !fechaAprobacionModulo[
-                                      asistencia.id_modulo
-                                    ] || asistencia.presente
-                                  } // Solo se activa el botón con fecha
-                                  onClick={() => {
-                                    setOpciones("modulo");
-                                    abrirModal();
-                                    setIdModulo(asistencia.id_modulo);
-                                    console.log(
-                                      "Fecha seleccionada:",
-                                      fechaAprobacionModulo[
+                              <div className="flex-1 min-w-0">
+                                {asistencia.presente ? (
+                                  <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-red-600 rounded-md shadow-sm">
+                                    Aprobado
+                                  </div>
+                                ) : (
+                                  <Boton
+                                    nombre={"Aprobar"}
+                                    disabled={
+                                      !fechaAprobacionModulo[
+                                        asistencia.id_modulo
+                                      ] || asistencia.presente
+                                    }
+                                    onClick={() => {
+                                      setOpciones("modulo");
+                                      abrirModal();
+                                      setIdModulo(asistencia.id_modulo);
+                                    }}
+                                    className={`w-full py-2 ${
+                                      !fechaAprobacionModulo[
                                         asistencia.id_modulo
                                       ]
-                                    ); // Captura solo la fecha del módulo correspondiente
-                                  }}
-                                  className={`py-2 ${
-                                    !fechaAprobacionModulo[asistencia.id_modulo]
-                                      ? "cursor-not-allowed bg-gray-400 text-black"
-                                      : asistencia.presente
-                                      ? "cursor-not-allowed bg-gray-400 text-black"
-                                      : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
-                                  }`}
-                                />
+                                        ? "bg-gray-400 text-black"
+                                        : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                                    }`}
+                                  />
+                                )}
                               </div>
                             </div>
                           );
@@ -358,17 +553,17 @@ export default function ParticipantesForm({
                       </div>
                     </div>
 
-                    <div className="mt-4 flex gap-2">
+                    <div className="mt-4 flex gap-4">
                       <Boton
                         title={
                           !usuario.puedeVerificar
-                            ? "Para verificar perimero debe validar todos los modulos"
+                            ? "Para verificar primero debe validar todos los modulos"
                             : !usuario.estaVerificado
                             ? "Puede verificar"
                             : "Ya esta verificado"
                         }
                         nombre={
-                          usuario.estaVerificado ? "✔ Verificado" : "Verificar"
+                          usuario.estaVerificado ? "Verificado" : "Verificar"
                         }
                         disabled={
                           !usuario.puedeVerificar || usuario.estaVerificado
@@ -376,14 +571,14 @@ export default function ParticipantesForm({
                         onClick={() => {
                           setOpciones("verificado");
                           abrirModal();
-                          verificarParticipante(curso.id, curso.id_vocero)
+                          setDatosVerificar(curso);
                         }}
                         className={`py-2 ${
                           !usuario.puedeVerificar
-                            ? "bg-red-600 hover:bg-red-700 text-white"
+                            ? "bg-gray-400 hover:bg-GRAY-300 text-black"
                             : usuario.estaVerificado
-                            ? "cursor-not-allowed bg-gray-400 text-black"
-                            : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                            ? "bg-red-600 hover:bg-red-700 text-white"
+                            : "color-fondo hover:bg-blue-700 text-white"
                         }`}
                       />
 
@@ -395,19 +590,20 @@ export default function ParticipantesForm({
                             ? "Puede certificar"
                             : "Ya esta certificado"
                         }
-                        nombre={
-                          !usuario.estaVerificado
-                            ? "Certificado"
-                            : "🎓 Certificar"
+                        nombre={curso.culminado ? "Certificado" : "Certificar"}
+                        disabled={
+                          curso.culminado ? true : !usuario.puedeCertificar
                         }
-                        disabled={!usuario.puedeCertificar}
                         onClick={() => {
                           setOpciones("certificado");
                           abrirModal();
+                          setDatosCertificar(curso);
                         }}
                         className={`py-2 ${
                           usuario.puedeCertificar
-                            ? "cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+                            ? curso.culminado
+                              ? "bg-red-600 hover:bg-red-700 text-white"
+                              : "bg-green-600 hover:bg-green-700 text-white"
                             : !usuario.puedeCertificar
                             ? "cursor-not-allowed bg-gray-400 text-black"
                             : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
