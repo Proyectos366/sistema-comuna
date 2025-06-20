@@ -26,6 +26,9 @@ export default function VistaUniversalInicio() {
   const [historialRutas, setHistorialRutas] = useState([]);
   const [indiceHistorial, setIndiceHistorial] = useState(-1);
 
+  const [buscador, setBuscador] = useState("");
+  const [validarCedula, setValidarCedula] = useState(false);
+
   const refMenuPerfil = useRef(null);
   const refMenuNotificaciones = useRef(null);
 
@@ -322,7 +325,12 @@ export default function VistaUniversalInicio() {
             </header>
 
             <main className={`bg-[#faf5f8] rounded-md px-4 h-full`}>
-              <MostrarAlInicioUsuarios />
+              <MostrarAlInicioUsuarios
+                buscador={buscador}
+                setBuscador={setBuscador}
+                validarCedula={validarCedula}
+                setValidarCedula={setValidarCedula}
+              />
             </main>
 
             <Footer />
