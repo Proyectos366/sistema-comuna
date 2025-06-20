@@ -55,6 +55,10 @@ export default function VoceroForm({
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
+  const [nombreComuna, setNombreComuna] = useState("");
+  const [nombreConsejoComunal, setNombreConsejoComunal] = useState("");
+  const [nombreFormacion, setNombreFormacion] = useState("");
+
   // Consultar parroquias al cargar el componente
   useEffect(() => {
     const fetchParroquias = async () => {
@@ -271,7 +275,8 @@ export default function VoceroForm({
     );
   };
 
-  const toggleFormacion = (id) => {
+  const toggleFormacion = (id, nombre) => {
+    setNombreFormacion(nombre);
     setSeleccionarFormacion((prev) =>
       prev.includes(id)
         ? prev.filter((formacion) => formacion !== id)
@@ -372,8 +377,41 @@ export default function VoceroForm({
         titulo={"¿Crear este vocero?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo={"Cedula"} descripcion={cedulaVocero} />
+          <ModalDatos titulo={"Edad"} descripcion={edadVocero} />
           <ModalDatos titulo={"Primer nombre"} descripcion={nombreVocero} />
           <ModalDatos titulo={"Segundo nombre"} descripcion={nombreDosVocero} />
+          <ModalDatos titulo={"Primer apellido"} descripcion={apellidoVocero} />
+          <ModalDatos
+            titulo={"Segundo apellido"}
+            descripcion={apellidoDosVocero}
+          />
+
+          <ModalDatos
+            titulo={"Genero"}
+            descripcion={generoVocero == 1 ? "Masculino" : "Femenino"}
+          />
+          <ModalDatos titulo={"Telefono"} descripcion={telefonoVocero} />
+
+          <ModalDatos titulo={"Correo"} descripcion={correoVocero} />
+          <ModalDatos
+            titulo={"Actividad laboral"}
+            descripcion={actividadLaboralVocero}
+          />
+
+          <ModalDatos titulo={"Formación"} descripcion={nombreFormacion} />
+          <ModalDatos
+            titulo={"Actividad laboral"}
+            descripcion={actividadLaboralVocero}
+          />
+
+          <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
+          {nombreConsejoComunal && (
+            <ModalDatos
+              titulo={"Consejo comunal"}
+              descripcion={nombreConsejoComunal}
+            />
+          )}
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -441,6 +479,8 @@ export default function VoceroForm({
             toggleFormaciones={toggleFormacion}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
+            setNombreComuna={setNombreComuna}
+            setNombreConsejoComunal={setNombreConsejoComunal}
           />
         </DivUnoDentroSectionRegistroMostrar>
 

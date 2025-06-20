@@ -10,7 +10,7 @@ export default function InputCheckBox({
       <input
         type="checkbox"
         checked={isChecked}
-        onChange={() => onToggle(id)}
+        onChange={() => onToggle(id, nombre)}
         className={`form-checkbox border w-${altura ? altura : 5} h-${
           altura ? altura : 5
         } text-blue-600 border-gray-300 rounded focus:ring-blue-400`}

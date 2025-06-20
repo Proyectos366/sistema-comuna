@@ -7,7 +7,7 @@ export default function ListadoGenaral({
   mensajeVacio,
 }) {
   return (
-    <div className="w-full max-w-xl bg-white bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl p-6">
+    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
       <Titulos indice={2} titulo={nombreListado} />
 
       {isLoading ? (

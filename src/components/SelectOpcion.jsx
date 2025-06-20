@@ -9,6 +9,7 @@ export default function SelectOpcion({
   handleChange,
   opciones,
   seleccione,
+  setNombre,
 }) {
   const [abierto, setAbierto] = useState(false);
   const [seleccionado, setSeleccionado] = useState("");
@@ -70,7 +71,7 @@ export default function SelectOpcion({
           </span>
         </div>
       </label>
-      {abierto && (
+      {/* {abierto && (
         <div
           className={`border border-[#082158] w-full px-2 mt-1 ${
             busqueda ? "pb-2" : ""
@@ -103,6 +104,53 @@ export default function SelectOpcion({
                   className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2
                   ${index === opciones.length - 1 ? "mb-2" : ""}`}
                   onClick={() => manejarSeleccion(opc.id, opc.nombre)}
+                >
+                  {opc.nombre}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )} */}
+
+      {abierto && (
+        <div
+          className={`border border-[#082158] w-full px-2 mt-1 ${
+            busqueda ? "pb-2" : ""
+          } pt-2 bg-white rounded-lg shadow-md z-10`}
+        >
+          <Input
+            type={"text"}
+            placeholder={"Buscar..."}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+
+          <ul>
+            {!busqueda && (
+              <li
+                className="p-2 bg-gray-100 hover:bg-gray-300 uppercase cursor-pointer transition duration-150 rounded-md mt-2"
+                onClick={() => manejarSeleccion("", seleccione)}
+              >
+                {seleccione}
+              </li>
+            )}
+
+            {opciones
+              .filter((opc) =>
+                opc.nombre.toLowerCase().includes(busqueda.toLowerCase())
+              )
+              .sort((a, b) => a.nombre.localeCompare(b.nombre))
+              .map((opc, index) => (
+                <li
+                  key={opc.id}
+                  className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
+                    index === opciones.length - 1 ? "mb-2" : ""
+                  }`}
+                  onClick={() => {
+                    manejarSeleccion(opc.id, opc.nombre);
+                    if (typeof setNombre === "function") {
+                      setNombre(opc.nombre); // Solo se ejecuta si se pasó la función
+                    }
+                  }}
                 >
                   {opc.nombre}
                 </li>
