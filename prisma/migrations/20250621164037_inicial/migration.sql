@@ -127,6 +127,7 @@ CREATE TABLE "vocero" (
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "laboral" TEXT NOT NULL,
+    "f_n" DATETIME NOT NULL,
     "borrado" BOOLEAN NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,

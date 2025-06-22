@@ -134,7 +134,7 @@ export default function SelectOpcion({
               </li>
             )}
 
-            {opciones
+            {opciones && opciones
               .filter((opc) =>
                 opc.nombre.toLowerCase().includes(busqueda.toLowerCase())
               )

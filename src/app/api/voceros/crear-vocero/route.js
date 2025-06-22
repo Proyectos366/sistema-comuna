@@ -113,6 +113,7 @@ export async function POST(request) {
           correo: validaciones.correo,
           token: validaciones.token,
           laboral: validaciones.laboral,
+          f_n: validaciones.fechaNacimiento,
           borrado: false,
           id_usuario: validaciones.id_usuario,
           id_comuna: validaciones.id_comuna,

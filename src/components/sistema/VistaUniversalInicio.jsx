@@ -29,6 +29,24 @@ export default function VistaUniversalInicio() {
   const [buscador, setBuscador] = useState("");
   const [validarCedula, setValidarCedula] = useState(false);
 
+  const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
+
+  const [cedula, setCedula] = useState("");
+
+  const [todasParroquias, setTodasParroquias] = useState([]);
+  const [todasComunas, setTodasComunas] = useState([]);
+  const [todosConsejos, setTodosConsejos] = useState([]);
+
+  const [voceroPorCedula, setVoceroPorCedula] = useState([]);
+  const [voceroPorParroquia, setVoceroPorParroquia] = useState([]);
+  const [voceroPorComuna, setVoceroPorComuna] = useState([]);
+  const [voceroPorConsejo, setVoceroPorConsejo] = useState([]);
+  const [voceroPorTodos, setVoceroPorTodos] = useState([]);
+
+  const [idOpcion, setIdOpcion] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
   const refMenuPerfil = useRef(null);
   const refMenuNotificaciones = useRef(null);
 
@@ -277,6 +295,49 @@ export default function VistaUniversalInicio() {
     localStorage.removeItem("historialRutas");
   };
 
+  const consultarVoceroCedula = async () => {
+    console.log(cedula);
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/voceros/cedula-vocero", {
+        cedula: cedula
+      });
+      setVoceroPorCedula(response.data.vocero);
+    } catch (error) {
+      console.log("Error, al consultar vocero: " + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const consultarVoceroParroquia = async () => {
+    console.log("Consulta vocero por parroquia: " + voceroPorParroquia.length);
+  };
+
+  const consultarVoceroComuna = async () => {
+    console.log("Consulta vocero por comuna: " + voceroPorComuna.length);
+  };
+
+  const consultarVoceroConsejo = async () => {
+    console.log("Consulta vocero por consejo: " + voceroPorConsejo);
+  };
+
+  const consultarVoceroTodos = async () => {
+    console.log("Consulta vocero por todos: " + voceroPorTodos.length);
+  };
+
+  const consultarTodasParroquias = async () => {
+    console.log("Todas las parroquias: " + todasParroquias.length);
+  };
+
+  const consultarTodasComunas = async () => {
+    console.log("Todas las comunas: " + todasComunas.length);
+  };
+
+  const consultarTodosConsejos = async () => {
+    console.log("Todos los consejos: " + todosConsejos.length);
+  };
+
   return (
     <>
       {usuarioActivo && (
@@ -330,6 +391,30 @@ export default function VistaUniversalInicio() {
                 setBuscador={setBuscador}
                 validarCedula={validarCedula}
                 setValidarCedula={setValidarCedula}
+                seleccionarConsulta={seleccionarConsulta}
+                setSeleccionarConsulta={setSeleccionarConsulta}
+                consultarTodasParroquias={consultarTodasParroquias}
+                consultarTodasComunas={consultarTodasComunas}
+                consultarTodosConsejos={consultarTodosConsejos}
+                consultarTodos={consultarVoceroTodos}
+                cedula={cedula}
+                setCedula={setCedula}
+                consultarVoceroCedula={consultarVoceroCedula}
+                voceroPorCedula={voceroPorCedula}
+                consultarVoceroParroquia={consultarVoceroParroquia}
+                voceroPorParroquia={voceroPorParroquia}
+                consultarVoceroComuna={consultarVoceroComuna}
+                voceroPorComuna={voceroPorComuna}
+                consultarVoceroConsejo={consultarVoceroConsejo}
+                voceroPorConsejo={voceroPorConsejo}
+                consultarVoceroTodos={consultarVoceroTodos}
+                voceroPorTodos={voceroPorTodos}
+                idOpcion={idOpcion}
+                setIdOpcion={setIdOpcion}
+                todasParroquias={todasParroquias}
+                todasComunas={todasComunas}
+                todosConsejos={todosConsejos}
+                loading={loading}
               />
             </main>
 

@@ -5,6 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "@/services/ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { phoneRegex } from "@/utils/constantes";
+import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
 
 export default async function validarCrearVocero(
   nombre,
@@ -131,6 +132,8 @@ export default async function validarCrearVocero(
       return retornarRespuestaFunciones("error", "Error, vocero ya existe...");
     }
 
+    const fechaNacimiento = calcularFechaNacimientoPorEdad(edadNumero);
+
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       nombre: nombreMinuscula,
       nombreDos: nombre_dosMinuscula,
@@ -144,6 +147,7 @@ export default async function validarCrearVocero(
       correo: correoMinuscula,
       token: tokenVocero,
       laboral: laboralMinuscula,
+      fechaNacimiento: fechaNacimiento,
       id_usuario: usuarioId,
       id_comuna: comunaId,
       id_consejo: consejoId,

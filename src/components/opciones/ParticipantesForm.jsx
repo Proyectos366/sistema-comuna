@@ -16,6 +16,7 @@ import Input from "../Input";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Boton from "../Boton";
 import { formatearFecha } from "@/utils/Fechas";
+import InputDate from "../InputDate";
 
 export default function ParticipantesForm({
   mostrar,
@@ -462,7 +463,7 @@ export default function ParticipantesForm({
                               key={asistencia.id_modulo}
                               className="flex flex-wrap justify-between items-center gap-3 mt-1"
                             >
-                              <div className="flex-1 text-sm sm:text-lg py-2 text-center uppercase border border-gray-300 rounded-md shadow-sm min-w-0">
+                              <div className="flex-1 text-sm sm:text-lg py-[6px]  text-center uppercase border border-gray-300 rounded-md shadow-sm min-w-0">
                                 {curso.formaciones.modulos.find(
                                   (m) => m.id === asistencia.id_modulo
                                 )?.nombre || "Módulo desconocido"}
@@ -493,7 +494,7 @@ export default function ParticipantesForm({
                                     }
                                     className="w-full cursor-pointer"
                                   >
-                                    <Input
+                                    <InputDate
                                       ref={(el) => {
                                         if (el)
                                           inputRefs.current[asistencia.id] = el;
@@ -542,7 +543,7 @@ export default function ParticipantesForm({
                                         asistencia.id_modulo
                                       ]
                                         ? "bg-gray-400 text-black"
-                                        : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                                        : "cursor-pointer color-fondo hover:bg-blue-700 text-white py-[9px]"
                                     }`}
                                   />
                                 )}

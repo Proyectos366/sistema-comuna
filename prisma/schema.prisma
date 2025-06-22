@@ -162,6 +162,7 @@ model vocero {
   correo       String   @unique
   token        String   @unique
   laboral      String
+  f_n          DateTime
   borrado      Boolean
   id_usuario   Int
   id_comuna    Int?

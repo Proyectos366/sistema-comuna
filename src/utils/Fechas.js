@@ -43,3 +43,14 @@ export function formatearFecha(fechaISO) {
     return "Fecha inválida";
   }
 }
+
+
+export function calcularFechaNacimientoPorEdad(edad) {
+  const ahora = new Date();
+  const añoNacimiento = ahora.getFullYear() - edad;
+
+  // Creamos la fecha con 1 de enero de ese año, a medianoche
+  const fecha = new Date(`${añoNacimiento}-01-01T00:00:00.102Z`);
+
+  return fecha.toISOString(); // devuelve algo como "2000-01-01T00:00:00.102Z"
+}
