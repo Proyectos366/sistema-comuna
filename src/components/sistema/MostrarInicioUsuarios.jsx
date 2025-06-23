@@ -7,8 +7,18 @@ import ConsultarCedula from "./opciones_inicio/ConsultarCedula";
 import ConsultarTodasParroquias from "./opciones_inicio/ConsultarParroquias";
 import ConsultarTodasComunas from "./opciones_inicio/ConsultarComunas";
 import ConsultarTodosConsejos from "./opciones_inicio/ConsultarConsejosComunales";
+import Modal from "../Modal";
+import MostarMsjEnModal from "../MostrarMsjEnModal";
 
 export default function MostrarAlInicioUsuarios({
+  mostrar,
+  cerrarModal,
+  mostrarMensaje,
+  mensaje, abrirModal,
+  mostrarModal,
+    abrirMensaje,
+    limpiarCampos,
+    ejecutarAccionesConRetraso,
   buscador,
   setBuscador,
   validarCedula,
@@ -37,6 +47,7 @@ export default function MostrarAlInicioUsuarios({
   todasComunas,
   todosConsejos,
   loading,
+  expandido, setExpandido
 }) {
   const toggleConsultar = (id) => {
     const nuevoId = seleccionarConsulta === id ? null : id;
@@ -98,89 +109,98 @@ export default function MostrarAlInicioUsuarios({
   
 
   return (
-    <div className="flex flex-col mt-3">
-      <div className="flex justify-start">
-        <Titulos indice={2} titulo={"Consultas"} />
-      </div>
+    <>
+      <Modal isVisible={mostrar} onClose={cerrarModal} titulo={"Respuesta"}>
+        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+      </Modal>
 
-      <div className="border border-gray-200 p-2 rounded-md mb-2">
-        <div className="flex flex-wrap gap-2 sm:justify-between">
-          <div className="w-full sm:w-auto">
-            <InputCheckBox
-              id={1}
-              isChecked={seleccionarConsulta === 1}
-              onToggle={toggleConsultar}
-              nombre="Cédula"
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <InputCheckBox
-              id={2}
-              isChecked={seleccionarConsulta === 2}
-              onToggle={toggleConsultar}
-              nombre="Parroquia"
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <InputCheckBox
-              id={3}
-              isChecked={seleccionarConsulta === 3}
-              onToggle={toggleConsultar}
-              nombre="Comuna"
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <InputCheckBox
-              id={4}
-              isChecked={seleccionarConsulta === 4}
-              onToggle={toggleConsultar}
-              nombre="Consejo comunal"
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <InputCheckBox
-              id={5}
-              isChecked={seleccionarConsulta === 5}
-              onToggle={toggleConsultar}
-              nombre="Todos"
-            />
+      <div className="flex flex-col mt-3">
+        <div className="flex justify-start">
+          <Titulos indice={2} titulo={"Consultas"} />
+        </div>
+
+        <div className="border border-gray-200 p-2 rounded-md mb-2">
+          <div className="flex flex-wrap gap-2 sm:justify-between">
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={1}
+                isChecked={seleccionarConsulta === 1}
+                onToggle={toggleConsultar}
+                nombre="Cédula"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={2}
+                isChecked={seleccionarConsulta === 2}
+                onToggle={toggleConsultar}
+                nombre="Parroquia"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={3}
+                isChecked={seleccionarConsulta === 3}
+                onToggle={toggleConsultar}
+                nombre="Comuna"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={4}
+                isChecked={seleccionarConsulta === 4}
+                onToggle={toggleConsultar}
+                nombre="Consejo comunal"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={5}
+                isChecked={seleccionarConsulta === 5}
+                onToggle={toggleConsultar}
+                nombre="Todos"
+              />
+            </div>
           </div>
         </div>
+
+        <DivDosConsultas>
+          <ConsultarCedula
+            seleccionarConsulta={seleccionarConsulta}
+            formatearCedula={formatearCedula}
+            cedula={cedula}
+            handleChangeCedula={handleChangeCedula}
+            consultarVoceroCedula={consultarVoceroCedula}
+            voceroPorCedula={voceroPorCedula}
+            abrirModal={abrirModal}
+          />
+
+          <ConsultarTodasParroquias
+            seleccionarConsulta={seleccionarConsulta}
+            idParroquia={idOpcion}
+            cambiarSeleccionParroquia={cambiarSeleccionParroquia}
+            parroquias={todasParroquias}
+            voceroPorParroquia={voceroPorParroquia}
+            expandido={expandido}
+            setExpandido={setExpandido}
+          />
+
+          <ConsultarTodasComunas
+            seleccionarConsulta={seleccionarConsulta}
+            idParroquia={idOpcion}
+            cambiarSeleccionComuna={cambiarSeleccionComuna}
+            comunas={todasComunas}
+          />
+
+          <ConsultarTodosConsejos
+            seleccionarConsulta={seleccionarConsulta}
+            idConsejo={idOpcion}
+            cambiarSeleccionConsejo={cambiarSeleccionConsejo}
+            consejos={todosConsejos}
+          />
+        </DivDosConsultas>
       </div>
-
-      <DivDosConsultas>
-        <ConsultarCedula
-          seleccionarConsulta={seleccionarConsulta}
-          formatearCedula={formatearCedula}
-          cedula={cedula}
-          handleChangeCedula={handleChangeCedula}
-          consultarVoceroCedula={consultarVoceroCedula}
-          voceroPorCedula={voceroPorCedula}
-        />
-
-        <ConsultarTodasParroquias
-        seleccionarConsulta={seleccionarConsulta}
-          idParroquia={idOpcion}
-          cambiarSeleccionParroquia={cambiarSeleccionParroquia}
-          parroquias={todasParroquias}
-        />
-
-        <ConsultarTodasComunas
-        seleccionarConsulta={seleccionarConsulta}
-          idParroquia={idOpcion}
-          cambiarSeleccionComuna={cambiarSeleccionComuna}
-          comunas={todasComunas}
-        />
-
-        <ConsultarTodosConsejos
-        seleccionarConsulta={seleccionarConsulta}
-          idConsejo={idOpcion}
-          cambiarSeleccionConsejo={cambiarSeleccionConsejo}
-          consejos={todosConsejos}
-        />
-        
-      </DivDosConsultas>
-    </div>
+    </>
   );
 }
 

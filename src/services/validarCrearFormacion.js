@@ -32,7 +32,7 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
     }
 
     const correo = descifrarToken.correo;
-    const nombreMayuscula = nombre.toUpperCase();
+    const nombreMinuscula = nombre.toLowerCase();
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -64,7 +64,7 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: idUsuario.id,
-      nombre: nombreMayuscula,
+      nombre: nombreMinuscula,
       cantidadModulos: todoscantidadModulos,
       todosModulos: todoscantidadModulos,
     });

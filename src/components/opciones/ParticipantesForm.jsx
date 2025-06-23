@@ -469,19 +469,6 @@ export default function ParticipantesForm({
                                 )?.nombre || "Módulo desconocido"}
                               </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                               <div className="flex-1 min-w-0">
                                 {asistencia.presente ? (
                                   <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-gray-400 rounded-md shadow-sm">
@@ -499,7 +486,9 @@ export default function ParticipantesForm({
                                         if (el)
                                           inputRefs.current[asistencia.id] = el;
                                       }}
-                                      max={new Date().toISOString().split("T")[0]}
+                                      max={
+                                        new Date().toISOString().split("T")[0]
+                                      }
                                       type="date"
                                       disabled={asistencia.presente}
                                       value={
@@ -621,6 +610,53 @@ export default function ParticipantesForm({
     </>
   );
 }
+
+/**
+ {vocero.cursos.map((curso, index) => {
+  const usuario = estadoUsuarios[curso.id] || {};
+
+  return (
+    <div
+      key={curso.id}
+      className={`border ${
+        !curso.verificado
+          ? !usuario.puedeVerificar
+            ? "border-gray-300"
+            : ""
+          : !curso.certificado
+          ? "border-green-500"
+          : "border-red-500"
+      } rounded-md shadow-md p-1 sm:p-4 mb-4`}
+    >
+      
+      <p className="text-lg font-semibold">
+        Formación: {curso.formaciones?.nombre || "Sin formación asignada"}
+      </p>
+
+      <p className="text-sm text-gray-600">
+        Asistencias registradas: {curso.asistencias?.length || 0}
+      </p>
+    </div>
+  );
+})}
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  <div className="mt-2 border rounded-md p-2">

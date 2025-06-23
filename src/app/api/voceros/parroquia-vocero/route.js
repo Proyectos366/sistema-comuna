@@ -7,9 +7,9 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function POST(request) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
-    const { cedula } = await request.json();
+    const { idParroquia } = await request.json();
 
-    const cedulaNumero = Number(cedula);
+    const idParroquiaNumero = Number(idParroquia);
 
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -23,15 +23,16 @@ export async function POST(request) {
       );
     }
 
-    if (!cedula) {
-      return generarRespuesta("error", "Campo cedula vacio...", {}, 400);
+    if (!idParroquia) {
+      return generarRespuesta("error", "Id parroquia vacio...", {}, 400);
     }
 
-    const voceroPorCedula = await prisma.vocero.findUnique({
+    const voceroPorParroquia = await prisma.vocero.findMany({
       where: {
-        cedula: cedulaNumero,
+        id_parroquia: idParroquiaNumero,
       },
       select: {
+        id: true,
         nombre: true,
         nombre_dos: true,
         apellido: true,
@@ -75,10 +76,10 @@ export async function POST(request) {
       },
     });
 
-    if (!voceroPorCedula) {
+    if (!voceroPorParroquia) {
       return generarRespuesta(
         "error",
-        "Error, no existe el vocero...",
+        "Error, no hay voceros...",
         {},
         400
       );
@@ -86,16 +87,16 @@ export async function POST(request) {
 
     return generarRespuesta(
       "ok",
-      "Vocero encontrado...",
-      { vocero: voceroPorCedula },
+      "Voceros encontrados...",
+      { vocero: voceroPorParroquia },
       200
     );
   } catch (error) {
-    console.log(`Error interno, al consultar vocero por cedula: ${error}`);
+    console.log(`Error interno, al consultar vocero por parroquia: ${error}`);
 
     return generarRespuesta(
       "error",
-      "Error interno al consultar vocero...",
+      "Error interno al consultar vocero por parroquia...",
       {},
       500
     );
@@ -103,7 +104,7 @@ export async function POST(request) {
 }
 
 /**
- const cursos = voceroPorCedula.cursos.map(curso => {
+ const cursos = voceroPorParroquia.cursos.map(curso => {
   const modulosIncompletos = curso.modulos.filter(modulo => {
     return modulo.asistencias.length === 0;
   });

@@ -10,7 +10,18 @@ import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import { useUser } from "@/app/context/AuthContext";
 
 export default function VistaUniversalInicio() {
-  const { usuarioActivo, screenSize } = useUser();
+  const {
+    usuarioActivo,
+    screenSize,
+    mostrarModal,
+    abrirModal,
+    cerrarModal,
+    mensaje,
+    mostrarMensaje,
+    abrirMensaje,
+    limpiarCampos,
+    ejecutarAccionesConRetraso,
+  } = useUser();
   const [vista, setVista] = useState("");
 
   const [abrirPanel, setAbrirPanel] = useState(true);
@@ -42,6 +53,8 @@ export default function VistaUniversalInicio() {
   const [voceroPorComuna, setVoceroPorComuna] = useState([]);
   const [voceroPorConsejo, setVoceroPorConsejo] = useState([]);
   const [voceroPorTodos, setVoceroPorTodos] = useState([]);
+
+  const [expandido, setExpandido] = useState({});
 
   const [idOpcion, setIdOpcion] = useState("");
 
@@ -225,6 +238,14 @@ export default function VistaUniversalInicio() {
   //   fetchCursos();
   // }, []);
 
+  useEffect(() => {
+    
+    
+  if (todasParroquias.length !== 0 && idOpcion) {
+    consultarVoceroParroquia();
+  }
+}, [todasParroquias, idOpcion]);
+
   const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
     // Determinar la base de la ruta según el id_rol
     let baseRuta = ""; // Por defecto, no hay ninguna ruta
@@ -296,23 +317,61 @@ export default function VistaUniversalInicio() {
   };
 
   const consultarVoceroCedula = async () => {
-    console.log(cedula);
     try {
       setLoading(true);
       const response = await axios.post("/api/voceros/cedula-vocero", {
-        cedula: cedula
+        cedula: cedula,
       });
+
       setVoceroPorCedula(response.data.vocero);
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     } catch (error) {
       console.log("Error, al consultar vocero: " + error);
+      abrirMensaje(error?.response?.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+      setVoceroPorCedula([]);
     } finally {
       setLoading(false);
     }
   };
 
   const consultarVoceroParroquia = async () => {
-    console.log("Consulta vocero por parroquia: " + voceroPorParroquia.length);
+     try {
+      setLoading(true);
+      const response = await axios.post("/api/voceros/parroquia-vocero", {
+        idParroquia: idOpcion,
+      });
+
+      setVoceroPorParroquia(response.data.vocero);
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, al consultar vocero por parroquia: " + error);
+      abrirMensaje(error?.response?.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+      setVoceroPorParroquia([]);
+    } finally {
+      setLoading(false);
+    }
   };
+
+
+
+
+
 
   const consultarVoceroComuna = async () => {
     console.log("Consulta vocero por comuna: " + voceroPorComuna.length);
@@ -326,8 +385,35 @@ export default function VistaUniversalInicio() {
     console.log("Consulta vocero por todos: " + voceroPorTodos.length);
   };
 
+
+
+
+
+
+
+
   const consultarTodasParroquias = async () => {
-    console.log("Todas las parroquias: " + todasParroquias.length);
+     try {
+      setLoading(true);
+      const response = await axios.get("/api/parroquias/todas-parroquias");
+
+      setTodasParroquias(response.data.parroquias);
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, al consultar parroquias: " + error);
+      abrirMensaje(error?.response?.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+      setTodasParroquias([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const consultarTodasComunas = async () => {
@@ -337,6 +423,8 @@ export default function VistaUniversalInicio() {
   const consultarTodosConsejos = async () => {
     console.log("Todos los consejos: " + todosConsejos.length);
   };
+
+  
 
   return (
     <>
@@ -415,6 +503,16 @@ export default function VistaUniversalInicio() {
                 todasComunas={todasComunas}
                 todosConsejos={todosConsejos}
                 loading={loading}
+                abrirModal={abrirModal}
+                mostrar={mostrarModal}
+                cerrarModal={cerrarModal}
+                mostrarMensaje={mostrarMensaje}
+                mensaje={mensaje}
+                abrirMensaje={abrirMensaje}
+                limpiarCampos={limpiarCampos}
+                ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                expandido={expandido}
+                setExpandido={setExpandido}
               />
             </main>
 
