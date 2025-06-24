@@ -17,10 +17,12 @@ import VoceroForm from "../opciones/VoceroForm";
 import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
+import FormOac from "../oac/FormOac";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
     usuarioActivo,
+    departamento,
     screenSize,
     mostrarModal,
     abrirModal,
@@ -42,8 +44,15 @@ export default function VistaUniversalUsuarios({ children }) {
   const pathname = usePathname();
   const userType = usuarioActivo?.id_rol;
 
+  const idDepartamento = departamento?.id;
+  const nombreDepartamento = departamento?.nombre;
+
   useEffect(() => {
-    setAbrirPanel(screenSize?.width > 640);
+    if (screenSize?.width > 640) {
+      setAbrirPanel(true);
+    } else {
+      setAbrirPanel(false);
+    }
   }, [screenSize]);
 
   // **Función para cambiar la ruta correctamente**
@@ -112,6 +121,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ],
       2: [
         "parroquias",
@@ -126,8 +136,10 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ],
       3: [
+        "comunas",
         "consejos-comunales",
         "circuitos-comunales",
         "cargos",
@@ -139,10 +151,10 @@ export default function VistaUniversalUsuarios({ children }) {
       4: [
         "consejos-comunales",
         "circuitos-comunales",
-        "cargos",
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ],
     };
 
@@ -183,6 +195,7 @@ export default function VistaUniversalUsuarios({ children }) {
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
+              nombreDepartamento={nombreDepartamento}
             />
           </div>
 
@@ -307,6 +320,23 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
+
+                  {vista === "oac" && nombreDepartamento === 'oac' (
+                    <FormOac
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
+                  )}
+
+
+
                   {vista === "perfil" && (
                     <MostrarPerfilUsuario abrirPanel={abrirPanel} />
                   )}

@@ -12,6 +12,7 @@ import { useUser } from "@/app/context/AuthContext";
 export default function VistaUniversalInicio() {
   const {
     usuarioActivo,
+    departamento,
     screenSize,
     mostrarModal,
     abrirModal,
@@ -67,11 +68,10 @@ export default function VistaUniversalInicio() {
   const pathname = usePathname();
 
   const userType = usuarioActivo?.id_rol;
-  const perteneceDepartamento = usuarioActivo?.departamentos;
+  const idDepartamento = departamento?.id;
+  const nombreDepartamento = departamento?.nombre;
 
   useEffect(() => {
-    localStorage.clear();
-
     if (screenSize?.width > 640) {
       setAbrirPanel(true);
     } else {
@@ -111,7 +111,8 @@ export default function VistaUniversalInicio() {
       subRuta === "cargos" ||
       subRuta === "formaciones" ||
       subRuta === "modulos" ||
-      subRuta === "participantes"
+      subRuta === "participantes" ||
+      subRuta === "oac"
     ) {
       setVista(subRuta);
     } else {
@@ -157,6 +158,7 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ], // Rol 1: Master
       2: [
         "parroquias",
@@ -171,6 +173,7 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ], // Rol 2: Administrador
       3: [
         "consejos-comunales",
@@ -188,6 +191,7 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "oac"
       ], // Rol 4: Empleados
     };
 
@@ -221,30 +225,12 @@ export default function VistaUniversalInicio() {
     }
   }, [pathname, router, userType]);
 
-  // useEffect(() => {
-  //   const fetchCursos = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await axios.get("/api/cursos/todos-cursos"); // Consulta todos los cursos
-  //       setCursos(response.data.cursos);
-  //     } catch (error) {
-  //       console.log("Error, al consultar cursos: " + error);
-  //       setError("Error, al obtener los cursos");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchCursos();
-  // }, []);
 
   useEffect(() => {
-    
-    
-  if (todasParroquias.length !== 0 && idOpcion) {
-    consultarVoceroParroquia();
-  }
-}, [todasParroquias, idOpcion]);
+    if (todasParroquias.length !== 0 && idOpcion) {
+      consultarVoceroParroquia();
+    }
+  }, [todasParroquias, idOpcion]);
 
   const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
     // Determinar la base de la ruta según el id_rol
@@ -343,7 +329,7 @@ export default function VistaUniversalInicio() {
   };
 
   const consultarVoceroParroquia = async () => {
-     try {
+    try {
       setLoading(true);
       const response = await axios.post("/api/voceros/parroquia-vocero", {
         idParroquia: idOpcion,
@@ -368,11 +354,6 @@ export default function VistaUniversalInicio() {
     }
   };
 
-
-
-
-
-
   const consultarVoceroComuna = async () => {
     console.log("Consulta vocero por comuna: " + voceroPorComuna.length);
   };
@@ -385,15 +366,8 @@ export default function VistaUniversalInicio() {
     console.log("Consulta vocero por todos: " + voceroPorTodos.length);
   };
 
-
-
-
-
-
-
-
   const consultarTodasParroquias = async () => {
-     try {
+    try {
       setLoading(true);
       const response = await axios.get("/api/parroquias/todas-parroquias");
 
@@ -424,8 +398,6 @@ export default function VistaUniversalInicio() {
     console.log("Todos los consejos: " + todosConsejos.length);
   };
 
-  
-
   return (
     <>
       {usuarioActivo && (
@@ -445,7 +417,7 @@ export default function VistaUniversalInicio() {
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
               volverInicio={volverInicio}
-              perteneceDepartamento={perteneceDepartamento}
+              nombreDepartamento={nombreDepartamento}
             />
           </div>
 

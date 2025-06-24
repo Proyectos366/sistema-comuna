@@ -28,6 +28,20 @@ export async function GET() {
       where: { correo: correo },
     });
 
+    const datosDepartamentoUsuario = await prisma.departamento.findFirst({
+      where: {
+        miembros: {
+          some: {
+            id: datosUsuarioActivo?.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+        nombre: true,
+      },
+    });
+
     if (!datosUsuarioActivo) {
       return generarRespuesta(
         msjErrores.error,
@@ -39,7 +53,12 @@ export async function GET() {
       return generarRespuesta(
         msjCorrectos.ok,
         msjCorrectos.okConsultarUsuarioActivo.usuarioEncontrado,
-        { usuarioActivo: datosUsuarioActivo },
+        {
+          usuarioActivo: datosUsuarioActivo,
+          departamento: datosDepartamentoUsuario
+            ? datosDepartamentoUsuario
+            : [],
+        },
         msjCorrectos.codigo.codigo200
       );
     }

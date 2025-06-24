@@ -6,6 +6,7 @@ export default function MenuLateralUsuario({
   vista,
   id_rol,
   volverInicio,
+  nombreDepartamento,
 }) {
   return (
     <>
@@ -237,6 +238,28 @@ export default function MenuLateralUsuario({
                     nombre={"Inicio"}
                     volverInicio={volverInicio}
                   />
+
+                  {nombreDepartamento === "oac" && (
+                    <>
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"comunas"}
+                        nombre={"Comunas"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"oac"}
+                        nombre={"OAC"}
+                        volverInicio={volverInicio}
+                      />
+                    </>
+                  )}
 
                   <EnlacesBarraLateral
                     id_rol={id_rol}

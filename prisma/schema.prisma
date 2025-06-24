@@ -19,6 +19,20 @@ model role {
   usuarios usuario[] @relation(name: "UsuarioRole")
 }
 
+model departamento {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosDepartamento")
+}
+
 model usuario {
   id        Int      @id @default(autoincrement())
   cedula    String
@@ -32,17 +46,19 @@ model usuario {
   createdAt DateTime @default(now())
 
   // Relaciones
-  roles              role         @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
-  creadorDeComunas   comuna[]     @relation(name: "CreadorComuna")
-  creadorDeCircuitos circuito[]   @relation(name: "CreadorCircuito")
-  creadorDeConsejos  consejo[]    @relation(name: "CreadorConsejo")
-  voceros            vocero[]     @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
-  parroquias         parroquia[]  @relation(name: "UsuarioParroquia")
-  cargos             cargo[]      @relation(name: "CreadorCargo")
-  modulos            modulo[]     @relation(name: "CreadorModulo")
-  formaciones        formacion[]  @relation(name: "CreadorFormacion")
-  cursos             curso[]      @relation(name: "CreadorCurso")
-  asistencias        asistencia[] @relation(name: "CreadorAsistencia")
+  roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+  creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
+  creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
+  creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
+  voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  parroquias             parroquia[]    @relation(name: "CreadorParroquia")
+  cargos                 cargo[]        @relation(name: "CreadorCargo")
+  modulos                modulo[]       @relation(name: "CreadorModulo")
+  formaciones            formacion[]    @relation(name: "CreadorFormacion")
+  cursos                 curso[]        @relation(name: "CreadorCurso")
+  asistencias            asistencia[]   @relation(name: "CreadorAsistencia")
 }
 
 model cargo {
@@ -67,7 +83,7 @@ model parroquia {
   createdAt  DateTime @default(now())
 
   // Relaciones
-  usuarios  usuario    @relation("UsuarioParroquia", fields: [id_usuario], references: [id])
+  usuarios  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
   comunas   comuna[]   @relation("ComunaParroquia")
   circuitos circuito[] @relation("CircuitoParroquia")
   consejos  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
@@ -247,6 +263,35 @@ model asistencia {
   cursos   curso   @relation(fields: [id_curso], references: [id])
 }
 
+model clase {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  id_usuario Int
+  borrado    Boolean  @default(false)
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+
+  cursandos cursando[]
+}
+
+model cursando {
+  id           Int      @id @default(autoincrement())
+  cedula       String   @unique
+  edad         Int
+  genero       Boolean
+  f_n          DateTime
+  id_usuario   Int
+  id_parroquia Int
+  id_comuna    Int?
+  id_consejo   Int?
+  id_clase     Int
+  borrado      Boolean  @default(false)
+  updatedAt    DateTime @default(now()) @updatedAt
+  createdAt    DateTime @default(now())
+
+  clases clase @relation(fields: [id_clase], references: [id])
+}
+
 /**
  * generator client {
  * provider = "prisma-client-js"
@@ -281,7 +326,7 @@ model asistencia {
  * creadorDeCircuitos circuito[]  @relation(name: "CreadorCircuito")
  * creadorDeConsejos  consejo[]   @relation(name: "CreadorConsejo")
  * voceros            vocero[]    @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
- * parroquias         parroquia[] @relation(name: "UsuarioParroquia")
+ * parroquias         parroquia[] @relation(name: "CreadorParroquia")
  * cargos             cargo[]     @relation(name: "CreadorCargo")
  * modulos            modulo[]    @relation(name: "CreadorModulo")
  * formaciones        formacion[] @relation(name: "CreadorFormacion")
@@ -294,7 +339,7 @@ model asistencia {
  * updatedAt  DateTime @default(now())
  * createdAt  DateTime @default(now())
  * // Relaciones
- * usuario  usuario    @relation("UsuarioParroquia", fields: [id_usuario], references: [id])
+ * usuario  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
  * comuna   comuna[]   @relation("ComunaParroquia")
  * circuito circuito[] @relation("CircuitoParroquia")
  * consejo  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
