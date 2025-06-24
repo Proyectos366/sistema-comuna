@@ -9,9 +9,11 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import FormCrearVocero from "../formularios/FormCrearVocero";
 import ListadoGenaral from "../ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import Titulos from "../Titulos";
+import FormCrearCursando from "./FormCrearCursando";
+import FormCrearClase from "./FormCrearClase";
 
 export default function FormOac({
   mostrar,
@@ -44,6 +46,13 @@ export default function FormOac({
   const [nombreComuna, setNombreComuna] = useState("");
   const [nombreConsejoComunal, setNombreConsejoComunal] = useState("");
   const [nameClase, setNameClase] = useState("");
+  const [nameComuna, setNameComuna] = useState("");
+  const [nameConsejo, setNameConsejo] = useState("");
+
+  const [accion, setAccion] = useState("");
+
+  const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
+  const [seleccionarDondeCrear, setSeleccionarDondeCrear] = useState("");
 
   // Consultar parroquias al cargar el componente
   useEffect(() => {
@@ -143,7 +152,6 @@ export default function FormOac({
           return;
         }
 
-
         // Datos generales del vocero
         const data = {
           cedula: Number(cedulaCursando),
@@ -159,7 +167,10 @@ export default function FormOac({
               : [],
         };
 
-        const response = await axios.post("/api/oac/crear-cursando-clase", data);
+        const response = await axios.post(
+          "/api/oac/crear-cursando-clase",
+          data
+        );
 
         setTodosCursandos([...todosCursandos, response.data.cursando]);
         abrirMensaje(response.data.message);
@@ -182,130 +193,170 @@ export default function FormOac({
     }
   };
 
+  const toggleConsultar = (id) => {
+    const nuevoId = seleccionarConsulta === id ? null : id;
+    setSeleccionarConsulta(nuevoId);
+  };
+
+  const toggleDondeCrear = (id) => {
+    const nuevoId = seleccionarDondeCrear === id ? null : id;
+    setSeleccionarDondeCrear(nuevoId);
+  };
+
   return (
     <>
       <Modal
         isVisible={mostrar}
         onClose={cerrarModal}
-        titulo={"¿Crear este vocero?"}
+        titulo={
+          accion === "clase"
+            ? "¿Crear esta formación?"
+            : "¿Crear este registro?"
+        }
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo={"Cedula"} descripcion={cedulaVocero} />
-          <ModalDatos titulo={"Edad"} descripcion={edadVocero} />
-          <ModalDatos titulo={"Primer nombre"} descripcion={nombreVocero} />
-          <ModalDatos titulo={"Segundo nombre"} descripcion={nombreDosVocero} />
-          <ModalDatos titulo={"Primer apellido"} descripcion={apellidoVocero} />
-          <ModalDatos
-            titulo={"Segundo apellido"}
-            descripcion={apellidoDosVocero}
-          />
-
-          <ModalDatos
-            titulo={"Genero"}
-            descripcion={generoVocero == 1 ? "Masculino" : "Femenino"}
-          />
-          <ModalDatos titulo={"Telefono"} descripcion={telefonoVocero} />
-
-          <ModalDatos titulo={"Correo"} descripcion={correoVocero} />
-          <ModalDatos
-            titulo={"Actividad laboral"}
-            descripcion={actividadLaboralVocero}
-          />
-
-          <ModalDatos titulo={"Formación"} descripcion={nameClase} />
-          <ModalDatos
-            titulo={"Actividad laboral"}
-            descripcion={actividadLaboralVocero}
-          />
-
-          <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
-          {nombreConsejoComunal && (
-            <ModalDatos
-              titulo={"Consejo comunal"}
-              descripcion={nombreConsejoComunal}
-            />
+          {accion === "clase" ? (
+            <ModalDatos titulo={"Nombre"} descripcion={nombreClase} />
+          ) : (
+            <>
+              <ModalDatos titulo={"Cedula"} descripcion={cedulaCursando} />
+              <ModalDatos titulo={"Edad"} descripcion={edadCursando} />
+              <ModalDatos titulo={"Genero"} descripcion={generoCursando} />
+            </>
           )}
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
         <BotonesModal
-          aceptar={crearVocero}
+          aceptar={accion === "clase" ? crearClase : crearCursando}
           cancelar={cerrarModal}
           indiceUno={"crear"}
           indiceDos={"cancelar"}
           nombreUno={"Aceptar"}
           nombreDos={"Cancelar"}
-          campos={{
-            nombreVocero,
-            idParroquia,
-            idComunaCircuito,
-            idConsejoComunal,
-          }}
+          campos={
+            accion === "clase"
+              ? { nombreClase }
+              : accion === "cursando"
+              ? {
+                  cedulaCursando,
+                  edadCursando,
+                  generoCursando,
+                }
+              : {}
+          }
         />
       </Modal>
-      <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar nombre={"Crear vocero"}>
-          <FormCrearVocero
-            idParroquia={idParroquia}
-            idComunaCircuito={idComunaCircuito}
-            idConsejo={idConsejoComunal}
-            cambiarSeleccionParroquia={cambiarSeleccionParroquia}
-            cambiarSeleccionComunaCircuito={cambiarSeleccionComunaCircuito}
-            cambiarSeleccionConsejo={cambiarSeleccionConsejo}
-            cambiarDondeGuardar={cambiarDondeGuardar}
-            cambiarDondeCrear={cambiarDondeCrear}
-            toggleGenero={toggleGenero}
-            parroquias={parroquias}
-            comunasCircuitos={todasComunas}
-            consejos={todosConsejos}
-            dondeGuardar={circuitoComuna}
-            dondeCrear={perteneceComunaCircuito}
-            setDondeGuardar={setCircuitoComuna}
-            nombre={nombreVocero}
-            setNombre={setNombreVocero}
-            nombreDos={nombreDosVocero}
-            setNombreDos={setNombreDosVocero}
-            apellido={apellidoVocero}
-            setApellido={setApellidoVocero}
-            apellidoDos={apellidoDosVocero}
-            setApellidoDos={setApellidoDosVocero}
-            cedula={cedulaVocero}
-            setCedula={setCedulaVocero}
-            genero={generoVocero}
-            setGenero={setGeneroVocero}
-            edad={edadVocero}
-            setEdad={setEdadVocero}
-            telefono={telefonoVocero}
-            setTelefono={setTelefonoVocero}
-            direccion={direccionVocero}
-            setDireccion={setDireccionVocero}
-            correo={correoVocero}
-            setCorreo={setCorreoVocero}
-            actividadLaboral={actividadLaboralVocero}
-            setActividadLaboral={setActividadLaboralVocero}
-            seleccionarCargo={seleccionarCargo}
-            setSeleccionarCargo={setSeleccionarCargo}
-            cargos={cargos}
-            toggleCargo={toggleCargos}
-            seleccionarClase={seleccionarClase}
-            formaciones={formaciones}
-            toggleFormaciones={toggleFormacion}
-            abrirModal={abrirModal}
-            limpiarCampos={limpiarCampos}
-            setNombreComuna={setNombreComuna}
-            setNombreConsejoComunal={setNombreConsejoComunal}
-          />
-        </DivUnoDentroSectionRegistroMostrar>
 
-        <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
-            isLoading={isLoading}
-            listado={todosVoceros}
-            nombreListado={"Voceros"}
-            mensajeVacio={"No hay voceros disponibles..."}
-          />
-        </DivDosDentroSectionRegistroMostrar>
-      </SectionRegistroMostrar>
+      <div className="flex flex-col mt-3">
+        <div className="flex justify-start">
+          <Titulos indice={2} titulo={"Consultas"} />
+        </div>
+
+        <div className="border border-gray-200 p-2 rounded-md mb-2">
+          <div className="flex flex-wrap gap-2 sm:justify-between">
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={1}
+                isChecked={seleccionarConsulta === 1}
+                onToggle={toggleConsultar}
+                nombre="Crear formación"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={2}
+                isChecked={seleccionarConsulta === 2}
+                onToggle={toggleConsultar}
+                nombre="Crear cursando"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {seleccionarConsulta && (
+        <div className="flex flex-col mt-3">
+          <div className="flex flex-wrap gap-2 sm:justify-between">
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={1}
+                isChecked={seleccionarDondeCrear === 1}
+                onToggle={toggleDondeCrear}
+                nombre="Comuna"
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <InputCheckBox
+                id={2}
+                isChecked={seleccionarDondeCrear === 2}
+                onToggle={toggleDondeCrear}
+                nombre="Consejo comunal"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {seleccionarConsulta === 1 && !seleccionarDondeCrear && (
+        <SectionRegistroMostrar>
+          <DivUnoDentroSectionRegistroMostrar nombre={"Crear  clase"}>
+            <FormCrearClase
+              abrirModal={abrirModal}
+              nombre={nombreClase}
+              setNombre={setNombreClase}
+            />
+          </DivUnoDentroSectionRegistroMostrar>
+
+          <DivDosDentroSectionRegistroMostrar>
+            <ListadoGenaral
+              isLoading={isLoading}
+              listado={todasClases}
+              nombreListado={"Formaciones"}
+              mensajeVacio={"No hay formaciones disponibles..."}
+            />
+          </DivDosDentroSectionRegistroMostrar>
+        </SectionRegistroMostrar>
+      )}
+
+      {seleccionarConsulta === 2 && seleccionarDondeCrear && (
+        <SectionRegistroMostrar>
+          <DivUnoDentroSectionRegistroMostrar nombre={"Crear cursando"}>
+            <FormCrearCursando
+              abrirModal={abrirModal}
+              cedula={cedulaCursando}
+              setCedula={setCedulaCursando}
+              genero={generoCursando}
+              setGenero={setGeneroCursando}
+              edad={edadCursando}
+              setEdad={setEdadCursando}
+              dondeCrear={seleccionarDondeCrear}
+              idComuna={idComuna}
+              idConsejo={idConsejo}
+              clases={todasClases}
+              cambiarSeleccionComuna={cambiarSeleccionComuna}
+              cambiarSeleccionConsejo={cambiarSeleccionConsejo}
+              comunas={todasComunas}
+              consejos={todosConsejos}
+              setNameComuna={setNameComuna}
+              setNameConsejo={setNameConsejo}
+              seleccionarClases={seleccionarClase}
+              toggleGenero={toggleGenero}
+              toggleClases={toggleClase}
+            />
+          </DivUnoDentroSectionRegistroMostrar>
+
+          <DivDosDentroSectionRegistroMostrar>
+            <ListadoGenaral
+              isLoading={isLoading}
+              listado={todosCursandos}
+              nombreListado={"Cursando"}
+              mensajeVacio={"No hay personas disponibles..."}
+            />
+          </DivDosDentroSectionRegistroMostrar>
+        </SectionRegistroMostrar>
+      )}
     </>
   );
 }

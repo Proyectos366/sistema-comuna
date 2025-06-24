@@ -7,7 +7,7 @@ import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
 
 export async function POST(request) {
   try {
-    const { cedula, idParroquia, idComuna, idConsejo, idClase, edad, genero } =
+    const { cedula, idParroquia, idComuna, idConsejo, clases, edad, genero } =
       await request.json();
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -26,7 +26,6 @@ export async function POST(request) {
     const id_parroquia = Number(idParroquia);
     const id_comuna = Number(idComuna);
     const id_consejo = Number(idConsejo);
-    const id_clase = Number(idClase);
     const edadNumero = Number(edad);
     const sexo = Number(genero);
     const fechaNacimiento = calcularFechaNacimientoPorEdad(edadNumero);
@@ -35,6 +34,30 @@ export async function POST(request) {
       where: { correo: correo },
       select: { id: true },
     });
+
+    const idsClase = clases.map((clase) => clase.id);
+
+    const existeCursando = await prisma.cursando.findFirst({
+      where: {
+        cedula: Number(cedulaCursando),
+        clases: {
+          some: {
+            id: {
+              in: idsClase,
+            },
+          },
+        },
+      },
+    });
+
+    if (existeCursando) {
+      return generarRespuesta(
+        "error",
+        "Error, error ya existe persona...",
+        {},
+        400
+      );
+    }
 
     const nuevoCursando = await prisma.cursando.create({
       data: {
@@ -46,7 +69,9 @@ export async function POST(request) {
         id_parroquia: id_parroquia,
         id_comuna: id_comuna,
         id_consejo: id_consejo,
-        id_clase: id_clase,
+        clases: {
+          connect: clases.map(({ id }) => ({ id })),
+        },
       },
     });
 

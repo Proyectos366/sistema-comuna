@@ -276,7 +276,7 @@ model clase {
 
 model cursando {
   id           Int      @id @default(autoincrement())
-  cedula       String   @unique
+  cedula       String  
   edad         Int
   genero       Boolean
   f_n          DateTime
