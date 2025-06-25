@@ -97,6 +97,22 @@ export default function CrearManuales() {
     }
   };
 
+   const crearDepartamentos = async () => {
+    try {
+      const responseDepartamentos = await axios.get(
+        `/api/crear-manuales/crear-departamentos`
+      );
+
+      if (responseDepartamentos?.data.status === "ok") {
+        router.push("/", { shallow: true });
+      } else {
+        alert("Error, al crear departamentos");
+      }
+    } catch (error) {
+      console.log("Error, al crear departamentos: " + error);
+    }
+  };
+
   return (
     <div className="grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 container mx-auto">
       <header></header>
@@ -124,13 +140,18 @@ export default function CrearManuales() {
             crear={crearModulos}
           />
 
+          <BotonCreacionesManuales
+            nombre={"Crear departamentos"}
+            crear={crearDepartamentos}
+          />
+
           {/* <BotonCreacionesManuales
             nombre={"Crear formaciones"}
             crear={crearFormaciones}
           /> */}
         </section>
       </main>
-      <footer className="text-white mt-10">© 2025 - Tu Proyecto</footer>
+      <footer className="text-black mt-10">© 2025 - Tu Proyecto</footer>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import ModalDatosContenedor from "../ModalDatosContenedor";
 import Titulos from "../Titulos";
 import FormCrearCursando from "./FormCrearCursando";
 import FormCrearClase from "./FormCrearClase";
+import InputCheckBox from "../InputCheckBox";
 
 export default function FormOac({
   mostrar,

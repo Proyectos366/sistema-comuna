@@ -70,6 +70,7 @@ export default function VistaUniversalInicio() {
   const userType = usuarioActivo?.id_rol;
   const idDepartamento = departamento?.id;
   const nombreDepartamento = departamento?.nombre;
+  
 
   useEffect(() => {
     if (screenSize?.width > 640) {

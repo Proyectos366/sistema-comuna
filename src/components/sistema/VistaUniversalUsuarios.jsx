@@ -46,6 +46,7 @@ export default function VistaUniversalUsuarios({ children }) {
 
   const idDepartamento = departamento?.id;
   const nombreDepartamento = departamento?.nombre;
+  
 
   useEffect(() => {
     if (screenSize?.width > 640) {
@@ -195,7 +196,7 @@ export default function VistaUniversalUsuarios({ children }) {
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
-              nombreDepartamento={nombreDepartamento}
+              nombreDepartamento={departamento.nombre}
             />
           </div>
 
@@ -233,6 +234,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
                   {vista === "cargos" && (
                     <CargosForm
                       mostrar={mostrarModal}
@@ -284,6 +286,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
                   {vista === "circuitos-comunales" && (
                     <CircuitoForm
                       mostrar={mostrarModal}
@@ -296,6 +299,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
                   {vista === "consejos-comunales" && (
                     <ConsejoForm
                       mostrar={mostrarModal}
@@ -308,6 +312,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
+
                   {vista === "voceros" && (
                     <VoceroForm
                       mostrar={mostrarModal}
@@ -321,8 +326,7 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-
-                  {vista === "oac" && nombreDepartamento === 'oac' (
+                  {vista === "oac" && departamento.nombre === 'oac' && (
                     <FormOac
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
@@ -334,8 +338,6 @@ export default function VistaUniversalUsuarios({ children }) {
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
                   )}
-
-
 
                   {vista === "perfil" && (
                     <MostrarPerfilUsuario abrirPanel={abrirPanel} />
