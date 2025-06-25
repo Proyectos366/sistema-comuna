@@ -167,14 +167,14 @@ model consejo {
 model vocero {
   id           Int      @id @default(autoincrement())
   nombre       String
-  nombre_dos   String
+  nombre_dos   String?
   apellido     String
-  apellido_dos String
+  apellido_dos String?
   cedula       Int      @unique
   genero       Boolean
   edad         Int
   telefono     String
-  direccion    String
+  direccion    String?
   correo       String   @unique
   token        String   @unique
   laboral      String
@@ -276,7 +276,7 @@ model clase {
 
 model cursando {
   id           Int      @id @default(autoincrement())
-  cedula       String  
+  cedula       Int  
   edad         Int
   genero       Boolean
   f_n          DateTime

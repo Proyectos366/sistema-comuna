@@ -9,7 +9,7 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import ListadoGenaral from "../ListadoGeneral";
+import ListadoOac from "./ListadoOac";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import Titulos from "../Titulos";
 import FormCrearCursando from "./FormCrearCursando";
@@ -55,6 +55,13 @@ export default function FormOac({
   const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
   const [seleccionarDondeCrear, setSeleccionarDondeCrear] = useState("");
 
+  const [conteo, setConteo] = useState({
+  mujeres: 0,
+  hombres: 0,
+  adultasMayores: 0,
+  adultosMayores: 0
+});
+
   // Consultar parroquias al cargar el componente
   useEffect(() => {
     const fetchDatos = async () => {
@@ -78,6 +85,39 @@ export default function FormOac({
 
     fetchDatos();
   }, []);
+
+
+
+
+
+useEffect(() => {
+  if (!Array.isArray(todosCursandos)) return;
+
+  let mujeres = 0;
+  let hombres = 0;
+  let adultasMayores = 0;
+  let adultosMayores = 0;
+
+  todosCursandos.forEach((persona) => {
+    if (persona?.borrado) return; // Ignorar si está marcada como borrada
+
+    const { genero, edad } = persona;
+
+    if (genero === false) {
+      mujeres++;
+      if (edad >= 60) adultasMayores++;
+    } else if (genero === true) {
+      hombres++;
+      if (edad >= 60) adultosMayores++;
+    }
+  });
+
+  setConteo({ mujeres, hombres, adultasMayores, adultosMayores });
+}, [todosCursandos]);
+
+
+console.log(conteo);
+
 
   /** 
   useEffect(() => {
@@ -257,7 +297,10 @@ export default function FormOac({
 
         <div className="border border-gray-200 p-2 rounded-md mb-2">
           <div className="flex flex-wrap gap-2 sm:justify-between">
-            <div className="w-full sm:w-auto">
+            <div
+              onClick={() => setAccion("clase")}
+              className="w-full sm:w-auto"
+            >
               <InputCheckBox
                 id={1}
                 isChecked={seleccionarConsulta === 1}
@@ -265,7 +308,10 @@ export default function FormOac({
                 nombre="Crear formación"
               />
             </div>
-            <div className="w-full sm:w-auto">
+            <div
+              onClick={() => setAccion("cursando")}
+              className="w-full sm:w-auto"
+            >
               <InputCheckBox
                 id={2}
                 isChecked={seleccionarConsulta === 2}
@@ -277,7 +323,7 @@ export default function FormOac({
         </div>
       </div>
 
-      {seleccionarConsulta && (
+      {seleccionarConsulta && accion !== "clase" && (
         <div className="flex flex-col mt-3">
           <div className="flex flex-wrap gap-2 sm:justify-between">
             <div className="w-full sm:w-auto">
@@ -311,7 +357,7 @@ export default function FormOac({
           </DivUnoDentroSectionRegistroMostrar>
 
           <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
+            <ListadoOac
               isLoading={isLoading}
               listado={todasClases}
               nombreListado={"Formaciones"}
@@ -349,12 +395,12 @@ export default function FormOac({
           </DivUnoDentroSectionRegistroMostrar>
 
           <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
+            <ListadoOac
               isLoading={isLoading}
               listado={todosCursandos}
               nombreListado={"Cursando"}
               mensajeVacio={"No hay personas disponibles..."}
-            />
+              conteo={conteo}            />
           </DivDosDentroSectionRegistroMostrar>
         </SectionRegistroMostrar>
       )}

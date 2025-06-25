@@ -418,7 +418,7 @@ export default function VistaUniversalInicio() {
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
               volverInicio={volverInicio}
-              nombreDepartamento={nombreDepartamento}
+              nombreDepartamento={departamento.nombre}
             />
           </div>
 

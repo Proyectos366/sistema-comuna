@@ -32,7 +32,7 @@ export default function MenuLateralUsuario({
               </p>
             </div>
 
-            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[500px]">
+            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[500px] no-scrollbar">
               {id_rol === 1 && (
                 <>
                   <EnlacesBarraLateral
@@ -44,13 +44,13 @@ export default function MenuLateralUsuario({
                     volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
-                        id_rol={id_rol}
-                        cambiarRuta={cambiarRuta}
-                        vista={vista}
-                        vistaActual={"oac"}
-                        nombre={"OAC"}
-                        volverInicio={volverInicio}
-                      />
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"oac"}
+                    nombre={"OAC"}
+                    volverInicio={volverInicio}
+                  />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -287,15 +287,15 @@ export default function MenuLateralUsuario({
                   />
                 </>
               )}
-            </div>
-          </div>
 
-          <div>
-            <img
-              className="w-full h-32 opacity-50"
-              src="/img/busqueda.png"
-              alt="Imagen de busqueda"
-            />
+              <div>
+                <img
+                  className="w-full h-32 opacity-50"
+                  src="/img/busqueda.png"
+                  alt="Imagen de busqueda"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>

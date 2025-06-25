@@ -52,52 +52,6 @@ export async function POST(request) {
       );
     }
 
-    /**
-    const nuevoVocero = await prisma.$transaction(async (tx) => {
-      const vocero = await tx.vocero.create({
-        data: {
-          nombre: validaciones.nombre,
-          nombre_dos: validaciones.nombreDos,
-          apellido: validaciones.apellido,
-          apellido_dos: validaciones.apellidoDos,
-          cedula: validaciones.cedula,
-          genero: validaciones.genero,
-          edad: validaciones.edad,
-          telefono: validaciones.telefono,
-          direccion: validaciones.direccion,
-          correo: validaciones.correo,
-          token: validaciones.token,
-          laboral: validaciones.laboral,
-          borrado: false,
-          id_usuario: validaciones.id_usuario,
-          id_comuna: validaciones.id_comuna,
-          id_consejo: validaciones.id_consejo,
-          id_circuito: validaciones.id_circuito,
-          id_parroquia: validaciones.id_parroquia,
-          cargos: {
-            connect: cargos.map(({ id }) => ({ id })),
-          },
-        },
-      });
-
-      if (Array.isArray(formaciones) && formaciones.length > 0) {
-        for (const { id: id } of formaciones) {
-          await tx.curso.create({
-            data: {
-              id_vocero: vocero.id,
-              id_formacion: id,
-              id_usuario: validaciones.id_usuario,
-              verificado: false,
-              certificado: false,
-            },
-          });
-        }
-      }
-
-      return vocero;
-    });
-    */
-
     const nuevoVocero = await prisma.$transaction(async (tx) => {
       const vocero = await tx.vocero.create({
         data: {
@@ -125,42 +79,6 @@ export async function POST(request) {
           },
         },
       });
-
-      /**
-      if (Array.isArray(formaciones) && formaciones.length > 0) {
-        for (const { id: id_formacion } of formaciones) {
-          // Crear el curso asociado al vocero
-          const curso = await tx.curso.create({
-            data: {
-              id_vocero: vocero.id,
-              id_formacion: id_formacion,
-              id_usuario: validaciones.id_usuario,
-              verificado: false,
-              certificado: false,
-            },
-          });
-
-          // Obtener los módulos relacionados con la formación
-          const modulos = await tx.modulo.findMany({
-            where: { id_usuario: validaciones.id_usuario },
-          });
-
-          // Crear las asistencias para cada módulo
-          for (const modulo of modulos) {
-            await tx.asistencia.create({
-              data: {
-                id_vocero: vocero.id,
-                id_modulo: modulo.id,
-                id_curso: curso.id,
-                id_usuario: validaciones.id_usuario,
-                presente: false, // Inicialmente no aprobado
-                fecha_registro: new Date(),
-              },
-            });
-          }
-        }
-      }
- */
 
       if (Array.isArray(formaciones) && formaciones.length > 0) {
         for (const { id: id_formacion } of formaciones) {

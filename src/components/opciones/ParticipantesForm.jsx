@@ -405,8 +405,14 @@ export default function ParticipantesForm({
                     <div className="">
                       <b>Nombre: </b>
                       <span>
-                        {curso.voceros.nombre} {curso.voceros.nombre_dos + " "}
-                        {curso.voceros.apellido} {curso.voceros.apellido_dos}
+                        {curso.voceros.nombre}{" "}
+                        {!curso.voceros.nombre_dos
+                          ? ""
+                          : curso.voceros.nombre_dos + " "}
+                        {curso.voceros.apellido}{" "}
+                        {!curso.voceros.apellido_dos
+                          ? ""
+                          : curso.voceros.apellido_dos}
                       </span>
                     </div>
                   </div>
@@ -640,23 +646,6 @@ export default function ParticipantesForm({
   );
 })}
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  <div className="mt-2 border rounded-md p-2">

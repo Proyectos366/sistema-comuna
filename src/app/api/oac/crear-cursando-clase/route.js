@@ -39,14 +39,8 @@ export async function POST(request) {
 
     const existeCursando = await prisma.cursando.findFirst({
       where: {
-        cedula: Number(cedulaCursando),
-        clases: {
-          some: {
-            id: {
-              in: idsClase,
-            },
-          },
-        },
+        cedula: cedulaNumero,
+        id_clase: { in: idsClase },
       },
     });
 
@@ -59,19 +53,33 @@ export async function POST(request) {
       );
     }
 
+    // const nuevoCursando = await prisma.cursando.create({
+    //   data: {
+    //     cedula: cedulaNumero,
+    //     edad: edadNumero,
+    //     genero: sexo === 1 ? true : false,
+    //     f_n: fechaNacimiento,
+    //     id_usuario: idUsuario.id,
+    //     id_parroquia: id_parroquia,
+    //     id_comuna: id_comuna,
+    //     id_consejo: id_consejo,
+    //     clases: {
+    //       connect: clases.map(({ id }) => ({ id })),
+    //     },
+    //   },
+    // });
+
     const nuevoCursando = await prisma.cursando.create({
       data: {
         cedula: cedulaNumero,
         edad: edadNumero,
-        genero: sexo === 1 ? true : false,
+        genero: sexo === 1,
         f_n: fechaNacimiento,
         id_usuario: idUsuario.id,
         id_parroquia: id_parroquia,
         id_comuna: id_comuna,
         id_consejo: id_consejo,
-        clases: {
-          connect: clases.map(({ id }) => ({ id })),
-        },
+        id_clase: clases[0]?.id, // Seleccionas la primera clase del array
       },
     });
 
