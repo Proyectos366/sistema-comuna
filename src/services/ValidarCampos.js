@@ -388,4 +388,28 @@ export default class ValidarCampos {
       );
     }
   }
+
+  static validarCamposCrearDepartamento(nombre, descripcion) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+
+      if (validarNombre.status === "error") return validarNombre;
+
+      /**
+        if (!descripcion) {
+          return retornarRespuestaFunciones(
+            "error",
+            "Error, campo descripción vacio..."
+          );
+        }
+      */
+      return retornarRespuestaFunciones("ok", "Campos validados...");
+    } catch (error) {
+      console.log(`Error, interno validando campos departamento: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos departamento..."
+      );
+    }
+  }
 }

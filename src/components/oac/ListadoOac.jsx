@@ -23,12 +23,12 @@ export default function ListadoOac({
             
             <div className="w-full flex flex-col items-center">
               <span className="font-semibold">Hombres</span>
-              <span>{conteo.hombres}</span>
+              <span>{conteo?.hombres}</span>
             </div>
             
             <div className="w-full flex flex-col items-center">
               <span className="font-semibold">Mujeres</span>
-              <span>{conteo.mujeres}</span>
+              <span>{conteo?.mujeres}</span>
             </div>
 
           </div>
@@ -36,11 +36,11 @@ export default function ListadoOac({
           <div className="w-full flex justify-around mt-2">
             <div className="w-full flex flex-col items-center">
               <span className="text-sm text-gray-600">Adultos Mayores</span>
-              <span>{conteo.adultosMayores}</span>
+              <span>{conteo?.adultosMayores}</span>
             </div>
             <div className="w-full flex flex-col items-center">
               <span className="text-sm text-gray-600">Adultas Mayores</span>
-              <span>{conteo.adultasMayores}</span>
+              <span>{conteo?.adultasMayores}</span>
             </div>
           </div>
         </div>

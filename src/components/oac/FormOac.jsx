@@ -56,11 +56,11 @@ export default function FormOac({
   const [seleccionarDondeCrear, setSeleccionarDondeCrear] = useState("");
 
   const [conteo, setConteo] = useState({
-  mujeres: 0,
-  hombres: 0,
-  adultasMayores: 0,
-  adultosMayores: 0
-});
+    mujeres: 0,
+    hombres: 0,
+    adultasMayores: 0,
+    adultosMayores: 0,
+  });
 
   // Consultar parroquias al cargar el componente
   useEffect(() => {
@@ -86,38 +86,30 @@ export default function FormOac({
     fetchDatos();
   }, []);
 
+  useEffect(() => {
+    if (!Array.isArray(todosCursandos)) return;
 
+    let mujeres = 0;
+    let hombres = 0;
+    let adultasMayores = 0;
+    let adultosMayores = 0;
 
+    todosCursandos?.forEach((persona) => {
+      if (persona?.borrado) return; // Ignorar si está marcada como borrada
 
+      const { genero, edad } = persona;
 
-useEffect(() => {
-  if (!Array.isArray(todosCursandos)) return;
+      if (genero === false) {
+        mujeres++;
+        if (edad >= 60) adultasMayores++;
+      } else if (genero === true) {
+        hombres++;
+        if (edad >= 60) adultosMayores++;
+      }
+    });
 
-  let mujeres = 0;
-  let hombres = 0;
-  let adultasMayores = 0;
-  let adultosMayores = 0;
-
-  todosCursandos.forEach((persona) => {
-    if (persona?.borrado) return; // Ignorar si está marcada como borrada
-
-    const { genero, edad } = persona;
-
-    if (genero === false) {
-      mujeres++;
-      if (edad >= 60) adultasMayores++;
-    } else if (genero === true) {
-      hombres++;
-      if (edad >= 60) adultosMayores++;
-    }
-  });
-
-  setConteo({ mujeres, hombres, adultasMayores, adultosMayores });
-}, [todosCursandos]);
-
-
-console.log(conteo);
-
+    setConteo({ mujeres, hombres, adultasMayores, adultosMayores });
+  }, [todosCursandos]);
 
   /** 
   useEffect(() => {
@@ -130,6 +122,20 @@ console.log(conteo);
     setNombreVocero("");
   }, [perteneceComunaCircuito]);
   */
+
+  useEffect(() => {
+    setSeleccionarDondeCrear("");
+    setIdComuna("");
+    setIdConsejo("");
+  }, [seleccionarConsulta]);
+
+  useEffect(() => {
+    if (seleccionarDondeCrear === 1) {
+      setIdConsejo("");
+    } else {
+      setIdComuna("");
+    }
+  }, [seleccionarDondeCrear]);
 
   const toggleGenero = (id) => {
     setGeneroCursando(generoCursando === id ? null : id); // Cambia el estado, permitiendo deselección
@@ -262,7 +268,10 @@ console.log(conteo);
             <>
               <ModalDatos titulo={"Cedula"} descripcion={cedulaCursando} />
               <ModalDatos titulo={"Edad"} descripcion={edadCursando} />
-              <ModalDatos titulo={"Genero"} descripcion={generoCursando} />
+              <ModalDatos
+                titulo={"Genero"}
+                descripcion={generoCursando === 1 ? "MAsculino" : "Femenino"}
+              />
             </>
           )}
         </ModalDatosContenedor>
@@ -290,120 +299,125 @@ console.log(conteo);
         />
       </Modal>
 
-      <div className="flex flex-col mt-3">
-        <div className="flex justify-start">
-          <Titulos indice={2} titulo={"Consultas"} />
-        </div>
-
-        <div className="border border-gray-200 p-2 rounded-md mb-2">
-          <div className="flex flex-wrap gap-2 sm:justify-between">
-            <div
-              onClick={() => setAccion("clase")}
-              className="w-full sm:w-auto"
-            >
-              <InputCheckBox
-                id={1}
-                isChecked={seleccionarConsulta === 1}
-                onToggle={toggleConsultar}
-                nombre="Crear formación"
-              />
-            </div>
-            <div
-              onClick={() => setAccion("cursando")}
-              className="w-full sm:w-auto"
-            >
-              <InputCheckBox
-                id={2}
-                isChecked={seleccionarConsulta === 2}
-                onToggle={toggleConsultar}
-                nombre="Crear cursando"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {seleccionarConsulta && accion !== "clase" && (
+      <div className="px-4">
         <div className="flex flex-col mt-3">
-          <div className="flex flex-wrap gap-2 sm:justify-between">
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={1}
-                isChecked={seleccionarDondeCrear === 1}
-                onToggle={toggleDondeCrear}
-                nombre="Comuna"
-              />
+          <div className="flex justify-start">
+            <Titulos indice={2} titulo={"Formaciones OAC"} />
+          </div>
+
+          <div className="border border-gray-200 p-2 rounded-md mb-2 flex justify-between">
+            <div className="flex flex-wrap gap-4 sm:justify-between">
+              <div
+                onClick={() => setAccion("clase")}
+                className="w-full sm:w-auto"
+              >
+                <InputCheckBox
+                  id={1}
+                  isChecked={seleccionarConsulta === 1}
+                  onToggle={toggleConsultar}
+                  nombre="Crear formación"
+                />
+              </div>
+              <div
+                onClick={() => setAccion("cursando")}
+                className="w-full sm:w-auto"
+              >
+                <InputCheckBox
+                  id={2}
+                  isChecked={seleccionarConsulta === 2}
+                  onToggle={toggleConsultar}
+                  nombre="Crear cursando"
+                />
+              </div>
             </div>
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={2}
-                isChecked={seleccionarDondeCrear === 2}
-                onToggle={toggleDondeCrear}
-                nombre="Consejo comunal"
-              />
+
+            <div className="flex flex-wrap gap-2 sm:justify-between">
+              {seleccionarConsulta && accion !== "clase" && (
+                <div className="flex flex-col">
+                  <div className="flex flex-wrap gap-4 sm:justify-between">
+                    <div className="w-full sm:w-auto">
+                      <InputCheckBox
+                        id={1}
+                        isChecked={seleccionarDondeCrear === 1}
+                        onToggle={toggleDondeCrear}
+                        nombre="Comuna"
+                      />
+                    </div>
+                    <div className="w-full sm:w-auto">
+                      <InputCheckBox
+                        id={2}
+                        isChecked={seleccionarDondeCrear === 2}
+                        onToggle={toggleDondeCrear}
+                        nombre="Consejo comunal"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      )}
 
-      {seleccionarConsulta === 1 && !seleccionarDondeCrear && (
-        <SectionRegistroMostrar>
-          <DivUnoDentroSectionRegistroMostrar nombre={"Crear  clase"}>
-            <FormCrearClase
-              abrirModal={abrirModal}
-              nombre={nombreClase}
-              setNombre={setNombreClase}
-            />
-          </DivUnoDentroSectionRegistroMostrar>
+        {seleccionarConsulta === 1 && !seleccionarDondeCrear && (
+          <SectionRegistroMostrar>
+            <DivUnoDentroSectionRegistroMostrar nombre={"Crear  clase"}>
+              <FormCrearClase
+                abrirModal={abrirModal}
+                nombre={nombreClase}
+                setNombre={setNombreClase}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
 
-          <DivDosDentroSectionRegistroMostrar>
-            <ListadoOac
-              isLoading={isLoading}
-              listado={todasClases}
-              nombreListado={"Formaciones"}
-              mensajeVacio={"No hay formaciones disponibles..."}
-            />
-          </DivDosDentroSectionRegistroMostrar>
-        </SectionRegistroMostrar>
-      )}
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoOac
+                isLoading={isLoading}
+                listado={todasClases}
+                nombreListado={"Formaciones"}
+                mensajeVacio={"No hay formaciones disponibles..."}
+              />
+            </DivDosDentroSectionRegistroMostrar>
+          </SectionRegistroMostrar>
+        )}
 
-      {seleccionarConsulta === 2 && seleccionarDondeCrear && (
-        <SectionRegistroMostrar>
-          <DivUnoDentroSectionRegistroMostrar nombre={"Crear cursando"}>
-            <FormCrearCursando
-              abrirModal={abrirModal}
-              cedula={cedulaCursando}
-              setCedula={setCedulaCursando}
-              genero={generoCursando}
-              setGenero={setGeneroCursando}
-              edad={edadCursando}
-              setEdad={setEdadCursando}
-              dondeCrear={seleccionarDondeCrear}
-              idComuna={idComuna}
-              idConsejo={idConsejo}
-              clases={todasClases}
-              cambiarSeleccionComuna={cambiarSeleccionComuna}
-              cambiarSeleccionConsejo={cambiarSeleccionConsejo}
-              comunas={todasComunas}
-              consejos={todosConsejos}
-              setNameComuna={setNameComuna}
-              setNameConsejo={setNameConsejo}
-              seleccionarClases={seleccionarClase}
-              toggleGenero={toggleGenero}
-              toggleClases={toggleClase}
-            />
-          </DivUnoDentroSectionRegistroMostrar>
+        {seleccionarConsulta === 2 && seleccionarDondeCrear && (
+          <SectionRegistroMostrar>
+            <DivUnoDentroSectionRegistroMostrar nombre={"Crear cursando"}>
+              <FormCrearCursando
+                abrirModal={abrirModal}
+                cedula={cedulaCursando}
+                setCedula={setCedulaCursando}
+                genero={generoCursando}
+                setGenero={setGeneroCursando}
+                edad={edadCursando}
+                setEdad={setEdadCursando}
+                dondeCrear={seleccionarDondeCrear}
+                idComuna={idComuna}
+                idConsejo={idConsejo}
+                clases={todasClases}
+                cambiarSeleccionComuna={cambiarSeleccionComuna}
+                cambiarSeleccionConsejo={cambiarSeleccionConsejo}
+                comunas={todasComunas}
+                consejos={todosConsejos}
+                setNameComuna={setNameComuna}
+                setNameConsejo={setNameConsejo}
+                seleccionarClases={seleccionarClase}
+                toggleGenero={toggleGenero}
+                toggleClases={toggleClase}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
 
-          <DivDosDentroSectionRegistroMostrar>
-            <ListadoOac
-              isLoading={isLoading}
-              listado={todosCursandos}
-              nombreListado={"Cursando"}
-              mensajeVacio={"No hay personas disponibles..."}
-              conteo={conteo}            />
-          </DivDosDentroSectionRegistroMostrar>
-        </SectionRegistroMostrar>
-      )}
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoOac
+                isLoading={isLoading}
+                listado={todosCursandos}
+                nombreListado={"Cursando"}
+                mensajeVacio={"No hay personas disponibles..."}
+                conteo={conteo}
+              />
+            </DivDosDentroSectionRegistroMostrar>
+          </SectionRegistroMostrar>
+        )}
+      </div>
     </>
   );
 }

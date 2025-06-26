@@ -14,6 +14,10 @@ import Formulario from "@/components/Formulario";
 import Titulos from "@/components/Titulos";
 import ModalPequena from "@/components/ModalPeque";
 import Main from "@/components/Main";
+import LabelInput from "@/components/LabelInput";
+import SelectOpcion from "@/components/SelectOpcion";
+import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import InputClave from "@/components/inputs/InputClave";
 
 export default function RegistrarUsuario() {
   const [cedula, setCedula] = useState("");
@@ -31,8 +35,30 @@ export default function RegistrarUsuario() {
   const [visible, setVisible] = useState(false);
   const [verModal, setVerModal] = useState(false);
 
+  const [todosDepartamentos, setTodosDepartamentos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [idDepartamento, setIdDepartamento] = useState(true);
+  const [nombreDepartamento, setNombreDepartamento] = useState("");
+
   const mostrarModalS = () => setVisible(true);
   const ocultarModal = () => setVisible(false);
+
+  useEffect(() => {
+    const fetchDatosDepartamentos = async () => {
+      try {
+        const response = await axios.get(
+          "/api/departamentos/todos-departamentos"
+        );
+        setTodosDepartamentos(response.data.departamentos || []);
+      } catch (error) {
+        console.log("Error, al obtener los departamentos: " + error);
+      } finally {
+        setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
+      }
+    };
+
+    fetchDatosDepartamentos();
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -134,6 +160,11 @@ export default function RegistrarUsuario() {
     setMostrar(false);
   };
 
+  const cambiarSeleccionDepartamento = (e) => {
+    const valor = e.target.value;
+    setIdDepartamento(valor);
+  };
+
   return (
     <>
       {/* <ImagenFondo /> */}
@@ -147,6 +178,10 @@ export default function RegistrarUsuario() {
           <ModalDatos titulo={"Cedula"} descripcion={cedula} />
           <ModalDatos titulo={"Nombre"} descripcion={nombre} />
           <ModalDatos titulo={"Correo"} descripcion={correo} />
+          <ModalDatos
+            titulo={"Departamento"}
+            descripcion={nombreDepartamento}
+          />
           <ModalDatos titulo={"Clave"} descripcion={claveUno} />
           <ModalDatos titulo={"Confirmar clave"} descripcion={claveDos} />
         </div>
@@ -193,138 +228,111 @@ export default function RegistrarUsuario() {
               e.preventDefault();
             }}
           >
-            <div className="flex flex-col sm:flex-row justify-between space-x-3 space-y-3">
-              <div className="w-full sm:w-1/2">
-                <Label
-                  htmlFor={"cedula-registro-usuario"}
+            <div className="flex flex-col space-y-3">
+              <div className="w-full flex flex-col sm:flex-row sm:space-x-4">
+                <LabelInput
                   nombre={"Cedula"}
-                  className={`font-semibold`}
-                />
-
-                <Input
-                  id={"cedula-registro-usuario"}
-                  indice={"cedula"}
-                  type={"text"}
-                  placeholder={"Ejemplo: 20.202.220"}
-                  name={"cedula"}
                   value={cedula}
-                  onChange={(e) => setCedula(e.target.value)}
+                  setValue={setCedula}
+                  indice={"cedula"}
                   validarCedula={validarCedula}
                   setValidarCedula={setValidarCedula}
                 />
-              </div>
-
-              <div className="w-full sm:w-1/2">
-                <Label
-                  htmlFor={"email_registro_usuario"}
-                  nombre={"Correo"}
-                  className={`font-semibold`}
-                />
-
-                <Input
-                  id={"email_registro_usuario"}
-                  indice={"email"}
-                  type={"email"}
-                  placeholder={"name@company.com"}
-                  name={"email"}
-                  value={correo}
-                  onChange={(e) => setCorreo(e.target.value)}
-                  validarCorreo={validarCorreo}
-                  setValidarCorreo={setValidarCorreo}
-                  autoComplete={"email"}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <Label
-                htmlFor={"nombre_registro_usuario"}
-                nombre={"Nombre"}
-                className={`font-semibold`}
-              />
-
-              <Input
-                id={"nombre_registro_usuario"}
-                indice={"nombre"}
-                type={"text"}
-                placeholder={""}
-                name={"nombre"}
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                validarTexto={validarNombre}
-                setValidarTexto={setValidarNombre}
-                autoComplete={"nombre"}
-              />
-            </div>
-
-            <div className="space-y-1 flex flex-col">
-              <Label
-                htmlFor={"claveUno_registro_usuario"}
-                nombre={"Clave"}
-                className={`font-semibold`}
-              />
-
-              <div className="flex justify-between w-full space-x-3">
-                <div className="w-[80%]">
-                  <Input
-                    id={"claveUno_registro_usuario"}
-                    indice={"clave"}
-                    type={"password"}
-                    placeholder={"**************************"}
-                    name={"claveUno"}
-                    value={claveUno}
-                    onChange={leyendoClave1}
-                    setValidarClave={setValidarClave}
+                <div className="mt-2 sm:mt-0 w-full">
+                  <LabelInput
+                    nombre={"Correo"}
+                    value={correo}
+                    setValue={setCorreo}
+                    indice={"email"}
+                    validarCorreo={validarCorreo}
+                    setValidarCorreo={setValidarCorreo}
                   />
                 </div>
+              </div>
 
-                <div
-                  onMouseEnter={mostrarModalS}
-                  onMouseLeave={ocultarModal}
-                  className="w-[20%] bg-white flex justify-center items-center rounded-md border border-[black] hover:border-[#005cf4]"
-                >
-                  <svg
-                    fill="#000000"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 52 52"
-                    enableBackground="new 0 0 52 52"
-                    xmlSpace="preserve"
-                  >
-                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <path d="M26.7,42.8c0.8,0,1.5,0.7,1.5,1.5v3.2c0,0.8-0.7,1.5-1.5,1.5h-3.2c-0.8,0-1.5-0.7-1.5-1.5v-3.2 c0-0.8,0.7-1.5,1.5-1.5H26.7z"></path>
-                        <path d="M28.2,35.1c0-2.1,1.3-4,3.1-4.8h0.1c5.2-2.1,8.8-7.2,8.8-13.2c0-7.8-6.4-14.2-14.2-14.2 c-7.2,0-13.2,5.3-14.2,12.2v0.1c-0.1,0.9,0.6,1.6,1.5,1.6h3.2c0.8,0,1.4-0.5,1.5-1.1v-0.2c0.7-3.7,4-6.5,7.9-6.5 c4.5,0,8.1,3.6,8.1,8.1c0,2.1-0.8,4-2.1,5.5l-0.1,0.1c-0.9,1-2.1,1.6-3.3,2c-4,1.4-6.7,5.2-6.7,9.4v1.5c0,0.8,0.6,1.4,1.4,1.4h3.2 c0.8,0,1.6-0.6,1.6-1.5L28.2,35.1z"></path>
-                      </g>
-                    </g>
-                  </svg>
+              <div className="w-full flex flex-col sm:flex-row sm:space-x-4">
+                <LabelInput
+                  nombre={"Nombre"}
+                  value={nombre}
+                  setValue={setNombre}
+                  indice={"nombre"}
+                  validarTexto={validarNombre}
+                  setValidarTexto={setValidarNombre}
+                />
+
+                <div className="mt-2 sm:mt-0 w-full">
+                  <SelectOpcion
+                    idOpcion={idDepartamento}
+                    nombre={"Departamentos"}
+                    handleChange={cambiarSeleccionDepartamento}
+                    opciones={todosDepartamentos}
+                    seleccione={"Seleccione"}
+                    setNombre={setNombreDepartamento}
+                  />
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-1">
-              <Label
-                htmlFor={"claveDos_registro_usuario"}
-                nombre={"Confirmar clave"}
-                className={`font-semibold`}
-              />
+              <div className="w-full flex flex-col">
+                <div className="w-full">
+                  <label className="block">
+                    <span className="text-gray-700 font-medium">Clave:</span>
+                    <InputClave
+                      type={"password"}
+                      nombre={"Clave"}
+                      value={claveUno}
+                      onChange={leyendoClave1}
+                      indice={"clave"}
+                      validarClave={validarClave}
+                      setValidarClave={setValidarClave}
+                    />
+                  </label>
+                </div>
 
-              <Input
-                id={"claveDos_registro_usuario"}
-                indice={"clave1"}
-                type={"password"}
-                placeholder={"**************************"}
-                name={"claveDos"}
-                value={claveDos}
-                onChange={leyendoClave2}
-              />
+                <div className="flex justify-between w-full space-x-4 pt-2">
+                  <div className="w-[80%]">
+                    <label className="block">
+                      <InputClave
+                        type={"password"}
+                        nombre={"Clave confirmar"}
+                        value={claveDos}
+                        onChange={leyendoClave2}
+                        indice={"clave2"}
+                      />
+                    </label>
+                  </div>
+
+                  <div className="flex items-end w-[20%]">
+                    <div
+                      onMouseEnter={mostrarModalS}
+                      onMouseLeave={ocultarModal}
+                      className="w-full py-2 bg-white flex justify-center items-center rounded-md border border-gray-300 hover:border-[#082158]"
+                    >
+                      <svg
+                        fill="#082158"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="23"
+                        height="23"
+                        viewBox="0 0 52 52"
+                        enableBackground="new 0 0 52 52"
+                        xmlSpace="preserve"
+                      >
+                        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                        <g
+                          id="SVGRepo_tracerCarrier"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        ></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <g>
+                            <path d="M26.7,42.8c0.8,0,1.5,0.7,1.5,1.5v3.2c0,0.8-0.7,1.5-1.5,1.5h-3.2c-0.8,0-1.5-0.7-1.5-1.5v-3.2 c0-0.8,0.7-1.5,1.5-1.5H26.7z"></path>
+                            <path d="M28.2,35.1c0-2.1,1.3-4,3.1-4.8h0.1c5.2-2.1,8.8-7.2,8.8-13.2c0-7.8-6.4-14.2-14.2-14.2 c-7.2,0-13.2,5.3-14.2,12.2v0.1c-0.1,0.9,0.6,1.6,1.5,1.6h3.2c0.8,0,1.4-0.5,1.5-1.1v-0.2c0.7-3.7,4-6.5,7.9-6.5 c4.5,0,8.1,3.6,8.1,8.1c0,2.1-0.8,4-2.1,5.5l-0.1,0.1c-0.9,1-2.1,1.6-3.3,2c-4,1.4-6.7,5.2-6.7,9.4v1.5c0,0.8,0.6,1.4,1.4,1.4h3.2 c0.8,0,1.6-0.6,1.6-1.5L28.2,35.1z"></path>
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <ModalPequena visible={visible} />
@@ -339,7 +347,45 @@ export default function RegistrarUsuario() {
 
             {mensaje && <MostrarMsj mensaje={mensaje} />}
 
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
+              <BotonAceptarCancelar
+                indice={"aceptar"}
+                aceptar={mostrarModal}
+                nombre={"Crear"}
+                campos={{
+                  cedula,
+                  correo,
+                  nombre,
+                  idDepartamento,
+                  claveUno,
+                  claveDos,
+                }}
+              />
+
+              <BotonAceptarCancelar
+                indice={"limpiar"}
+                aceptar={() => {
+                  limpiarCampos({
+                    setCedula,
+                    setCorreo,
+                    setNombre,
+                    setIdDepartamento,
+                    setClaveUno,
+                    setClaveDos,
+                  });
+                }}
+                nombre={"Limpiar"}
+                campos={{
+                  cedula,
+                  correo,
+                  nombre,
+                  claveUno,
+                  claveDos,
+                }}
+              />
+            </div>
+
+            {/* <div className="flex space-x-2">
               <Boton
                 onClick={() => mostrarModal()}
                 disabled={
@@ -367,7 +413,7 @@ export default function RegistrarUsuario() {
                   )
                 }
               />
-            </div>
+            </div> */}
           </Formulario>
         </div>
       </Main>
