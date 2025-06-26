@@ -10,7 +10,7 @@ export default function BotonesModal({
   nombreDos,
 }) {
   return (
-    <div className="w-full flex justify-between space-x-2">
+    <div className="w-full flex justify-between space-x-4">
       <BotonAceptarCancelar
         aceptar={aceptar}
         campos={campos}

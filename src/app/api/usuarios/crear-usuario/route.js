@@ -7,7 +7,8 @@ import AuthTokens from "@/libs/AuthTokens";
 
 export async function POST(request) {
   try {
-    const { cedula, nombre, correo, claveUno, claveDos } = await request.json();
+    const { cedula, nombre, correo, claveUno, claveDos, departamento } =
+      await request.json();
 
     const validaciones = await validarCrearUsuario(
       cedula,
@@ -37,6 +38,9 @@ export async function POST(request) {
         clave: validaciones.claveEncriptada,
         borrado: false,
         id_rol: 4,
+        MiembrosDepartamentos: {
+          connect: departamento.map(({ id }) => ({ id })),
+        },
       },
     });
 

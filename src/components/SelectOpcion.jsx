@@ -47,7 +47,7 @@ export default function SelectOpcion({
       <label className="block">
         <span className="text-gray-800 font-semibold">{nombre}:</span>
         <div
-          className={`mt-1 uppercase flex justify-between items-center w-full p-2 
+          className={`uppercase flex justify-between items-center w-full p-2 
           rounded-md shadow-sm transition-all cursor-pointer focus:outline-none hover:border-[#082158]
           ${
             seleccionado === "Seleccione"
