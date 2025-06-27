@@ -75,7 +75,7 @@ export default function SelectOpcion({
 
       {abierto && (
         <div
-          className={`overflow-y-auto h-[300px] no-scrollbar ${!indice ? 'absolute' : 'relative'} left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
+          className={`overflow-y-auto max-h-[300px] no-scrollbar ${!indice ? 'absolute' : 'relative'} left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
             busqueda ? "pb-2" : ""
           } pt-2 bg-white rounded-lg shadow-md z-50`}
         >

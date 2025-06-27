@@ -26,6 +26,7 @@ export default function CargosForm({
   const [nombreCargo, setNombreCargo] = useState("");
   const [todosCargos, setTodosCargos] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [validarNombre, setValidarNombre] = useState(false);
 
   useEffect(() => {
     const fetchDatosCargos = async () => {
@@ -97,6 +98,8 @@ export default function CargosForm({
             setNombre={setNombreCargo}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
           />
         </DivUnoDentroSectionRegistroMostrar>
         <DivDosDentroSectionRegistroMostrar>

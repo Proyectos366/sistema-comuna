@@ -28,7 +28,8 @@ export default function FormacionesForm({
   const [todasFormaciones, setTodasFormaciones] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
-  const [validarCantidad, setValidarCantidad] = useState(false);
+  const [validarNombre, setValidarNombre] = useState(false);
+  const [validarModulo, setValidarModulo] = useState(false);
 
   useEffect(() => {
     const fetchDatosFormaciones = async () => {
@@ -110,8 +111,10 @@ export default function FormacionesForm({
             setModulo={setCantidadModulos}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
-            validar={validarCantidad}
-            setValidar={setValidarCantidad}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
+            validarModulo={validarModulo}
+            setValidarModulo={setValidarModulo}
           />
         </DivUnoDentroSectionRegistroMostrar>
         <DivDosDentroSectionRegistroMostrar>

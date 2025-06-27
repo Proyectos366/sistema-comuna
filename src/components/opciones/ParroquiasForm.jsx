@@ -27,6 +27,8 @@ export default function ParroquiasForm({
   const [todasParroquias, setTodasParroquias] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
+  const [validarNombre, setValidarNombre] = useState(false);
+
   useEffect(() => {
     const fetchDatosParroquia = async () => {
       try {
@@ -101,6 +103,8 @@ export default function ParroquiasForm({
             setNombre={setNombreParroquia}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
           />
         </DivUnoDentroSectionRegistroMostrar>
         <DivDosDentroSectionRegistroMostrar>

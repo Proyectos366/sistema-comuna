@@ -1,9 +1,14 @@
 import SelectOpcion from "../SelectOpcion";
-import LabelInput from "../LabelInput";
+import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import MenuDesplegable from "../MenuDesplegable";
 import InputCheckBox from "../InputCheckBox";
+import InputCedula from "../inputs/InputCedula";
+import InputNombre from "../inputs/InputNombre";
+import InputEdad from "../inputs/InputEdad";
+import InputTelefono from "../inputs/InputTelefono";
+import InputCorreo from "../inputs/InputCorreo";
 
 export default function FormCrearVocero({
   idParroquia,
@@ -54,6 +59,24 @@ export default function FormCrearVocero({
   limpiarCampos,
   setNombreComuna,
   setNombreConsejoComunal,
+  validarCedula,
+  setValidarCedula,
+  validarNombre,
+  setValidarNombre,
+  validarNombreDos,
+  setValidarNombreDos,
+  validarApellido,
+  setValidarApellido,
+  validarApellidoDos,
+  setValidarApellidoDos,
+  validarEdad,
+  setValidarEdad,
+  validarTelefono,
+  setValidarTelefono,
+  validarCorreo,
+  setValidarCorreo,
+  validarActividadLaboral,
+  setValidarActividadLaboral,
 }) {
   return (
     /** 
@@ -283,6 +306,7 @@ export default function FormCrearVocero({
           { id: 3, nombre: "CONSEJO COMUNAL" },
         ]}
         seleccione={"Seleccione"}
+        indice={1}
       />
 
       <MenuDesplegable>
@@ -293,6 +317,7 @@ export default function FormCrearVocero({
             handleChange={cambiarDondeCrear}
             opciones={[{ id: 1, nombre: "COMUNA" }]}
             seleccione={"Seleccione"}
+            indice={1}
           />
         )}
 
@@ -303,6 +328,7 @@ export default function FormCrearVocero({
             handleChange={cambiarSeleccionParroquia}
             opciones={parroquias}
             seleccione={"Seleccione"}
+            indice={1}
           />
         )}
 
@@ -313,6 +339,7 @@ export default function FormCrearVocero({
             handleChange={cambiarSeleccionParroquia}
             opciones={parroquias}
             seleccione={"Seleccione"}
+            indice={1}
           />
         )}
 
@@ -332,6 +359,7 @@ export default function FormCrearVocero({
             opciones={comunasCircuitos}
             seleccione={"Seleccione"}
             setNombre={setNombreComuna}
+            indice={1}
           />
         )}
 
@@ -343,6 +371,7 @@ export default function FormCrearVocero({
             opciones={consejos}
             seleccione={"Seleccione"}
             setNombre={setNombreConsejoComunal}
+            indice={1}
           />
         )}
       </MenuDesplegable>
@@ -353,38 +382,75 @@ export default function FormCrearVocero({
         (dondeGuardar === 3 ? idConsejo : true) && (
           <>
             <div className="flex flex-col sm:flex-row justify-between space-x-4">
-              <LabelInput
-                nombre={"Cedula"}
-                value={cedula}
-                setValue={setCedula}
-              />
-              <LabelInput nombre={"Edad"} value={edad} setValue={setEdad} />
+              <LabelInput nombre={"Cedula"}>
+                <InputCedula
+                  type={"text"}
+                  indice={"cedula"}
+                  value={cedula}
+                  setValue={setCedula}
+                  validarCedula={validarCedula}
+                  setValidarCedula={setValidarCedula}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Edad"}>
+                <InputEdad
+                  type={"text"}
+                  indice={"edad"}
+                  value={edad}
+                  setValue={setEdad}
+                  validarEdad={validarEdad}
+                  setValidarEdad={setValidarEdad}
+                />
+              </LabelInput>
             </div>
 
             <div className="flex flex-col sm:flex-row space-x-4">
-              <LabelInput
-                nombre={"Primer nombre"}
-                value={nombre}
-                setValue={setNombre}
-              />
-              <LabelInput
-                nombre={"Segundo nombre"}
-                value={nombreDos}
-                setValue={setNombreDos}
-              />
+              <LabelInput nombre={"Primer nombre"}>
+                <InputNombre
+                  type={"text"}
+                  indice={"nombre"}
+                  value={nombre}
+                  setValue={setNombre}
+                  validarNombre={validarNombre}
+                  setValidarNombre={setValidarNombre}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Segundo nombre"}>
+                <InputNombre
+                  type={"text"}
+                  indice={"nombre"}
+                  value={nombreDos}
+                  setValue={setNombreDos}
+                  validarNombre={validarNombreDos}
+                  setValidarNombre={setValidarNombreDos}
+                />
+              </LabelInput>
             </div>
 
             <div className="flex flex-col sm:flex-row space-x-4">
-              <LabelInput
-                nombre={"Primer apellido"}
-                value={apellido}
-                setValue={setApellido}
-              />
-              <LabelInput
-                nombre={"Segundo apellido"}
-                value={apellidoDos}
-                setValue={setApellidoDos}
-              />
+              <LabelInput nombre={"Primer nombre"}>
+                <InputNombre
+                  type={"text"}
+                  indice={"nombre"}
+                  value={apellido}
+                  setValue={setApellido}
+                  validarNombre={validarApellido}
+                  setValidarNombre={setValidarApellido}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Segundo Apellido"}>
+                <InputNombre
+                  type={"text"}
+                  indice={"nombre"}
+                  value={apellidoDos}
+                  setValue={setApellidoDos}
+                  validarNombre={validarApellidoDos}
+                  setValidarNombre={setValidarApellidoDos}
+                />
+              </LabelInput>
             </div>
 
             <div className="flex flex-col sm:flex-row space-x-4">
@@ -407,24 +473,40 @@ export default function FormCrearVocero({
                 </div>
               </div>
 
-              <LabelInput
-                nombre={"Telefono"}
-                value={telefono}
-                setValue={setTelefono}
-              />
+              <LabelInput nombre={"Telefono"}>
+                <InputTelefono
+                  type={"text"}
+                  indice={"telefono"}
+                  value={telefono}
+                  setValue={setTelefono}
+                  validarTelefono={validarTelefono}
+                  setValidarTelefono={setValidarTelefono}
+                />
+              </LabelInput>
             </div>
 
             <div className="flex flex-col sm:flex-row space-x-4">
-              <LabelInput
-                nombre={"Correo"}
-                value={correo}
-                setValue={setCorreo}
-              />
-              <LabelInput
-                nombre={"Actividad laboral"}
-                value={actividadLaboral}
-                setValue={setActividadLaboral}
-              />
+              <LabelInput nombre={"Correo"}>
+                <InputCorreo
+                  type="text"
+                  indice="email"
+                  value={correo}
+                  setValue={setCorreo}
+                  validarCorreo={validarCorreo}
+                  setValidarCorreo={setValidarCorreo}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Actividad laboral"}>
+                <InputNombre
+                  type="text"
+                  indice="nombre"
+                  value={actividadLaboral}
+                  setValue={setActividadLaboral}
+                  validarNombre={validarActividadLaboral}
+                  setValidarNombre={setValidarActividadLaboral}
+                />
+              </LabelInput>
             </div>
 
             <div className="hidden  space-x-4">

@@ -1,12 +1,15 @@
-import LabelInput from "../LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
+import InputNombre from "../inputs/InputNombre";
+import LabelInput from "../inputs/LabelInput";
 
 export default function FormCrearCargo({
   nombre,
   setNombre,
   abrirModal,
   limpiarCampos,
+  validarNombre,
+  setValidarNombre
 }) {
   return (
     <Formulario
@@ -15,7 +18,16 @@ export default function FormCrearCargo({
       }}
       className="space-y-4"
     >
-      <LabelInput nombre={"Nombre"} value={nombre} setValue={setNombre} />
+      <LabelInput nombre={"Nombre"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
+      </LabelInput>
 
       <div className="flex space-x-3">
         <BotonAceptarCancelar

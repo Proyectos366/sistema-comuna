@@ -1,7 +1,8 @@
 import SelectOpcion from "../SelectOpcion";
-import LabelInput from "../LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
+import LabelInput from "../inputs/LabelInput";
+import Input from "../inputs/Input";
+import BotonAceptarCancelar from "../BotonAceptarCancelar";
 
 export default function FormCrearCircuito({
   idParroquia,
@@ -25,11 +26,18 @@ export default function FormCrearCircuito({
         handleChange={cambiarSeleccionParroquia}
         opciones={parroquias}
         seleccione={"Seleccione"}
+        indice={1}
       />
 
       {idParroquia && (
         <>
-          <LabelInput nombre={"Nombre"} value={nombre} setValue={setNombre} />
+          <LabelInput nombre={"Nombre"}>
+            <Input
+              type={"text"}
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </LabelInput>
 
           <div className="flex space-x-3">
             <BotonAceptarCancelar

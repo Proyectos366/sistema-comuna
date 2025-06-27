@@ -1,6 +1,8 @@
+import Formulario from "../Formulario";
 import SelectOpcion from "../SelectOpcion";
-import LabelInput from "../LabelInput";
+import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import Input from "../inputs/Input";
 
 export default function FormCrearComuna({
   idParroquia,
@@ -12,11 +14,10 @@ export default function FormCrearComuna({
   limpiarCampos,
 }) {
   return (
-    <form
+    <Formulario
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      className="space-y-4"
     >
       <SelectOpcion
         idOpcion={idParroquia}
@@ -24,11 +25,18 @@ export default function FormCrearComuna({
         handleChange={cambiarSeleccionParroquia}
         opciones={parroquias}
         seleccione={"Seleccione"}
+        indice={1}
       />
 
       {idParroquia && (
         <>
-          <LabelInput nombre={"Nombre"} value={nombre} setValue={setNombre} />
+          <LabelInput nombre={"Nombre"}>
+            <Input
+              type={"text"}
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </LabelInput>
 
           <div className="flex space-x-3">
             <BotonAceptarCancelar
@@ -54,6 +62,6 @@ export default function FormCrearComuna({
           </div>
         </>
       )}
-    </form>
+    </Formulario>
   );
 }

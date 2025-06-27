@@ -54,6 +54,16 @@ export default function VoceroForm({
   const [perteneceComunaCircuito, setPerteneceComunaCircuito] = useState("");
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [validarCedula, setValidarCedula] = useState(false);
+  const [validarNombre, setValidarNombre] = useState(false);
+  const [validarNombreDos, setValidarNombreDos] = useState(false);
+  const [validarApellido, setValidarApellido] = useState(false);
+  const [validarApellidoDos, setValidarApellidoDos] = useState(false);
+  const [validarEdad, setValidarEdad] = useState(false);
+  const [validarTelefono, setValidarTelefono] = useState(false);
+
+  const [validarCorreo, setValidarCorreo] = useState(false);
+  const [validarActividadLaboral, setValidarActividadLaboral] = useState(false);
 
   const [nombreComuna, setNombreComuna] = useState("");
   const [nombreConsejoComunal, setNombreConsejoComunal] = useState("");
@@ -245,11 +255,11 @@ export default function VoceroForm({
   };
 
   /**
-  const cambiarSeleccionComunaCircuito = (e) => {
-    const valor = e.target.value;
-    setIdComunaCircuito(valor);
-  };
- */
+    const cambiarSeleccionComunaCircuito = (e) => {
+      const valor = e.target.value;
+      setIdComunaCircuito(valor);
+    };
+  */
 
   const cambiarSeleccionComunaCircuito = (e) => {
     const valor = e.target.value; // ID de la comuna seleccionada
@@ -481,6 +491,24 @@ export default function VoceroForm({
             limpiarCampos={limpiarCampos}
             setNombreComuna={setNombreComuna}
             setNombreConsejoComunal={setNombreConsejoComunal}
+            validarCedula={validarCedula}
+            setValidarCedula={setValidarCedula}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
+            validarNombreDos={validarNombreDos}
+            setValidarNombreDos={setValidarNombreDos}
+            validarApellido={validarApellido}
+            setValidarApellido={setValidarApellido}
+            validarApellidoDos={validarApellidoDos}
+            setValidarApellidoDos={setValidarApellidoDos}
+            validarEdad={validarEdad}
+            setValidarEdad={setValidarEdad}
+            validarTelefono={validarTelefono}
+            setValidarTelefono={setValidarTelefono}
+            validarCorreo={validarCorreo}
+            setValidarCorreo={setValidarCorreo}
+            validarActividadLaboral={validarActividadLaboral}
+            setValidarActividadLaboral={setValidarActividadLaboral}
           />
         </DivUnoDentroSectionRegistroMostrar>
 

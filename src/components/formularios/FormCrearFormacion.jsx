@@ -1,6 +1,8 @@
-import LabelInput from "../LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
+import InputNombre from "../inputs/InputNombre";
+import InputModulo from "../inputs/InputModulo";
+import LabelInput from "../inputs/LabelInput";
 
 export default function FormCrearFormacion({
   nombre,
@@ -9,8 +11,10 @@ export default function FormCrearFormacion({
   setModulo,
   abrirModal,
   limpiarCampos,
-  validar,
-  setValidar,
+  validarNombre,
+  setValidarNombre,
+  validarModulo,
+  setValidarModulo,
 }) {
   return (
     <Formulario
@@ -19,15 +23,27 @@ export default function FormCrearFormacion({
       }}
       className="space-y-4"
     >
-      <LabelInput nombre={"Nombre"} value={nombre} setValue={setNombre} />
-      <LabelInput
-        indice={"numero"}
-        validar={validar}
-        setValidar={setValidar}
-        nombre={"Cantidad de modulos"}
-        value={modulo}
-        setValue={setModulo}
-      />
+      <LabelInput nombre={"Nombre"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
+      </LabelInput>
+
+      <LabelInput nombre={"Cantidad de modulos"}>
+        <InputModulo
+          type="text"
+          indice="modulo"
+          value={modulo}
+          setValue={setModulo}
+          validarModulo={validarModulo}
+          setValidarModulo={setValidarModulo}
+        />
+      </LabelInput>
 
       <div className="flex space-x-3">
         <BotonAceptarCancelar
