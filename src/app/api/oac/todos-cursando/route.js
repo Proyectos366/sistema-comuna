@@ -20,11 +20,42 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
-    const todosCursando = await prisma.cursando.findMany({
+    // const todosCursando = await prisma.cursando.findMany({
+    //   where: {
+    //     borrado: false,
+    //   },
+    // });
+
+    const cursandoData = await prisma.cursando.findMany({
       where: {
         borrado: false,
       },
+      select: {
+        cedula: true,
+        edad: true,
+        genero: true,
+        id_parroquia: true,
+        id_comuna: true,
+        id_consejo: true,
+        id_clase: true,
+      },
     });
+
+    const parroquias = await prisma.parroquia.findMany();
+    const comunas = await prisma.comuna.findMany();
+    const consejos = await prisma.consejo.findMany();
+    const clases = await prisma.clase.findMany();
+
+    const todosCursando = cursandoData.map((c) => ({
+      cedula: c.cedula,
+      edad: c.edad,
+      genero: c.genero,
+      parroquia:
+        parroquias.find((p) => p.id === c.id_parroquia)?.nombre ?? null,
+      comuna: comunas.find((co) => co.id === c.id_comuna)?.nombre ?? null,
+      consejo: consejos.find((con) => con.id === c.id_consejo)?.nombre ?? null,
+      clase: clases.find((cl) => cl.id === c.id_clase)?.nombre ?? null,
+    }));
 
     if (!todosCursando) {
       return generarRespuesta(

@@ -10,6 +10,7 @@ export default function SelectOpcion({
   opciones,
   seleccione,
   setNombre,
+  indice
 }) {
   const [abierto, setAbierto] = useState(false);
   const [seleccionado, setSeleccionado] = useState("");
@@ -74,7 +75,7 @@ export default function SelectOpcion({
 
       {abierto && (
         <div
-          className={`absolute left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
+          className={`overflow-y-auto h-[300px] no-scrollbar ${!indice ? 'absolute' : 'relative'} left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
             busqueda ? "pb-2" : ""
           } pt-2 bg-white rounded-lg shadow-md z-50`}
         >
@@ -103,7 +104,7 @@ export default function SelectOpcion({
                 .map((opc, index) => (
                   <li
                     key={opc.id}
-                    className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
+                    className={`uppercase p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
                       index === opciones.length - 1 ? "mb-2" : ""
                     }`}
                     onClick={() => {

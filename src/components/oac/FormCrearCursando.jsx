@@ -42,6 +42,7 @@ export default function FormCrearCursando({
           opciones={comunas}
           seleccione={"Seleccione"}
           setNombre={setNameComuna}
+          indice={1}
         />
       ) : (
         <SelectOpcion
@@ -51,6 +52,7 @@ export default function FormCrearCursando({
           opciones={consejos}
           seleccione={"Seleccione"}
           setNombre={setNameConsejo}
+          indice={1}
         />
       )}
 

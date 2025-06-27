@@ -34,6 +34,8 @@ export default function RegistrarUsuario() {
   const [claveDos, setClaveDos] = useState("");
   const [mensaje, setMensaje] = useState("");
 
+  const [mensajeBackEnd, setMensajeBackEnd] = useState("");
+
   const [validarCorreo, setValidarCorreo] = useState(false);
   const [validarCedula, setValidarCedula] = useState(false);
   const [validarNombre, setValidarNombre] = useState(false);
@@ -188,14 +190,14 @@ export default function RegistrarUsuario() {
       console.log(respuesta.data);
 
       if (respuesta.data.status === "ok") {
-        setMensaje(respuesta.data.message);
+        setMensajeBackEnd(respuesta.data.message);
         setTimeout(() => {
           setCedula("");
           setNombre("");
           setCorreo("");
           setClaveUno("");
           setClaveDos("");
-          setMensaje("");
+          setMensajeBackEnd("");
           window.location.href = respuesta.data.redirect;
         }, 5000);
       }
@@ -203,9 +205,9 @@ export default function RegistrarUsuario() {
       console.log("Error, al crear el usuario: " + error);
 
       if (error && error.response && error.response.status === 400) {
-        setMensaje(error.response.data.message);
+        setMensajeBackEnd(error.response.data.message);
       } else {
-        setMensaje("Error interno");
+        setMensajeBackEnd("Error interno");
       }
 
       setTimeout(() => {
@@ -270,9 +272,9 @@ export default function RegistrarUsuario() {
           />
         </ModalDatosContenedor>
 
-        {mensaje && (
+        {mensajeBackEnd && (
           <div className="w-full mb-3">
-            <MostrarMsj mensaje={mensaje} />
+            <MostrarMsj mensaje={mensajeBackEnd} />
           </div>
         )}
 
@@ -411,8 +413,6 @@ export default function RegistrarUsuario() {
                   </div>
                 </div>
               </div> */}
-
-
             </div>
 
             <ModalPequena visible={visible} />
@@ -424,6 +424,12 @@ export default function RegistrarUsuario() {
                 nombre={"Olvido su clave?"}
               />
             </div>
+
+            {mensaje && (
+              <div className="w-full mb-3">
+                <MostrarMsj mensaje={mensaje} />
+              </div>
+            )}
 
             <div className="flex space-x-4">
               <BotonAceptarCancelar

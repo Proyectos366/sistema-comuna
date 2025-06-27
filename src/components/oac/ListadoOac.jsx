@@ -20,17 +20,15 @@ export default function ListadoOac({
           <Titulos indice={3} titulo={"Total personas"} />
 
           <div className="w-full flex justify-around mt-2">
-            
             <div className="w-full flex flex-col items-center">
               <span className="font-semibold">Hombres</span>
               <span>{conteo?.hombres}</span>
             </div>
-            
+
             <div className="w-full flex flex-col items-center">
               <span className="font-semibold">Mujeres</span>
               <span>{conteo?.mujeres}</span>
             </div>
-
           </div>
 
           <div className="w-full flex justify-around mt-2">
@@ -51,22 +49,22 @@ export default function ListadoOac({
       ) : listado?.length === 0 ? (
         <p className="text-center text-gray-600 uppercase">{mensajeVacio}</p>
       ) : ( */}
-        <div>
-          {listado?.map((lista, index) => (
-            <div
-              key={index}
-              className="mt-2 bg-gray-100 rounded-md transition-all duration-700 ease-in-out 
+      <div>
+        {listado?.map((lista, index) => (
+          <div
+            key={index}
+            className="mt-2 bg-gray-100 rounded-md transition-all duration-700 ease-in-out 
                  hover:bg-gray-200 hover:border hover:border-gray-300 
                  hover:shadow-md hover:scale-101 flex flex-col uppercase"
-            >
-              <div className="rounded-md p-3 uppercase flex space-x-4">
-                <span>{lista.cedula}</span>
-                <span>{lista.edad}</span>
-                <span>{lista.genero ? "Hombre" : "Mujer"}</span>
-              </div>
+          >
+            <div className="rounded-md p-3 uppercase flex space-x-4">
+              <span>{lista.cedula}</span>
+              <span>{lista.edad}</span>
+              <span>{lista.genero ? "Hombre" : "Mujer"}</span>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
       {/* )} */}
     </div>
   );

@@ -31,8 +31,8 @@ export async function POST(request) {
 
     const nuevoUsuario = await prisma.usuario.create({
       data: {
-        cedula,
-        nombre,
+        cedula: validaciones.cedula,
+        nombre: validaciones.nombre,
         correo: validaciones.correo,
         token: token,
         clave: validaciones.claveEncriptada,

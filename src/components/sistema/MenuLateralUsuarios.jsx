@@ -32,7 +32,7 @@ export default function MenuLateralUsuario({
               </p>
             </div>
 
-            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[500px] no-scrollbar">
+            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[390px] no-scrollbar">
               {id_rol === 1 && (
                 <>
                   <EnlacesBarraLateral
@@ -287,16 +287,19 @@ export default function MenuLateralUsuario({
                   />
                 </>
               )}
-
-              <div>
-                <img
-                  className="w-full h-32 opacity-50"
-                  src="/img/busqueda.png"
-                  alt="Imagen de busqueda"
-                />
-              </div>
             </div>
+
+            
+
           </div>
+<div>
+              <img
+                className="w-full h-32 opacity-50"
+                src="/img/busqueda.png"
+                alt="Imagen de busqueda"
+              />
+            </div>
+
         </div>
       </section>
     </>

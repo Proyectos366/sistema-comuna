@@ -87,6 +87,16 @@ export default function FormOac({
   }, []);
 
   useEffect(() => {
+    if (idComuna && todasComunas?.length) {
+      const comuna = todasComunas.find((c) => c.id === idComuna);
+      setIdParroquia(comuna?.id_parroquia ?? null);
+    } else if (idConsejo && todosConsejos?.length) {
+      const consejo = todosConsejos.find((c) => c.id === idConsejo);
+      setIdParroquia(consejo?.id_parroquia ?? null);
+    }
+  }, [idComuna, idConsejo]);
+
+  useEffect(() => {
     if (!Array.isArray(todosCursandos)) return;
 
     let mujeres = 0;
@@ -101,7 +111,7 @@ export default function FormOac({
 
       if (genero === false) {
         mujeres++;
-        if (edad >= 60) adultasMayores++;
+        if (edad >= 55) adultasMayores++;
       } else if (genero === true) {
         hombres++;
         if (edad >= 60) adultosMayores++;
@@ -110,18 +120,6 @@ export default function FormOac({
 
     setConteo({ mujeres, hombres, adultasMayores, adultosMayores });
   }, [todosCursandos]);
-
-  /** 
-  useEffect(() => {
-    setIdParroquia("");
-    setIdComunaCircuito("");
-    setIdConsejoComunal("");
-    setTodasComunas([]);
-    setTodosConsejos([]);
-    setTodosVoceros([]);
-    setNombreVocero("");
-  }, [perteneceComunaCircuito]);
-  */
 
   useEffect(() => {
     setSeleccionarDondeCrear("");

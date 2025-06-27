@@ -360,7 +360,7 @@ export default class ValidarCampos {
       if (!Number.isInteger(moduloNumero)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, debe ser unnumero entero..."
+          "Error, debe ser un número entero..."
         );
       }
 

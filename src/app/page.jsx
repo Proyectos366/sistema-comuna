@@ -12,6 +12,7 @@ import InputCorreo from "@/components/inputs/InputCorreo";
 import InputClave from "@/components/inputs/InputClave";
 import BotonesModal from "@/components/BotonesModal";
 import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
 
 export default function Home() {
   const [correo, setCorreo] = useState("");
@@ -66,10 +67,10 @@ export default function Home() {
     }
   };
 
-  function limpiar(setCorreo, setClave) {
+  const limpiarCampos = () => {
     setCorreo("");
     setClave("");
-  }
+  };
 
   const leyendoClave = (e) => {
     const claveUno = e.target.value;
@@ -168,7 +169,29 @@ export default function Home() {
               </div>
             )}
 
-            <BotonesModal
+            <div className="flex space-x-4">
+              <BotonAceptarCancelar
+                indice={"aceptar"}
+                aceptar={iniciarSesion}
+                nombre={"Iniciar sesion"}
+                campos={{
+                  correo,
+                  clave,
+                }}
+              />
+
+              <BotonAceptarCancelar
+                indice={"limpiar"}
+                aceptar={limpiarCampos}
+                nombre={"Limpiar"}
+                campos={{
+                  correo,
+                  clave,
+                }}
+              />
+            </div>
+
+            {/* <BotonesModal
               aceptar={iniciarSesion}
               cancelar={limpiar}
               indiceUno={"crear"}
@@ -178,7 +201,7 @@ export default function Home() {
               campos={{
                 correo,
               }}
-            />
+            /> */}
 
             {/* <div className="flex space-x-2">
               <Boton

@@ -73,7 +73,7 @@ export async function POST(request) {
       data: {
         cedula: cedulaNumero,
         edad: edadNumero,
-        genero: sexo === 1,
+        genero: sexo === 1 ? true : false,
         f_n: fechaNacimiento,
         id_usuario: idUsuario.id,
         id_parroquia: id_parroquia,
