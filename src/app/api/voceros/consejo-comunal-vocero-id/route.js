@@ -34,9 +34,39 @@ export async function GET(req) {
     }
 
     const vocerosPorConsejoComunal = await prisma.vocero.findMany({
-      where: { id_consejo: id_consejo },
-      include: {
-        cargos: true, // Incluir los cargos relacionados
+      where: {
+        id_consejo: id_consejo,
+      },
+      select: {
+        id: true,
+        nombre: true,
+        nombre_dos: true,
+        apellido: true,
+        apellido_dos: true,
+        cedula: true,
+        telefono: true,
+        correo: true,
+        edad: true,
+        genero: true,
+        comunas: { select: { nombre: true } },
+        parroquias: { select: { nombre: true } },
+        consejos: { select: { nombre: true } },
+        cursos: {
+          where: { borrado: false },
+          select: {
+            verificado: true,
+            certificado: true,
+            formaciones: { select: { nombre: true } },
+            asistencias: {
+              select: {
+                id: true,
+                presente: true,
+                fecha_registro: true,
+                modulos: { select: { id: true, nombre: true } },
+              },
+            },
+          },
+        },
       },
     });
 

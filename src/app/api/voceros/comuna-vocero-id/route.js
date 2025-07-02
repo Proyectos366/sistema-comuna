@@ -33,30 +33,57 @@ export async function GET(req) {
       );
     }
 
-    // Consultar los consejos comunales de la comuna específica
-    const vocerosPorComuna = await prisma.vocero.findMany({
+    const voceroPorComuna = await prisma.vocero.findMany({
       where: {
         id_comuna: id_comuna,
-        id_consejo: null, // Solo traer registros donde id_consejo es NULL
+        id_consejo: null,
       },
-      include: {
-        cargos: true, // Incluir los cargos relacionados
+      select: {
+        id: true,
+        nombre: true,
+        nombre_dos: true,
+        apellido: true,
+        apellido_dos: true,
+        cedula: true,
+        telefono: true,
+        correo: true,
+        edad: true,
+        genero: true,
+        comunas: { select: { nombre: true } },
+        parroquias: { select: { nombre: true } },
+        consejos: { select: { nombre: true } },
+        cursos: {
+          where: { borrado: false },
+          select: {
+            verificado: true,
+            certificado: true,
+            formaciones: { select: { nombre: true } },
+            asistencias: {
+              select: {
+                id: true,
+                presente: true,
+                fecha_registro: true,
+                modulos: { select: { id: true, nombre: true } },
+              },
+            },
+          },
+        },
       },
     });
 
-    if (!vocerosPorComuna) {
+    if (voceroPorComuna.length === 0) {
       return generarRespuesta(
-        "ok",
+        "error",
         "No hay voceros en esta comuna...",
         { voceros: [] },
-        200
+        400
       );
     }
 
     return generarRespuesta(
       "ok",
       "Voceros encontrados.",
-      { voceros: vocerosPorComuna },
+      { voceros: voceroPorComuna },
       200
     );
   } catch (error) {

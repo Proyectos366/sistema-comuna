@@ -4,14 +4,8 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 
-export async function GET(request) {
+export async function GET() {
   try {
-    // Obtener el ID desde los parámetros de la solicitud
-    const { searchParams } = new URL(request.url);
-    const idParroquia = searchParams.get("idParroquia");
-
-    const idParroquiaNumero = Number(idParroquia);
-
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
 
@@ -24,13 +18,10 @@ export async function GET(request) {
       );
     }
 
-    if (!idParroquia) {
-      return generarRespuesta("error", "Id parroquia vacio...", {}, 400);
-    }
 
-    const voceroPorParroquia = await prisma.vocero.findMany({
+    const todosVoceros = await prisma.vocero.findMany({
       where: {
-        id_parroquia: idParroquiaNumero,
+        borrado: false,
       },
       select: {
         id: true,
@@ -78,22 +69,22 @@ export async function GET(request) {
       },
     });
 
-    if (!voceroPorParroquia) {
+    if (!todosVoceros) {
       return generarRespuesta("error", "Error, no hay voceros...", {}, 400);
     }
 
     return generarRespuesta(
       "ok",
       "Voceros encontrados...",
-      { voceros: voceroPorParroquia },
+      { voceros: todosVoceros },
       200
     );
   } catch (error) {
-    console.log(`Error interno, al consultar vocero por parroquia: ${error}`);
+    console.log(`Error interno, al consultar todos los voceros: ${error}`);
 
     return generarRespuesta(
       "error",
-      "Error interno al consultar vocero por parroquia...",
+      "Error interno al consultar todos los voceros...",
       {},
       500
     );
@@ -101,7 +92,7 @@ export async function GET(request) {
 }
 
 /**
- const cursos = voceroPorParroquia.cursos.map(curso => {
+ const cursos = todosVoceros.cursos.map(curso => {
   const modulosIncompletos = curso.modulos.filter(modulo => {
     return modulo.asistencias.length === 0;
   });

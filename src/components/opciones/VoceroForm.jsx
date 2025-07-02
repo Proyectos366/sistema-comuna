@@ -14,7 +14,7 @@ import ListadoGenaral from "../ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import InputCheckBox from "../inputs/InputCheckBox";
 import SelectOpcion from "../SelectOpcion";
-import ListadoVoceros from "../ListadoVoceros";
+import ListadoVoceros from "../Listados/ListadoVoceros";
 
 export default function VoceroForm({
   mostrar,
@@ -119,29 +119,31 @@ export default function VoceroForm({
     setNombreVocero("");
   }, [perteneceComunaCircuito]);
 
-  useEffect(() => {
-    if (!idComunaCircuito) {
-      setTodosVoceros([]);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!idComunaCircuito) {
+  //     setTodosVoceros([]);
+  //     return;
+  //   }
 
-    const fetchVocerosPorComuna = async () => {
-      setIsLoading(true);
-      try {
-        let response = await axios.get(`/api/voceros/vocero-comuna-id`, {
-          params: { idComuna: idComunaCircuito },
-        });
+  //   const fetchVocerosPorComuna = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       let response = await axios.get(`/api/voceros/vocero-comuna-id`, {
+  //         params: { idComuna: idComunaCircuito },
+  //       });
 
-        setTodosVoceros(response?.data?.voceros);
-      } catch (error) {
-        console.log("Error, al obtener los voceros por comuna: " + error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       setTodosVoceros(response?.data?.voceros || []);
+  //     } catch (error) {
+  //       console.log("Error, al obtener los voceros por comuna: " + error);
+  //       console.log(error?.response?.data);
 
-    fetchVocerosPorComuna();
-  }, [idComunaCircuito]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchVocerosPorComuna();
+  // }, [idComunaCircuito]);
 
   useEffect(() => {
     if (!idConsejoComunal) {
@@ -153,7 +155,7 @@ export default function VoceroForm({
       setIsLoading(true);
       try {
         let response = await axios.get(
-          `/api/voceros/vocero-consejo-comunal-id`,
+          `/api/voceros/consejo-comunal-vocero-id`,
           {
             params: { idConsejo: idConsejoComunal },
           }
@@ -208,7 +210,7 @@ export default function VoceroForm({
 
         setTodosVoceros(response?.data?.voceros);
       } catch (error) {
-        console.log("Error, al obtener los voceros por comuna: " + error);
+        console.log("Error, al obtener los voceros por parroquia: " + error);
       } finally {
         setIsLoading(false);
       }
@@ -216,6 +218,56 @@ export default function VoceroForm({
 
     fetchVoceroPorParroquia();
   }, [idParroquia]);
+
+  useEffect(() => {
+    if (!idComunaCircuito) {
+      setTodosVoceros([]);
+      return;
+    }
+
+    const fetchVoceroPorComuna = async () => {
+      setIsLoading(true);
+      try {
+        let response = await axios.get(`/api/voceros/comuna-vocero-id`, {
+          params: { idComuna: idComunaCircuito },
+        });
+
+        setTodosVoceros(response?.data?.voceros);
+      } catch (error) {
+        console.log("Error, al obtener los voceros por comuna: " + error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVoceroPorComuna();
+  }, [idComunaCircuito]);
+
+  useEffect(() => {
+    /**
+      if (seleccionarConsulta !== 5) {
+        setTodosVoceros([]);
+        return;
+      }
+    */
+
+    const fetchTodosVoceros = async () => {
+      setIsLoading(true);
+      try {
+        let response = await axios.get(`/api/voceros/todos-voceros`);
+
+        setTodosVoceros(response?.data?.voceros);
+      } catch (error) {
+        console.log("Error, al obtener todos los voceros: " + error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (seleccionarConsulta === 5) {
+      fetchTodosVoceros();
+    }
+  }, [seleccionarConsulta]);
 
   const toggleGenero = (id) => {
     setGeneroVocero(generoVocero === id ? null : id); // Cambia el estado, permitiendo deselección
@@ -580,28 +632,78 @@ export default function VoceroForm({
           </>
         )}
 
-        {seleccionarConsulta &&
-          seleccionarConsulta !== 1 &&
-          seleccionarConsulta !== 5 && (
-            <>
-              <DivUnoDentroSectionRegistroMostrar
-                nombre={getTitulo(seleccionarConsulta)}
-              >
-                <SelectOpcion
-                  idOpcion={idParroquia}
-                  nombre={"Parroquia"}
-                  handleChange={cambiarSeleccionParroquia}
-                  opciones={todasParroquias}
-                  seleccione={"Seleccione"}
-                  setNombre={setNombreParroquia}
-                  setDatos={setDatos}
-                  indice={1}
-                />
-              </DivUnoDentroSectionRegistroMostrar>
+        {seleccionarConsulta === 2 && (
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={getTitulo(seleccionarConsulta)}
+            >
+              <SelectOpcion
+                idOpcion={idParroquia}
+                nombre={"Parroquia"}
+                handleChange={cambiarSeleccionParroquia}
+                opciones={todasParroquias}
+                seleccione={"Seleccione"}
+                setNombre={setNombreParroquia}
+                setDatos={setDatos}
+                indice={1}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
 
-              <ListadoVoceros voceros={todosVoceros} />
-            </>
-          )}
+            <ListadoVoceros voceros={todosVoceros} />
+          </>
+        )}
+
+        {seleccionarConsulta === 3 && (
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={getTitulo(seleccionarConsulta)}
+            >
+              <SelectOpcion
+                idOpcion={idComunaCircuito}
+                nombre={"Comunas"}
+                handleChange={cambiarSeleccionComunaCircuito}
+                opciones={todasComunas}
+                seleccione={"Seleccione"}
+                setNombre={setNombreComuna}
+                setDatos={setDatos}
+                indice={1}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
+
+            <ListadoVoceros voceros={todosVoceros} />
+          </>
+        )}
+
+        {seleccionarConsulta === 4 && (
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={getTitulo(seleccionarConsulta)}
+            >
+              <SelectOpcion
+                idOpcion={idComunaCircuito}
+                nombre={"Consejos comunales"}
+                handleChange={cambiarSeleccionConsejo}
+                opciones={todosConsejos}
+                seleccione={"Seleccione"}
+                setNombre={setNombreConsejoComunal}
+                setDatos={setDatos}
+                indice={1}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
+
+            <ListadoVoceros voceros={todosVoceros} />
+          </>
+        )}
+
+        {seleccionarConsulta === 5 && (
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={getTitulo(seleccionarConsulta)}
+            ></DivUnoDentroSectionRegistroMostrar>
+
+            <ListadoVoceros voceros={todosVoceros} />
+          </>
+        )}
       </SectionRegistroMostrar>
     </>
   );
