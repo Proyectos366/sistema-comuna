@@ -1,6 +1,8 @@
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import msjErrores from "../msj_validaciones/campos_formulario/msjErrores.json";
 import msjCorrectos from "../msj_validaciones/campos_formulario/msjCorrectos.json";
+import { quitarCaracteres } from "@/utils/quitarCaracteres";
+import { phoneRegex } from "@/utils/constantes";
 
 const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -105,13 +107,27 @@ export default class ValidarCampos {
   static validarCampoCedula(cedula) {
     try {
       if (!cedula) {
+        return retornarRespuestaFunciones("error", "Campo cedula vacio...");
+      }
+
+      const cedulaLimpia = quitarCaracteres(cedula);
+
+      const cedulaNumero = Number(cedulaLimpia);
+
+      if (isNaN(cedulaNumero)) {
+        // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
+        return retornarRespuestaFunciones("error", "Error, cedula inválida...");
+      }
+
+      // Opcional: Rango de cedula (ej. no más de 120 años)
+      if (cedulaNumero.length < 7 || cedulaNumero.length > 8) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCedula.campoVacio
+          "error",
+          "Error, cedula incorrecta...."
         );
       }
 
-      if (!cedulaRegex.test(cedula)) {
+      if (!cedulaRegex.test(cedulaNumero)) {
         return retornarRespuestaFunciones(
           msjErrores.error,
           msjErrores.errorCedula.formatoInvalido
@@ -120,13 +136,78 @@ export default class ValidarCampos {
 
       return retornarRespuestaFunciones(
         msjCorrectos.ok,
-        msjCorrectos.okCedula.campoValido
+        msjCorrectos.okCedula.campoValido,
+        { cedula: cedulaNumero }
       );
     } catch (error) {
       console.log(`${msjErrores.errorCedula.internoValidando}: ` + error);
       return retornarRespuestaFunciones(
         msjErrores.error,
         msjErrores.errorCedula.internoValidando
+      );
+    }
+  }
+
+  static validarCampoTelefono(telefono) {
+    try {
+      if (!telefono) {
+        return retornarRespuestaFunciones("error", "Campo teléfono vacio...");
+      }
+
+      const telefonoLimpio = quitarCaracteres(telefono);
+
+      if (!phoneRegex.test(telefonoLimpio)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, formato invalido..."
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", "Campo teléfono valido...", {
+        telefono: telefonoLimpio,
+      });
+    } catch (error) {
+      console.log(`Error, interno al validar telefono: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno (validar telefono)"
+      );
+    }
+  }
+
+  static validarCampoEdad(edad) {
+    try {
+      if (!edad) {
+        return retornarRespuestaFunciones("error", "Campo edad vacio...");
+      }
+
+      const edadNumero = Number(edad);
+
+      if (isNaN(edadNumero) || edadNumero <= 0) {
+        // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
+        return retornarRespuestaFunciones("error", "Error, edad inválida...");
+      }
+
+      // Opcional: Rango de edad (ej. no más de 120 años)
+      if (edadNumero > 99) {
+        return retornarRespuestaFunciones("error", "Error, edad muy alta....");
+      }
+
+      if (edadNumero < 18) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, es un menor de edad...."
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", "Campo edad valido...", {
+        edad: edadNumero,
+      });
+    } catch (error) {
+      console.log(`Error, interno al (validar edad): ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno (validar edad)"
       );
     }
   }
@@ -294,7 +375,8 @@ export default class ValidarCampos {
     cedula,
     correo,
     genero,
-    edad
+    edad,
+    telefono
   ) {
     try {
       const validarCorreo = this.validarCampoCorreo(correo);
@@ -311,6 +393,9 @@ export default class ValidarCampos {
       const validarCedula = this.validarCampoCedula(cedula);
       const validarGenero = this.validarCampoGenero(genero);
 
+      const validarEdad = this.validarCampoEdad(edad);
+      const validarTelefono = this.validarCampoTelefono(telefono);
+
       if (validarCorreo.status === "error") return validarCorreo;
       if (validarNombre.status === "error") return validarNombre;
       if (validarNombreDos.status === "error") return validarNombreDos;
@@ -318,15 +403,14 @@ export default class ValidarCampos {
       if (validarApellidoDos.status === "error") return validarApellidoDos;
       if (validarCedula.status === "error") return validarCedula;
       if (validarGenero.status === "error") return validarGenero;
+      if (validarEdad.status === "error") return validarEdad;
+      if (validarTelefono.status === "error") return validarTelefono;
 
-      if (!edad) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo edad vacio..."
-        );
-      }
-
-      return retornarRespuestaFunciones("ok", "Campos validados...");
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        cedula: validarCedula.cedula,
+        telefono: validarTelefono.telefono,
+        edad: validarEdad.edad,
+      });
     } catch (error) {
       console.log(`Error, interno validando campos vocero: ` + error);
       return retornarRespuestaFunciones(

@@ -4,7 +4,6 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "@/services/ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import { phoneRegex } from "@/utils/constantes";
 import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
 
 export default async function validarCrearVocero(
@@ -48,7 +47,8 @@ export default async function validarCrearVocero(
       cedula,
       correo,
       genero,
-      edad
+      edad,
+      telefono
     );
 
     if (validandoCampos.status === "error") {
@@ -77,41 +77,12 @@ export default async function validarCrearVocero(
     const apellido_dosMinuscula = apellido_dos
       ? apellido_dos.toLowerCase()
       : null;
-    const cedulaNumero = cedula ? Number(cedula) : null;
+
     const correoMinuscula = correo ? correo.toLowerCase() : null;
-    const edadNumero = edad ? Number(edad) : null;
+
     const direccionMinuscula = direccion ? direccion.toLowerCase() : null;
     const laboralMinuscula = laboral ? laboral.toLowerCase() : null;
     const generoNumero = genero ? Number(genero) : null;
-
-    if (isNaN(edadNumero) || edadNumero <= 0) {
-      // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, edad inválida [18-99]..."
-      );
-    }
-
-    // Opcional: Rango de edad (ej. no más de 120 años)
-    if (edadNumero > 99) {
-      return retornarRespuestaFunciones("error", "Error, edad muy alta....");
-    }
-
-    if (edadNumero < 18) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, es un menor de edad...."
-      );
-    }
-
-    const telefonoValidado = telefono ? phoneRegex.test(telefono) : "";
-
-    if (telefono && !telefonoValidado) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, formato telefono invalido..."
-      );
-    }
 
     let tokenVocero;
     let tokenEnUsoEnDB;
@@ -125,24 +96,26 @@ export default async function validarCrearVocero(
 
     // Verificar si el usuario ya existe
     const voceroExistente = await prisma.vocero.findFirst({
-      where: { cedula: cedula },
+      where: { cedula: validandoCampos.cedula },
     });
 
     if (voceroExistente) {
       return retornarRespuestaFunciones("error", "Error, vocero ya existe...");
     }
 
-    const fechaNacimiento = calcularFechaNacimientoPorEdad(edadNumero);
+    const fechaNacimiento = calcularFechaNacimientoPorEdad(
+      validandoCampos.edad
+    );
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       nombre: nombreMinuscula,
       nombreDos: nombre_dosMinuscula,
       apellido: apellidoMinuscula,
       apellidoDos: apellido_dosMinuscula,
-      cedula: cedulaNumero,
+      cedula: validandoCampos.cedula,
       genero: generoNumero === 1 ? true : false,
-      edad: edadNumero,
-      telefono: telefono,
+      edad: validandoCampos.edad,
+      telefono: validandoCampos.telefono,
       direccion: direccionMinuscula,
       correo: correoMinuscula,
       token: tokenVocero,

@@ -10,6 +10,7 @@ export default function SelectOpcion({
   opciones,
   seleccione,
   setNombre,
+  setDatos,
   indice
 }) {
   const [abierto, setAbierto] = useState(false);
@@ -111,6 +112,10 @@ export default function SelectOpcion({
                       manejarSeleccion(opc.id, opc.nombre);
                       if (typeof setNombre === "function") {
                         setNombre(opc.nombre); // Solo se ejecuta si se pasó la función
+                      }
+
+                      if (typeof setDatos === "function") {
+                        setDatos(opc); // Solo se ejecuta si se pasó la función
                       }
                     }}
                   >

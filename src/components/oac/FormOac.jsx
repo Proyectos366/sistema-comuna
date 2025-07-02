@@ -15,6 +15,7 @@ import Titulos from "../Titulos";
 import FormCrearCursando from "./FormCrearCursando";
 import FormCrearClase from "./FormCrearClase";
 import InputCheckBox from "../InputCheckBox";
+import FormCrearEstadistica from "./FormCrearEstadistica";
 
 export default function FormOac({
   mostrar,
@@ -41,6 +42,7 @@ export default function FormOac({
   const [todasComunas, setTodasComunas] = useState([]);
   const [todosConsejos, setTodosConsejos] = useState([]);
   const [todosCursandos, setTodosCursandos] = useState([]);
+  const [todasEstadisticas, setTodasEstadisticas] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
@@ -51,6 +53,7 @@ export default function FormOac({
   const [nameConsejo, setNameConsejo] = useState("");
 
   const [accion, setAccion] = useState("");
+  const [datos, setDatos] = useState("");
 
   const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
   const [seleccionarDondeCrear, setSeleccionarDondeCrear] = useState("");
@@ -62,22 +65,37 @@ export default function FormOac({
     adultosMayores: 0,
   });
 
+  const [cantidadMujeres, setCantidadMujeres] = useState("");
+  const [cantidadHombres, setCantidadHombres] = useState("");
+  const [modulo, setModulo] = useState("");
+  const [fechaAprobado, setFechaAprobado] = useState("");
+  const [nombreFacilitador, setNombreFacilitador] = useState("");
+
+  const [seleccionarModulo, setSeleccionarModulo] = useState("");
+
   // Consultar parroquias al cargar el componente
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const [clasesRes, cursandoRes, comunasRes, consejosRes] =
-          await Promise.all([
-            axios.get("/api/oac/todas-clases"),
-            axios.get("/api/oac/todos-cursando"),
-            axios.get("/api/comunas/todas-comunas"),
-            axios.get("/api/consejos/todos-consejos-comunales"),
-          ]);
+        const [
+          clasesRes,
+          cursandoRes,
+          comunasRes,
+          consejosRes,
+          estadisticasRes,
+        ] = await Promise.all([
+          axios.get("/api/oac/todas-clases"),
+          axios.get("/api/oac/todos-cursando"),
+          axios.get("/api/comunas/todas-comunas"),
+          axios.get("/api/consejos/todos-consejos-comunales"),
+          axios.get("/api/oac/todas-estadisticas"),
+        ]);
 
         setTodasClases(clasesRes.data.clases || []);
         setTodosCursandos(cursandoRes.data.cursandos || []);
         setTodasComunas(comunasRes.data.comunas || []);
         setTodosConsejos(consejosRes.data.consejos || []);
+        setTodasComunas(estadisticasRes.data.estadisticas || []);
       } catch (error) {
         console.log("Error, al obtener datos: " + error);
       }
@@ -137,6 +155,18 @@ export default function FormOac({
 
   const toggleGenero = (id) => {
     setGeneroCursando(generoCursando === id ? null : id); // Cambia el estado, permitiendo deselección
+  };
+
+  /**
+    const toggleModulo = (id) => {
+      setSeleccionarModulo((prev) =>
+        prev.includes(id) ? prev.filter((modulo) => modulo !== id) : [...prev, id]
+      );
+    };
+  */
+
+  const toggleModulo = (id) => {
+    setModulo(modulo === id ? null : id); // Cambia el estado, permitiendo deselección
   };
 
   const cambiarSeleccionComuna = (e) => {
@@ -238,6 +268,53 @@ export default function FormOac({
     }
   };
 
+  const crearEstadistica = async () => {
+    if (nombreFacilitador.trim()) {
+      try {
+        // Verificación básica antes de enviar la solicitud
+        if (!nombreFacilitador.trim()) {
+          console.warn("Todos los campos obligatorios deben estar completos.");
+          return;
+        }
+
+        // Datos generales del vocero
+        const data = {
+          cantidadMujeres: Number(cantidadMujeres),
+          cantidadHombres: Number(cantidadHombres),
+          fechaAprobado: fechaAprobado,
+          facilitador: nombreFacilitador,
+          idParroquia: datos.id_parroquia,
+          idComuna: datos.id_comuna,
+          idConsejo: idConsejo,
+          idClase: idClase,
+          modulos: modulo,
+        };
+
+        const response = await axios.post("/api/oac/crear-estadistica", data);
+
+        setTodasEstadisticas([...todasEstadisticas, response.data.estadistica]);
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCantidadMujeres(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCantidadHombres(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setSeleccionarModulo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setFechaAprobado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreFacilitador(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al crear estadistica: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
   const toggleConsultar = (id) => {
     const nuevoId = seleccionarConsulta === id ? null : id;
     setSeleccionarConsulta(nuevoId);
@@ -248,21 +325,34 @@ export default function FormOac({
     setSeleccionarDondeCrear(nuevoId);
   };
 
+  // Before your Modal component
+const getTitulo = (accion) => {
+  switch (accion) {
+    case 'clase':
+      return "¿Crear esta formación?";
+    case 'cursando':
+      return "¿Crear este registro?";
+    case 'estadistica':
+      return "¿Crear esta estadistica?";
+    default:
+      return ""; // Or a default title if none of the cases match
+  }
+};
+
+
   return (
     <>
       <Modal
         isVisible={mostrar}
         onClose={cerrarModal}
-        titulo={
-          accion === "clase"
-            ? "¿Crear esta formación?"
-            : "¿Crear este registro?"
-        }
+        titulo={getTitulo(accion)}
       >
         <ModalDatosContenedor>
-          {accion === "clase" ? (
+          {accion === "clase" && (
             <ModalDatos titulo={"Nombre"} descripcion={nombreClase} />
-          ) : (
+          )}
+          
+          {accion === 'cursando' &&(
             <>
               <ModalDatos titulo={"Cedula"} descripcion={cedulaCursando} />
               <ModalDatos titulo={"Edad"} descripcion={edadCursando} />
@@ -272,6 +362,15 @@ export default function FormOac({
               />
             </>
           )}
+
+          {accion === "estadistica" && (
+           <>
+            <ModalDatos titulo={"Cantidad mujeres"} descripcion={cantidadMujeres} />
+            <ModalDatos titulo={"Cantidad Hombres"} descripcion={cantidadHombres} />
+            <ModalDatos titulo={"Modulos"} descripcion={modulo === 1 ? 'Modulo I y II' : 'Modulo III'} />
+           </>
+          )}
+
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -327,32 +426,46 @@ export default function FormOac({
                   nombre="Crear cursando"
                 />
               </div>
+
+              <div
+                onClick={() => setAccion("estadistica")}
+                className="w-full sm:w-auto"
+              >
+                <InputCheckBox
+                  id={3}
+                  isChecked={seleccionarConsulta === 3}
+                  onToggle={toggleConsultar}
+                  nombre="Crear estadistica"
+                />
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:justify-between">
-              {seleccionarConsulta && accion !== "clase" && (
-                <div className="flex flex-col">
-                  <div className="flex flex-wrap gap-4 sm:justify-between">
-                    <div className="w-full sm:w-auto">
-                      <InputCheckBox
-                        id={1}
-                        isChecked={seleccionarDondeCrear === 1}
-                        onToggle={toggleDondeCrear}
-                        nombre="Comuna"
-                      />
-                    </div>
-                    <div className="w-full sm:w-auto">
-                      <InputCheckBox
-                        id={2}
-                        isChecked={seleccionarDondeCrear === 2}
-                        onToggle={toggleDondeCrear}
-                        nombre="Consejo comunal"
-                      />
+            {seleccionarConsulta !== 3 ? (
+              <div className="flex flex-wrap gap-2 sm:justify-between">
+                {seleccionarConsulta && accion !== "clase" && (
+                  <div className="flex flex-col">
+                    <div className="flex flex-wrap gap-4 sm:justify-between">
+                      <div className="w-full sm:w-auto">
+                        <InputCheckBox
+                          id={1}
+                          isChecked={seleccionarDondeCrear === 1}
+                          onToggle={toggleDondeCrear}
+                          nombre="Comuna"
+                        />
+                      </div>
+                      <div className="w-full sm:w-auto">
+                        <InputCheckBox
+                          id={2}
+                          isChecked={seleccionarDondeCrear === 2}
+                          onToggle={toggleDondeCrear}
+                          nombre="Consejo comunal"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -409,6 +522,48 @@ export default function FormOac({
                 isLoading={isLoading}
                 listado={todosCursandos}
                 nombreListado={"Cursando"}
+                mensajeVacio={"No hay personas disponibles..."}
+                conteo={conteo}
+              />
+            </DivDosDentroSectionRegistroMostrar>
+          </SectionRegistroMostrar>
+        )}
+
+        {seleccionarConsulta === 3 && (
+          <SectionRegistroMostrar>
+            <DivUnoDentroSectionRegistroMostrar nombre={"Crear estadistica"}>
+              <FormCrearEstadistica
+                abrirModal={abrirModal}
+                limpiarCampos={limpiarCampos}
+                cantidadMujeres={cantidadMujeres}
+                setCantidadMujeres={setCantidadMujeres}
+                cantidadHombres={cantidadHombres}
+                setCantidadHombres={setCantidadHombres}
+                modulo={modulo}
+                setModulo={setModulo}
+                fechaAprobado={fechaAprobado}
+                setFechaAprobado={setFechaAprobado}
+                nombreFacilitador={nombreFacilitador}
+                setNombreFacilitador={setNombreFacilitador}
+                idConsejo={idConsejo}
+                clases={todasClases}
+                cambiarSeleccionConsejo={cambiarSeleccionConsejo}
+                consejos={todosConsejos}
+                setNameConsejo={setNameConsejo}
+                seleccionarClases={seleccionarClase}
+                seleccionarModulo={seleccionarModulo}
+                setSeleccionarModulo={setSeleccionarModulo}
+                toggleModulo={toggleModulo}
+                toggleClases={toggleClase}
+                setDatos={setDatos}
+              />
+            </DivUnoDentroSectionRegistroMostrar>
+
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoOac
+                isLoading={isLoading}
+                listado={todasEstadisticas}
+                nombreListado={"Estadisticas"}
                 mensajeVacio={"No hay personas disponibles..."}
                 conteo={conteo}
               />

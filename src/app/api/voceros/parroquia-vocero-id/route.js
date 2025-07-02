@@ -4,10 +4,11 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 
-export async function POST(request) {
+export async function GET(request) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
-    const { idParroquia } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const idParroquia = searchParams.get("idParroquia");
 
     const idParroquiaNumero = Number(idParroquia);
 
@@ -77,18 +78,13 @@ export async function POST(request) {
     });
 
     if (!voceroPorParroquia) {
-      return generarRespuesta(
-        "error",
-        "Error, no hay voceros...",
-        {},
-        400
-      );
+      return generarRespuesta("error", "Error, no hay voceros...", {}, 400);
     }
 
     return generarRespuesta(
       "ok",
       "Voceros encontrados...",
-      { vocero: voceroPorParroquia },
+      { voceros: voceroPorParroquia },
       200
     );
   } catch (error) {

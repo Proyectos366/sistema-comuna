@@ -22,7 +22,6 @@ export async function POST(request) {
       id_comuna,
       id_consejo,
       id_circuito,
-      pertenece,
     } = await request.json();
 
     const validaciones = await validarCrearVocero(
