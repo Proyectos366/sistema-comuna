@@ -15,6 +15,12 @@ import ModalDatosContenedor from "../ModalDatosContenedor";
 import InputCheckBox from "../inputs/InputCheckBox";
 import SelectOpcion from "../SelectOpcion";
 import ListadoVoceros from "../Listados/ListadoVoceros";
+import Titulos from "../Titulos";
+import InputCedula from "../inputs/InputCedula";
+import LabelInput from "../inputs/LabelInput";
+import Boton from "../Boton";
+import FormEditarVocero from "../formularios/FormEditarVocero";
+import ModalEditar from "../modales/ModalEditar";
 
 export default function VoceroForm({
   mostrar,
@@ -109,41 +115,15 @@ export default function VoceroForm({
     fetchDatos();
   }, []);
 
-  useEffect(() => {
-    setIdParroquia("");
-    setIdComunaCircuito("");
-    setIdConsejoComunal("");
-    setTodasComunas([]);
-    setTodosConsejos([]);
-    setTodosVoceros([]);
-    setNombreVocero("");
-  }, [perteneceComunaCircuito]);
-
   // useEffect(() => {
-  //   if (!idComunaCircuito) {
-  //     setTodosVoceros([]);
-  //     return;
-  //   }
-
-  //   const fetchVocerosPorComuna = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       let response = await axios.get(`/api/voceros/vocero-comuna-id`, {
-  //         params: { idComuna: idComunaCircuito },
-  //       });
-
-  //       setTodosVoceros(response?.data?.voceros || []);
-  //     } catch (error) {
-  //       console.log("Error, al obtener los voceros por comuna: " + error);
-  //       console.log(error?.response?.data);
-
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchVocerosPorComuna();
-  // }, [idComunaCircuito]);
+  //   setIdParroquia("");
+  //   setIdComunaCircuito("");
+  //   setIdConsejoComunal("");
+  //   setTodasComunas([]);
+  //   setTodosConsejos([]);
+  //   setTodosVoceros([]);
+  //   setNombreVocero("");
+  // }, [perteneceComunaCircuito]);
 
   useEffect(() => {
     if (!idConsejoComunal) {
@@ -175,8 +155,13 @@ export default function VoceroForm({
   }, [idConsejoComunal]);
 
   useEffect(() => {
-    if (!idConsejoComunal || !idComunaCircuito) {
+    if (!idConsejoComunal && !idComunaCircuito) {
+      console.log(seleccionarConsulta, idComunaCircuito, idConsejoComunal);
+
       setTodosVoceros([]);
+
+      setCedulaVocero("");
+      setEdadVocero("");
       setNombreVocero("");
       setNombreDosVocero("");
       setApellidoVocero("");
@@ -193,6 +178,21 @@ export default function VoceroForm({
 
   useEffect(() => {
     setTodosVoceros([]);
+    setIdParroquia("");
+    setIdComunaCircuito("");
+    setIdConsejoComunal("");
+    setTodosVoceros([]);
+    setNombreVocero("");
+    setNombreDosVocero("");
+    setApellidoVocero("");
+    setApellidoDosVocero("");
+    setCedulaVocero("");
+    setGeneroVocero("");
+    setEdadVocero("");
+    setTelefonoVocero("");
+    setDireccionVocero("");
+    setCorreoVocero("");
+    setActividadLaboralVocero("");
   }, [seleccionarConsulta]);
 
   useEffect(() => {
@@ -435,118 +435,274 @@ export default function VoceroForm({
         return "Voceros por consejo comunal";
       case 5:
         return "Todos los voceros";
+      case 6:
+        return "Vocero por cédula";
       default:
         return ""; // Or a default title if none of the cases match
     }
   };
 
+  const consultarVoceroCedula = async () => {
+    try {
+      const response = await axios.post("/api/voceros/cedula-vocero", {
+        cedula: cedulaVocero,
+      });
+
+      setTodosVoceros(response.data.vocero);
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, al consultar vocero: " + error);
+      abrirMensaje(error?.response?.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+      setTodosVoceros([]);
+    }
+  };
+
+  const editando = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdComunaCircuito(datos.comunas.id);
+      setCedulaVocero(datos.cedula);
+      setEdadVocero(datos.edad);
+      setNombreVocero(datos.nombre);
+      setNombreDosVocero(datos.nombre_dos);
+
+      setApellidoVocero(datos.apellido);
+      setApellidoDosVocero(datos.apellido_dos);
+
+      setGeneroVocero(datos.genero ? 1 : 2);
+      setTelefonoVocero(datos.telefono);
+
+      setDireccionVocero(datos.direccion);
+      setCorreoVocero(datos.correo);
+      setActividadLaboralVocero(datos.laboral);
+
+      abrirModal();
+      console.log(datos);
+    } catch (error) {
+      console.log("Error, editando vocero: " + error);
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Crear este vocero?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Cedula"} descripcion={cedulaVocero} />
-          <ModalDatos titulo={"Edad"} descripcion={edadVocero} />
-          <ModalDatos titulo={"Primer nombre"} descripcion={nombreVocero} />
-          <ModalDatos titulo={"Segundo nombre"} descripcion={nombreDosVocero} />
-          <ModalDatos titulo={"Primer apellido"} descripcion={apellidoVocero} />
-          <ModalDatos
-            titulo={"Segundo apellido"}
-            descripcion={apellidoDosVocero}
-          />
-
-          <ModalDatos
-            titulo={"Genero"}
-            descripcion={generoVocero == 1 ? "Masculino" : "Femenino"}
-          />
-          <ModalDatos titulo={"Telefono"} descripcion={telefonoVocero} />
-
-          <ModalDatos titulo={"Correo"} descripcion={correoVocero} />
-          <ModalDatos
-            titulo={"Actividad laboral"}
-            descripcion={actividadLaboralVocero}
-          />
-
-          <ModalDatos titulo={"Formación"} descripcion={nombreFormacion} />
-          <ModalDatos
-            titulo={"Actividad laboral"}
-            descripcion={actividadLaboralVocero}
-          />
-
-          <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
-          {nombreConsejoComunal && (
-            <ModalDatos
-              titulo={"Consejo comunal"}
-              descripcion={nombreConsejoComunal}
+      {accion === "editar" ? (
+        <ModalEditar isVisible={mostrar} onClose={cerrarModal} titulo={"Editar vocero"}>
+          <div className="-mt-5">
+            <FormEditarVocero
+              idComuna={idComunaCircuito}
+              idConsejo={idConsejoComunal}
+              cambiarSeleccionComuna={cambiarSeleccionComunaCircuito}
+              cambiarSeleccionConsejo={cambiarSeleccionConsejo}
+              toggleGenero={toggleGenero}
+              nombre={nombreVocero}
+              setNombre={setNombreVocero}
+              nombreDos={nombreDosVocero}
+              setNombreDos={setNombreDosVocero}
+              apellido={apellidoVocero}
+              setApellido={setApellidoVocero}
+              apellidoDos={apellidoDosVocero}
+              setApellidoDos={setApellidoDosVocero}
+              cedula={cedulaVocero}
+              setCedula={setCedulaVocero}
+              genero={generoVocero}
+              setGenero={setGeneroVocero}
+              edad={edadVocero}
+              setEdad={setEdadVocero}
+              telefono={telefonoVocero}
+              setTelefono={setTelefonoVocero}
+              direccion={direccionVocero}
+              setDireccion={setDireccionVocero}
+              correo={correoVocero}
+              setCorreo={setCorreoVocero}
+              actividadLaboral={actividadLaboralVocero}
+              setActividadLaboral={setActividadLaboralVocero}
+              todasComunas={todasComunas}
+              todosConsejos={todosConsejos}
+              cargos={cargos}
+              toggleCargo={toggleCargos}
+              formaciones={formaciones}
+              toggleFormaciones={toggleFormacion}
+              seleccionarCargo={seleccionarCargo}
+              setSeleccionarCargo={setSeleccionarCargo}
+              seleccionarFormacion={seleccionarFormacion}
+              setSeleccionarFormacion={setSeleccionarFormacion}
+              abrirModal={abrirModal}
+              limpiarCampos={limpiarCampos}
+              setNombreComuna={setNombreComuna}
+              setNombreConsejoComunal={setNombreConsejoComunal}
+              validarCedula={validarCedula}
+              setValidarCedula={setValidarCedula}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+              validarNombreDos={validarNombreDos}
+              setValidarNombreDos={setValidarNombreDos}
+              validarApellido={validarApellido}
+              setValidarApellido={setValidarApellido}
+              validarApellidoDos={validarApellidoDos}
+              setValidarApellidoDos={setValidarApellidoDos}
+              validarEdad={validarEdad}
+              setValidarEdad={setValidarEdad}
+              validarTelefono={validarTelefono}
+              setValidarTelefono={setValidarTelefono}
+              validarCorreo={validarCorreo}
+              setValidarCorreo={setValidarCorreo}
+              validarActividadLaboral={validarActividadLaboral}
+              setValidarActividadLaboral={setValidarActividadLaboral}
+              setDatos={setDatos}
             />
-          )}
-        </ModalDatosContenedor>
+          </div>
+        </ModalEditar>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear este vocero?"}
+        >
+          <>
+            <ModalDatosContenedor>
+              <ModalDatos titulo={"Cedula"} descripcion={cedulaVocero} />
+              <ModalDatos titulo={"Edad"} descripcion={edadVocero} />
+              <ModalDatos titulo={"Primer nombre"} descripcion={nombreVocero} />
+              <ModalDatos
+                titulo={"Segundo nombre"}
+                descripcion={nombreDosVocero}
+              />
+              <ModalDatos
+                titulo={"Primer apellido"}
+                descripcion={apellidoVocero}
+              />
+              <ModalDatos
+                titulo={"Segundo apellido"}
+                descripcion={apellidoDosVocero}
+              />
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
-          aceptar={crearVocero}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            nombreVocero,
-            idParroquia,
-            idComunaCircuito,
-            idConsejoComunal,
-          }}
-        />
-      </Modal>
+              <ModalDatos
+                titulo={"Genero"}
+                descripcion={generoVocero == 1 ? "Masculino" : "Femenino"}
+              />
+              <ModalDatos titulo={"Telefono"} descripcion={telefonoVocero} />
+
+              <ModalDatos titulo={"Correo"} descripcion={correoVocero} />
+              <ModalDatos
+                titulo={"Actividad laboral"}
+                descripcion={actividadLaboralVocero}
+              />
+
+              <ModalDatos titulo={"Formación"} descripcion={nombreFormacion} />
+              <ModalDatos
+                titulo={"Actividad laboral"}
+                descripcion={actividadLaboralVocero}
+              />
+
+              <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
+              {nombreConsejoComunal && (
+                <ModalDatos
+                  titulo={"Consejo comunal"}
+                  descripcion={nombreConsejoComunal}
+                />
+              )}
+            </ModalDatosContenedor>
+
+            <MostarMsjEnModal
+              mostrarMensaje={mostrarMensaje}
+              mensaje={mensaje}
+            />
+            <BotonesModal
+              aceptar={crearVocero}
+              cancelar={cerrarModal}
+              indiceUno={"crear"}
+              indiceDos={"cancelar"}
+              nombreUno={"Aceptar"}
+              nombreDos={"Cancelar"}
+              campos={{
+                nombreVocero,
+                idParroquia,
+                idComunaCircuito,
+                idConsejoComunal,
+              }}
+            />
+          </>
+        </Modal>
+      )}
 
       <SectionRegistroMostrar>
-        <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
-          <div className="flex flex-wrap gap-2 sm:justify-between">
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={1}
-                isChecked={seleccionarConsulta === 1}
-                onToggle={toggleConsultar}
-                nombre="Crear vocero"
-              />
+        <DivUnoDentroSectionRegistroMostrar>
+          <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
+            <div className="w-full text-center mb-2">
+              <Titulos indice={3} titulo={"Opciones vocero"} />
             </div>
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={2}
-                isChecked={seleccionarConsulta === 2}
-                onToggle={toggleConsultar}
-                nombre="Voceros por parroquia"
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={3}
-                isChecked={seleccionarConsulta === 3}
-                onToggle={toggleConsultar}
-                nombre="Voceros por comuna"
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={4}
-                isChecked={seleccionarConsulta === 4}
-                onToggle={toggleConsultar}
-                nombre="Voceros por consejo comunal"
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <InputCheckBox
-                id={5}
-                isChecked={seleccionarConsulta === 5}
-                onToggle={toggleConsultar}
-                nombre="Todos los voceros"
-              />
+
+            <div
+              className="grid gap-4 
+                grid-cols-1 
+                sm:grid-cols-2 
+                md:grid-cols-3"
+            >
+              <div className="w-full">
+                <InputCheckBox
+                  id={1}
+                  isChecked={seleccionarConsulta === 1}
+                  onToggle={toggleConsultar}
+                  nombre="Crear"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={6}
+                  isChecked={seleccionarConsulta === 6}
+                  onToggle={toggleConsultar}
+                  nombre="Por cédula"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={2}
+                  isChecked={seleccionarConsulta === 2}
+                  onToggle={toggleConsultar}
+                  nombre="Por parroquia"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={3}
+                  isChecked={seleccionarConsulta === 3}
+                  onToggle={toggleConsultar}
+                  nombre="Por comuna"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={4}
+                  isChecked={seleccionarConsulta === 4}
+                  onToggle={toggleConsultar}
+                  nombre="Por consejo comunal"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={5}
+                  isChecked={seleccionarConsulta === 5}
+                  onToggle={toggleConsultar}
+                  nombre="Todos"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </DivUnoDentroSectionRegistroMostrar>
+
         {seleccionarConsulta === 1 && (
           <>
             <DivUnoDentroSectionRegistroMostrar nombre={"Crear vocero"}>
@@ -622,11 +778,11 @@ export default function VoceroForm({
             </DivUnoDentroSectionRegistroMostrar>
 
             <DivDosDentroSectionRegistroMostrar>
-              <ListadoGenaral
-                isLoading={isLoading}
-                listado={todosVoceros}
-                nombreListado={"Voceros"}
-                mensajeVacio={"No hay voceros disponibles..."}
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -649,7 +805,14 @@ export default function VoceroForm({
               />
             </DivUnoDentroSectionRegistroMostrar>
 
-            <ListadoVoceros voceros={todosVoceros} />
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
+              />
+            </DivDosDentroSectionRegistroMostrar>
           </>
         )}
 
@@ -669,8 +832,14 @@ export default function VoceroForm({
                 indice={1}
               />
             </DivUnoDentroSectionRegistroMostrar>
-
-            <ListadoVoceros voceros={todosVoceros} />
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
+              />
+            </DivDosDentroSectionRegistroMostrar>
           </>
         )}
 
@@ -691,7 +860,14 @@ export default function VoceroForm({
               />
             </DivUnoDentroSectionRegistroMostrar>
 
-            <ListadoVoceros voceros={todosVoceros} />
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
+              />
+            </DivDosDentroSectionRegistroMostrar>
           </>
         )}
 
@@ -701,7 +877,54 @@ export default function VoceroForm({
               nombre={getTitulo(seleccionarConsulta)}
             ></DivUnoDentroSectionRegistroMostrar>
 
-            <ListadoVoceros voceros={todosVoceros} />
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
+              />
+            </DivDosDentroSectionRegistroMostrar>
+          </>
+        )}
+
+        {seleccionarConsulta === 6 && (
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={getTitulo(seleccionarConsulta)}
+            >
+              <div className="w-full flex flex-col justify-center sm:flex-row items-center sm:space-x-4 p-2 bg-gray-100 shadow-lg rounded-md border border-gray-300 ">
+                <div className="w-full">
+                  <InputCedula
+                    type={"text"}
+                    indice={"cedula"}
+                    value={cedulaVocero}
+                    setValue={setCedulaVocero}
+                    validarCedula={validarCedula}
+                    setValidarCedula={setValidarCedula}
+                  />
+                </div>
+                <div className="w-1/3">
+                  <Boton
+                    disabled={!cedulaVocero}
+                    nombre={"Consultar"}
+                    onClick={() => {
+                      consultarVoceroCedula();
+                    }}
+                    className={`color-fondo text-white`}
+                  />
+                </div>
+              </div>
+            </DivUnoDentroSectionRegistroMostrar>
+
+            <DivDosDentroSectionRegistroMostrar>
+              <ListadoVoceros
+                voceros={
+                  Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
+                }
+                editar={editando}
+              />
+            </DivDosDentroSectionRegistroMostrar>
           </>
         )}
       </SectionRegistroMostrar>

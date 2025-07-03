@@ -3,13 +3,15 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
+import { quitarCaracteres } from "@/utils/quitarCaracteres";
 
 export async function POST(request) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
     const { cedula } = await request.json();
 
-    const cedulaNumero = Number(cedula);
+    const cedulaLimpia = quitarCaracteres(cedula);
+    const cedulaNumero = Number(cedulaLimpia);
 
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -62,6 +64,7 @@ export async function POST(request) {
               select: {
                 id: true,
                 presente: true,
+                fecha_registro: true,
                 modulos: {
                   select: {
                     id: true,

@@ -35,13 +35,13 @@ export async function GET() {
         edad: true,
         genero: true,
         comunas: {
-          select: { nombre: true },
+          select: { nombre: true, id: true},
         },
         parroquias: {
           select: { nombre: true },
         },
         consejos: {
-          select: { nombre: true },
+          select: { nombre: true, id: true},
         },
         cursos: {
           where: { borrado: false },

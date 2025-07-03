@@ -1,25 +1,53 @@
 import { formatearFecha } from "@/utils/Fechas";
 import ListaDetallesVocero from "./ListaDetalleVocero";
+import BotonEditar from "../botones/BotonEditar";
 
-export default function DetallesListadoVoceros({ abierto, index, vocero }) {
+export default function DetallesListadoVoceros({
+  abierto,
+  index,
+  vocero,
+  editar,
+}) {
   return (
     <>
       {abierto === index && (
         <div className="bg-white text-gray-800 text-base sm:text-sm mt-1 rounded-md p-4 shadow-inner">
-          <ListaDetallesVocero nombre={"Cedula"} valor={vocero.cedula} />
-          <ListaDetallesVocero nombre={"Edad"} valor={vocero.edad} />
+          <div className="relative w-full flex items-center">
+            <ListaDetallesVocero
+              indice={1}
+              nombre={"Cedula"}
+              valor={vocero.cedula}
+            />
+
+            <div className="absolute right-0 top-1/2 -translate-y-1/2">
+              <BotonEditar editar={() => editar(vocero)} />
+            </div>
+          </div>
+
+          <ListaDetallesVocero indice={1} nombre={"Edad"} valor={vocero.edad} />
           <ListaDetallesVocero
+            indice={1}
             nombre={"Genero"}
             valor={vocero.genero ? "Masculino" : "Femenino"}
           />
-          <ListaDetallesVocero nombre={"Correo"} valor={vocero.correo} />
-          <ListaDetallesVocero nombre={"Telefono"} valor={vocero.telefono} />
-          
           <ListaDetallesVocero
+            indice={1}
+            nombre={"Correo"}
+            valor={vocero.correo}
+          />
+          <ListaDetallesVocero
+            indice={1}
+            nombre={"Telefono"}
+            valor={vocero.telefono}
+          />
+
+          <ListaDetallesVocero
+            indice={1}
             nombre={"Comuna"}
             valor={vocero.comunas?.nombre || "Sin comuna"}
           />
           <ListaDetallesVocero
+            indice={1}
             nombre={"Consejo comunal"}
             valor={vocero.consejos?.nombre || "No asignado"}
           />
@@ -28,40 +56,33 @@ export default function DetallesListadoVoceros({ abierto, index, vocero }) {
             vocero.cursos.map((curso, i) => (
               <div key={i} className="mt-4 border-t border-gray-300 pt-2">
                 <ListaDetallesVocero
+                  indice={1}
                   nombre={"Formación"}
                   valor={curso.formaciones?.nombre || "Sin formación"}
                 />
 
-                <div className="flex gap-2">
-                  <span>Verificado:</span>
-                  <span className={`${curso.verificado ? "text-green-700" : "text-red-600"} uppercase`}>
-                    {curso.verificado ? "Sí" : "No"}
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <span>Certificado:</span>
-                  <span className={`${curso.certificado ? "text-green-700" : "text-red-600"} uppercase`}>
-                    {curso.certificado ? "Sí" : "No"}
-                  </span>
-                </div>
-                
+                <ListaDetallesVocero
+                  indice={2}
+                  nombre={"Verificado"}
+                  valor={curso.verificado}
+                />
+
+                <ListaDetallesVocero
+                  indice={2}
+                  nombre={"Certificado"}
+                  valor={curso.certificado}
+                />
+
                 <ul className="mt-2 list-disc list-inside text-sm text-gray-700">
                   {curso.asistencias.map((asistencia, j) => {
                     return (
                       <li key={j} className="flex gap-2">
-                        <span className="uppercase"> {asistencia.modulos?.nombre || "Desconocido"} — </span>
-                        <span
-                          className={
-                            `uppercase ${asistencia.presente
-                              ? "text-green-700"
-                              : "text-red-600"}`
-                          }
-                        >
-                          {asistencia.presente
-                            ? "Asistió: " +
-                              formatearFecha(asistencia.fecha_registro)
-                            : "No asistió"}
-                        </span>
+                        <ListaDetallesVocero
+                          indice={3}
+                          nombre={asistencia.modulos?.nombre}
+                          valor={asistencia.presente}
+                          fecha={formatearFecha(asistencia.fecha_registro)}
+                        />
                       </li>
                     );
                   })}

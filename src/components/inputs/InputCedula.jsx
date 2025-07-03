@@ -59,7 +59,7 @@ export default function InputCedula({
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder}
+        placeholder={"Inserte cédula"}
         autoComplete={autoComplete}
         readOnly={readOnly}
         ref={ref}
