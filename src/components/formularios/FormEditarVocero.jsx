@@ -188,9 +188,8 @@ export default function FormEditarVocero({
   }, [idComuna, todosConsejos]);
 
   return (
-    <Formulario onSubmit={(e) => e.preventDefault()} className="space-y-4">
-      {/* Comuna */}
-
+    <Formulario onSubmit={(e) => e.preventDefault()} className="">
+      <div className="overflow-y-auto h-[390px] no-scrollbar space-y-2">
       <SelectOpcion
         idOpcion={idComuna}
         nombre="Comuna"
@@ -201,7 +200,7 @@ export default function FormEditarVocero({
         indice={1}
       />
 
-      {/* Consejo comunal (solo si hay comuna seleccionada) */}
+      
       {idComuna && consejosFiltrados.length > 0 && (
         <SelectOpcion
           idOpcion={idConsejo}
@@ -289,7 +288,7 @@ export default function FormEditarVocero({
       <div className="flex flex-col sm:flex-row space-x-4">
         <div className="flex flex-col w-full">
           <span>Genero</span>
-          <div className="flex justify-evenly border border-gray-300 py-2 mt-1 rounded-md hover:border hover:border-[#082158]">
+          <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
             {[
               { id: 1, nombre: "Masculino" },
               { id: 2, nombre: "Femenino" },
@@ -317,6 +316,30 @@ export default function FormEditarVocero({
           />
         </LabelInput>
       </div>
+
+      <div className="flex flex-col sm:flex-row space-x-4">
+                  <LabelInput nombre={"Correo"}>
+                    <InputCorreo
+                      type="text"
+                      indice="email"
+                      value={correo}
+                      setValue={setCorreo}
+                      validarCorreo={validarCorreo}
+                      setValidarCorreo={setValidarCorreo}
+                    />
+                  </LabelInput>
+      
+                  <LabelInput nombre={"Actividad laboral"}>
+                    <InputNombre
+                      type="text"
+                      indice="nombre"
+                      value={actividadLaboral}
+                      setValue={setActividadLaboral}
+                      validarNombre={validarActividadLaboral}
+                      setValidarNombre={setValidarActividadLaboral}
+                    />
+                  </LabelInput>
+                </div>
 
       <div className="flex space-x-4 mt-4">
         <BotonAceptarCancelar
@@ -355,6 +378,8 @@ export default function FormEditarVocero({
           }
           campos={{}} // puedes omitir campos si no los usas aquí
         />
+      </div>
+
       </div>
     </Formulario>
   );

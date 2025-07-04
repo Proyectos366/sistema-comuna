@@ -34,6 +34,7 @@ export async function GET() {
         correo: true,
         edad: true,
         genero: true,
+        laboral: true,
         comunas: {
           select: { nombre: true, id: true},
         },

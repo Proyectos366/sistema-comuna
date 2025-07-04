@@ -495,7 +495,7 @@ export default function VoceroForm({
     <>
       {accion === "editar" ? (
         <ModalEditar isVisible={mostrar} onClose={cerrarModal} titulo={"Editar vocero"}>
-          <div className="-mt-5">
+          <div className="-mt-5 w-full">
             <FormEditarVocero
               idComuna={idComunaCircuito}
               idConsejo={idConsejoComunal}

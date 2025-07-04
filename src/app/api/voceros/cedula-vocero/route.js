@@ -43,6 +43,7 @@ export async function POST(request) {
         correo: true,
         edad: true,
         genero: true,
+        laboral: true,
         comunas: {
           select: { nombre: true },
         },

@@ -48,6 +48,7 @@ export async function GET(req) {
         correo: true,
         edad: true,
         genero: true,
+        laboral: true,
         comunas: { select: { nombre: true } },
         parroquias: { select: { nombre: true } },
         consejos: { select: { nombre: true } },
