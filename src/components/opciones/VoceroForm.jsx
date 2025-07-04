@@ -167,8 +167,6 @@ export default function VoceroForm({
   }, [idComuna, idConsejoComunal]);
 
   useEffect(() => {
-    console.log("ajklsdfhoashdokasj");
-
     setTodosVoceros([]);
     setIdParroquia("");
     setIdComuna("");
@@ -543,8 +541,6 @@ export default function VoceroForm({
     }
   };
 
-  console.log(circuitoComuna);
-
   return (
     <>
       {accion === "editar" ? (
@@ -893,6 +889,7 @@ export default function VoceroForm({
                 indice={1}
               />
             </DivUnoDentroSectionRegistroMostrar>
+            
             <DivDosDentroSectionRegistroMostrar>
               <ListadoVoceros
                 voceros={

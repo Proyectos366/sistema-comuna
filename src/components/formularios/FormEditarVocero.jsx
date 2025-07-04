@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import SelectOpcion from "../SelectOpcion";
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
-import MenuDesplegable from "../MenuDesplegable";
 import InputCheckBox from "../InputCheckBox";
 import InputCedula from "../inputs/InputCedula";
 import InputNombre from "../inputs/InputNombre";
@@ -84,12 +82,21 @@ export default function FormEditarVocero({
 
   useEffect(() => {
     if (cedula) {
-      const cedulaSinPuntos = String(cedula).replaceAll(".", "");
-      const esValido = /^[1-9][0-9]{6,7}$/.test(cedulaSinPuntos);
+      // Elimina el prefijo "V-" y los puntos, dejando solo los números
+      const cedulaSinFormato = String(cedula)
+        .replace(/^V-/, "")
+        .replace(/\./g, "");
+
+      // Validar que sea un número entre 7 y 8 dígitos y que no comience en 0
+      const esValido = /^[1-9][0-9]{6,7}$/.test(cedulaSinFormato);
       setValidarCedula?.(esValido);
 
-      const formateada = cedulaSinPuntos.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      setCedula?.(formateada);
+      // Formatear nuevamente con puntos y añadir el prefijo "V-"
+      const conFormato = `V-${cedulaSinFormato.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        "."
+      )}`;
+      setCedula?.(conFormato);
     }
 
     if (edad) {

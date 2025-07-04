@@ -33,9 +33,19 @@ export default function InputCedula({
 
   const leyendoInput = (e) => {
     const valorEntrada = e.target.value;
+
+    // Elimina prefijo y puntos para validar
     const cedulaSinFormato = limpiarCedula(valorEntrada);
 
-    // Validación inicial para evitar que ingrese datos no deseados
+    // Si no queda ningún número, borra todo el valor
+    if (cedulaSinFormato.length === 0) {
+      setValue?.("");
+      setValidarCedula?.(false);
+      onChange?.(e);
+      return;
+    }
+
+    // Validación previa
     if (
       indice === "cedula" &&
       (cedulaSinFormato.startsWith("0") ||
@@ -53,7 +63,6 @@ export default function InputCedula({
       setValidarCedula?.(esValida);
     }
 
-    // Si usas onChange de forma externa, propaga el evento
     onChange?.(e);
   };
 

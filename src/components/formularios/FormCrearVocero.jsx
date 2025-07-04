@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import SelectOpcion from "../SelectOpcion";
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
@@ -79,9 +82,22 @@ export default function FormCrearVocero({
   setValidarActividadLaboral,
   setDatos,
 }) {
+  useEffect(() => {
+    if (idConsejo) {
+      const consejo = consejos.find((c) => c.id === idConsejo);
 
-  console.log(dondeGuardar);
-  
+      if (consejo) {
+        const comuna = comunasCircuitos.find(
+          (comuna) => comuna.id === consejo.id_comuna
+        );
+
+        if (comuna) {
+          setNombreComuna(comuna.nombre);
+        }
+      }
+    }
+  }, [idConsejo]);
+
   return (
     <Formulario
       onSubmit={(e) => {
@@ -89,7 +105,6 @@ export default function FormCrearVocero({
       }}
       className="space-y-4"
     >
-      
       <SelectOpcion
         idOpcion={dondeGuardar}
         nombre={"Crear en"}
