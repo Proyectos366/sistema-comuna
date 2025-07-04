@@ -363,7 +363,20 @@ export default function VoceroForm({
 
         const response = await axios.post("/api/voceros/crear-vocero", data);
 
-        setTodosVoceros([...todosVoceros, response.data.vocero]);
+        if (todosVoceros?.length > 1) {
+          setTodosVoceros((voceros) => {
+            const arrayVoceros = Array.isArray(voceros) ? voceros : [];
+            return arrayVoceros.map((vocero) =>
+              vocero.cedula === response.data.vocero.cedula
+                ? response.data.vocero
+                : vocero
+            );
+          });
+        } else {
+          setTodosVoceros(response.data.vocero);
+        }
+        
+        //setTodosVoceros([...todosVoceros, response.data.vocero]);
         abrirMensaje(response.data.message);
 
         ejecutarAccionesConRetraso([
