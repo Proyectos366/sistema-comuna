@@ -1,7 +1,7 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
 
-const cedulaRegex = /^[1-9][0-9]{6,7}$/;
+const cedulaRegex = /^[1-9][0-9]{6,7}$/; // acepta de 7 a 8 dígitos, sin puntos ni prefijo
 
 export default function InputCedula({
   type,
@@ -11,8 +11,8 @@ export default function InputCedula({
   className,
   placeholder,
   id,
-  onChange,
   value,
+  onChange,
   autoComplete,
   readOnly,
   ref,
@@ -21,32 +21,40 @@ export default function InputCedula({
   setValidarCedula,
   setValue,
 }) {
-  const desformatearCedula = (valor) => valor.replace(/\./g, "");
+  // Elimina puntos y prefijo V-
+  const limpiarCedula = (valor) => valor.replace(/^V-/, "").replace(/\./g, "");
 
+  // Añade puntos cada 3 dígitos y prepende V-
   const formatearCedula = (valor) => {
-    const limpio = desformatearCedula(valor);
-    return limpio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    const soloNumeros = valor.replace(/\D/g, "");
+    const conPuntos = soloNumeros.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `V-${conPuntos}`;
   };
 
   const leyendoInput = (e) => {
-    const sinPuntos = e.target.value.replace(/\./g, "");
+    const valorEntrada = e.target.value;
+    const cedulaSinFormato = limpiarCedula(valorEntrada);
 
+    // Validación inicial para evitar que ingrese datos no deseados
     if (
       indice === "cedula" &&
-      (sinPuntos.startsWith("0") ||
-        /[^0-9]/.test(sinPuntos) ||
-        sinPuntos.length > 8)
+      (cedulaSinFormato.startsWith("0") ||
+        /[^0-9]/.test(cedulaSinFormato) ||
+        cedulaSinFormato.length > 8)
     ) {
-      return; // previene ingreso no deseado
+      return;
     }
 
-    const conFormato = formatearCedula(sinPuntos);
-    setValue?.(conFormato);
+    const cedulaFormateada = formatearCedula(cedulaSinFormato);
+    setValue?.(cedulaFormateada);
 
     if (indice === "cedula") {
-      const esValido = cedulaRegex.test(sinPuntos);
-      setValidarCedula?.(esValido);
+      const esValida = cedulaRegex.test(cedulaSinFormato);
+      setValidarCedula?.(esValida);
     }
+
+    // Si usas onChange de forma externa, propaga el evento
+    onChange?.(e);
   };
 
   return (
@@ -59,7 +67,7 @@ export default function InputCedula({
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={"Inserte cédula"}
+        placeholder={"inserte cédula"}
         autoComplete={autoComplete}
         readOnly={readOnly}
         ref={ref}
@@ -68,8 +76,81 @@ export default function InputCedula({
       />
 
       {indice === "cedula" && value && !validarCedula && (
-        <DivMensajeInput mensaje={"Cédula inválida"} />
+        <DivMensajeInput mensaje="Cédula inválida" />
       )}
     </div>
   );
 }
+
+/**
+  export default function InputCedula({
+    type,
+    indice,
+    name,
+    disabled,
+    className,
+    placeholder,
+    id,
+    onChange,
+    value,
+    autoComplete,
+    readOnly,
+    ref,
+    max,
+    validarCedula,
+    setValidarCedula,
+    setValue,
+  }) {
+    const desformatearCedula = (valor) => valor.replace(/\./g, "");
+
+    const formatearCedula = (valor) => {
+      const limpio = desformatearCedula(valor);
+      return limpio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
+    const leyendoInput = (e) => {
+      const sinPuntos = e.target.value.replace(/\./g, "");
+
+      if (
+        indice === "cedula" &&
+        (sinPuntos.startsWith("0") ||
+          /[^0-9]/.test(sinPuntos) ||
+          sinPuntos.length > 8)
+      ) {
+        return; // previene ingreso no deseado
+      }
+
+      const conFormato = formatearCedula(sinPuntos);
+      setValue?.(conFormato);
+
+      if (indice === "cedula") {
+        const esValido = cedulaRegex.test(sinPuntos);
+        setValidarCedula?.(esValido);
+      }
+    };
+
+    return (
+      <div className="space-y-2 relative">
+        <Input
+          type={type}
+          id={id}
+          value={value}
+          name={name}
+          disabled={disabled}
+          className={className}
+          onChange={leyendoInput}
+          placeholder={"Inserte cédula"}
+          autoComplete={autoComplete}
+          readOnly={readOnly}
+          ref={ref}
+          max={max}
+          indice={indice}
+        />
+
+        {indice === "cedula" && value && !validarCedula && (
+          <DivMensajeInput mensaje={"Cédula inválida"} />
+        )}
+      </div>
+    );
+  }
+*/

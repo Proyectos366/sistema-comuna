@@ -142,15 +142,14 @@ export default function VoceroForm({
       }
     };
 
-    fetchVocerosPorConsejo();
+    if (accion !== "editar") {
+      fetchVocerosPorConsejo();
+    }
   }, [idConsejoComunal]);
 
   useEffect(() => {
-    if (!idConsejoComunal && !idComuna) {
-      console.log(seleccionarConsulta, idComuna, idConsejoComunal);
-
+    if (!idConsejoComunal && !idComuna && accion !== "editar") {
       setTodosVoceros([]);
-
       setCedulaVocero("");
       setEdadVocero("");
       setNombreVocero("");
@@ -168,9 +167,12 @@ export default function VoceroForm({
   }, [idComuna, idConsejoComunal]);
 
   useEffect(() => {
+    console.log("ajklsdfhoashdokasj");
+
     setTodosVoceros([]);
     setIdParroquia("");
     setIdComuna("");
+    setCircuitoComuna("");
     setIdConsejoComunal("");
     setTodosVoceros([]);
     setNombreVocero("");
@@ -189,6 +191,7 @@ export default function VoceroForm({
   useEffect(() => {
     if (!idParroquia) {
       setTodosVoceros([]);
+
       return;
     }
 
@@ -207,12 +210,15 @@ export default function VoceroForm({
       }
     };
 
-    fetchVoceroPorParroquia();
+    if (accion !== "editar") {
+      fetchVoceroPorParroquia();
+    }
   }, [idParroquia]);
 
   useEffect(() => {
     if (!idComuna) {
       setTodosVoceros([]);
+
       return;
     }
 
@@ -231,7 +237,9 @@ export default function VoceroForm({
       }
     };
 
-    fetchVoceroPorComuna();
+    if (accion !== "editar") {
+      fetchVoceroPorComuna();
+    }
   }, [idComuna]);
 
   useEffect(() => {
@@ -255,7 +263,7 @@ export default function VoceroForm({
       }
     };
 
-    if (seleccionarConsulta === 5) {
+    if (seleccionarConsulta === 5 && accion !== "editar") {
       fetchTodosVoceros();
     }
   }, [seleccionarConsulta]);
@@ -434,8 +442,8 @@ export default function VoceroForm({
     try {
       setAccion("editar");
       setIdComuna(datos.comunas.id);
-      setIdCircuito(datos.circuito ? datos.circuito.id : "")
-      setIdParroquia(datos.comunas.id_parroquia)
+      setIdCircuito(datos.circuito ? datos.circuito.id : "");
+      setIdParroquia(datos.comunas.id_parroquia);
 
       setCedulaVocero(datos.cedula);
       setEdadVocero(datos.edad);
@@ -458,9 +466,6 @@ export default function VoceroForm({
       console.log("Error, editando vocero: " + error);
     }
   };
-
-
-
 
   const editar = async () => {
     if (nombreVocero.trim()) {
@@ -497,7 +502,19 @@ export default function VoceroForm({
           data
         );
 
-        setTodosVoceros([...todosVoceros, response.data.vocero]);
+        if (todosVoceros?.length > 1) {
+          setTodosVoceros((voceros) => {
+            const arrayVoceros = Array.isArray(voceros) ? voceros : [];
+            return arrayVoceros.map((vocero) =>
+              vocero.cedula === response.data.vocero.cedula
+                ? response.data.vocero
+                : vocero
+            );
+          });
+        } else {
+          setTodosVoceros(response.data.vocero);
+        }
+
         abrirMensaje(response.data.message);
 
         ejecutarAccionesConRetraso([
@@ -512,6 +529,7 @@ export default function VoceroForm({
           { accion: () => setTelefonoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCorreoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setActividadLaboralVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
         console.log("Error, al actualizar datos del vocero: " + error);
@@ -525,14 +543,7 @@ export default function VoceroForm({
     }
   };
 
-
-
-
-
-
-
-
-
+  console.log(circuitoComuna);
 
   return (
     <>

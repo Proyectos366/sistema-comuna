@@ -12,7 +12,7 @@ import InputCorreo from "../inputs/InputCorreo";
 
 export default function FormCrearVocero({
   idParroquia,
-  idComunaCircuito,
+  idComuna,
   idConsejo,
   cambiarSeleccionParroquia,
   cambiarSeleccionComunaCircuito,
@@ -79,6 +79,9 @@ export default function FormCrearVocero({
   setValidarActividadLaboral,
   setDatos,
 }) {
+
+  console.log(dondeGuardar);
+  
   return (
     <Formulario
       onSubmit={(e) => {
@@ -101,7 +104,7 @@ export default function FormCrearVocero({
 
       {dondeGuardar === 1 && (
         <SelectOpcion
-          idOpcion={idComunaCircuito}
+          idOpcion={idComuna}
           nombre={"Comunas"}
           handleChange={cambiarSeleccionComunaCircuito}
           opciones={comunasCircuitos}
@@ -125,7 +128,7 @@ export default function FormCrearVocero({
         />
       )}
 
-      {(idComunaCircuito || idConsejo) && (
+      {(idComuna || idConsejo) && (
         <>
           <div className="flex flex-col sm:flex-row justify-between space-x-4">
             <LabelInput nombre={"Cedula"}>
@@ -359,7 +362,7 @@ export default function FormCrearVocero({
 
 // export default function FormCrearVocero({
 //   idParroquia,
-//   idComunaCircuito,
+//   idComuna,
 //   idConsejo,
 //   cambiarSeleccionParroquia,
 //   cambiarSeleccionComunaCircuito,
@@ -481,7 +484,7 @@ export default function FormCrearVocero({
 
 //         {dondeGuardar !== 0 && idParroquia && (
 //           <SelectOpcion
-//             idOpcion={idComunaCircuito}
+//             idOpcion={idComuna}
 //             nombre={
 //               dondeGuardar !== 3
 //                 ? dondeGuardar === 1
@@ -499,7 +502,7 @@ export default function FormCrearVocero({
 //           />
 //         )}
 
-//         {idComunaCircuito && dondeGuardar === 3 && (
+//         {idComuna && dondeGuardar === 3 && (
 //           <SelectOpcion
 //             idOpcion={idConsejo}
 //             nombre={"Consejos comunales"}
@@ -514,7 +517,7 @@ export default function FormCrearVocero({
 
 //       {(dondeGuardar !== 0 || dondeCrear !== 0) &&
 //         idParroquia &&
-//         idComunaCircuito &&
+//         idComuna &&
 //         (dondeGuardar === 3 ? idConsejo : true) && (
 //           <>
 //             <div className="flex flex-col sm:flex-row justify-between space-x-4">
@@ -696,7 +699,7 @@ export default function FormCrearVocero({
 //                   actividadLaboral,
 //                   seleccionarFormacion,
 //                   idParroquia,
-//                   idComunaCircuito,
+//                   idComuna,
 //                   idConsejo: 0,
 //                 }}
 //               />
@@ -796,7 +799,7 @@ export default function FormCrearVocero({
 
         {dondeGuardar !== 0 && idParroquia && (
           <SelectOpcion
-            idOpcion={idComunaCircuito}
+            idOpcion={idComuna}
             nombre={
               dondeGuardar !== 3
                 ? dondeGuardar === 1
@@ -812,7 +815,7 @@ export default function FormCrearVocero({
           />
         )}
 
-        {idComunaCircuito && dondeGuardar === 3 && (
+        {idComuna && dondeGuardar === 3 && (
           <SelectOpcion
             idOpcion={idConsejo}
             nombre={"Consejos comunales"}
@@ -825,7 +828,7 @@ export default function FormCrearVocero({
 
       {(dondeGuardar !== 0 || dondeCrear !== 0) &&
         idParroquia &&
-        idComunaCircuito &&
+        idComuna &&
         (dondeGuardar === 3 ? idConsejo : true) && (
           <>
             <div className="flex justify-between">
@@ -930,7 +933,7 @@ export default function FormCrearVocero({
                 campos={{
                   nombre,
                   idParroquia,
-                  idComunaCircuito,
+                  idComuna,
                   idConsejo: 0,
                 }}
               />
@@ -945,7 +948,7 @@ export default function FormCrearVocero({
                   nombre,
                   nombreDos,
                   idParroquia,
-                  idComunaCircuito,
+                  idComuna,
                   idConsejo: 0,
                 }}
               />

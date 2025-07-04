@@ -48,10 +48,17 @@ export async function GET(req) {
         telefono: true,
         correo: true,
         edad: true,
-        genero: true,
+       genero: true,
         laboral: true,
-        comunas: { select: { nombre: true } },
-        parroquias: { select: { nombre: true } },
+        comunas: {
+          select: { nombre: true, id: true, id_parroquia: true},
+        },
+        circuitos: {
+          select: { nombre: true, id: true }
+        },
+        parroquias: {
+          select: { nombre: true },
+        },
         consejos: { select: { nombre: true } },
         cursos: {
           where: { borrado: false },
