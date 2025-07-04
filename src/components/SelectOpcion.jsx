@@ -11,7 +11,7 @@ export default function SelectOpcion({
   seleccione,
   setNombre,
   setDatos,
-  indice
+  indice,
 }) {
   const [abierto, setAbierto] = useState(false);
   const [seleccionado, setSeleccionado] = useState("");
@@ -49,7 +49,7 @@ export default function SelectOpcion({
       <label className="block">
         <span className="text-gray-800 font-semibold">{nombre}:</span>
         <div
-          className={`uppercase flex justify-between items-center w-full p-2 
+          className={` uppercase flex justify-between items-center w-full py-2 px-4 
           rounded-md shadow-sm transition-all cursor-pointer focus:outline-none hover:border-[#082158]
           ${
             seleccionado === "Seleccione"
@@ -76,7 +76,9 @@ export default function SelectOpcion({
 
       {abierto && (
         <div
-          className={`overflow-y-auto max-h-[300px] no-scrollbar ${!indice ? 'absolute' : 'relative'} left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
+          className={`overflow-y-auto max-h-[300px] no-scrollbar ${
+            !indice ? "absolute" : "relative"
+          } left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
             busqueda ? "pb-2" : ""
           } pt-2 bg-white rounded-lg shadow-md z-50`}
         >

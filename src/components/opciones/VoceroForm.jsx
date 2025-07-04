@@ -48,7 +48,8 @@ export default function VoceroForm({
   const [seleccionarFormacion, setSeleccionarFormacion] = useState([]);
 
   const [idParroquia, setIdParroquia] = useState("");
-  const [idComunaCircuito, setIdComunaCircuito] = useState("");
+  const [idComuna, setIdComuna] = useState("");
+  const [idCircuito, setIdCircuito] = useState("");
   const [idConsejoComunal, setIdConsejoComunal] = useState("");
 
   const [todasParroquias, setTodasParroquias] = useState([]);
@@ -115,16 +116,6 @@ export default function VoceroForm({
     fetchDatos();
   }, []);
 
-  // useEffect(() => {
-  //   setIdParroquia("");
-  //   setIdComunaCircuito("");
-  //   setIdConsejoComunal("");
-  //   setTodasComunas([]);
-  //   setTodosConsejos([]);
-  //   setTodosVoceros([]);
-  //   setNombreVocero("");
-  // }, [perteneceComunaCircuito]);
-
   useEffect(() => {
     if (!idConsejoComunal) {
       setTodosVoceros([]);
@@ -155,8 +146,8 @@ export default function VoceroForm({
   }, [idConsejoComunal]);
 
   useEffect(() => {
-    if (!idConsejoComunal && !idComunaCircuito) {
-      console.log(seleccionarConsulta, idComunaCircuito, idConsejoComunal);
+    if (!idConsejoComunal && !idComuna) {
+      console.log(seleccionarConsulta, idComuna, idConsejoComunal);
 
       setTodosVoceros([]);
 
@@ -174,12 +165,12 @@ export default function VoceroForm({
       setCorreoVocero("");
       setActividadLaboralVocero("");
     }
-  }, [idComunaCircuito, idConsejoComunal]);
+  }, [idComuna, idConsejoComunal]);
 
   useEffect(() => {
     setTodosVoceros([]);
     setIdParroquia("");
-    setIdComunaCircuito("");
+    setIdComuna("");
     setIdConsejoComunal("");
     setTodosVoceros([]);
     setNombreVocero("");
@@ -220,7 +211,7 @@ export default function VoceroForm({
   }, [idParroquia]);
 
   useEffect(() => {
-    if (!idComunaCircuito) {
+    if (!idComuna) {
       setTodosVoceros([]);
       return;
     }
@@ -229,7 +220,7 @@ export default function VoceroForm({
       setIsLoading(true);
       try {
         let response = await axios.get(`/api/voceros/comuna-vocero-id`, {
-          params: { idComuna: idComunaCircuito },
+          params: { idComuna: idComuna },
         });
 
         setTodosVoceros(response?.data?.voceros);
@@ -241,7 +232,7 @@ export default function VoceroForm({
     };
 
     fetchVoceroPorComuna();
-  }, [idComunaCircuito]);
+  }, [idComuna]);
 
   useEffect(() => {
     /**
@@ -291,14 +282,14 @@ export default function VoceroForm({
   /**
     const cambiarSeleccionComunaCircuito = (e) => {
       const valor = e.target.value;
-      setIdComunaCircuito(valor);
+      setIdComuna(valor);
     };
   */
 
   const cambiarSeleccionComunaCircuito = (e) => {
     const valor = e.target.value; // ID de la comuna seleccionada
 
-    setIdComunaCircuito(valor);
+    setIdComuna(valor);
 
     // Filtrar voceros por ID de la comuna
     const vocerosSeleccionados =
@@ -337,32 +328,6 @@ export default function VoceroForm({
   const crearVocero = async () => {
     if (nombreVocero.trim()) {
       try {
-        /** 
-          // Configurar valores según `circuitoComuna`
-          const config = {
-            1: {
-              pertenece: "comuna",
-              id_comuna: !datos.id_comuna ? null : datos.id_comuna,
-              id_circuito: !datos.id_circuito ? null : datos.id_circuito,
-              id_consejo: !datos.id_consejo ? null : datos.id_consejo,
-            },
-            2: {
-              pertenece: "circuito",
-              id_comuna: null,
-              id_circuito: idComunaCircuito,
-              id_consejo: null,
-            },
-            3: {
-              pertenece: "consejo",
-              id_comuna: perteneceComunaCircuito === 1 ? idComunaCircuito : null,
-              id_circuito:
-                perteneceComunaCircuito === 2 ? idComunaCircuito : null,
-              id_consejo: idConsejoComunal,
-            },
-          };
-        */
-
-        // Datos generales del vocero
         const data = {
           nombre: nombreVocero.trim(),
           nombre_dos: nombreDosVocero,
@@ -468,7 +433,10 @@ export default function VoceroForm({
   const editando = async (datos) => {
     try {
       setAccion("editar");
-      setIdComunaCircuito(datos.comunas.id);
+      setIdComuna(datos.comunas.id);
+      setIdCircuito(datos.circuito ? datos.circuito.id : "")
+      setIdParroquia(datos.comunas.id_parroquia)
+
       setCedulaVocero(datos.cedula);
       setEdadVocero(datos.edad);
       setNombreVocero(datos.nombre);
@@ -491,13 +459,92 @@ export default function VoceroForm({
     }
   };
 
+
+
+
+  const editar = async () => {
+    if (nombreVocero.trim()) {
+      try {
+        const data = {
+          nombre: nombreVocero.trim(),
+          nombre_dos: nombreDosVocero,
+          apellido: apellidoVocero.trim(),
+          apellido_dos: apellidoDosVocero,
+          cedula: cedulaVocero,
+          genero: generoVocero,
+          edad: Number(edadVocero),
+          telefono: telefonoVocero,
+          direccion: "No especificada",
+          correo: correoVocero.trim(),
+          laboral: actividadLaboralVocero,
+          cargos:
+            seleccionarCargo.length > 0
+              ? seleccionarCargo.map((id) => ({ id }))
+              : [],
+          formaciones:
+            seleccionarFormacion.length > 0
+              ? seleccionarFormacion.map((id) => ({ id }))
+              : [],
+
+          id_parroquia: idParroquia,
+          id_comuna: idComuna,
+          id_circuito: idCircuito ? idCircuito : null,
+          id_consejo: idConsejoComunal ? idConsejoComunal : null,
+        };
+
+        const response = await axios.post(
+          "/api/voceros/actualizar-datos-vocero",
+          data
+        );
+
+        setTodosVoceros([...todosVoceros, response.data.vocero]);
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCedulaVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setEdadVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreDosVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setApellidoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setApellidoDosVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setGeneroVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setTelefonoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCorreoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setActividadLaboralVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al actualizar datos del vocero: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
+
+
+
+
+
+
+
+
+
   return (
     <>
       {accion === "editar" ? (
-        <ModalEditar isVisible={mostrar} onClose={cerrarModal} titulo={"Editar vocero"}>
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"Editar vocero"}
+        >
           <div className="-mt-5 w-full">
             <FormEditarVocero
-              idComuna={idComunaCircuito}
+              idComuna={idComuna}
               idConsejo={idConsejoComunal}
               cambiarSeleccionComuna={cambiarSeleccionComunaCircuito}
               cambiarSeleccionConsejo={cambiarSeleccionConsejo}
@@ -557,6 +604,9 @@ export default function VoceroForm({
               validarActividadLaboral={validarActividadLaboral}
               setValidarActividadLaboral={setValidarActividadLaboral}
               setDatos={setDatos}
+              mostrarMensaje={mostrarMensaje}
+              mensaje={mensaje}
+              editar={editar}
             />
           </div>
         </ModalEditar>
@@ -625,7 +675,7 @@ export default function VoceroForm({
               campos={{
                 nombreVocero,
                 idParroquia,
-                idComunaCircuito,
+                idComuna,
                 idConsejoComunal,
               }}
             />
@@ -708,7 +758,7 @@ export default function VoceroForm({
             <DivUnoDentroSectionRegistroMostrar nombre={"Crear vocero"}>
               <FormCrearVocero
                 idParroquia={idParroquia}
-                idComunaCircuito={idComunaCircuito}
+                idComuna={idComuna}
                 idConsejo={idConsejoComunal}
                 cambiarSeleccionParroquia={cambiarSeleccionParroquia}
                 cambiarSeleccionComunaCircuito={cambiarSeleccionComunaCircuito}
@@ -822,7 +872,7 @@ export default function VoceroForm({
               nombre={getTitulo(seleccionarConsulta)}
             >
               <SelectOpcion
-                idOpcion={idComunaCircuito}
+                idOpcion={idComuna}
                 nombre={"Comunas"}
                 handleChange={cambiarSeleccionComunaCircuito}
                 opciones={todasComunas}
@@ -849,7 +899,7 @@ export default function VoceroForm({
               nombre={getTitulo(seleccionarConsulta)}
             >
               <SelectOpcion
-                idOpcion={idComunaCircuito}
+                idOpcion={idComuna}
                 nombre={"Consejos comunales"}
                 handleChange={cambiarSeleccionConsejo}
                 opciones={todosConsejos}
@@ -973,7 +1023,7 @@ export default function VoceroForm({
 //   const [seleccionarFormacion, setSeleccionarFormacion] = useState([]);
 
 //   const [idParroquia, setIdParroquia] = useState("");
-//   const [idComunaCircuito, setIdComunaCircuito] = useState("");
+//   const [idComuna, setIdComuna] = useState("");
 //   const [idConsejoComunal, setIdConsejoComunal] = useState("");
 
 //   const [parroquias, setTodasParroquias] = useState([]);
@@ -1031,7 +1081,7 @@ export default function VoceroForm({
 //       setTodasComunas([]); // Vacía comunas si no hay parroquia seleccionada
 //       setTodosConsejos([]);
 //       setTodosConsejos([]);
-//       setIdComunaCircuito("");
+//       setIdComuna("");
 //       setIdConsejoComunal("");
 //       return;
 //     }
@@ -1063,10 +1113,10 @@ export default function VoceroForm({
 //   }, [idParroquia]);
 
 //   useEffect(() => {
-//     if (!idComunaCircuito) {
+//     if (!idComuna) {
 //       setTodosConsejos([]);
 //       setTodosVoceros([]);
-//       setIdComunaCircuito("");
+//       setIdComuna("");
 //       setIdConsejoComunal("");
 //       return;
 //     }
@@ -1079,14 +1129,14 @@ export default function VoceroForm({
 //           response = await axios.get(
 //             `/api/consejos/consejos-comunales-id-comuna`,
 //             {
-//               params: { idComuna: idComunaCircuito },
+//               params: { idComuna: idComuna },
 //             }
 //           );
 //         } else if (circuitoComuna === 2) {
 //           response = await axios.get(
 //             `/api/consejos/consejos-comunales-id-circuito`,
 //             {
-//               params: { idCircuito: idComunaCircuito },
+//               params: { idCircuito: idComuna },
 //             }
 //           );
 //         } else if (circuitoComuna === 3) {
@@ -1094,14 +1144,14 @@ export default function VoceroForm({
 //             response = await axios.get(
 //               `/api/consejos/consejos-comunales-id-comuna`,
 //               {
-//                 params: { idComuna: idComunaCircuito },
+//                 params: { idComuna: idComuna },
 //               }
 //             );
 //           } else if (perteneceComunaCircuito === 2) {
 //             response = await axios.get(
 //               `/api/consejos/consejos-comunales-id-circuito`,
 //               {
-//                 params: { idCircuito: idComunaCircuito },
+//                 params: { idCircuito: idComuna },
 //               }
 //             );
 //           }
@@ -1116,13 +1166,13 @@ export default function VoceroForm({
 //     };
 
 //     fetchConsejosPorComunaCircuito();
-//   }, [idComunaCircuito]);
+//   }, [idComuna]);
 
 //   useEffect(() => {
 //     if (!idConsejoComunal) {
 //       setTodosConsejos([]);
 //       setTodosVoceros([]);
-//       setIdComunaCircuito("");
+//       setIdComuna("");
 //       setIdConsejoComunal("");
 //       return;
 //     }
@@ -1152,7 +1202,7 @@ export default function VoceroForm({
 
 //   useEffect(() => {
 //     setIdParroquia("");
-//     setIdComunaCircuito("");
+//     setIdComuna("");
 //     setIdConsejoComunal("");
 //     setPerteneceComunaCircuito("");
 //     setTodasComunas([]);
@@ -1163,7 +1213,7 @@ export default function VoceroForm({
 
 //   useEffect(() => {
 //     setIdParroquia("");
-//     setIdComunaCircuito("");
+//     setIdComuna("");
 //     setIdConsejoComunal("");
 //     setTodasComunas([]);
 //     setTodosConsejos([]);
@@ -1193,14 +1243,14 @@ export default function VoceroForm({
 //   /**
 //     const cambiarSeleccionComunaCircuito = (e) => {
 //       const valor = e.target.value;
-//       setIdComunaCircuito(valor);
+//       setIdComuna(valor);
 //     };
 //   */
 
 //   const cambiarSeleccionComunaCircuito = (e) => {
 //     const valor = e.target.value; // ID de la comuna seleccionada
 
-//     setIdComunaCircuito(valor);
+//     setIdComuna(valor);
 
 //     // Filtrar voceros por ID de la comuna
 //     const vocerosSeleccionados =
@@ -1250,21 +1300,21 @@ export default function VoceroForm({
 //         const config = {
 //           1: {
 //             pertenece: "comuna",
-//             id_comuna: idComunaCircuito,
+//             id_comuna: idComuna,
 //             id_circuito: null,
 //             id_consejo: null,
 //           },
 //           2: {
 //             pertenece: "circuito",
 //             id_comuna: null,
-//             id_circuito: idComunaCircuito,
+//             id_circuito: idComuna,
 //             id_consejo: null,
 //           },
 //           3: {
 //             pertenece: "consejo",
-//             id_comuna: perteneceComunaCircuito === 1 ? idComunaCircuito : null,
+//             id_comuna: perteneceComunaCircuito === 1 ? idComuna : null,
 //             id_circuito:
-//               perteneceComunaCircuito === 2 ? idComunaCircuito : null,
+//               perteneceComunaCircuito === 2 ? idComuna : null,
 //             id_consejo: idConsejoComunal,
 //           },
 //         };
@@ -1406,7 +1456,7 @@ export default function VoceroForm({
 //           campos={{
 //             nombreVocero,
 //             idParroquia,
-//             idComunaCircuito,
+//             idComuna,
 //             idConsejoComunal,
 //           }}
 //         />
@@ -1415,7 +1465,7 @@ export default function VoceroForm({
 //         <DivUnoDentroSectionRegistroMostrar nombre={"Crear vocero"}>
 //           <FormCrearVocero
 //             idParroquia={idParroquia}
-//             idComunaCircuito={idComunaCircuito}
+//             idComuna={idComuna}
 //             idConsejo={idConsejoComunal}
 //             cambiarSeleccionParroquia={cambiarSeleccionParroquia}
 //             cambiarSeleccionComunaCircuito={cambiarSeleccionComunaCircuito}

@@ -13,6 +13,7 @@ import InputNombre from "../inputs/InputNombre";
 import InputEdad from "../inputs/InputEdad";
 import InputTelefono from "../inputs/InputTelefono";
 import InputCorreo from "../inputs/InputCorreo";
+import MostarMsjEnModal from "../MostrarMsjEnModal";
 
 export default function FormEditarVocero({
   idComuna,
@@ -75,21 +76,11 @@ export default function FormEditarVocero({
   validarActividadLaboral,
   setValidarActividadLaboral,
   setDatos,
+  mostrarMensaje,
+  editar,
+  mensaje,
 }) {
   const [consejosFiltrados, setConsejosFiltrados] = useState([]);
-
-  /**
-  useEffect(() => {
-    if (cedula) {
-      const cedulaSinPuntos = String(cedula).replaceAll(".", "");
-      const esValido = /^[1-9][0-9]{6,7}$/.test(cedulaSinPuntos);
-      setValidarCedula?.(esValido);
-
-      const formateada = cedulaSinPuntos.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      setCedula?.(formateada);
-    }
-  }, [cedula]);
- */
 
   useEffect(() => {
     if (cedula) {
@@ -174,7 +165,49 @@ export default function FormEditarVocero({
 
       setTelefono?.(formateada);
     }
-  }, [cedula, edad, nombre, nombreDos, apellido, apellidoDos, genero, telefono]);
+
+    if (correo) {
+      const correoStr = String(correo);
+      const esValido =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+          correoStr
+        );
+
+      setValidarCorreo?.(esValido);
+
+      if (esValido) {
+        // Solo modifica el correo si es válido, por ejemplo removiendo puntos del nombre de usuario
+        const [user, domain] = correoStr.split("@");
+        const userSinPuntos = user.replaceAll(".", "");
+        const correoFormateado = `${userSinPuntos}@${domain}`;
+        setCorreo?.(correoFormateado);
+      } else {
+        // Si es inválido, mantén el original (o puedes manejarlo como prefieras)
+        setCorreo?.(correoStr);
+      }
+    }
+
+    if (actividadLaboral) {
+      const actividadLaboralLimpio = String(actividadLaboral).trim();
+      const esActividadLaboralValido = /^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/.test(
+        actividadLaboralLimpio
+      );
+
+      setValidarActividadLaboral?.(esActividadLaboralValido);
+      setActividadLaboral?.(actividadLaboralLimpio);
+    }
+  }, [
+    cedula,
+    edad,
+    nombre,
+    nombreDos,
+    apellido,
+    apellidoDos,
+    genero,
+    telefono,
+    correo,
+    actividadLaboral,
+  ]);
 
   useEffect(() => {
     if (idComuna) {
@@ -189,197 +222,210 @@ export default function FormEditarVocero({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="overflow-y-auto h-[390px] no-scrollbar space-y-2">
-      <SelectOpcion
-        idOpcion={idComuna}
-        nombre="Comuna"
-        handleChange={cambiarSeleccionComuna}
-        opciones={todasComunas}
-        seleccione="Seleccione una comuna"
-        setNombre={setNombreComuna}
-        indice={1}
-      />
-
-      
-      {idComuna && consejosFiltrados.length > 0 && (
+      <div className="overflow-y-auto h-[390px] no-scrollbar space-y-2 px-1">
         <SelectOpcion
-          idOpcion={idConsejo}
-          nombre="Consejo Comunal"
-          handleChange={cambiarSeleccionConsejo}
-          opciones={consejosFiltrados}
-          seleccione="Seleccione un consejo"
-          setNombre={setNombreConsejoComunal}
+          idOpcion={idComuna}
+          nombre="Comuna"
+          handleChange={cambiarSeleccionComuna}
+          opciones={todasComunas}
+          seleccione="Seleccione una comuna"
+          setNombre={setNombreComuna}
+          setDatos={setDatos}
           indice={1}
         />
-      )}
 
-      <div className="flex flex-col sm:flex-row justify-between space-x-4">
-        <LabelInput nombre={"Cedula"}>
-          <InputCedula
-            type={"text"}
-            indice={"cedula"}
-            value={cedula}
-            setValue={setCedula}
-            validarCedula={validarCedula}
-            setValidarCedula={setValidarCedula}
+        {idComuna && consejosFiltrados.length > 0 && (
+          <SelectOpcion
+            idOpcion={idConsejo}
+            nombre="Consejo Comunal"
+            handleChange={cambiarSeleccionConsejo}
+            opciones={consejosFiltrados}
+            seleccione="Seleccione un consejo"
+            setNombre={setNombreConsejoComunal}
+            indice={1}
           />
-        </LabelInput>
+        )}
 
-        <LabelInput nombre={"Edad"}>
-          <InputEdad
-            type={"text"}
-            indice={"edad"}
-            value={edad}
-            setValue={setEdad}
-            validarEdad={validarEdad}
-            setValidarEdad={setValidarEdad}
-          />
-        </LabelInput>
-      </div>
+        <div className="flex flex-col sm:flex-row justify-between space-x-4">
+          <LabelInput nombre={"Cedula"}>
+            <InputCedula
+              type={"text"}
+              indice={"cedula"}
+              value={cedula}
+              setValue={setCedula}
+              validarCedula={validarCedula}
+              setValidarCedula={setValidarCedula}
+            />
+          </LabelInput>
 
-      <div className="flex flex-col sm:flex-row space-x-4">
-        <LabelInput nombre={"Primer nombre"}>
-          <InputNombre
-            type={"text"}
-            indice={"nombre"}
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
-
-        <LabelInput nombre={"Segundo nombre"}>
-          <InputNombre
-            type={"text"}
-            indice={"nombre"}
-            value={nombreDos}
-            setValue={setNombreDos}
-            validarNombre={validarNombreDos}
-            setValidarNombre={setValidarNombreDos}
-          />
-        </LabelInput>
-      </div>
-
-      <div className="flex flex-col sm:flex-row space-x-4">
-        <LabelInput nombre={"Primer apellido"}>
-          <InputNombre
-            type={"text"}
-            indice={"nombre"}
-            value={apellido}
-            setValue={setApellido}
-            validarNombre={validarApellido}
-            setValidarNombre={setValidarApellido}
-          />
-        </LabelInput>
-
-        <LabelInput nombre={"Segundo Apellido"}>
-          <InputNombre
-            type={"text"}
-            indice={"nombre"}
-            value={apellidoDos}
-            setValue={setApellidoDos}
-            validarNombre={validarApellidoDos}
-            setValidarNombre={setValidarApellidoDos}
-          />
-        </LabelInput>
-      </div>
-
-      <div className="flex flex-col sm:flex-row space-x-4">
-        <div className="flex flex-col w-full">
-          <span>Genero</span>
-          <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
-            {[
-              { id: 1, nombre: "Masculino" },
-              { id: 2, nombre: "Femenino" },
-            ].map((opcion) => (
-              <InputCheckBox
-                altura={5}
-                key={opcion.id}
-                id={opcion.id}
-                nombre={opcion.nombre}
-                isChecked={genero === opcion.id} // Solo una opción puede estar seleccionada
-                onToggle={() => toggleGenero(opcion.id)} // Cambia el estado con la opción elegida
-              />
-            ))}
-          </div>
+          <LabelInput nombre={"Edad"}>
+            <InputEdad
+              type={"text"}
+              indice={"edad"}
+              value={edad}
+              setValue={setEdad}
+              validarEdad={validarEdad}
+              setValidarEdad={setValidarEdad}
+            />
+          </LabelInput>
         </div>
 
-        <LabelInput nombre={"Telefono"}>
-          <InputTelefono
-            type={"text"}
-            indice={"telefono"}
-            value={telefono}
-            setValue={setTelefono}
-            validarTelefono={validarTelefono}
-            setValidarTelefono={setValidarTelefono}
+        <div className="flex flex-col sm:flex-row space-x-4">
+          <LabelInput nombre={"Primer nombre"}>
+            <InputNombre
+              type={"text"}
+              indice={"nombre"}
+              value={nombre}
+              setValue={setNombre}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+            />
+          </LabelInput>
+
+          <LabelInput nombre={"Segundo nombre"}>
+            <InputNombre
+              type={"text"}
+              indice={"nombre"}
+              value={nombreDos}
+              setValue={setNombreDos}
+              validarNombre={validarNombreDos}
+              setValidarNombre={setValidarNombreDos}
+            />
+          </LabelInput>
+        </div>
+
+        <div className="flex flex-col sm:flex-row space-x-4">
+          <LabelInput nombre={"Primer apellido"}>
+            <InputNombre
+              type={"text"}
+              indice={"nombre"}
+              value={apellido}
+              setValue={setApellido}
+              validarNombre={validarApellido}
+              setValidarNombre={setValidarApellido}
+            />
+          </LabelInput>
+
+          <LabelInput nombre={"Segundo Apellido"}>
+            <InputNombre
+              type={"text"}
+              indice={"nombre"}
+              value={apellidoDos}
+              setValue={setApellidoDos}
+              validarNombre={validarApellidoDos}
+              setValidarNombre={setValidarApellidoDos}
+            />
+          </LabelInput>
+        </div>
+
+        <div className="flex flex-col sm:flex-row space-x-4">
+          <div className="flex flex-col w-full">
+            <span>Genero</span>
+            <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
+              {[
+                { id: 1, nombre: "Masculino" },
+                { id: 2, nombre: "Femenino" },
+              ].map((opcion) => (
+                <InputCheckBox
+                  altura={5}
+                  key={opcion.id}
+                  id={opcion.id}
+                  nombre={opcion.nombre}
+                  isChecked={genero === opcion.id} // Solo una opción puede estar seleccionada
+                  onToggle={() => toggleGenero(opcion.id)} // Cambia el estado con la opción elegida
+                />
+              ))}
+            </div>
+          </div>
+
+          <LabelInput nombre={"Telefono"}>
+            <InputTelefono
+              type={"text"}
+              indice={"telefono"}
+              value={telefono}
+              setValue={setTelefono}
+              validarTelefono={validarTelefono}
+              setValidarTelefono={setValidarTelefono}
+            />
+          </LabelInput>
+        </div>
+
+        <div className="flex flex-col sm:flex-row space-x-4">
+          <LabelInput nombre={"Correo"}>
+            <InputCorreo
+              type="text"
+              indice="email"
+              value={correo}
+              setValue={setCorreo}
+              validarCorreo={validarCorreo}
+              setValidarCorreo={setValidarCorreo}
+            />
+          </LabelInput>
+
+          <LabelInput nombre={"Actividad laboral"}>
+            <InputNombre
+              type="text"
+              indice="nombre"
+              value={actividadLaboral}
+              setValue={setActividadLaboral}
+              validarNombre={validarActividadLaboral}
+              setValidarNombre={setValidarActividadLaboral}
+            />
+          </LabelInput>
+        </div>
+
+        <div className="">
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+        </div>
+
+        <div className="flex space-x-4">
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={editar}
+            nombre={"Guardar cambios"}
+            campos={{
+              cedula,
+              nombre,
+              apellido,
+              edad,
+              genero,
+              telefono,
+              correo,
+              actividadLaboral,
+            }}
           />
-        </LabelInput>
-      </div>
 
-      <div className="flex flex-col sm:flex-row space-x-4">
-                  <LabelInput nombre={"Correo"}>
-                    <InputCorreo
-                      type="text"
-                      indice="email"
-                      value={correo}
-                      setValue={setCorreo}
-                      validarCorreo={validarCorreo}
-                      setValidarCorreo={setValidarCorreo}
-                    />
-                  </LabelInput>
-      
-                  <LabelInput nombre={"Actividad laboral"}>
-                    <InputNombre
-                      type="text"
-                      indice="nombre"
-                      value={actividadLaboral}
-                      setValue={setActividadLaboral}
-                      validarNombre={validarActividadLaboral}
-                      setValidarNombre={setValidarActividadLaboral}
-                    />
-                  </LabelInput>
-                </div>
-
-      <div className="flex space-x-4 mt-4">
-        <BotonAceptarCancelar
-          nombre="Guardar cambios"
-          aceptar={abrirModal}
-          campos={{
-            cedula,
-            nombre,
-            apellido,
-            edad,
-            genero,
-            telefono,
-            correo,
-            actividadLaboral,
-            seleccionarFormacion,
-            idComuna,
-            idConsejo,
-          }}
-        />
-
-        <BotonAceptarCancelar
-          nombre="Limpiar"
-          aceptar={() =>
-            limpiarCampos({
-              setCedula,
-              setEdad,
-              setNombre,
-              setNombreDos,
-              setApellido,
-              setApellidoDos,
-              setGenero,
-              setTelefono,
-              setCorreo,
-              setActividadLaboral,
-            })
-          }
-          campos={{}} // puedes omitir campos si no los usas aquí
-        />
-      </div>
-
+          <BotonAceptarCancelar
+            indice={"limpiar"}
+            aceptar={() => {
+              limpiarCampos({
+                setCedula,
+                setEdad,
+                setNombre,
+                setNombreDos,
+                setApellido,
+                setApellidoDos,
+                setGenero,
+                setTelefono,
+                setCorreo,
+                setActividadLaboral,
+              });
+            }}
+            nombre={"Limpiar"}
+            campos={{
+              cedula,
+              edad,
+              nombre,
+              nombreDos,
+              apellido,
+              apellidoDos,
+              genero,
+              telefono,
+              correo,
+              actividadLaboral,
+            }}
+          />
+        </div>
       </div>
     </Formulario>
   );

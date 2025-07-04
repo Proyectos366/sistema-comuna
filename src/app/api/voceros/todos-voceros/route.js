@@ -36,7 +36,10 @@ export async function GET() {
         genero: true,
         laboral: true,
         comunas: {
-          select: { nombre: true, id: true},
+          select: { nombre: true, id: true, id_parroquia: true},
+        },
+        circuitos: {
+          select: { nombre: true, id: true }
         },
         parroquias: {
           select: { nombre: true },
