@@ -51,7 +51,7 @@ export async function POST(request) {
       );
     }
 
-    const nuevoVocero = await prisma.$transaction(async (tx) => {
+    const nuevoVoceroCreado = await prisma.$transaction(async (tx) => {
       const vocero = await tx.vocero.create({
         data: {
           nombre: validaciones.nombre,
@@ -122,6 +122,46 @@ export async function POST(request) {
       return vocero;
     });
 
+    if (!nuevoVoceroCreado) {
+      return generarRespuesta("error", "Error, al crear vocero...", {}, 400);
+    }
+
+    const nuevoVocero = prisma.vocero.findUnique({
+      where: { cedula: validaciones.cedula },
+      select: {
+        nombre: true,
+        nombre_dos: true,
+        apellido: true,
+        apellido_dos: true,
+        cedula: true,
+        telefono: true,
+        correo: true,
+        edad: true,
+        genero: true,
+        laboral: true,
+        comunas: { select: { nombre: true, id: true, id_parroquia: true } },
+        circuitos: { select: { nombre: true, id: true } },
+        parroquias: { select: { nombre: true } },
+        consejos: { select: { nombre: true } },
+        cursos: {
+          where: { borrado: false },
+          select: {
+            verificado: true,
+            certificado: true,
+            formaciones: { select: { nombre: true } },
+            asistencias: {
+              select: {
+                id: true,
+                presente: true,
+                fecha_registro: true,
+                modulos: { select: { id: true, nombre: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
     //const nuevoVocero = false;
 
     if (!nuevoVocero) {
@@ -131,16 +171,16 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      return generarRespuesta(
-        "ok",
-        "Vocero creado...",
-        {
-          vocero: nuevoVocero,
-        },
-        201
-      );
     }
+
+    return generarRespuesta(
+      "ok",
+      "Vocero creado...",
+      {
+        vocero: nuevoVocero,
+      },
+      201
+    );
   } catch (error) {
     console.log(`Error interno (crear vocero): ` + error);
 
