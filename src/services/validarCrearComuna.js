@@ -30,24 +30,7 @@ export default async function validarCrearComuna(
       );
     }
 
-    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
-
-    if (validarNombre.status === "error") {
-      return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
-      );
-    }
-
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
-    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
-    const norteMinuscula = norte ? norte.toLowerCase() : "";
-    const surMinuscula = sur ? sur.toLowerCase() : "";
-    const esteMinuscula = este ? este.toLowerCase() : "";
-    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
-    const puntoMinuscula = punto ? punto.toLowerCase() : "";
-    const rifMinuscula = rif ? rif.toLowerCase() : "";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -58,27 +41,33 @@ export default async function validarCrearComuna(
       return retornarRespuestaFunciones("error", "Error, usuario no existe...");
     }
 
-    const usuario_id = Number(idUsuario.id);
-    const parroquia_id = Number(id_parroquia);
+    const usuarioId = idUsuario.id;
 
-    if (typeof usuario_id !== "number") {
+    const validandoCampos = ValidarCampos.validarCamposCrearComuna(
+      nombre,
+      usuarioId,
+      id_parroquia
+    );
+
+    if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
-        "error",
-        "Error, id_usuario no es un numero"
+        validandoCampos.status,
+        validandoCampos.message
       );
     }
 
-    if (typeof parroquia_id != "number") {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, id_parroquia no es un numero..."
-      );
-    }
+    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+    const norteMinuscula = norte ? norte.toLowerCase() : "";
+    const surMinuscula = sur ? sur.toLowerCase() : "";
+    const esteMinuscula = este ? este.toLowerCase() : "";
+    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+    const puntoMinuscula = punto ? punto.toLowerCase() : "";
+    const rifMinuscula = rif ? rif.toLowerCase() : "";
 
     const nombreRepetido = await prisma.comuna.findFirst({
       where: {
-        nombre: nombreMinuscula,
-        id_parroquia: parroquia_id,
+        nombre: validandoCampos.nombre,
+        id_parroquia: validandoCampos.id_parroquia,
       },
     });
 
@@ -87,9 +76,9 @@ export default async function validarCrearComuna(
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: usuario_id,
-      id_parroquia: parroquia_id,
-      nombre: nombreMinuscula,
+      id_usuario: validandoCampos.usuario_id,
+      id_parroquia: validandoCampos.parroquia_id,
+      nombre: validandoCampos.nombre,
       direccion: direccionMinuscula,
       norte: norteMinuscula,
       sur: surMinuscula,

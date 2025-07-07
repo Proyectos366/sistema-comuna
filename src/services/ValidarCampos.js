@@ -28,9 +28,14 @@ export default class ValidarCampos {
         );
       }
 
+      const correoLetrasMinusculas = correo.toLowerCase();
+
       return retornarRespuestaFunciones(
         msjCorrectos.ok,
-        msjCorrectos.okCorreo.campoValido
+        msjCorrectos.okCorreo.campoValido,
+        {
+          correo: correoLetrasMinusculas,
+        }
       );
     } catch (error) {
       console.log(`${msjErrores.errorCorreo.internoValidando}: ` + error);
@@ -57,15 +62,40 @@ export default class ValidarCampos {
         );
       }
 
+      const nombreLetrasMinusculas = nombre.toLowerCase();
+
       return retornarRespuestaFunciones(
         msjCorrectos.ok,
-        msjCorrectos.okNombre.campoValido
+        msjCorrectos.okNombre.campoValido,
+        {
+          nombre: nombreLetrasMinusculas,
+        }
       );
     } catch (error) {
       console.log(`${msjErrores.errorNombre.internoValidando}: ` + error);
       return retornarRespuestaFunciones(
         msjErrores.error,
         msjErrores.errorNombre.internoValidando
+      );
+    }
+  }
+
+  static validarCampoTexto(texto) {
+    try {
+      if (!texto) {
+        return retornarRespuestaFunciones("error", "Error, campo vacio...");
+      }
+
+      const textoLetrasMinusculas = texto.toLowerCase();
+
+      return retornarRespuestaFunciones("ok", "Campo valido...", {
+        texto: textoLetrasMinusculas,
+      });
+    } catch (error) {
+      console.log(`Error, interno validar campo texto: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validar campo texto..."
       );
     }
   }
@@ -212,6 +242,28 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoId(id) {
+    try {
+      if (!id) {
+        return retornarRespuestaFunciones("error", "Campo id vacio...");
+      }
+
+      const idNumero = Number(id);
+
+      if (isNaN(idNumero) || idNumero <= 0) {
+        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
+        return retornarRespuestaFunciones("error", "Error, id inválido...");
+      }
+
+      return retornarRespuestaFunciones("ok", "Campo id valido...", {
+        id: idNumero,
+      });
+    } catch (error) {
+      console.log(`Error, interno al (validar id): ` + error);
+      return retornarRespuestaFunciones("error", "Error, interno (validar id)");
+    }
+  }
+
   static validarCampoClave(claveUno, claveDos) {
     try {
       if (!claveUno) {
@@ -300,41 +352,25 @@ export default class ValidarCampos {
   static validarCamposRegistro(cedula, nombre, correo, claveUno, claveDos) {
     try {
       const validarCorreo = this.validarCampoCorreo(correo);
+      const validarCedula = this.validarCampoCedula(cedula);
+      const validarNombre = this.validarCampoNombre(nombre);
 
-      if (!cedula) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCedula.campoVacio
-        );
-      }
-
-      if (!cedulaRegex.test(cedula)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCedula.formatoInvalido
-        );
-      }
-
-      if (!nombre) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
-        );
-      }
-
-      if (!nombreRegex.test(nombre)) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.formatoInvalido
-        );
-      }
-
+      if (validarCedula.status === "error") return validarCedula;
+      if (validarNombre.status === "error") return validarNombre;
       if (validarCorreo.status === "error") return validarCorreo;
 
       const validarClave = this.validarCampoClave(claveUno, claveDos);
       if (validarClave.status === "error") return validarClave;
 
-      return retornarRespuestaFunciones(msjCorrectos.ok, "Campos validados...");
+      return retornarRespuestaFunciones(
+        msjCorrectos.ok,
+        "Campos validados...",
+        {
+          cedula: validarCedula.cedula,
+          nombre: validarNombre.nombre,
+          correo: validarCorreo.correo,
+        }
+      );
     } catch (error) {
       console.log(`${msjErrores.errorMixto}: ` + error);
       return retornarRespuestaFunciones(
@@ -363,6 +399,85 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         msjErrores.error,
         msjErrores.errorLogin
+      );
+    }
+  }
+
+  static validarCamposCrearComuna(nombre, usuarioId, parroquiaId) {
+    try {
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarUsuarioId = this.validarCampoId(usuarioId);
+      const validarParroquiaId = this.validarCampoId(parroquiaId);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarUsuarioId.status === "error") return validarUsuarioId;
+      if (validarParroquiaId.status === "error") return validarParroquiaId;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.texto,
+        id_usuario: validarUsuarioId.id,
+        id_parroquia: validarParroquiaId.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos vocero: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos vocero..."
+      );
+    }
+  }
+
+  static validarCamposCrearConsejoComunal(
+    nombre,
+    usuarioId,
+    parroquiaId,
+    comunaId,
+    circuitoId,
+    comunaCircuito
+  ) {
+    try {
+      const validaciones = {
+        nombre: this.validarCampoTexto(nombre),
+        id_usuario: this.validarCampoId(usuarioId),
+        id_parroquia: this.validarCampoId(parroquiaId),
+      };
+
+      if (validaciones.nombre.status === "error") return validaciones.nombre;
+      if (validaciones.id_usuario.status === "error")
+        return validaciones.id_usuario;
+      if (validaciones.id_parroquia.status === "error")
+        return validaciones.id_parroquia;
+
+      // Validar solo el ID activo (comuna o circuito)
+      let id_comuna = null;
+      let id_circuito = null;
+
+      if (comunaCircuito === "comuna") {
+        const result = this.validarCampoId(comunaId);
+        if (result.status === "error") return result;
+        id_comuna = result.id;
+      } else if (comunaCircuito === "circuito") {
+        const result = this.validarCampoId(circuitoId);
+        if (result.status === "error") return result;
+        id_circuito = result.id;
+      }
+
+      return retornarRespuestaFunciones(
+        "ok",
+        "Campos validados correctamente...",
+        {
+          nombre: validaciones.nombre.texto,
+          id_usuario: validaciones.id_usuario.id,
+          id_parroquia: validaciones.id_parroquia.id,
+          id_comuna: id_comuna,
+          id_circuito: id_circuito,
+        }
+      );
+    } catch (error) {
+      console.error("Error interno al validar campos del consejo:", error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno al validar los campos del consejo..."
       );
     }
   }

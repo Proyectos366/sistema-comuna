@@ -16,7 +16,7 @@ export default async function validarCrearUsuario(
     const cedulaSinPunto = cedula.replace(/\./g, "");
     // Validar campos
     const validandoCampos = ValidarCampos.validarCamposRegistro(
-      cedulaSinPunto,
+      cedula,
       nombre,
       correo,
       claveUno,
@@ -33,7 +33,10 @@ export default async function validarCrearUsuario(
     // Verificar si el usuario ya existe
     const usuarioExistente = await prisma.usuario.findFirst({
       where: {
-        OR: [{ correo: correo }, { cedula: cedulaSinPunto }],
+        OR: [
+          { correo: validandoCampos.correo },
+          { cedula: validandoCampos.cedula },
+        ],
       },
     });
 
@@ -54,32 +57,14 @@ export default async function validarCrearUsuario(
       );
     }
 
-    const correoLetrasMinusculas = correo.toLowerCase();
-    const cedulaNumero = Number(cedulaSinPunto);
-    const nombreMinuscula = nombre.toLowerCase();
-
-    if (isNaN(cedulaNumero)) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, cedula debe ser numero..."
-      );
-    }
-
-    if (!Number.isInteger(cedulaNumero)) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, N° cédula debe ser entero..."
-      );
-    }
-
     return retornarRespuestaFunciones(
       msjCorrectos.ok,
       msjCorrectos.okCrearUsuario.encriptarCorrecto,
       {
-        cedula: cedulaNumero,
-        nombre: nombreMinuscula,
+        cedula: validandoCampos.cedula,
+        nombre: validandoCampos.nombre,
         claveEncriptada: claveEncriptada.claveEncriptada,
-        correo: correoLetrasMinusculas,
+        correo: validandoCampos.correo,
       }
     );
   } catch (error) {

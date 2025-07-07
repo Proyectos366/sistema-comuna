@@ -1,6 +1,12 @@
-import { capitalizarTitulo, formatoTituloPersonalizado } from "@/utils/formatearTextCapitalice";
+import { formatoTituloPersonalizado } from "@/utils/formatearTextCapitalice";
 
-export default function ListaDetallesVocero({ nombre, valor, indice, fecha }) {
+export default function ListaDetallesVocero({
+  nombre,
+  valor,
+  indice,
+  fecha,
+  formador,
+}) {
   return (
     <>
       {indice === 1 && (
@@ -22,19 +28,26 @@ export default function ListaDetallesVocero({ nombre, valor, indice, fecha }) {
       )}
 
       {indice === 3 && (
-        <div className="flex flex-row gap-2">
-          <span className="font-semibold text-md">
-            {formatoTituloPersonalizado(nombre)}:
-          </span>
+        <div className="w-full flex flex-col">
           <div>
-            <span
-              className={`${
-                valor ? "text-green-700" : "text-red-600"
-              } uppercase`}
-            >
-              {valor ? "Asistio" : "No asistio"}
+            <span className="font-semibold text-md">Formador: </span>
+            <span className="uppercase">{formador}</span>
+          </div>
+
+          <div className="flex flex-row gap-2">
+            <span className="font-semibold text-md">
+              {formatoTituloPersonalizado(nombre)}:
             </span>
-            <span>{" — " + fecha}</span>
+            <div>
+              <span
+                className={`${
+                  valor ? "text-green-700" : "text-red-600"
+                } uppercase`}
+              >
+                {valor ? "Asistio" : "No asistio"}
+              </span>
+              <span>{" — " + fecha}</span>
+            </div>
           </div>
         </div>
       )}

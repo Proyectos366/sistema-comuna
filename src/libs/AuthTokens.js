@@ -1,14 +1,6 @@
 import jsonwebtoken from "jsonwebtoken";
-import dotenv from "dotenv";
-
-//process.loadEnvFile();
-
-dotenv.config();
 
 export default class AuthTokens {
-  /** tokenValidarUsuario es la encargada de generar el token al momento de
-  registrar un nuevo empleado y tambien sirve para generar un token para
-  el cambio de clave por olvido */
   static tokenValidarUsuario(num) {
     let result1 = Math.random().toString(34).substring(0, num);
     let result2 = Math.random().toString(34).substring(0, num);
@@ -24,10 +16,8 @@ export default class AuthTokens {
     return token1 + token2;
   }
 
-  /** tokenInicioSesion token creado para poder iniciar sesion */
   static tokenInicioSesion(correo, rol) {
     try {
-      // Validar configuración previa
       if (
         !process.env.JWT_SECRET ||
         !process.env.JWT_EXPIRATION ||
@@ -40,7 +30,6 @@ export default class AuthTokens {
         };
       }
 
-      // Generar el token
       const token = jsonwebtoken.sign(
         {
           correo: correo,
@@ -51,19 +40,6 @@ export default class AuthTokens {
           expiresIn: process.env.JWT_EXPIRATION,
         }
       );
-
-      /** 
-      // Configurar opciones de la cookie
-      const cookieOption = {
-        expires: new Date(
-          Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-        ),
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Solo HTTPS en producción
-        sameSite: "strict", // Protección contra CSRF
-      };
-*/
 
       const cookieOption = {
         expires: new Date(
@@ -91,9 +67,7 @@ export default class AuthTokens {
       };
     }
   }
-
-  /** descifrarToken se encarga de descifrar el token y retorna si es
-    correcto o no */
+  
   static descifrarToken(token) {
     try {
       if (!token) {
@@ -105,7 +79,6 @@ export default class AuthTokens {
 
       const descifrada = jsonwebtoken.verify(token, process.env.JWT_SECRET);
 
-      // Validar que todos los campos esperados estén presentes
       if (!descifrada || !descifrada.correo || !descifrada.rol) {
         return {
           status: "error",
@@ -114,7 +87,6 @@ export default class AuthTokens {
         };
       }
 
-      // Respuesta exitosa
       return {
         status: "ok",
         numero: 1,
@@ -136,3 +108,16 @@ export default class AuthTokens {
     }
   }
 }
+
+/** 
+  // Configurar opciones de la cookie
+  const cookieOption = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+    ),
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Solo HTTPS en producción
+    sameSite: "strict", // Protección contra CSRF
+  };
+*/

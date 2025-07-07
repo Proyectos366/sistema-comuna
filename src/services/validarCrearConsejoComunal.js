@@ -33,24 +33,7 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
-    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
-
-    if (validarNombre.status === "error") {
-      return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
-      );
-    }
-
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
-    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
-    const norteMinuscula = norte ? norte.toLowerCase() : "";
-    const surMinuscula = sur ? sur.toLowerCase() : "";
-    const esteMinuscula = este ? este.toLowerCase() : "";
-    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
-    const puntoMinuscula = punto ? punto.toLowerCase() : "";
-    const rifMinuscula = rif ? rif.toLowerCase() : "";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -64,30 +47,36 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
-    const usuario_id = Number(idUsuario.id);
-    const parroquia_id = Number(id_parroquia);
-    const comuna_id = id_comuna ? Number(id_comuna) : null;
-    const circuito_id = id_circuito ? Number(id_circuito) : null;
+    const usuarioId = idUsuario.id;
+    const validandoCampos = ValidarCampos.validarCamposCrearConsejoComunal(
+      nombre,
+      usuarioId,
+      id_parroquia,
+      id_comuna,
+      id_circuito,
+      comunaCircuito
+    );
 
-    if (typeof usuario_id !== "number") {
+    if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
-        "error",
-        "Error, id_usuario no es un numero"
+        validandoCampos.status,
+        validandoCampos.message
       );
     }
 
-    if (typeof parroquia_id != "number") {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, id_parroquia no es un numero..."
-      );
-    }
+    const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+    const norteMinuscula = norte ? norte.toLowerCase() : "";
+    const surMinuscula = sur ? sur.toLowerCase() : "";
+    const esteMinuscula = este ? este.toLowerCase() : "";
+    const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+    const puntoMinuscula = punto ? punto.toLowerCase() : "";
+    const rifMinuscula = rif ? rif.toLowerCase() : "";
 
     const whereClause = {
-      nombre: nombreMinuscula,
-      id_parroquia: parroquia_id,
-      id_comuna: comunaCircuito === "comuna" ? comuna_id : null,
-      id_circuito: comunaCircuito === "circuito" ? circuito_id : null,
+      nombre: validandoCampos.nombre,
+      id_parroquia: validandoCampos.id_parroquia,
+      id_comuna: validandoCampos.id_comuna,
+      id_circuito: validandoCampos.id_circuito,
     };
 
     const consejoExistente = await prisma.consejo.findFirst({
@@ -102,11 +91,11 @@ export default async function validarCrearConsejoComunal(
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: usuario_id,
-      id_parroquia: parroquia_id,
-      id_comuna: comuna_id,
-      id_circuito: circuito_id,
-      nombre: nombreMinuscula,
+      id_usuario: validandoCampos.id_usuario,
+      id_parroquia: validandoCampos.id_parroquia,
+      id_comuna: validandoCampos.id_comuna,
+      id_circuito: validandoCampos.id_circuito,
+      nombre: validandoCampos.nombre,
       direccion: direccionMinuscula,
       norte: norteMinuscula,
       sur: surMinuscula,
@@ -117,10 +106,10 @@ export default async function validarCrearConsejoComunal(
       codigo: codigo,
     });
   } catch (error) {
-    console.log(`Error, interno al crear circuito: ` + error);
+    console.log(`Error, interno al crear consejo: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear circuito"
+      "Error, interno al crear consejo"
     );
   }
 }

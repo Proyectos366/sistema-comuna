@@ -24,3 +24,5 @@ export function formatoTituloPersonalizado(texto) {
     .join(" ");
   return `${primera} ${resto}`;
 }
+
+

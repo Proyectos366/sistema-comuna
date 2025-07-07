@@ -1,6 +1,8 @@
 import { formatearFecha } from "@/utils/Fechas";
 import ListaDetallesVocero from "./ListaDetalleVocero";
 import BotonEditar from "../botones/BotonEditar";
+import { formatearCedula } from "@/utils/formatearCedula";
+import { formatearTelefono } from "@/utils/formatearTelefono";
 
 export default function DetallesListadoVoceros({
   abierto,
@@ -15,8 +17,8 @@ export default function DetallesListadoVoceros({
           <div className="relative w-full flex items-center">
             <ListaDetallesVocero
               indice={1}
-              nombre={"Cedula"}
-              valor={vocero.cedula}
+              nombre={"Cédula"}
+              valor={formatearCedula(vocero.cedula)}
             />
 
             <div className="absolute right-0 top-1/2 -translate-y-1/2">
@@ -27,7 +29,7 @@ export default function DetallesListadoVoceros({
           <ListaDetallesVocero indice={1} nombre={"Edad"} valor={vocero.edad} />
           <ListaDetallesVocero
             indice={1}
-            nombre={"Genero"}
+            nombre={"Género"}
             valor={vocero.genero ? "Masculino" : "Femenino"}
           />
           <ListaDetallesVocero
@@ -37,8 +39,8 @@ export default function DetallesListadoVoceros({
           />
           <ListaDetallesVocero
             indice={1}
-            nombre={"Telefono"}
-            valor={vocero.telefono}
+            nombre={"Teléfono"}
+            valor={formatearTelefono(vocero.telefono)}
           />
 
           <ListaDetallesVocero
@@ -73,7 +75,7 @@ export default function DetallesListadoVoceros({
                   valor={curso.certificado}
                 />
 
-                <ul className="mt-2 list-disc list-inside text-sm text-gray-700">
+                <ul className="mt-2 list-disc list-inside text-sm text-gray-700 flex flex-col gap-2">
                   {curso.asistencias.map((asistencia, j) => {
                     return (
                       <li key={j} className="flex gap-2">
@@ -82,6 +84,7 @@ export default function DetallesListadoVoceros({
                           nombre={asistencia.modulos?.nombre}
                           valor={asistencia.presente}
                           fecha={formatearFecha(asistencia.fecha_registro)}
+                          formador={asistencia.formador}
                         />
                       </li>
                     );

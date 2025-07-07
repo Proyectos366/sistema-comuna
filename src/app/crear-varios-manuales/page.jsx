@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function CrearManuales() {
   const router = useRouter();
+
   const crearRoles = async () => {
     try {
       const responseRol = await axios.get(`/api/crear-manuales/crear-rol`);
@@ -97,7 +98,7 @@ export default function CrearManuales() {
     }
   };
 
-   const crearDepartamentos = async () => {
+  const crearDepartamentos = async () => {
     try {
       const responseDepartamentos = await axios.get(
         `/api/crear-manuales/crear-departamentos`
@@ -110,6 +111,22 @@ export default function CrearManuales() {
       }
     } catch (error) {
       console.log("Error, al crear departamentos: " + error);
+    }
+  };
+
+  const crearUsuarioMaster = async () => {
+    try {
+      const responseUsuarioMaster = await axios.get(
+        `/api/crear-manuales/crear-usuario-master`
+      );
+
+      if (responseUsuarioMaster?.data.status === "ok") {
+        router.push("/", { shallow: true });
+      } else {
+        alert("Error al crear usuario master");
+      }
+    } catch (error) {
+      console.log("Error, al crear usuario master: " + error);
     }
   };
 
@@ -143,6 +160,11 @@ export default function CrearManuales() {
           <BotonCreacionesManuales
             nombre={"Crear departamentos"}
             crear={crearDepartamentos}
+          />
+
+           <BotonCreacionesManuales
+            nombre={"Crear usuario"}
+            crear={crearUsuarioMaster}
           />
 
           {/* <BotonCreacionesManuales

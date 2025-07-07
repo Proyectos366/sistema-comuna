@@ -4,7 +4,7 @@ import validarCrearCargo from "@/services/validarCrearCargo";
 
 export async function PATCH(request) {
   try {
-    const { modulo, fecha, id_asistencia } = await request.json();
+    const { modulo, fecha, id_asistencia, nombreFormador } = await request.json();
 
     /**
     const validaciones = await validarCrearCargo(nombre);
@@ -20,8 +20,7 @@ export async function PATCH(request) {
     */
 
     const moduloNumero = Number(modulo);
-    const asistencia_id = Number(id_asistencia)
-    
+    const asistencia_id = Number(id_asistencia);
 
     const moduloEnAsistenciaValidado = await prisma.asistencia.update({
       where: {
@@ -31,6 +30,7 @@ export async function PATCH(request) {
       data: {
         presente: true,
         fecha_registro: fecha,
+        formador: nombreFormador
       },
     });
 

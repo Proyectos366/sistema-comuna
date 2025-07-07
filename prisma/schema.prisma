@@ -35,7 +35,7 @@ model departamento {
 
 model usuario {
   id        Int      @id @default(autoincrement())
-  cedula    String
+  cedula    Int
   nombre    String
   correo    String   @unique
   token     String   @unique
@@ -252,6 +252,7 @@ model asistencia {
   id_curso       Int
   id_usuario     Int
   presente       Boolean
+  formador       String?  @default("")
   borrado        Boolean  @default(false)
   fecha_registro DateTime @default(now())
   createdAt      DateTime @default(now())
@@ -276,7 +277,7 @@ model clase {
 
 model cursando {
   id           Int      @id @default(autoincrement())
-  cedula       Int  
+  cedula       Int
   edad         Int
   genero       Boolean
   f_n          DateTime

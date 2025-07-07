@@ -126,7 +126,7 @@ export async function POST(request) {
       return generarRespuesta("error", "Error, al crear vocero...", {}, 400);
     }
 
-    const nuevoVocero = prisma.vocero.findUnique({
+    const nuevoVocero = await prisma.vocero.findFirst({
       where: { cedula: validaciones.cedula },
       select: {
         nombre: true,

@@ -12,6 +12,7 @@ import ModalDatosContenedor from "../ModalDatosContenedor";
 import Boton from "../Boton";
 import { formatearFecha } from "@/utils/Fechas";
 import InputDate from "../InputDate";
+import SelectOpcion from "../SelectOpcion";
 
 export default function ParticipantesForm({
   mostrar,
@@ -36,25 +37,34 @@ export default function ParticipantesForm({
   const [datosCertificar, setDatosCertificar] = useState([]);
   const [estadoUsuarios, setEstadoUsuarios] = useState({});
 
+  const [idFormador, setIdFormador] = useState("");
+  const [formadores, setFormadores] = useState([]);
+  const [nombreFormador, setNombreFormador] = useState("");
+
+  const [datos, setDatos] = useState([]);
+
   const inputRefs = useRef({});
 
   const [opciones, setOpciones] = useState("");
 
   useEffect(() => {
-    const fetchCursos = async () => {
+    const fetchDatos = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get("/api/cursos/todos-cursos");
-        setCursos(response.data.cursos);
+        const [cursosRes, formadoresRes] = await Promise.all([
+          axios.get("/api/cursos/todos-cursos"),
+          axios.get("/api/usuarios/todos-usuarios"),
+        ]);
+
+        console.log(formadoresRes.data.todosUsuarios);
+
+        setCursos(cursosRes.data.cursos || []);
+        setFormadores(formadoresRes.data.todosUsuarios || []);
       } catch (error) {
-        console.log("Error al consultar cursos: " + error);
-        setError("Error al obtener los cursos");
-      } finally {
-        setLoading(false);
+        console.log("Error, al obtener datos: " + error);
       }
     };
 
-    fetchCursos();
+    fetchDatos();
   }, []);
 
   useEffect(() => {
@@ -117,6 +127,7 @@ export default function ParticipantesForm({
           modulo: datosActualizar.modulo,
           fecha: `${datosActualizar.fecha}T00:00:00Z`, // Asegurar formato ISO
           id_asistencia: datosActualizar.id_asistencia,
+          nombreFormador: nombreFormador,
         }
       );
       setCursos((prevCursos) =>
@@ -137,6 +148,9 @@ export default function ParticipantesForm({
         { accion: () => setIdModulo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         { accion: () => setFechaAprobacionModulo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         { accion: () => setDatosActualizar([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setDatos([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setIdFormador(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setNombreFormador(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
       console.log("Error, al validar modulo: " + error);
@@ -216,6 +230,14 @@ export default function ParticipantesForm({
     }
   };
 
+  const cambiarSeleccionFormador = (e) => {
+    const valor = e.target.value;
+    setIdFormador(valor);
+  };
+
+  const camposSiExisten =
+    opciones === "modulo" ? { idFormador, nombreFormador } : {};
+
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>;
 
@@ -243,6 +265,16 @@ export default function ParticipantesForm({
                 descripcion={formatearFecha(
                   fechaAprobacionModulo[idModulo] + "T00:00:00Z"
                 )}
+              />
+              <SelectOpcion
+                idOpcion={idFormador}
+                nombre="Formador"
+                handleChange={cambiarSeleccionFormador}
+                opciones={formadores}
+                seleccione="Seleccione"
+                setNombre={setNombreFormador}
+                setDatos={setDatos}
+                indice={1}
               />
             </>
           )}
@@ -364,11 +396,11 @@ export default function ParticipantesForm({
             }
           }}
           cancelar={cerrarModal}
-          indiceUno="crear"
+          indiceUno="aceptar"
           indiceDos="cancelar"
           nombreUno="Aceptar"
           nombreDos="Cancelar"
-          campos={{}}
+          campos={camposSiExisten}
         />
       </Modal>
 
@@ -389,8 +421,8 @@ export default function ParticipantesForm({
                         ? "border-gray-300"
                         : ""
                       : !curso.certificado
-                      ? "border-green-500"
-                      : "border-red-500"
+                      ? "border-red-600"
+                      : "border-green-600"
                   } rounded-md shadow-md p-1 sm:p-4 mb-4`}
                 >
                   <div className="flex justify-between items-center space-x-5">
@@ -423,8 +455,8 @@ export default function ParticipantesForm({
                             ? "bg-gray-300 text-black border-gray-400"
                             : "color-fondo text-white "
                           : !curso.certificado
-                          ? "border-green-500 bg-green-500 text-white"
-                          : "border-red-500 bg-red-500 text-white"
+                          ? "border-red-600 bg-red-600 text-white"
+                          : "border-green-600 bg-green-600 text-white"
                       } cursor-pointer rounded-md shadow-md p-2 hover:font-semibold transition-transform transform hover:scale-105`}
                     >
                       {expanded === curso.id
@@ -455,8 +487,8 @@ export default function ParticipantesForm({
                               ? " text-black border-gray-400"
                               : "borde-fondo"
                             : !curso.certificado
-                            ? "border-green-500"
-                            : "border-red-500"
+                            ? "border-red-600"
+                            : "border-green-600"
                         } rounded-md shadow-md p-2 mt-2`}
                       >
                         <p className="font-semibold">Módulos (asistencias):</p>
@@ -467,7 +499,13 @@ export default function ParticipantesForm({
                                 key={asistencia.id_modulo}
                                 className="flex flex-wrap justify-between items-center gap-3 mt-1"
                               >
-                                <div className="flex-1 text-sm sm:text-lg py-[6px]  text-center uppercase border border-gray-300 rounded-md shadow-sm min-w-0">
+                                <div
+                                  className={`flex-1 text-sm sm:text-lg py-[6px]  text-center uppercase border ${
+                                    asistencia.presente
+                                      ? "border-green-600"
+                                      : "border-gray-300"
+                                  }  rounded-md shadow-sm min-w-0`}
+                                >
                                   {curso.formaciones.modulos.find(
                                     (m) => m.id === asistencia.id_modulo
                                   )?.nombre || "Módulo desconocido"}
@@ -475,7 +513,7 @@ export default function ParticipantesForm({
 
                                 <div className="flex-1 min-w-0">
                                   {asistencia.presente ? (
-                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-gray-400 rounded-md shadow-sm">
+                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
                                       {formatearFecha(
                                         asistencia.fecha_registro
                                       )}
@@ -518,7 +556,7 @@ export default function ParticipantesForm({
 
                                 <div className="flex-1 min-w-0">
                                   {asistencia.presente ? (
-                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-red-600 rounded-md shadow-sm">
+                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
                                       Aprobado
                                     </div>
                                   ) : (
@@ -574,7 +612,7 @@ export default function ParticipantesForm({
                             !usuario.puedeVerificar
                               ? "bg-gray-400 hover:bg-GRAY-300 text-black"
                               : usuario.estaVerificado
-                              ? "bg-red-600 hover:bg-red-700 text-white"
+                              ? "bg-green-600 text-white"
                               : "color-fondo hover:bg-blue-700 text-white"
                           }`}
                         />
@@ -601,8 +639,8 @@ export default function ParticipantesForm({
                           className={`py-2 ${
                             usuario.puedeCertificar
                               ? curso.culminado
-                                ? "bg-red-600 hover:bg-red-700 text-white"
-                                : "bg-green-600 hover:bg-green-700 text-white"
+                                ? "bg-green-600 text-white"
+                                : "color-fondo hover:bg-blue-700 text-white"
                               : !usuario.puedeCertificar
                               ? "cursor-not-allowed bg-gray-400 text-black"
                               : "cursor-pointer color-fondo hover:bg-blue-700 text-white"

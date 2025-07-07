@@ -128,14 +128,14 @@ CREATE TABLE "consejo" (
 CREATE TABLE "vocero" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
-    "nombre_dos" TEXT NOT NULL,
+    "nombre_dos" TEXT,
     "apellido" TEXT NOT NULL,
-    "apellido_dos" TEXT NOT NULL,
+    "apellido_dos" TEXT,
     "cedula" INTEGER NOT NULL,
     "genero" BOOLEAN NOT NULL,
     "edad" INTEGER NOT NULL,
     "telefono" TEXT NOT NULL,
-    "direccion" TEXT NOT NULL,
+    "direccion" TEXT,
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "laboral" TEXT NOT NULL,
@@ -227,7 +227,7 @@ CREATE TABLE "clase" (
 -- CreateTable
 CREATE TABLE "cursando" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "cedula" TEXT NOT NULL,
+    "cedula" INTEGER NOT NULL,
     "edad" INTEGER NOT NULL,
     "genero" BOOLEAN NOT NULL,
     "f_n" DATETIME NOT NULL,
