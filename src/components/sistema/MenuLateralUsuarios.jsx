@@ -288,18 +288,14 @@ export default function MenuLateralUsuario({
                 </>
               )}
             </div>
-
-            
-
           </div>
-<div>
-              <img
-                className="w-full h-32 opacity-50"
-                src="/img/busqueda.png"
-                alt="Imagen de busqueda"
-              />
-            </div>
-
+          <div>
+            <img
+              className="w-full h-32 opacity-50"
+              src="/img/busqueda.png"
+              alt="Imagen de busqueda"
+            />
+          </div>
         </div>
       </section>
     </>
