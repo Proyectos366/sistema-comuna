@@ -219,8 +219,8 @@ export default function FormCrearVocero({
 
           <div className="flex flex-col sm:flex-row space-x-4">
             <div className="flex flex-col w-full">
-              <span>Genero</span>
-              <div className="flex justify-evenly border border-gray-300 py-2 mt-1 rounded-md hover:border hover:border-[#082158]">
+              <span className="text-gray-700 font-medium">Genero</span>
+              <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
                 {[
                   { id: 1, nombre: "Masculino" },
                   { id: 2, nombre: "Femenino" },

@@ -5,29 +5,31 @@ export default function ItemsInputPorPagina({
   incrementarItems,
 }) {
   return (
-    <div className="flex flex-col items-center justify-center w-full border border-gray-300 rounded-md p-1">
-      <span className="text-sm text-gray-600">Voceros por página</span>
+    <div className="flex flex-col flex-1 items-center justify-center w-full rounded-md">
+      {/* <span className="text-sm text-gray-600">Voceros por página</span> */}
       <div className="w-full flex justify-between">
         <button
           onClick={reducirItems}
           className={`${
             itemsPorPagina <= 1 ? "cursor-not-allowed" : "cursor-pointer"
-          } bg-blue-600 px-2 py-1 rounded-s-md flex-1`}
+          } bg-[#082158] text-white font-semibold px-2 py-2 rounded-s-md flex-1`}
           disabled={itemsPorPagina <= 1}
         >
           −
         </button>
+
         <input
-          type="number"
+          type="text"
           value={itemsPorPagina}
           onChange={(e) => setItemsPorPagina(Number(e.target.value))}
-          className="text-center w-1/2 outline-none border border-gray-300 border-x-0"
+          className="text-center w-2/3 outline-none border border-gray-300 border-x-0"
           min={1}
           max={100}
         />
+
         <button
           onClick={incrementarItems}
-          className="bg-blue-600 px-2 py-1 rounded-e-md flex-1 cursor-pointer"
+          className="bg-[#082158] text-white font-semibold px-2 py-2 rounded-e-md flex-1 cursor-pointer"
         >
           +
         </button>

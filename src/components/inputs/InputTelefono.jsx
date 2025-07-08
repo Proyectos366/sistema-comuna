@@ -36,9 +36,16 @@ export default function InputTelefono({
     )}.${soloNumeros.slice(7, 9)}.${soloNumeros.slice(9, 11)}`;
   };
 
+  /**
+    const validandoCampos = (campo) => {
+      const soloNumeros = campo.replace(/\D/g, "");
+      return /^0(2\d{2}|41\d)\d{7}$/.test(soloNumeros);
+    };
+  */
+
   const validandoCampos = (campo) => {
     const soloNumeros = campo.replace(/\D/g, "");
-    return /^0(2\d{2}|41\d)\d{7}$/.test(soloNumeros);
+    return /^(02\d{2}|04(12|14|16|24|26))\d{7}$/.test(soloNumeros);
   };
 
   const leyendoInput = (e) => {

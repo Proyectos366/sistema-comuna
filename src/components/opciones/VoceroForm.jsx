@@ -713,12 +713,8 @@ export default function VoceroForm({
       )}
 
       <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar>
-          <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
-            <div className="w-full text-center mb-2">
-              <Titulos indice={3} titulo={"Opciones vocero"} />
-            </div>
-
+        <DivUnoDentroSectionRegistroMostrar nombre={"Opciones vocero"}>
+          <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">
             <div
               className="grid gap-2 sm:gap-4 
                 grid-cols-1 
@@ -869,9 +865,7 @@ export default function VoceroForm({
 
         {seleccionarConsulta === 2 && (
           <>
-            <DivUnoDentroSectionRegistroMostrar
-              nombre={getTitulo(seleccionarConsulta)}
-            >
+            <DivUnoDentroSectionRegistroMostrar>
               <SelectOpcion
                 idOpcion={idParroquia}
                 nombre={"Parroquia"}
@@ -897,9 +891,7 @@ export default function VoceroForm({
 
         {seleccionarConsulta === 3 && (
           <>
-            <DivUnoDentroSectionRegistroMostrar
-              nombre={getTitulo(seleccionarConsulta)}
-            >
+            <DivUnoDentroSectionRegistroMostrar>
               <SelectOpcion
                 idOpcion={idComuna}
                 nombre={"Comunas"}
@@ -925,11 +917,9 @@ export default function VoceroForm({
 
         {seleccionarConsulta === 4 && (
           <>
-            <DivUnoDentroSectionRegistroMostrar
-              nombre={getTitulo(seleccionarConsulta)}
-            >
+            <DivUnoDentroSectionRegistroMostrar>
               <SelectOpcion
-                idOpcion={idComuna}
+                idOpcion={idConsejoComunal}
                 nombre={"Consejos comunales"}
                 handleChange={cambiarSeleccionConsejo}
                 opciones={todosConsejos}
@@ -953,10 +943,6 @@ export default function VoceroForm({
 
         {seleccionarConsulta === 5 && (
           <>
-            <DivUnoDentroSectionRegistroMostrar
-              nombre={getTitulo(seleccionarConsulta)}
-            ></DivUnoDentroSectionRegistroMostrar>
-
             <DivDosDentroSectionRegistroMostrar>
               <ListadoVoceros
                 voceros={
@@ -970,9 +956,7 @@ export default function VoceroForm({
 
         {seleccionarConsulta === 6 && (
           <>
-            <DivUnoDentroSectionRegistroMostrar
-              nombre={getTitulo(seleccionarConsulta)}
-            >
+            <DivUnoDentroSectionRegistroMostrar>
               <div className="w-full flex flex-col justify-center sm:flex-row items-center sm:space-x-4 p-2 bg-gray-100 shadow-lg rounded-md border border-gray-300 ">
                 <div className="w-full">
                   <InputCedula
