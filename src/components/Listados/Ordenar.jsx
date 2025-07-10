@@ -32,20 +32,12 @@ export default function OrdenarLista({
   }, []);
 
   return (
-    <div className="flex gap-2 items-start relative" ref={selectRef}>
+    <div className="flex gap-2 items-center relative" ref={selectRef}>
       <div className="w-full">
         <div
-          className={`uppercase flex justify-between items-center w-full py-2 px-4 rounded-md shadow-sm transition-all cursor-pointer hover:border-[#082158]
-          ${
-            abierto
-              ? "focus:ring focus:ring-[#082158]"
-              : "border border-gray-300"
-          }
-          ${
-            seleccionActual?.nombre
-              ? "border border-[#082158]"
-              : "border border-gray-300"
-          }`}
+          className={`uppercase flex justify-between items-center text-white w-full py-2 px-4 rounded-md shadow-sm transition-all cursor-pointer hover:border-[#082158]
+          ${ordenAscendente ? "bg-[#4ade80]" : "bg-[#f43f5e]"}
+          `}
           onClick={() => setAbierto(!abierto)}
         >
           <span>{seleccionActual?.nombre || "Seleccione"}</span>
@@ -53,8 +45,12 @@ export default function OrdenarLista({
 
         {abierto && (
           <ul
-            className={`absolute z-10 mt-2 w-full bg-white p-2 no-scrollbar border ${
-              seleccionActual?.nombre ? "border-[#082158]" : "border-gray-300"
+            className={`absolute z-10 mt-1 w-full bg-white p-2 no-scrollbar border ${
+              seleccionActual?.nombre
+                ? ordenAscendente
+                  ? "border-[#4ade80]"
+                  : "border-[#f43f5e]"
+                : ""
             }  rounded-md shadow-md max-h-[300px] overflow-y-auto`}
           >
             {opcionesOrden.map((opcion, index) => (
@@ -75,13 +71,14 @@ export default function OrdenarLista({
         )}
       </div>
 
-      {/* Botón de orden */}
       <button
         onClick={() => setOrdenAscendente(!ordenAscendente)}
-        className="px-3 py-2 rounded-md bg-[#6c7aa1] text-white self-end"
+        className={`px-3 py-2 rounded-md text-white cursor-pointer transition-all shadow-md hover:scale-105 ${
+          ordenAscendente ? "bg-[#4ade80]" : "bg-[#f43f5e]"
+        }`}
       >
         <span className="hidden sm:block">
-          {ordenAscendente ? "Ascendente" : "Descendente"}
+          {ordenAscendente ? "ASCENDENTE" : "DESCENDENTE"}
         </span>
         <span className="block sm:hidden">{ordenAscendente ? "⬆" : "⬇"}</span>
       </button>

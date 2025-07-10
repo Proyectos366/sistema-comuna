@@ -19,6 +19,7 @@ import InputCedula from "../inputs/InputCedula";
 import Boton from "../Boton";
 import FormEditarVocero from "../formularios/FormEditarVocero";
 import ModalEditar from "../modales/ModalEditar";
+import BotonSelecOpcionVocero from "../botones/BotonSelecOpcion";
 
 export default function VoceroForm({
   mostrar,
@@ -263,6 +264,17 @@ export default function VoceroForm({
       fetchTodosVoceros();
     }
   }, [seleccionarConsulta]);
+
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key === "Enter" && validarCedula) {
+        consultarVoceroCedula();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnter);
+    return () => window.removeEventListener("keydown", handleEnter);
+  }, [validarCedula, cedulaVocero]);
 
   const toggleGenero = (id) => {
     setGeneroVocero(generoVocero === id ? null : id); // Cambia el estado, permitiendo deselección
@@ -714,66 +726,49 @@ export default function VoceroForm({
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Opciones vocero"}>
-          <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">
-            <div
-              className="grid gap-2 sm:gap-4 
-                grid-cols-1 
-                sm:grid-cols-2 
-                md:grid-cols-3"
-            >
-              <div className="w-full">
-                <InputCheckBox
-                  id={1}
-                  isChecked={seleccionarConsulta === 1}
-                  onToggle={toggleConsultar}
-                  nombre="Crear"
-                />
-              </div>
+          <div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(1)}
+                seleccionar={seleccionarConsulta}
+                indice={1}
+                nombre="Crear"
+              />
 
-              <div className="w-full">
-                <InputCheckBox
-                  id={6}
-                  isChecked={seleccionarConsulta === 6}
-                  onToggle={toggleConsultar}
-                  nombre="Por cédula"
-                />
-              </div>
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(6)}
+                seleccionar={seleccionarConsulta}
+                indice={6}
+                nombre="Por cédula"
+              />
 
-              <div className="w-full">
-                <InputCheckBox
-                  id={2}
-                  isChecked={seleccionarConsulta === 2}
-                  onToggle={toggleConsultar}
-                  nombre="Por parroquia"
-                />
-              </div>
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(2)}
+                seleccionar={seleccionarConsulta}
+                indice={2}
+                nombre="Por parroquia"
+              />
 
-              <div className="w-full">
-                <InputCheckBox
-                  id={3}
-                  isChecked={seleccionarConsulta === 3}
-                  onToggle={toggleConsultar}
-                  nombre="Por comuna"
-                />
-              </div>
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(3)}
+                seleccionar={seleccionarConsulta}
+                indice={3}
+                nombre="Por comuna"
+              />
 
-              <div className="w-full">
-                <InputCheckBox
-                  id={4}
-                  isChecked={seleccionarConsulta === 4}
-                  onToggle={toggleConsultar}
-                  nombre="Por consejo comunal"
-                />
-              </div>
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(4)}
+                seleccionar={seleccionarConsulta}
+                indice={4}
+                nombre="Por consejo"
+              />
 
-              <div className="w-full">
-                <InputCheckBox
-                  id={5}
-                  isChecked={seleccionarConsulta === 5}
-                  onToggle={toggleConsultar}
-                  nombre="Todos"
-                />
-              </div>
+              <BotonSelecOpcionVocero
+                consultar={() => toggleConsultar(5)}
+                seleccionar={seleccionarConsulta}
+                indice={5}
+                nombre="Todos"
+              />
             </div>
           </div>
         </DivUnoDentroSectionRegistroMostrar>
@@ -966,6 +961,7 @@ export default function VoceroForm({
                     setValue={setCedulaVocero}
                     validarCedula={validarCedula}
                     setValidarCedula={setValidarCedula}
+                    className={`bg-white`}
                   />
                 </div>
                 <div className="w-1/3">
@@ -995,3 +991,67 @@ export default function VoceroForm({
     </>
   );
 }
+
+/*
+  <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">
+    <div
+              className="grid gap-2 sm:gap-4 
+                grid-cols-1 
+                sm:grid-cols-2 
+                md:grid-cols-3"
+            >
+              <div className="w-full">
+                <InputCheckBox
+                  id={1}
+                  isChecked={seleccionarConsulta === 1}
+                  onToggle={toggleConsultar}
+                  nombre="Crear"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={6}
+                  isChecked={seleccionarConsulta === 6}
+                  onToggle={toggleConsultar}
+                  nombre="Por cédula"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={2}
+                  isChecked={seleccionarConsulta === 2}
+                  onToggle={toggleConsultar}
+                  nombre="Por parroquia"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={3}
+                  isChecked={seleccionarConsulta === 3}
+                  onToggle={toggleConsultar}
+                  nombre="Por comuna"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={4}
+                  isChecked={seleccionarConsulta === 4}
+                  onToggle={toggleConsultar}
+                  nombre="Por consejo comunal"
+                />
+              </div>
+
+              <div className="w-full">
+                <InputCheckBox
+                  id={5}
+                  isChecked={seleccionarConsulta === 5}
+                  onToggle={toggleConsultar}
+                  nombre="Todos"
+                />
+              </div>
+            </div>
+          </div> */

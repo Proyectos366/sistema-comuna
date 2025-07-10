@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Input from "../inputs/Input";
 import DetallesListadoVoceros from "./DetallesListadoVoceros";
 import Leyenda from "./Leyenda";
-import { Paginator } from "primereact/paginator";
+//import { Paginator } from "primereact/paginator";
 import OrdenarLista from "./Ordenar";
 
 import { Button } from "primereact/button";
@@ -13,6 +13,7 @@ import { InputText } from "primereact/inputtext";
 import { Slider } from "primereact/slider";
 import { Tooltip } from "primereact/tooltip";
 import { classNames } from "primereact/utils";
+import Paginador from "../templates/PlantillaPaginacion";
 
 export default function ListadoVoceros({ voceros, editar }) {
   const [abierto, setAbierto] = useState(null);
@@ -138,43 +139,6 @@ export default function ListadoVoceros({ voceros, editar }) {
     );
   }
 
-  /** 
-    const paginatorTemplate = {
-      layout:
-        "RowsPerPageDropdown CurrentPageReport PrevPageLink PageLinks NextPageLink",
-      RowsPerPageDropdown: () => (
-        <select
-          value={rows}
-          onChange={(e) => {
-            setFirst(0); // reiniciar a la primera página
-            setRows(Number(e.target.value));
-          }}
-          className="px-2 py-1 outline-none rounded-md border border-gray-300 bg-white text-[#082158]"
-        >
-          {[5, 10, 20, 30].map((value, i) => (
-            <option key={`rows-${value}-${i}`} value={value}>
-              {value} por página
-            </option>
-          ))}
-        </select>
-      ),
-      CurrentPageReport: (options) => {
-        return (
-          <span className="px-2 py-1 text-[#082158] text-sm">
-            Página {options.currentPage} de {options.totalPages}
-          </span>
-        );
-      },
-      
-    };
-  */
-
-
-
-
-
-
-
   const template1 = {
     layout:
       "PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport",
@@ -182,11 +146,15 @@ export default function ListadoVoceros({ voceros, editar }) {
       return (
         <button
           type="button"
-          className={classNames(options.className, "border-round")}
+          className={`border py-1 me-1 text-sm rounded-md font-semibold ${
+            options.disabled
+              ? "border border-gray-300 bg-white text-[#082158]"
+              : "border bg-[#082158] text-white"
+          } cursor-pointer transition hover:scale-105 duration-500`}
           onClick={options.onClick}
           disabled={options.disabled}
         >
-          <span className="p-3">Previous</span>
+          <span className="py-2 px-3">Anterior</span>
           <Ripple />
         </button>
       );
@@ -195,11 +163,15 @@ export default function ListadoVoceros({ voceros, editar }) {
       return (
         <button
           type="button"
-          className={classNames(options.className, "border-round")}
+          className={`border py-1 mx-1 text-sm rounded-md font-semibold ${
+            options.disabled
+              ? "border border-gray-300 bg-white text-[#082158]"
+              : "border bg-[#082158] text-white"
+          } cursor-pointer transition hover:scale-105 duration-500`}
           onClick={options.onClick}
           disabled={options.disabled}
         >
-          <span className="p-3">Next</span>
+          <span className="py-2 px-3">Siguiente</span>
           <Ripple />
         </button>
       );
@@ -211,41 +183,17 @@ export default function ListadoVoceros({ voceros, editar }) {
         (options.view.endPage === options.page &&
           options.page + 1 !== options.totalPages)
       ) {
-        const spanClasses = classNames(
-          options.className,
-          "",
-          "text-gray-400",
-          "px-2"
-        );
-
-        return (
-          <span className={spanClasses} style={{ userSelect: "none" }}>
-            ...
-          </span>
-        );
+        return <span className={`text-gray-400`}>...</span>;
       }
-
-      const buttonClasses = classNames(
-        options.className,
-        "px-4",
-        "py-2",
-        "rounded-md",
-        "bg-whithe",
-        "shadow-md",
-        "transition-all",
-        "hover:scale-105",
-        "text-black",
-        "font-semibold",
-        {
-          "border border-gray-500 bg-gray-200 text-black":
-            options.page === options.currentPage,
-        }
-      );
 
       return (
         <button
           type="button"
-          className={buttonClasses}
+          className={`px-2 rounded mx-[3px] ${
+            options.page === options.currentPage
+              ? "bg-[#082158] text-white"
+              : "bg-white border border-gray-300"
+          } cursor-pointer transition hover:scale-105 duration-500`}
           onClick={options.onClick}
         >
           {options.page + 1}
@@ -253,23 +201,60 @@ export default function ListadoVoceros({ voceros, editar }) {
         </button>
       );
     },
-    RowsPerPageDropdown: () => (
-      <select
-        value={rows}
-        onChange={(e) => {
-          setFirst(0);
-          setRows(Number(e.target.value));
-        }}
-        className="px-2 py-1 outline-none rounded-md border border-gray-300 bg-white text-[#082158]"
-      >
-        {[5, 10, 20, 30].map((value, i) => (
-          <option key={`rows-${value}-${i}`} value={value}>
-            {value} por página
-          </option>
-        ))}
-      </select>
-    ),
+    RowsPerPageDropdown: () => {
+      const [abierto, setAbierto] = useState(false);
+      const dropdownRef = useRef(null);
+      const opcionesBase = [10, 25, 50, 100];
+      const incluirTodos = totalRecords > 100;
+      const opciones = incluirTodos ? [...opcionesBase, "todos"] : opcionesBase;
 
+      useEffect(() => {
+        const cerrar = (e) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+            setAbierto(false);
+          }
+        };
+        document.addEventListener("click", cerrar);
+        return () => document.removeEventListener("click", cerrar);
+      }, []);
+
+      return (
+        <div ref={dropdownRef} className="relative ">
+          <div
+            onClick={() => setAbierto(!abierto)}
+            className={`flex justify-between items-center text-sm px-4 py-1 rounded-md shadow-md bg-white cursor-pointer transition hover:scale-105 duration-500 border
+              ${abierto ? "border-[#082158]" : "border-gray-300"}`}
+          >
+            <span className="text-[#082158] font-semibold">
+              {rows} por página
+            </span>
+          </div>
+
+          {abierto && (
+            <ul className="absolute z-10 mt-1 w-full flex flex-col gap-2 bg-white p-2 rounded-md shadow-lg border border-[#082158] max-h-[200px] overflow-y-auto no-scrollbar">
+              {opciones.map((valor) => (
+                <li
+                  key={`rows-${valor}`}
+                  onClick={() => {
+                    setFirst(0);
+                    setRows(valor === "todos" ? totalRecords : valor);
+                    setAbierto(false);
+                  }}
+                  className={`px-4 py-1 text-sm rounded-md cursor-pointer transition font-semibold ${
+                    (valor === "todos" && rows === totalRecords) ||
+                    rows === valor
+                      ? "bg-gray-200 border border-gray-500"
+                      : "hover:bg-gray-200"
+                  }`}
+                >
+                  {valor === "todos" ? "Mostrar todos" : `${valor}`}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    },
     CurrentPageReport: (options) => (
       <span className="px-2 py-1 text-[#082158] text-sm">
         Página {options.currentPage} de {options.totalPages}
@@ -284,7 +269,7 @@ export default function ListadoVoceros({ voceros, editar }) {
           type="text"
           placeholder="🔍 Buscar..."
           value={searchTerm}
-          className={`pl placeholder:px-5`}
+          className={`bg-white ps-4 placeholder:px-5`}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             setFirst(0);
@@ -341,30 +326,24 @@ export default function ListadoVoceros({ voceros, editar }) {
             </div>
 
             <div className="mt-6">
-              {/*  <Paginator
-                first={first}
-                rows={rows}
-                totalRecords={totalRecords}
-                onPageChange={onPageChange}
-                rowsPerPageOptions={[5, 10, 20, 30]}
-              /> 
-              <Paginator
-                first={first}
-                rows={rows}
-                totalRecords={totalRecords}
-                onPageChange={onPageChange}
-                rowsPerPageOptions={[5, 10, 20, 30]}
-                template={paginatorTemplate}
-                className="!bg-gray-200 !border !border-gray-300 !rounded-md !shadow-md"
-              />*/}
 
-              <Paginator
+              <Paginador
+                first={first}
+                setFirst={setFirst}
+                rows={rows}
+                setRows={setRows}
+                totalRecords={totalRecords}
+              />
+
+              {/* <Paginator
                 first={first}
                 rows={rows}
                 totalRecords={totalRecords}
                 onPageChange={onPageChange}
                 template={template1}
-              />
+                className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-md"
+              /> */}
+
             </div>
           </>
         )}
