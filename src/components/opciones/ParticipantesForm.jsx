@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import Modal from "../Modal";
 import ModalDatos from "../ModalDatos";
@@ -13,6 +13,12 @@ import Boton from "../Boton";
 import { formatearFecha } from "@/utils/Fechas";
 import InputDate from "../InputDate";
 import SelectOpcion from "../SelectOpcion";
+import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
+import Paginador from "../templates/PlantillaPaginacion";
+import Input from "../inputs/Input";
+import OrdenarLista from "../listados/Ordenar";
+import EstadisticasParticipantes from "../EstadisticasParticipantes";
+import { formatearCedula } from "@/utils/formatearCedula";
 
 export default function ParticipantesForm({
   mostrar,
@@ -28,6 +34,10 @@ export default function ParticipantesForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState({});
+  const [abierto, setAbierto] = useState("");
+  const [abiertoEntidad, setAbiertoEntidad] = useState({});
+
+  const [abiertoLista, setAbiertoLista] = useState(false);
 
   const [fechaAprobacionModulo, setFechaAprobacionModulo] = useState("");
   const [idModulo, setIdModulo] = useState("");
@@ -47,6 +57,13 @@ export default function ParticipantesForm({
 
   const [opciones, setOpciones] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenAscendente, setOrdenAscendente] = useState(true);
+
   useEffect(() => {
     const fetchDatos = async () => {
       try {
@@ -55,7 +72,7 @@ export default function ParticipantesForm({
           axios.get("/api/usuarios/todos-usuarios"),
         ]);
 
-        console.log(formadoresRes.data.todosUsuarios);
+        //console.log(formadoresRes.data.todosUsuarios);
 
         setCursos(cursosRes.data.cursos || []);
         setFormadores(formadoresRes.data.todosUsuarios || []);
@@ -92,6 +109,133 @@ export default function ParticipantesForm({
 
     setEstadoUsuarios(nuevoEstadoUsuarios);
   }, [cursos]); // Se ejecuta cada vez que `cursos` cambia
+
+  const registrosFiltrados = useMemo(() => {
+    if (!searchTerm) return cursos;
+
+    const lower = searchTerm.toLowerCase();
+    return cursos?.filter((registro) =>
+      Object.values(registro).some((valorPrincipal) => {
+        if (
+          typeof valorPrincipal === "string" ||
+          typeof valorPrincipal === "number"
+        ) {
+          return String(valorPrincipal).toLowerCase().includes(lower);
+        }
+
+        if (typeof valorPrincipal === "boolean") {
+          return (valorPrincipal ? "sí" : "no").includes(lower);
+        }
+
+        if (typeof valorPrincipal === "object" && valorPrincipal !== null) {
+          if (
+            valorPrincipal.nombre &&
+            String(valorPrincipal.nombre).toLowerCase().includes(lower)
+          )
+            return true;
+
+          if (Array.isArray(valorPrincipal)) {
+            return valorPrincipal.some((item) =>
+              Object.values(item).some((subValor) => {
+                if (
+                  typeof subValor === "string" ||
+                  typeof subValor === "number"
+                ) {
+                  return String(subValor).toLowerCase().includes(lower);
+                }
+                if (typeof subValor === "boolean") {
+                  return (subValor ? "sí" : "no").includes(lower);
+                }
+                if (
+                  typeof subValor === "object" &&
+                  subValor !== null &&
+                  subValor.nombre
+                ) {
+                  return String(subValor.nombre).toLowerCase().includes(lower);
+                }
+                return false;
+              })
+            );
+          } else {
+            // Para objetos no arreglos
+            return Object.values(valorPrincipal).some((subValor) => {
+              if (
+                typeof subValor === "string" ||
+                typeof subValor === "number"
+              ) {
+                return String(subValor).toLowerCase().includes(lower);
+              }
+              if (typeof subValor === "boolean") {
+                return (subValor ? "sí" : "no").includes(lower);
+              }
+              if (
+                typeof subValor === "object" &&
+                subValor !== null &&
+                subValor.nombre
+              ) {
+                return String(subValor.nombre).toLowerCase().includes(lower);
+              }
+              return false;
+            });
+          }
+        }
+
+        return false;
+      })
+    );
+  }, [cursos, searchTerm]);
+
+  const ordenarRegistros = (lista, campo, asc) => {
+    const listaClonada = [...lista];
+
+    listaClonada.sort((a, b) => {
+      const voceroA = a.voceros;
+      const voceroB = b.voceros;
+
+      if (!voceroA || !voceroB) return 0;
+
+      const valorA = obtenerCampoAnidado(voceroA, campo);
+      const valorB = obtenerCampoAnidado(voceroB, campo);
+
+      if (typeof valorA === "string") {
+        return asc
+          ? valorA?.localeCompare(valorB)
+          : valorB?.localeCompare(valorA);
+      } else {
+        return asc ? valorA - valorB : valorB - valorA;
+      }
+    });
+
+    return listaClonada;
+  };
+
+  const aliasCampo = {
+    comuna: "comunas",
+    consejo: "consejos",
+    parroquia: "parroquias",
+  };
+
+  const obtenerCampoAnidado = (vocero, campo) => {
+    const clave = aliasCampo[campo] || campo;
+    const objeto = vocero[clave];
+
+    if (!objeto) return undefined;
+
+    if (typeof objeto === "object" && objeto !== null && "nombre" in objeto) {
+      return objeto.nombre;
+    }
+
+    return objeto;
+  };
+
+  const registrosOrdenados = ordenarRegistros(
+    registrosFiltrados,
+    ordenCampo,
+    ordenAscendente
+  );
+
+  const vocerosPagina = registrosOrdenados?.slice(first, first + rows);
+  const totalRecords = registrosFiltrados?.length;
 
   const handleContainerClick = (idAsistencia) => {
     const targetInput = inputRefs.current[idAsistencia];
@@ -234,6 +378,16 @@ export default function ParticipantesForm({
     const valor = e.target.value;
     setIdFormador(valor);
   };
+
+  if (!Array.isArray(cursos) || cursos.length === 0) {
+    return (
+      <div className="w-full bg-white p-4 rounded-md shadow-lg text-center">
+        <p className="text-red-600 font-semibold">
+          No hay voceros disponibles.
+        </p>
+      </div>
+    );
+  }
 
   const camposSiExisten =
     opciones === "modulo" ? { idFormador, nombreFormador } : {};
@@ -406,253 +560,309 @@ export default function ParticipantesForm({
 
       <SectionRegistroMostrar>
         {cursos?.length > 0 ? (
-          <DivUnoDentroSectionRegistroMostrar
-            nombre={"Certificar participantes"}
-          >
-            {cursos.map((curso, index) => {
-              const usuario = estadoUsuarios[curso.id] || {};
+          <>
+            <DivUnoDentroSectionRegistroMostrar
+              nombre={"Certificar participantes"}
+            >
+              <div className="w-full flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 mb-4 rounded-md shadow-md">
+                <Input
+                  type="text"
+                  placeholder="🔍 Buscar..."
+                  value={searchTerm}
+                  className={`bg-white ps-4 placeholder:px-5`}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setFirst(0);
+                  }}
+                />
 
-              return (
-                <div
-                  key={curso.id}
-                  className={`border ${
-                    !curso.verificado
-                      ? !usuario.puedeVerificar
-                        ? "border-gray-300"
-                        : ""
-                      : !curso.certificado
-                      ? "border-red-600"
-                      : "border-green-600"
-                  } rounded-md shadow-md p-1 sm:p-4 mb-4`}
-                >
-                  <div className="flex justify-between items-center space-x-5">
-                    <div className="w-2/3">
-                      <div className="">
-                        <b>Cédula: </b>
-                        <span>{curso.voceros.cedula}</span>
-                      </div>
+                <OrdenarLista
+                  ordenCampo={ordenCampo}
+                  setOrdenCampo={setOrdenCampo}
+                  setOrdenAscendente={setOrdenAscendente}
+                  ordenAscendente={ordenAscendente}
+                />
+              </div>
 
-                      <div className="">
-                        <b>Nombre: </b>
-                        <span>
-                          {curso.voceros.nombre}{" "}
-                          {!curso.voceros.nombre_dos
-                            ? ""
-                            : curso.voceros.nombre_dos + " "}
-                          {curso.voceros.apellido}{" "}
-                          {!curso.voceros.apellido_dos
-                            ? ""
-                            : curso.voceros.apellido_dos}
-                        </span>
-                      </div>
-                    </div>
+              {vocerosPagina?.length === 0 && searchTerm !== "" ? (
+                <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-md">
+                  No se encontraron voceros que coincidan con la búsqueda.
+                </div>
+              ) : (
+                <>
+                  <div className="w-full flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-md">
+                    <div className="flex flex-col gap-3">
+                      {vocerosPagina?.map((curso, index) => {
+                        const usuario = estadoUsuarios[curso.id] || {};
 
-                    <button
-                      onClick={() => toggleExpand(curso.id)}
-                      className={`border w-1/3 ${
-                        !curso.verificado
-                          ? !usuario.puedeVerificar
-                            ? "bg-gray-300 text-black border-gray-400"
-                            : "color-fondo text-white "
-                          : !curso.certificado
-                          ? "border-red-600 bg-red-600 text-white"
-                          : "border-green-600 bg-green-600 text-white"
-                      } cursor-pointer rounded-md shadow-md p-2 hover:font-semibold transition-transform transform hover:scale-105`}
-                    >
-                      {expanded === curso.id
-                        ? "▲ Ocultar detalles"
-                        : "▼ Mostrar detalles"}
-                    </button>
-                  </div>
+                        return (
+                          <div
+                            key={curso.id}
+                            className="bg-[#eef1f5] rounded-md shadow-md border border-gray-300 transition-all"
+                          >
+                            <button
+                              onClick={() => toggleExpand(curso.id)}
+                              className={`${
+                                !curso.verificado
+                                  ? !usuario.puedeVerificar
+                                    ? "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#082158]"
+                                    : "color-fondo text-white"
+                                  : !curso.certificado
+                                  ? "border-red-600 bg-red-600 text-white"
+                                  : "bg-green-500 hover:bg-green-600 text-white"
+                              } w-full text-left font-semibold tracking-wide uppercase px-6 py-2 rounded-md cursor-pointer transition-colors duration-200`}
+                            >
+                              {curso.voceros.nombre}{" "}
+                              {curso.voceros.nombre_dos
+                                ? curso.voceros.nombre_dos
+                                : ""}
+                              {curso.voceros.apellido}{" "}
+                              {curso.voceros.apellido_dos
+                                ? curso.voceros.apellido_dos
+                                : ""}
+                            </button>
 
-                  {expanded === curso.id && (
-                    <div className="mt-4 p-2 sm:p-4 bg-gray-100 rounded-md">
-                      <p className="">
-                        <strong>Comuna: </strong>
-                        {curso.voceros.comunas?.nombre || "No asignada"}
-                      </p>
-                      <p className="">
-                        <strong>Correo: </strong>
-                        {curso.voceros.correo}
-                      </p>
-                      <p className="">
-                        <strong>Formación: </strong>
-                        {curso.formaciones.nombre}
-                      </p>
+                            {expanded === curso.id && (
+                              <div className="mt-4 p-2 sm:p-4 bg-gray-100 rounded-md w-full">
+                                <div className="">
+                                  <b>Cédula: </b>
+                                  <span>
+                                    {formatearCedula(curso.voceros.cedula)}
+                                  </span>
+                                </div>
+                                <p className="">
+                                  <strong>Comuna: </strong>
+                                  {curso.voceros.comunas?.nombre ||
+                                    "No asignada"}
+                                </p>
+                                <p className="">
+                                  <strong>Correo: </strong>
+                                  {curso.voceros.correo}
+                                </p>
+                                <p className="">
+                                  <strong>Formación: </strong>
+                                  {curso.formaciones.nombre}
+                                </p>
 
-                      <div
-                        className={`border ${
-                          !curso.verificado
-                            ? !usuario.puedeVerificar
-                              ? " text-black border-gray-400"
-                              : "borde-fondo"
-                            : !curso.certificado
-                            ? "border-red-600"
-                            : "border-green-600"
-                        } rounded-md shadow-md p-2 mt-2`}
-                      >
-                        <p className="font-semibold">Módulos (asistencias):</p>
-                        <div className="flex flex-col space-y-2">
-                          {curso.asistencias.map((asistencia) => {
-                            return (
-                              <div
-                                key={asistencia.id_modulo}
-                                className="flex flex-wrap justify-between items-center gap-3 mt-1"
-                              >
                                 <div
-                                  className={`flex-1 text-sm sm:text-lg py-[6px]  text-center uppercase border ${
-                                    asistencia.presente
-                                      ? "border-green-600"
-                                      : "border-gray-300"
-                                  }  rounded-md shadow-sm min-w-0`}
+                                  className={`border ${
+                                    !curso.verificado
+                                      ? !usuario.puedeVerificar
+                                        ? " text-black border-gray-400"
+                                        : "borde-fondo"
+                                      : !curso.certificado
+                                      ? "border-red-600"
+                                      : "border-green-600"
+                                  } rounded-md shadow-md p-2 mt-2`}
                                 >
-                                  {curso.formaciones.modulos.find(
-                                    (m) => m.id === asistencia.id_modulo
-                                  )?.nombre || "Módulo desconocido"}
+                                  <p className="font-semibold">
+                                    Módulos (asistencias):
+                                  </p>
+                                  <div className="flex flex-col space-y-2">
+                                    {curso.asistencias.map((asistencia) => {
+                                      return (
+                                        <div
+                                          key={asistencia.id_modulo}
+                                          className="flex flex-wrap justify-between items-center gap-3 mt-1"
+                                        >
+                                          <div
+                                            className={`flex-1 text-sm sm:text-lg py-[6px]  text-center uppercase border ${
+                                              asistencia.presente
+                                                ? "border-green-600"
+                                                : "border-gray-300"
+                                            }  rounded-md shadow-sm min-w-0`}
+                                          >
+                                            {curso.formaciones.modulos.find(
+                                              (m) =>
+                                                m.id === asistencia.id_modulo
+                                            )?.nombre || "Módulo desconocido"}
+                                          </div>
+
+                                          <div className="flex-1 min-w-0">
+                                            {asistencia.presente ? (
+                                              <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
+                                                {formatearFecha(
+                                                  asistencia.fecha_registro
+                                                )}
+                                              </div>
+                                            ) : (
+                                              <div
+                                                onClick={() =>
+                                                  handleContainerClick(
+                                                    asistencia.id
+                                                  )
+                                                }
+                                                className="w-full cursor-pointer"
+                                              >
+                                                <InputDate
+                                                  ref={(el) => {
+                                                    if (el)
+                                                      inputRefs.current[
+                                                        asistencia.id
+                                                      ] = el;
+                                                  }}
+                                                  max={
+                                                    new Date()
+                                                      .toISOString()
+                                                      .split("T")[0]
+                                                  }
+                                                  type="date"
+                                                  disabled={asistencia.presente}
+                                                  value={
+                                                    fechaAprobacionModulo[
+                                                      asistencia.id_modulo
+                                                    ] || ""
+                                                  }
+                                                  onChange={(e) =>
+                                                    actualizarFechaModulo(
+                                                      asistencia.id_modulo,
+                                                      e.target.value,
+                                                      asistencia.id
+                                                    )
+                                                  }
+                                                  className="w-full cursor-pointer"
+                                                />
+                                              </div>
+                                            )}
+                                          </div>
+
+                                          <div className="flex-1 min-w-0">
+                                            {asistencia.presente ? (
+                                              <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
+                                                Aprobado
+                                              </div>
+                                            ) : (
+                                              <Boton
+                                                nombre={"Aprobar"}
+                                                disabled={
+                                                  !fechaAprobacionModulo[
+                                                    asistencia.id_modulo
+                                                  ] || asistencia.presente
+                                                }
+                                                onClick={() => {
+                                                  setOpciones("modulo");
+                                                  abrirModal();
+                                                  setIdModulo(
+                                                    asistencia.id_modulo
+                                                  );
+                                                }}
+                                                className={`w-full py-2 ${
+                                                  !fechaAprobacionModulo[
+                                                    asistencia.id_modulo
+                                                  ]
+                                                    ? "bg-gray-400 text-black"
+                                                    : "cursor-pointer color-fondo hover:bg-blue-700 text-white py-[9px]"
+                                                }`}
+                                              />
+                                            )}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                  {asistencia.presente ? (
-                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
-                                      {formatearFecha(
-                                        asistencia.fecha_registro
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <div
-                                      onClick={() =>
-                                        handleContainerClick(asistencia.id)
-                                      }
-                                      className="w-full cursor-pointer"
-                                    >
-                                      <InputDate
-                                        ref={(el) => {
-                                          if (el)
-                                            inputRefs.current[asistencia.id] =
-                                              el;
-                                        }}
-                                        max={
-                                          new Date().toISOString().split("T")[0]
-                                        }
-                                        type="date"
-                                        disabled={asistencia.presente}
-                                        value={
-                                          fechaAprobacionModulo[
-                                            asistencia.id_modulo
-                                          ] || ""
-                                        }
-                                        onChange={(e) =>
-                                          actualizarFechaModulo(
-                                            asistencia.id_modulo,
-                                            e.target.value,
-                                            asistencia.id
-                                          )
-                                        }
-                                        className="w-full cursor-pointer"
-                                      />
-                                    </div>
-                                  )}
-                                </div>
+                                <div className="mt-4 flex gap-4">
+                                  <Boton
+                                    title={
+                                      !usuario.puedeVerificar
+                                        ? "Para verificar primero debe validar todos los modulos"
+                                        : !usuario.estaVerificado
+                                        ? "Puede verificar"
+                                        : "Ya esta verificado"
+                                    }
+                                    nombre={
+                                      usuario.estaVerificado
+                                        ? "Verificado"
+                                        : "Verificar"
+                                    }
+                                    disabled={
+                                      !usuario.puedeVerificar ||
+                                      usuario.estaVerificado
+                                    }
+                                    onClick={() => {
+                                      setOpciones("verificado");
+                                      abrirModal();
+                                      setDatosVerificar(curso);
+                                    }}
+                                    className={`py-2 ${
+                                      !usuario.puedeVerificar
+                                        ? "bg-gray-400 hover:bg-GRAY-300 text-black"
+                                        : usuario.estaVerificado
+                                        ? "bg-green-600 text-white"
+                                        : "color-fondo hover:bg-blue-700 text-white"
+                                    }`}
+                                  />
 
-                                <div className="flex-1 min-w-0">
-                                  {asistencia.presente ? (
-                                    <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-green-600 rounded-md shadow-sm">
-                                      Aprobado
-                                    </div>
-                                  ) : (
-                                    <Boton
-                                      nombre={"Aprobar"}
-                                      disabled={
-                                        !fechaAprobacionModulo[
-                                          asistencia.id_modulo
-                                        ] || asistencia.presente
-                                      }
-                                      onClick={() => {
-                                        setOpciones("modulo");
-                                        abrirModal();
-                                        setIdModulo(asistencia.id_modulo);
-                                      }}
-                                      className={`w-full py-2 ${
-                                        !fechaAprobacionModulo[
-                                          asistencia.id_modulo
-                                        ]
-                                          ? "bg-gray-400 text-black"
-                                          : "cursor-pointer color-fondo hover:bg-blue-700 text-white py-[9px]"
-                                      }`}
-                                    />
-                                  )}
+                                  <Boton
+                                    title={
+                                      !usuario.puedeCertificar
+                                        ? "Para certificar primero debe estar verificado"
+                                        : usuario.estaVerificado
+                                        ? "Puede certificar"
+                                        : "Ya esta certificado"
+                                    }
+                                    nombre={
+                                      curso.culminado
+                                        ? "Certificado"
+                                        : "Certificar"
+                                    }
+                                    disabled={
+                                      curso.culminado
+                                        ? true
+                                        : !usuario.puedeCertificar
+                                    }
+                                    onClick={() => {
+                                      setOpciones("certificado");
+                                      abrirModal();
+                                      setDatosCertificar(curso);
+                                    }}
+                                    className={`py-2 ${
+                                      usuario.puedeCertificar
+                                        ? curso.culminado
+                                          ? "bg-green-600 text-white"
+                                          : "color-fondo hover:bg-blue-700 text-white"
+                                        : !usuario.puedeCertificar
+                                        ? "cursor-not-allowed bg-gray-400 text-black"
+                                        : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                                    }`}
+                                  />
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="mt-4 flex gap-4">
-                        <Boton
-                          title={
-                            !usuario.puedeVerificar
-                              ? "Para verificar primero debe validar todos los modulos"
-                              : !usuario.estaVerificado
-                              ? "Puede verificar"
-                              : "Ya esta verificado"
-                          }
-                          nombre={
-                            usuario.estaVerificado ? "Verificado" : "Verificar"
-                          }
-                          disabled={
-                            !usuario.puedeVerificar || usuario.estaVerificado
-                          }
-                          onClick={() => {
-                            setOpciones("verificado");
-                            abrirModal();
-                            setDatosVerificar(curso);
-                          }}
-                          className={`py-2 ${
-                            !usuario.puedeVerificar
-                              ? "bg-gray-400 hover:bg-GRAY-300 text-black"
-                              : usuario.estaVerificado
-                              ? "bg-green-600 text-white"
-                              : "color-fondo hover:bg-blue-700 text-white"
-                          }`}
-                        />
-
-                        <Boton
-                          title={
-                            !usuario.puedeCertificar
-                              ? "Para certificar primero debe estar verificado"
-                              : usuario.estaVerificado
-                              ? "Puede certificar"
-                              : "Ya esta certificado"
-                          }
-                          nombre={
-                            curso.culminado ? "Certificado" : "Certificar"
-                          }
-                          disabled={
-                            curso.culminado ? true : !usuario.puedeCertificar
-                          }
-                          onClick={() => {
-                            setOpciones("certificado");
-                            abrirModal();
-                            setDatosCertificar(curso);
-                          }}
-                          className={`py-2 ${
-                            usuario.puedeCertificar
-                              ? curso.culminado
-                                ? "bg-green-600 text-white"
-                                : "color-fondo hover:bg-blue-700 text-white"
-                              : !usuario.puedeCertificar
-                              ? "cursor-not-allowed bg-gray-400 text-black"
-                              : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
-                          }`}
-                        />
-                      </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </DivUnoDentroSectionRegistroMostrar>
+                  </div>
+                </>
+              )}
+
+              <div className={`${abiertoLista ? "mb-40" : "mb-0"} w-full mt-4`}>
+                <Paginador
+                  first={first}
+                  setFirst={setFirst}
+                  rows={rows}
+                  setRows={setRows}
+                  totalRecords={totalRecords}
+                  abierto={abiertoLista}
+                  setAbierto={setAbiertoLista}
+                />
+              </div>
+            </DivUnoDentroSectionRegistroMostrar>
+
+            <DivDosDentroSectionRegistroMostrar>
+              <div className="">
+                <EstadisticasParticipantes
+                  registrosFiltrados={registrosFiltrados}
+                  abierto={abierto}
+                  setAbierto={setAbierto}
+                  abiertoEntidad={abiertoEntidad}
+                  setAbiertoEntidad={setAbiertoEntidad}
+                />
+              </div>
+            </DivDosDentroSectionRegistroMostrar>
+          </>
         ) : (
           <DivUnoDentroSectionRegistroMostrar
             nombre={"No hay formaciones activas..."}
@@ -662,3 +872,108 @@ export default function ParticipantesForm({
     </>
   );
 }
+
+/**
+ const totalParticipantes = registrosFiltrados.length;
+
+  const totalHombres = registrosFiltrados.filter((registro) => {
+    const vocero = registro.voceros;
+    return vocero?.genero === true;
+  }).length;
+
+  const totalMujeres = registrosFiltrados.filter((registro) => {
+    const vocero = registro.voceros;
+    return vocero?.genero === false;
+  }).length;
+
+  const totalAdultosMayoresHombres = registrosFiltrados.filter((registro) => {
+    const vocero = registro.voceros;
+    return vocero?.genero === true && vocero?.edad >= 60;
+  }).length;
+
+  const totalAdultosMayoresMujeres = registrosFiltrados.filter((registro) => {
+    const vocero = registro.voceros;
+    return vocero?.genero === false && vocero?.edad >= 55;
+  }).length;
+
+  const totalCertificados = registrosFiltrados.filter(
+    (registro) => registro.certificado === true
+  ).length;
+
+  const totalVerificados = registrosFiltrados.filter(
+    (registro) => registro.verificado === true
+  ).length;
+
+  const participantesPorParroquia = registrosFiltrados.reduce(
+    (acc, registro) => {
+      const parroquia = registro.voceros?.parroquias?.nombre || "Sin parroquia";
+      acc[parroquia] = (acc[parroquia] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const participantesPorComuna = registrosFiltrados.reduce((acc, registro) => {
+    const comuna = registro.voceros?.comunas?.nombre || "Sin comuna";
+    acc[comuna] = (acc[comuna] || 0) + 1;
+    return acc;
+  }, {});
+
+  const participantesPorConsejo = registrosFiltrados.reduce((acc, registro) => {
+    const consejo = registro.voceros?.consejos?.nombre || "Sin consejo";
+    acc[consejo] = (acc[consejo] || 0) + 1;
+    return acc;
+  }, {});
+
+  const participantesPorGenero = registrosFiltrados.reduce((acc, registro) => {
+    const genero =
+      registro.voceros?.genero === true
+        ? "Hombre"
+        : registro.voceros?.genero === false
+        ? "Mujer"
+        : "Sin especificar";
+    acc[genero] = (acc[genero] || 0) + 1;
+    return acc;
+  }, {});
+
+  const participantesPorEdad = registrosFiltrados.reduce((acc, registro) => {
+    const edad = registro.voceros?.edad;
+
+    let grupo = "Sin edad";
+    if (edad >= 60) grupo = "Adulto mayor";
+    else if (edad >= 30) grupo = "Adulto";
+    else if (edad >= 18) grupo = "Joven";
+
+    acc[grupo] = (acc[grupo] || 0) + 1;
+    return acc;
+  }, {});
+
+  const estadisticaPorFormador = registrosFiltrados.reduce((acc, registro) => {
+    registro.asistencias?.forEach((asistencia) => {
+      const nombre = asistencia.formador || "Sin formador";
+      const modulo = asistencia.id_modulo || "Sin módulo";
+      const fecha = asistencia.fecha_registro || "Sin fecha";
+      const presente = asistencia.presente || false;
+
+      if (!acc[nombre]) {
+        acc[nombre] = {
+          totalAsistencias: 0,
+          modulos: new Set(),
+          fechasPorModulo: {},
+          presentes: 0,
+        };
+      }
+
+      acc[nombre].totalAsistencias += 1;
+      acc[nombre].modulos.add(modulo);
+
+      if (!acc[nombre].fechasPorModulo[modulo]) {
+        acc[nombre].fechasPorModulo[modulo] = new Set();
+      }
+      acc[nombre].fechasPorModulo[modulo].add(fecha);
+
+      if (presente) acc[nombre].presentes += 1;
+    });
+    return acc;
+  }, {});
+ */

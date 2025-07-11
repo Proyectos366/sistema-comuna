@@ -23,7 +23,6 @@ export default function ListadoVoceros({ voceros, editar }) {
 
   const [ordenCampo, setOrdenCampo] = useState("nombre");
   const [ordenAscendente, setOrdenAscendente] = useState(true);
-  const selectRef = useRef(null);
 
   // 🔍 Filtrado completo y optimizado
   const vocerosFiltrados = useMemo(() => {
@@ -108,11 +107,6 @@ export default function ListadoVoceros({ voceros, editar }) {
   const vocerosPagina = vocerosOrdenados.slice(first, first + rows);
   const totalRecords = vocerosFiltrados.length;
 
-  const onPageChange = (event) => {
-    setFirst(event.first);
-    setRows(event.rows);
-  };
-
   const toggleVocero = (index) => {
     setAbierto(abierto === index ? null : index);
   };
@@ -138,129 +132,6 @@ export default function ListadoVoceros({ voceros, editar }) {
       </div>
     );
   }
-
-  const template1 = {
-    layout:
-      "PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport",
-    PrevPageLink: (options) => {
-      return (
-        <button
-          type="button"
-          className={`border py-1 me-1 text-sm rounded-md font-semibold ${
-            options.disabled
-              ? "border border-gray-300 bg-white text-[#082158]"
-              : "border bg-[#082158] text-white"
-          } cursor-pointer transition hover:scale-105 duration-500`}
-          onClick={options.onClick}
-          disabled={options.disabled}
-        >
-          <span className="py-2 px-3">Anterior</span>
-          <Ripple />
-        </button>
-      );
-    },
-    NextPageLink: (options) => {
-      return (
-        <button
-          type="button"
-          className={`border py-1 mx-1 text-sm rounded-md font-semibold ${
-            options.disabled
-              ? "border border-gray-300 bg-white text-[#082158]"
-              : "border bg-[#082158] text-white"
-          } cursor-pointer transition hover:scale-105 duration-500`}
-          onClick={options.onClick}
-          disabled={options.disabled}
-        >
-          <span className="py-2 px-3">Siguiente</span>
-          <Ripple />
-        </button>
-      );
-    },
-    PageLinks: (options) => {
-      if (
-        (options.view.startPage === options.page &&
-          options.view.startPage !== 0) ||
-        (options.view.endPage === options.page &&
-          options.page + 1 !== options.totalPages)
-      ) {
-        return <span className={`text-gray-400`}>...</span>;
-      }
-
-      return (
-        <button
-          type="button"
-          className={`px-2 rounded mx-[3px] ${
-            options.page === options.currentPage
-              ? "bg-[#082158] text-white"
-              : "bg-white border border-gray-300"
-          } cursor-pointer transition hover:scale-105 duration-500`}
-          onClick={options.onClick}
-        >
-          {options.page + 1}
-          <Ripple />
-        </button>
-      );
-    },
-    RowsPerPageDropdown: () => {
-      const [abierto, setAbierto] = useState(false);
-      const dropdownRef = useRef(null);
-      const opcionesBase = [10, 25, 50, 100];
-      const incluirTodos = totalRecords > 100;
-      const opciones = incluirTodos ? [...opcionesBase, "todos"] : opcionesBase;
-
-      useEffect(() => {
-        const cerrar = (e) => {
-          if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-            setAbierto(false);
-          }
-        };
-        document.addEventListener("click", cerrar);
-        return () => document.removeEventListener("click", cerrar);
-      }, []);
-
-      return (
-        <div ref={dropdownRef} className="relative ">
-          <div
-            onClick={() => setAbierto(!abierto)}
-            className={`flex justify-between items-center text-sm px-4 py-1 rounded-md shadow-md bg-white cursor-pointer transition hover:scale-105 duration-500 border
-              ${abierto ? "border-[#082158]" : "border-gray-300"}`}
-          >
-            <span className="text-[#082158] font-semibold">
-              {rows} por página
-            </span>
-          </div>
-
-          {abierto && (
-            <ul className="absolute z-10 mt-1 w-full flex flex-col gap-2 bg-white p-2 rounded-md shadow-lg border border-[#082158] max-h-[200px] overflow-y-auto no-scrollbar">
-              {opciones.map((valor) => (
-                <li
-                  key={`rows-${valor}`}
-                  onClick={() => {
-                    setFirst(0);
-                    setRows(valor === "todos" ? totalRecords : valor);
-                    setAbierto(false);
-                  }}
-                  className={`px-4 py-1 text-sm rounded-md cursor-pointer transition font-semibold ${
-                    (valor === "todos" && rows === totalRecords) ||
-                    rows === valor
-                      ? "bg-gray-200 border border-gray-500"
-                      : "hover:bg-gray-200"
-                  }`}
-                >
-                  {valor === "todos" ? "Mostrar todos" : `${valor}`}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      );
-    },
-    CurrentPageReport: (options) => (
-      <span className="px-2 py-1 text-[#082158] text-sm">
-        Página {options.currentPage} de {options.totalPages}
-      </span>
-    ),
-  };
 
   return (
     <div className="flex flex-col w-full p-1 sm:p-6 bg-[#f4f6f9] rounded-md shadow-lg space-y-6 text-gray-800">
@@ -326,7 +197,6 @@ export default function ListadoVoceros({ voceros, editar }) {
             </div>
 
             <div className="mt-6">
-
               <Paginador
                 first={first}
                 setFirst={setFirst}
@@ -343,7 +213,6 @@ export default function ListadoVoceros({ voceros, editar }) {
                 template={template1}
                 className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-md"
               /> */}
-
             </div>
           </>
         )}

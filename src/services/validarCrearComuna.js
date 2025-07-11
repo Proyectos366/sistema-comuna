@@ -56,6 +56,8 @@ export default async function validarCrearComuna(
       );
     }
 
+    console.log(validandoCampos);
+
     const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
     const norteMinuscula = norte ? norte.toLowerCase() : "";
     const surMinuscula = sur ? sur.toLowerCase() : "";
@@ -76,8 +78,8 @@ export default async function validarCrearComuna(
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: validandoCampos.usuario_id,
-      id_parroquia: validandoCampos.parroquia_id,
+      id_usuario: validandoCampos.id_usuario,
+      id_parroquia: validandoCampos.id_parroquia,
       nombre: validandoCampos.nombre,
       direccion: direccionMinuscula,
       norte: norteMinuscula,

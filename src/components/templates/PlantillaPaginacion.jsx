@@ -8,6 +8,8 @@ export default function Paginador({
   rows,
   setRows,
   totalRecords,
+  colorFondo,
+  abierto, setAbierto
 }) {
 
   const color = "#082158";
@@ -78,7 +80,7 @@ export default function Paginador({
       );
     },
     RowsPerPageDropdown: () => {
-      const [abierto, setAbierto] = useState(false);
+      
       const dropdownRef = useRef(null);
       const opcionesBase = [1, 10, 25, 50, 100];
       const incluirTodos = totalRecords > 100;
@@ -153,7 +155,7 @@ export default function Paginador({
       totalRecords={totalRecords}
       onPageChange={onPageChange}
       template={template}
-      className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-md"
+      className={`!flex ${colorFondo ? colorFondo : '!bg-gray-200'}  !border !border-gray-300 !rounded-md !shadow-md`}
     />
   );
 }
