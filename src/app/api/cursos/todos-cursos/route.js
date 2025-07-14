@@ -68,6 +68,7 @@ export async function GET() {
             telefono: true,
             correo: true,
             edad: true,
+            f_n: true,
             genero: true,
             comunas: {
               select: {

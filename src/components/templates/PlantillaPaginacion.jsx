@@ -9,9 +9,9 @@ export default function Paginador({
   setRows,
   totalRecords,
   colorFondo,
-  abierto, setAbierto
+  open,
+  setOpen,
 }) {
-
   const color = "#082158";
 
   const onPageChange = (event) => {
@@ -80,18 +80,17 @@ export default function Paginador({
       );
     },
     RowsPerPageDropdown: () => {
-      
+      const [abierto, setAbierto] = useState(null);
       const dropdownRef = useRef(null);
       const opcionesBase = [1, 10, 25, 50, 100];
       const incluirTodos = totalRecords > 100;
-      const opciones = incluirTodos
-        ? [...opcionesBase, "todos"]
-        : opcionesBase;
+      const opciones = incluirTodos ? [...opcionesBase, "todos"] : opcionesBase;
 
       useEffect(() => {
         const cerrar = (e) => {
           if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
             setAbierto(false);
+            setOpen(false);
           }
         };
         document.addEventListener("click", cerrar);
@@ -101,7 +100,10 @@ export default function Paginador({
       return (
         <div ref={dropdownRef} className="relative">
           <div
-            onClick={() => setAbierto(!abierto)}
+            onClick={() => {
+              setAbierto(!abierto);
+              setOpen(!abierto);
+            }}
             className={`flex justify-between items-center text-sm px-4 py-1 rounded-md shadow-md bg-white cursor-pointer transition hover:scale-105 duration-500 border ${
               abierto ? `border-[${color}]` : "border-gray-300"
             }`}
@@ -155,7 +157,9 @@ export default function Paginador({
       totalRecords={totalRecords}
       onPageChange={onPageChange}
       template={template}
-      className={`!flex ${colorFondo ? colorFondo : '!bg-gray-200'}  !border !border-gray-300 !rounded-md !shadow-md`}
+      className={`!flex ${
+        colorFondo ? colorFondo : "!bg-gray-200"
+      }  !border !border-gray-300 !rounded-md !shadow-md`}
     />
   );
 }

@@ -15,7 +15,7 @@ import { Tooltip } from "primereact/tooltip";
 import { classNames } from "primereact/utils";
 import Paginador from "../templates/PlantillaPaginacion";
 
-export default function ListadoVoceros({ voceros, editar }) {
+export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
   const [abierto, setAbierto] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [first, setFirst] = useState(0);
@@ -171,15 +171,18 @@ export default function ListadoVoceros({ voceros, editar }) {
                 return (
                   <div
                     key={vocero.cedula || index}
-                    className="bg-[#eef1f5] rounded-md shadow-md border border-gray-300 transition-all"
+                    className={`bg-[#eef1f5] rounded-md shadow-md border ${tieneCursosNoVerificados
+                          ? "border-[#2FA807] hover:bg-[#15EA0E] hover:text-whi"
+                          : "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#082158]"
+                        } transition-all`}
                   >
                     <button
                       onClick={() => toggleVocero(index)}
-                      className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 rounded-md cursor-pointer transition-colors duration-200 ${
-                        tieneCursosNoVerificados
-                          ? "bg-green-500 hover:bg-green-600 text-white"
+                      className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 rounded-md cursor-pointer transition-colors duration-200
+                        ${tieneCursosNoVerificados
+                          ? "border-[#2FA807] hover:bg-[#15EA0E] text-[#2FA807] hover:text-white"
                           : "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#082158]"
-                      }`}
+                        }`}
                     >
                       {vocero.nombre} {vocero.nombre_dos} {vocero.apellido}{" "}
                       {vocero.apellido_dos}
@@ -203,6 +206,8 @@ export default function ListadoVoceros({ voceros, editar }) {
                 rows={rows}
                 setRows={setRows}
                 totalRecords={totalRecords}
+                open={open}
+                setOpen={setOpen}
               />
 
               {/* <Paginator

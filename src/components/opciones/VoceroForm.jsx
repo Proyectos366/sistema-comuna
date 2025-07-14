@@ -11,10 +11,8 @@ import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearVocero from "../formularios/FormCrearVocero";
 import ModalDatosContenedor from "../ModalDatosContenedor";
-import InputCheckBox from "../inputs/InputCheckBox";
 import SelectOpcion from "../SelectOpcion";
 import ListadoVoceros from "../listados/ListadoVoceros";
-import Titulos from "../Titulos";
 import InputCedula from "../inputs/InputCedula";
 import Boton from "../Boton";
 import FormEditarVocero from "../formularios/FormEditarVocero";
@@ -83,6 +81,8 @@ export default function VoceroForm({
   const [datos, setDatos] = useState("");
 
   const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
+
+  const [open, setOpen] = useState(false);
 
   // Consultar parroquias al cargar el componente
   useEffect(() => {
@@ -575,10 +575,6 @@ export default function VoceroForm({
     }
   };
 
-
-  
-  
-
   return (
     <>
       {accion === "editar" ? (
@@ -857,6 +853,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -883,6 +881,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -909,6 +909,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -935,6 +937,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -948,6 +952,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -987,6 +993,8 @@ export default function VoceroForm({
                   Array.isArray(todosVoceros) ? todosVoceros : [todosVoceros]
                 }
                 editar={editando}
+                open={open}
+                setOpen={setOpen}
               />
             </DivDosDentroSectionRegistroMostrar>
           </>
@@ -995,6 +1003,14 @@ export default function VoceroForm({
     </>
   );
 }
+
+
+
+
+
+
+
+
 
 /*
   <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">

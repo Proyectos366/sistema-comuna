@@ -107,6 +107,7 @@ export default function EstadisticasVoceros({
           toggleDetalles={() => toggleEntidad(entidad.parr)}
           nombre={titulo}
           index={entidad.parr}
+          indice={true}
         />
 
         {abiertoEntidad[entidad.parr] && (

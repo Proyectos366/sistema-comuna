@@ -44,7 +44,6 @@ export function formatearFecha(fechaISO) {
   }
 }
 
-
 export function calcularFechaNacimientoPorEdad(edad) {
   const ahora = new Date();
   const añoNacimiento = ahora.getFullYear() - edad;
@@ -53,4 +52,25 @@ export function calcularFechaNacimientoPorEdad(edad) {
   const fecha = new Date(`${añoNacimiento}-01-01T00:00:00.102Z`);
 
   return fecha.toISOString(); // devuelve algo como "2000-01-01T00:00:00.102Z"
+}
+
+export function calcularEdadPorFechaNacimiento(fechaNacimiento) {
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const mesActual = hoy.getMonth();
+  const diaActual = hoy.getDate();
+  const mesNacimiento = nacimiento.getMonth();
+  const diaNacimiento = nacimiento.getDate();
+
+  // Ajustamos si aún no ha cumplido años este año
+  if (
+    mesActual < mesNacimiento ||
+    (mesActual === mesNacimiento && diaActual < diaNacimiento)
+  ) {
+    edad--;
+  }
+
+  return edad;
 }
