@@ -13,7 +13,7 @@ export default function DetallesListadoVoceros({
   return (
     <>
       {abierto === index && (
-        <div className="bg-white text-gray-800 text-base sm:text-sm mt-1 rounded-md p-4 shadow-inner">
+        <div className="bg-white text-gray-800 text-base sm:text-sm rounded-b-md p-4 shadow-lg">
           <div className="relative w-full flex items-center">
             <ListaDetallesVocero
               indice={1}

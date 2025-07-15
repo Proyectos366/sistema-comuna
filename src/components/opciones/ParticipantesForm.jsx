@@ -21,6 +21,7 @@ import EstadisticasParticipantes from "../EstadisticasParticipantes";
 import { formatearCedula } from "@/utils/formatearCedula";
 import ListaDetallesVocero from "../listados/ListaDetalleVocero";
 import { formatearTelefono } from "@/utils/formatearTelefono";
+import Titulos from "../Titulos";
 
 export default function ParticipantesForm({
   mostrar,
@@ -66,12 +67,7 @@ export default function ParticipantesForm({
   const [ordenCampo, setOrdenCampo] = useState("nombre");
   const [ordenAscendente, setOrdenAscendente] = useState(true);
 
-  
-
   const [cantidadModulos, setCantidadModulos] = useState(0);
-
-
-
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -224,10 +220,13 @@ export default function ParticipantesForm({
     comuna: "comunas",
     consejo: "consejos",
     parroquia: "parroquias",
+    verificado: "verificado",
+    certificado: "certificado",
   };
 
   const obtenerCampoAnidado = (vocero, campo) => {
     const clave = aliasCampo[campo] || campo;
+
     const objeto = vocero[clave];
 
     if (!objeto) return undefined;
@@ -406,70 +405,72 @@ export default function ParticipantesForm({
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>;
 
-
-
-
-
-
-
-
-
   function agruparPorCampo(registros, campo) {
+    let registrosFiltrados = registros;
 
-    console.log(campo);
-    
-  return registros.reduce((acc, item) => {
-    let clave;
-
-    console.log(item.asistencias[0]);
-    
-
-    // Si el campo es una condición (como faltaModulo1), evaluamos lógica personalizada
-    switch (campo) {
-      case "comuna":
-        clave = item?.voceros?.comunas?.nombre ? item?.voceros?.comunas?.nombre : "Sin comuna";
-        break;
-      case "consejo":
-        clave = item?.voceros?.consejos?.nombre ? item?.voceros?.consejos?.nombre : "Sin consejo";
-        break;
-
-      case "parroquia":
-        clave = item?.voceros?.parroquias?.nombre ? item?.voceros?.parroquias?.nombre : "Sin parroquia";
-        break;
-
-
-
-
-      case "faltaModulo1":
-        clave = !item.modulo1 ? "Falta Módulo 1" : "Con Módulo 1";
-        break;
-      case "faltaModulo2":
-        clave = !item.modulo2 ? "Falta Módulo 2" : "Con Módulo 2";
-        break;
-      case "faltaVerificacion":
-        clave = !item.verificado ? "No Verificado" : "Verificado";
-        break;
-      case "faltaCertificacion":
-        clave = !item.certificado ? "No Certificado" : "Certificado";
-        break;
-      default:
-        clave = item[campo] || "Sin información";
+    if (campo === "comuna") {
+      registrosFiltrados = registros.filter((item) => {
+        const vocero = item?.voceros;
+        const tieneComuna = vocero?.comunas?.nombre;
+        const consejo = vocero?.consejos;
+        return (
+          tieneComuna &&
+          (consejo === undefined || consejo === null || consejo === "")
+        );
+      });
     }
 
-    if (!acc[clave]) acc[clave] = [];
-    acc[clave].push(item);
-    return acc;
-  }, {});
-}
+    if (campo === "consejo") {
+      registrosFiltrados = registros.filter((item) => {
+        const consejoNombre = item?.voceros?.consejos?.nombre;
+        return typeof consejoNombre === "string" && consejoNombre.trim() !== "";
+      });
+    }
 
+    return registrosFiltrados.reduce((acc, item) => {
+      let clave;
 
-const grupos = agruparPorCampo(vocerosPagina, ordenCampo);
+      switch (campo) {
+        case "comuna":
+          clave = item?.voceros?.comunas?.nombre || "Sin comuna";
+          break;
 
+        case "consejo":
+          clave = item?.voceros?.consejos?.nombre || "Sin consejo";
+          break;
 
+        case "parroquia":
+          clave = item?.voceros?.parroquias?.nombre || "Sin parroquia";
+          break;
 
+        case "verificado":
+          clave = !item.verificado ? "No Verificado" : "Verificado";
+          break;
 
+        case "certificado":
+          clave = !item.certificado ? "No Certificado" : "Certificado";
+          break;
 
+        default:
+          const matchModulo = campo.match(/^modulo(\d+)$/);
+          if (matchModulo) {
+            const index = parseInt(matchModulo[1], 10);
+            clave = item.asistencias?.[index - 1]?.presente
+              ? `Módulo ${index} aprobado`
+              : `Falta Módulo ${index}`;
+          } else {
+            clave = item[campo] || "Sin información";
+          }
+          break;
+      }
 
+      if (!acc[clave]) acc[clave] = [];
+      acc[clave].push(item);
+      return acc;
+    }, {});
+  }
+
+  const grupos = agruparPorCampo(vocerosPagina, ordenCampo);
 
   return (
     <>
@@ -666,36 +667,50 @@ const grupos = agruparPorCampo(vocerosPagina, ordenCampo);
                   No se encontraron voceros que coincidan con la búsqueda.
                 </div>
               ) : (
-                <>
-                  <div className="w-full flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-md">
-                    <div className="flex flex-col gap-3">
-                      
+                <div className={`w-full flex flex-col gap-4`}>
+                  {Object.entries(grupos).map(([titulo, lista]) => (
+                    <div
+                      key={titulo}
+                      className="w-full flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-md"
+                    >
+                      {titulo !== "Sin información" && (
+                        <Titulos
+                          indice={2}
+                          titulo={titulo}
+                          className={`uppercase text-xl`}
+                        />
+                      )}
 
-{Object.entries(grupos).map(([titulo, lista]) => (
-  <div key={titulo} className="border p-4 rounded-md shadow-md bg-[#f4f6f9] mb-4">
-    <h2 className="text-lg font-bold text-[#082158] mb-2 uppercase">{titulo}</h2>
+                      <div
+                        className={`overflow-y-auto max-h-[1000px] no-scrollbar flex flex-col gap-4 ${
+                          titulo !== "Sin información" ? "-mt-5" : ""
+                        }`}
+                      >
+                        {lista.map((curso, index) => {
+                          const usuario = estadoUsuarios[curso.id] || {};
 
-                      {lista.map((curso, index) => {
-                        const usuario = estadoUsuarios[curso.id] || {};
-
-                        return (
-                          <div
-                            key={curso.id}
-                            className={`bg-[#eef1f5] rounded-md shadow-md border 
+                          return (
+                            <div
+                              key={curso.id}
+                              className={`bg-[#eef1f5] rounded-md shadow-md border 
                               ${
                                 !curso.verificado
                                   ? !usuario.puedeVerificar
                                     ? "bg-[#e2e8f0] hover:bg-gray-100 text-[#082158] border-gray-300"
                                     : "border-[#082158] text-[#082158] " // "color-fondo text-white"
                                   : !curso.certificado
-                                  ? "border-[#E61C45] text-[black]" //"bg-[#E61C45] text-white"
-                                  : "border-[#2FA807] hover:border-[#15EA0E] text-[black]" //: "bg-[#2FA807] hover:bg-[#15EA0E] text-white"
+                                  ? "border-[#E61C45] hover:bg-[#E61C45] text-[black] hover:border-[#E61C45]" //"bg-[#E61C45] text-white"
+                                  : "border-[#2FA807] hover:bg-[#2FA807] text-[black] hover:border-[#2FA807] " //: "bg-[#2FA807] hover:bg-[#15EA0E] text-white"
                               }
                               transition-all`}
-                          >
-                            <button
-                              onClick={() => toggleExpand(curso.id)}
-                              className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 ${expanded === curso.id ? 'rounded-t-md' : 'rounded-md'}
+                            >
+                              <button
+                                onClick={() => toggleExpand(curso.id)}
+                                className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 ${
+                                  expanded === curso.id
+                                    ? "rounded-t-md mb-2 sm:mb-0"
+                                    : "rounded-md"
+                                }
                                 cursor-pointer transition-colors duration-200
                                 ${
                                   !curso.verificado
@@ -705,296 +720,285 @@ const grupos = agruparPorCampo(vocerosPagina, ordenCampo);
                                     : !curso.certificado
                                     ? expanded === curso.id
                                       ? "border-[#E61C45] text-[black] hover:bg-[#E61C45] hover:text-white"
-                                      : "text-[#E61C45]"
+                                      : "text-[#E61C45] hover:text-white"
                                     : expanded === curso.id
                                     ? "border-[#2FA807] text-[black] hover:bg-[#2FA807] hover:text-white"
-                                    : "text-[#2FA807]"
+                                    : "text-[#2FA807] hover:text-white"
                                 }`}
-                            >
-                              {curso.voceros.nombre}{" "}
-                              {curso.voceros.nombre_dos
-                                ? curso.voceros.nombre_dos
-                                : ""}
-                              {curso.voceros.apellido}{" "}
-                              {curso.voceros.apellido_dos
-                                ? curso.voceros.apellido_dos
-                                : ""}
-                            </button>
+                              >
+                                {curso.voceros.nombre}{" "}
+                                {curso.voceros.nombre_dos
+                                  ? curso.voceros.nombre_dos
+                                  : ""}{" "}
+                                {curso.voceros.apellido}{" "}
+                                {curso.voceros.apellido_dos
+                                  ? curso.voceros.apellido_dos
+                                  : ""}
+                              </button>
 
-                            {expanded === curso.id && (
-                              <div className=" p-2 sm:p-0 sm:px-4 -mt-4 sm:mt-0 mb-4 bg-gray-100 rounded-md w-full">
-                                <ListaDetallesVocero
-                                  nombre={"Cedula"}
-                                  valor={formatearCedula(curso.voceros.cedula)}
-                                  indice={1}
-                                />
+                              {expanded === curso.id && (
+                                <div className=" p-2 sm:p-0 sm:px-4 -mt-4 sm:mt-0 bg-gray-100 rounded-md w-full">
+                                  <ListaDetallesVocero
+                                    nombre={"Cedula"}
+                                    valor={formatearCedula(
+                                      curso.voceros.cedula
+                                    )}
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Edad"}
-                                  valor={calcularEdadPorFechaNacimiento(
-                                    curso.voceros.f_n
-                                  )}
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Edad"}
+                                    valor={calcularEdadPorFechaNacimiento(
+                                      curso.voceros.f_n
+                                    )}
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Genero"}
-                                  valor={
-                                    curso.voceros.genero
-                                      ? "MASCULINO"
-                                      : "FEMENINO"
-                                  }
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Genero"}
+                                    valor={
+                                      curso.voceros.genero
+                                        ? "MASCULINO"
+                                        : "FEMENINO"
+                                    }
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Correo"}
-                                  valor={curso.voceros.correo}
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Correo"}
+                                    valor={curso.voceros.correo}
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Telefono"}
-                                  valor={formatearTelefono(
-                                    curso.voceros.telefono
-                                  )}
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Telefono"}
+                                    valor={formatearTelefono(
+                                      curso.voceros.telefono
+                                    )}
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Comuna"}
-                                  valor={
-                                    curso.voceros.comunas?.nombre ||
-                                    "No asignada"
-                                  }
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Comuna"}
+                                    valor={
+                                      curso.voceros.comunas?.nombre ||
+                                      "No asignada"
+                                    }
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Comuna"}
-                                  valor={
-                                    curso.voceros.consejo?.nombre ||
-                                    "No asignado"
-                                  }
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Consejo comunal"}
+                                    valor={
+                                      curso.voceros.consejo?.nombre ||
+                                      "No asignado"
+                                    }
+                                    indice={1}
+                                  />
 
-                                <ListaDetallesVocero
-                                  nombre={"Formación"}
-                                  valor={curso.formaciones.nombre}
-                                  indice={1}
-                                />
+                                  <ListaDetallesVocero
+                                    nombre={"Formación"}
+                                    valor={curso.formaciones.nombre}
+                                    indice={1}
+                                  />
 
-                                <div
-                                  className={`border ${
-                                    !curso.verificado
-                                      ? !usuario.puedeVerificar
-                                        ? " text-black border-gray-400"
-                                        : "borde-fondo"
-                                      : !curso.certificado
-                                      ? "border-[#E61C45]"
-                                      : "border-[#2FA807]"
-                                  } rounded-md shadow-md p-2 mt-2`}
-                                >
-                                  <p className="font-semibold">
-                                    Módulos (asistencias):
-                                  </p>
+                                  <div
+                                    className={`border ${
+                                      !curso.verificado
+                                        ? !usuario.puedeVerificar
+                                          ? " text-black border-gray-400"
+                                          : "borde-fondo"
+                                        : !curso.certificado
+                                        ? "border-[#E61C45]"
+                                        : "border-[#2FA807]"
+                                    } rounded-md shadow-md p-2 mt-2`}
+                                  >
+                                    <p className="font-semibold">
+                                      Módulos (asistencias):
+                                    </p>
 
-
-                                  <div className="flex flex-col space-y-2">
-                                    {curso.asistencias.map((asistencia) => {
-                                      return (
-                                        <div
-                                          key={asistencia.id_modulo}
-                                          className="flex flex-wrap justify-between items-center gap-3 mt-1"
-                                        >
-
+                                    <div className="flex flex-col space-y-2">
+                                      {curso.asistencias.map((asistencia) => {
+                                        return (
                                           <div
-                                            className={`flex-1 text-sm sm:text-lg py-2  text-center uppercase border ${
-                                              asistencia.presente
-                                                ? "border-[#2FA807]"
-                                                : "border-gray-300"
-                                            }  rounded-md shadow-sm min-w-0`}
+                                            key={asistencia.id_modulo}
+                                            className="flex flex-wrap justify-between items-center gap-3 mt-1"
                                           >
-                                            {curso.formaciones.modulos.find(
-                                              (m) =>
-                                                m.id === asistencia.id_modulo
-                                            )?.nombre || "Módulo desconocido"}
-                                          </div>
+                                            <div
+                                              className={`flex-1 text-sm sm:text-lg py-2  text-center uppercase border ${
+                                                asistencia.presente
+                                                  ? "border-[#2FA807]"
+                                                  : "border-gray-300"
+                                              }  rounded-md shadow-sm min-w-0`}
+                                            >
+                                              {curso.formaciones.modulos.find(
+                                                (m) =>
+                                                  m.id === asistencia.id_modulo
+                                              )?.nombre || "Módulo desconocido"}
+                                            </div>
 
-                                          <div className="flex-1 min-w-0">
-                                            {asistencia.presente ? (
-                                              <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-[#2FA807] rounded-md shadow-sm">
-                                                {formatearFecha(
-                                                  asistencia.fecha_registro
-                                                )}
-                                              </div>
-                                            ) : (
-                                              <div
-                                                onClick={() =>
-                                                  handleContainerClick(
-                                                    asistencia.id
-                                                  )
-                                                }
-                                                className="w-full cursor-pointer"
-                                              >
-                                                <InputDate
-                                                  ref={(el) => {
-                                                    if (el)
-                                                      inputRefs.current[
-                                                        asistencia.id
-                                                      ] = el;
-                                                  }}
-                                                  max={
-                                                    new Date()
-                                                      .toISOString()
-                                                      .split("T")[0]
-                                                  }
-                                                  type="date"
-                                                  disabled={asistencia.presente}
-                                                  value={
-                                                    fechaAprobacionModulo[
-                                                      asistencia.id_modulo
-                                                    ] || ""
-                                                  }
-                                                  onChange={(e) =>
-                                                    actualizarFechaModulo(
-                                                      asistencia.id_modulo,
-                                                      e.target.value,
+                                            <div className="flex-1 min-w-0">
+                                              {asistencia.presente ? (
+                                                <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-[#2FA807] rounded-md shadow-sm">
+                                                  {formatearFecha(
+                                                    asistencia.fecha_registro
+                                                  )}
+                                                </div>
+                                              ) : (
+                                                <div
+                                                  onClick={() =>
+                                                    handleContainerClick(
                                                       asistencia.id
                                                     )
                                                   }
                                                   className="w-full cursor-pointer"
+                                                >
+                                                  <InputDate
+                                                    ref={(el) => {
+                                                      if (el)
+                                                        inputRefs.current[
+                                                          asistencia.id
+                                                        ] = el;
+                                                    }}
+                                                    max={
+                                                      new Date()
+                                                        .toISOString()
+                                                        .split("T")[0]
+                                                    }
+                                                    type="date"
+                                                    disabled={
+                                                      asistencia.presente
+                                                    }
+                                                    value={
+                                                      fechaAprobacionModulo[
+                                                        asistencia.id_modulo
+                                                      ] || ""
+                                                    }
+                                                    onChange={(e) =>
+                                                      actualizarFechaModulo(
+                                                        asistencia.id_modulo,
+                                                        e.target.value,
+                                                        asistencia.id
+                                                      )
+                                                    }
+                                                    className="w-full cursor-pointer"
+                                                  />
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            <div className="flex-1 min-w-0">
+                                              {asistencia.presente ? (
+                                                <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-[#2FA807] rounded-md shadow-sm">
+                                                  Aprobado
+                                                </div>
+                                              ) : (
+                                                <Boton
+                                                  nombre={"Aprobar"}
+                                                  disabled={
+                                                    !fechaAprobacionModulo[
+                                                      asistencia.id_modulo
+                                                    ] || asistencia.presente
+                                                  }
+                                                  onClick={() => {
+                                                    setOpciones("modulo");
+                                                    abrirModal();
+                                                    setIdModulo(
+                                                      asistencia.id_modulo
+                                                    );
+                                                  }}
+                                                  className={`w-full py-2 ${
+                                                    !fechaAprobacionModulo[
+                                                      asistencia.id_modulo
+                                                    ]
+                                                      ? "bg-gray-400 text-black"
+                                                      : "cursor-pointer color-fondo hover:bg-blue-700 text-white py-[9px]"
+                                                  }`}
                                                 />
-                                              </div>
-                                            )}
+                                              )}
+                                            </div>
                                           </div>
-
-                                          <div className="flex-1 min-w-0">
-                                            {asistencia.presente ? (
-                                              <div className="w-full text-sm sm:text-lg py-2 text-center uppercase border border-[#2FA807] rounded-md shadow-sm">
-                                                Aprobado
-                                              </div>
-                                            ) : (
-                                              <Boton
-                                                nombre={"Aprobar"}
-                                                disabled={
-                                                  !fechaAprobacionModulo[
-                                                    asistencia.id_modulo
-                                                  ] || asistencia.presente
-                                                }
-                                                onClick={() => {
-                                                  setOpciones("modulo");
-                                                  abrirModal();
-                                                  setIdModulo(
-                                                    asistencia.id_modulo
-                                                  );
-                                                }}
-                                                className={`w-full py-2 ${
-                                                  !fechaAprobacionModulo[
-                                                    asistencia.id_modulo
-                                                  ]
-                                                    ? "bg-gray-400 text-black"
-                                                    : "cursor-pointer color-fondo hover:bg-blue-700 text-white py-[9px]"
-                                                }`}
-                                              />
-                                            )}
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
 
-                                <div className="mt-4 flex gap-4">
-                                  <Boton
-                                    title={
-                                      !usuario.puedeVerificar
-                                        ? "Para verificar primero debe validar todos los modulos"
-                                        : !usuario.estaVerificado
-                                        ? "Puede verificar"
-                                        : "Ya esta verificado"
-                                    }
-                                    nombre={
-                                      usuario.estaVerificado
-                                        ? "Verificado"
-                                        : "Verificar"
-                                    }
-                                    disabled={
-                                      !usuario.puedeVerificar ||
-                                      usuario.estaVerificado
-                                    }
-                                    onClick={() => {
-                                      setOpciones("verificado");
-                                      abrirModal();
-                                      setDatosVerificar(curso);
-                                    }}
-                                    className={`py-2 ${
-                                      !usuario.puedeVerificar
-                                        ? "bg-gray-400 hover:bg-GRAY-300 text-black"
-                                        : usuario.estaVerificado
-                                        ? "bg-[#2FA807] text-white"
-                                        : "color-fondo hover:bg-blue-700 text-white"
-                                    }`}
-                                  />
-
-                                  <Boton
-                                    title={
-                                      !usuario.puedeCertificar
-                                        ? "Para certificar primero debe estar verificado"
-                                        : usuario.estaVerificado
-                                        ? "Puede certificar"
-                                        : "Ya esta certificado"
-                                    }
-                                    nombre={
-                                      curso.culminado
-                                        ? "Certificado"
-                                        : "Certificar"
-                                    }
-                                    disabled={
-                                      curso.culminado
-                                        ? true
-                                        : !usuario.puedeCertificar
-                                    }
-                                    onClick={() => {
-                                      setOpciones("certificado");
-                                      abrirModal();
-                                      setDatosCertificar(curso);
-                                    }}
-                                    className={`py-2 ${
-                                      usuario.puedeCertificar
-                                        ? curso.culminado
+                                  <div className="mt-4 flex gap-4 pb-4">
+                                    <Boton
+                                      title={
+                                        !usuario.puedeVerificar
+                                          ? "Para verificar primero debe validar todos los modulos"
+                                          : !usuario.estaVerificado
+                                          ? "Puede verificar"
+                                          : "Ya esta verificado"
+                                      }
+                                      nombre={
+                                        usuario.estaVerificado
+                                          ? "Verificado"
+                                          : "Verificar"
+                                      }
+                                      disabled={
+                                        !usuario.puedeVerificar ||
+                                        usuario.estaVerificado
+                                      }
+                                      onClick={() => {
+                                        setOpciones("verificado");
+                                        abrirModal();
+                                        setDatosVerificar(curso);
+                                      }}
+                                      className={`py-2 ${
+                                        !usuario.puedeVerificar
+                                          ? "bg-gray-400 hover:bg-GRAY-300 text-black"
+                                          : usuario.estaVerificado
                                           ? "bg-[#2FA807] text-white"
                                           : "color-fondo hover:bg-blue-700 text-white"
-                                        : !usuario.puedeCertificar
-                                        ? "cursor-not-allowed bg-gray-400 text-black"
-                                        : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
-                                    }`}
-                                  />
+                                      }`}
+                                    />
+
+                                    <Boton
+                                      title={
+                                        !usuario.puedeCertificar
+                                          ? "Para certificar primero debe estar verificado"
+                                          : usuario.estaVerificado
+                                          ? "Puede certificar"
+                                          : "Ya esta certificado"
+                                      }
+                                      nombre={
+                                        curso.culminado
+                                          ? "Certificado"
+                                          : "Certificar"
+                                      }
+                                      disabled={
+                                        curso.culminado
+                                          ? true
+                                          : !usuario.puedeCertificar
+                                      }
+                                      onClick={() => {
+                                        setOpciones("certificado");
+                                        abrirModal();
+                                        setDatosCertificar(curso);
+                                      }}
+                                      className={`py-2 ${
+                                        usuario.puedeCertificar
+                                          ? curso.culminado
+                                            ? "bg-[#2FA807] text-white"
+                                            : "color-fondo hover:bg-blue-700 text-white"
+                                          : !usuario.puedeCertificar
+                                          ? "cursor-not-allowed bg-gray-400 text-black"
+                                          : "cursor-pointer color-fondo hover:bg-blue-700 text-white"
+                                      }`}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-
-))}
-
                     </div>
-                  </div>
-                </>
+                  ))}
+                </div>
               )}
-
-
-
-
-
-
-
-
-
-
 
               <div className={`${abiertoLista ? "mb-40" : "mb-0"} w-full mt-4`}>
                 <Paginador

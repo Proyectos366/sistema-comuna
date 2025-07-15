@@ -11,8 +11,8 @@ export default function BotonMostrarDetalles({
       className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 rounded-md cursor-pointer transition-colors duration-200
          ${
            indice
-             ? "hover:bg-[#05FA0D]  bg-gray-200 text-[#082158] hover:text-white"
-             : "bg-[#05FA0D]  text-white hover:bg-gray-200 hover:text-[#082158]"
+             ? "hover:bg-[#2FA807]  bg-gray-200 text-[#082158] hover:text-white"
+             : "bg-[#2FA807]  text-white hover:bg-gray-200 hover:text-[#082158]"
          }          
          `}
     >
@@ -20,10 +20,6 @@ export default function BotonMostrarDetalles({
     </button>
   );
 }
-
-
-
-
 
 /**
  export default function BotonMostrarDetalles({

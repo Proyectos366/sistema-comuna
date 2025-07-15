@@ -7,43 +7,31 @@ export default function OrdenarLista({
   setOrdenCampo,
   setOrdenAscendente,
   ordenAscendente,
-  cantidadModulos
+  cantidadModulos,
 }) {
   const [abierto, setAbierto] = useState(false);
   const selectRef = useRef(null);
-  // const opcionesOrden = [
-  //   { id: "nombre", nombre: "Nombre" },
-  //   { id: "comuna", nombre: "Comuna" },
-  //   { id: "consejo", nombre: "Consejo" },
-  //   { id: "parroquia", nombre: "Parroquia" },
-  //   { id: "edad", nombre: "Edad" },
-  //   { id: "cedula", nombre: "Cédula" },
-  // ];
 
   // 🧩 Opciones de orden base
-const opcionesOrdenBase = [
-  { id: "nombre", nombre: "Nombre" },
-  { id: "comuna", nombre: "Comuna" },
-  { id: "consejo", nombre: "Consejo" },
-  { id: "parroquia", nombre: "Parroquia" },
-  { id: "edad", nombre: "Edad" },
-  { id: "cedula", nombre: "Cédula" },
-];
+  const opcionesOrdenBase = [
+    { id: "nombre", nombre: "Nombre" },
+    { id: "cedula", nombre: "Cédula" },
+    { id: "edad", nombre: "Edad" },
+    { id: "parroquia", nombre: "Parroquia" },
+    { id: "comuna", nombre: "Comuna" },
+    { id: "consejo", nombre: "Consejo" },
+    { id: "verificado", nombre: "Verificado" },
+    { id: "certificado", nombre: "Certificado" },
+  ];
 
-// 🔎 Si conoces cuántos módulos hay como máximo (ejemplo: 3)
-const cantidadMaximaModulos = 3;
+  // ⚙️ Genera dinámicamente opciones tipo { id: "modulo1", nombre: "Módulo 1" }
+  const opcionesModulos = Array.from({ length: cantidadModulos }, (_, i) => ({
+    id: `modulo${i + 1}`,
+    nombre: `Módulo ${i + 1}`,
+  }));
 
-// ⚙️ Genera dinámicamente opciones tipo { id: "modulo1", nombre: "Módulo 1" }
-const opcionesModulos = Array.from({ length: cantidadMaximaModulos }, (_, i) => ({
-  id: `modulo${i + 1}`,
-  nombre: `Módulo ${i + 1}`,
-}));
-
-// 🧠 Lista final combinada
-const opcionesOrden = [...opcionesOrdenBase, ...opcionesModulos];
-
-
-  
+  // 🧠 Lista final combinada
+  const opcionesOrden = [...opcionesOrdenBase, ...opcionesModulos];
 
   const seleccionActual = opcionesOrden.find((o) => o.id === ordenCampo);
 
@@ -70,7 +58,10 @@ const opcionesOrden = [...opcionesOrdenBase, ...opcionesModulos];
           `}
           onClick={() => setAbierto(!abierto)}
         >
-          <span>{seleccionActual?.nombre || "Seleccione"}</span>
+          {/* <span>{seleccionActual?.nombre || "Seleccione"}</span> */}
+          <span className="whitespace-nowrap">
+            {seleccionActual?.nombre || "Seleccione"}
+          </span>
         </div>
 
         {abierto && (
@@ -101,7 +92,24 @@ const opcionesOrden = [...opcionesOrdenBase, ...opcionesModulos];
         )}
       </div>
 
-      <button
+      {!["verificado", "certificado"].includes(ordenCampo) &&
+        !ordenCampo.startsWith("modulo") && (
+          <button
+            onClick={() => setOrdenAscendente(!ordenAscendente)}
+            className={`px-3 py-2 rounded-md text-white font-medium cursor-pointer transition-all shadow-md hover:scale-105 ${
+              ordenAscendente ? "bg-[#2FA807]" : "bg-[#E61C45]"
+            }`}
+          >
+            <span className="hidden sm:block">
+              {ordenAscendente ? "ASCENDENTE" : "DESCENDENTE"}
+            </span>
+            <span className="block sm:hidden">
+              {ordenAscendente ? "⬆" : "⬇"}
+            </span>
+          </button>
+        )}
+
+      {/* <button
         onClick={() => setOrdenAscendente(!ordenAscendente)}
         className={`px-3 py-2 rounded-md text-white font-medium cursor-pointer transition-all shadow-md hover:scale-105 ${
           ordenAscendente ? "bg-[#2FA807]" : "bg-[#E61C45]"
@@ -111,10 +119,25 @@ const opcionesOrden = [...opcionesOrdenBase, ...opcionesModulos];
           {ordenAscendente ? "ASCENDENTE" : "DESCENDENTE"}
         </span>
         <span className="block sm:hidden">{ordenAscendente ? "⬆" : "⬇"}</span>
-      </button>
+      </button> */}
     </div>
   );
 }
+
+/** 
+<div className="flex items-center justify-center">
+                         <Titulos
+                          indice={2}
+                          titulo={titulo}
+                          className={`uppercase text-xl w-full`}
+                        />
+                        {titulo === 'Módulo 1 aprobado' && (
+                          <div className="w-20 absolute right-30">
+                            <img src="/img/aprobado.png" alt="" />
+                          </div>
+                        )}
+                       </div>
+*/
 
 // "use client";
 

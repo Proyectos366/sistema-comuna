@@ -111,8 +111,8 @@ export default function EstadisticasVoceros({
         />
 
         {abiertoEntidad[entidad.parr] && (
-          <div className="bg-white shadow-lg rounded-md p-4 w-full border">
-            <Titulos indice={3} titulo={titulo} />
+          <div className="bg-white shadow-lg rounded-md p-2 sm:p-4 w-full border">
+            {/* <Titulos indice={3} titulo={titulo} /> */}
             <ul className="space-y-3">
               {Object.entries(datos).map(([clave, valores]) => (
                 <li key={clave} className="border-b pb-2">
@@ -125,7 +125,7 @@ export default function EstadisticasVoceros({
                     {Object.entries(valores).map(([tipo, count]) => (
                       <p
                         key={tipo}
-                        className="flex justify-between border border-gray-300 rounded-md p-2 bg-gray-100"
+                        className="flex flex-col items-center sm:flex-row justify-between border border-gray-300 rounded-md p-2 bg-gray-100"
                       >
                         <span>{tipo}</span>
                         <span className="font-bold">{count}</span>
@@ -142,7 +142,7 @@ export default function EstadisticasVoceros({
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-1 sm:p-6 space-y-8">
       <Titulos indice={2} titulo={"📊 Estadísticas Voceros"} />
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -155,7 +155,7 @@ export default function EstadisticasVoceros({
         ].map(({ titulo, valor }) => (
           <div
             key={titulo}
-            className="bg-blue-50 p-4 rounded shadow text-center"
+            className="bg-blue-50 p-4 rounded-md border border-gray-300 shadow text-center"
           >
             <p className="text-sm text-gray-600">{titulo}</p>
             <p className="text-xl font-bold text-blue-700">{valor}</p>

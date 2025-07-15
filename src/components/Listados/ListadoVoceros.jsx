@@ -162,7 +162,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 bg-[#f4f6f9]">
               {vocerosPagina.map((vocero, index) => {
                 const tieneCursosNoVerificados = vocero.cursos?.some(
                   (curso) => curso.verificado === true
@@ -171,17 +171,24 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                 return (
                   <div
                     key={vocero.cedula || index}
-                    className={`bg-[#eef1f5] rounded-md shadow-md border ${tieneCursosNoVerificados
-                          ? "border-[#2FA807] hover:bg-[#15EA0E] hover:text-whi"
-                          : "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#082158]"
-                        } transition-all`}
+                    className={`bg-[#eef1f5] rounded-md shadow-lg border ${
+                      tieneCursosNoVerificados
+                        ? "border-[#2FA807]  hover:text-white"
+                        : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158] border-gray-300"
+                    } transition-all`}
                   >
                     <button
                       onClick={() => toggleVocero(index)}
-                      className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 rounded-md cursor-pointer transition-colors duration-200
-                        ${tieneCursosNoVerificados
-                          ? "border-[#2FA807] hover:bg-[#15EA0E] text-[#2FA807] hover:text-white"
-                          : "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#082158]"
+                      className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 cursor-pointer transition-colors duration-200
+                        ${
+                          abierto === index
+                            ? "rounded-t-md mb-2 sm:mb-0"
+                            : "rounded-md"
+                        }
+                        ${
+                          tieneCursosNoVerificados
+                            ? "border-[#2FA807] hover:bg-[#15EA0E] text-[black] hover:text-white"
+                            : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158]"
                         }`}
                     >
                       {vocero.nombre} {vocero.nombre_dos} {vocero.apellido}{" "}

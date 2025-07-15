@@ -116,7 +116,7 @@ export default function VoceroForm({
   }, []);
 
   useEffect(() => {
-    if (!idConsejoComunal) {
+    if (!idConsejoComunal && accion !== "editar") {
       setTodosVoceros([]);
       return;
     }
@@ -183,10 +183,11 @@ export default function VoceroForm({
     setDireccionVocero("");
     setCorreoVocero("");
     setActividadLaboralVocero("");
+    setAccion("");
   }, [seleccionarConsulta]);
 
   useEffect(() => {
-    if (!idParroquia) {
+    if (!idParroquia && accion !== "editar") {
       setTodosVoceros([]);
 
       return;
@@ -213,7 +214,7 @@ export default function VoceroForm({
   }, [idParroquia]);
 
   useEffect(() => {
-    if (!idComuna) {
+    if (!idComuna && accion !== "editar") {
       setTodosVoceros([]);
 
       return;
@@ -311,7 +312,7 @@ export default function VoceroForm({
     const vocerosSeleccionados =
       todasComunas.find((comuna) => comuna.id === Number(valor))?.voceros || [];
 
-    setTodosVoceros(vocerosSeleccionados);
+    setTodosVoceros(accion !== "editar" ? vocerosSeleccionados : todosVoceros);
   };
 
   const cambiarSeleccionConsejo = (e) => {
@@ -474,9 +475,10 @@ export default function VoceroForm({
   const editando = async (datos) => {
     try {
       setAccion("editar");
-      setIdComuna(datos.comunas.id);
-      setIdCircuito(datos.circuito ? datos.circuito.id : "");
       setIdParroquia(datos.comunas.id_parroquia);
+      setIdComuna(datos.comunas.id);
+      setIdCircuito(datos.circuitos ? datos.circuitos.id : "");
+      setIdConsejoComunal(datos.consejos ? datos.consejos.id : "");
 
       setCedulaVocero(datos.cedula);
       setEdadVocero(datos.edad);
@@ -568,6 +570,7 @@ export default function VoceroForm({
         abrirMensaje(error?.response?.data?.message);
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       }
     } else {
@@ -1003,14 +1006,6 @@ export default function VoceroForm({
     </>
   );
 }
-
-
-
-
-
-
-
-
 
 /*
   <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">
