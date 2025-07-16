@@ -134,8 +134,8 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
   }
 
   return (
-    <div className="flex flex-col w-full p-1 sm:p-6 bg-[#f4f6f9] rounded-md shadow-lg space-y-6 text-gray-800">
-      <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-md">
+    <div className="flex flex-col w-full p-1 sm:p-6 bg-[#f4f6f9] rounded-md shadow-lg space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-lg">
         <Input
           type="text"
           placeholder="🔍 Buscar..."
@@ -155,9 +155,9 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
         />
       </div>
 
-      <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-md">
+      <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-lg">
         {vocerosPagina.length === 0 && searchTerm !== "" ? (
-          <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-md">
+          <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-lg">
             No se encontraron voceros que coincidan con la búsqueda.
           </div>
         ) : (
@@ -168,13 +168,20 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                   (curso) => curso.verificado === true
                 );
 
+                const tieneCursosNoCertificados = vocero.cursos?.some(
+                  (curso) => curso.certificado === true
+                );
+
                 return (
                   <div
                     key={vocero.cedula || index}
                     className={`bg-[#eef1f5] rounded-md shadow-lg border ${
-                      tieneCursosNoVerificados
-                        ? "border-[#2FA807]  hover:text-white"
+                      tieneCursosNoCertificados
+                        ? "border-[#2FA807] hover:text-white"
+                        : tieneCursosNoVerificados ? "border-[#E61C45] hover:text-white"
                         : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158] border-gray-300"
+                        
+                        
                     } transition-all`}
                   >
                     <button
@@ -186,9 +193,10 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                             : "rounded-md"
                         }
                         ${
-                          tieneCursosNoVerificados
-                            ? "border-[#2FA807] hover:bg-[#15EA0E] text-[black] hover:text-white"
-                            : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158]"
+                          tieneCursosNoCertificados
+                            ? "border-[#2FA807] hover:bg-[#15EA0E] text-[#2FA807] hover:text-white"
+                            : tieneCursosNoVerificados ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45] hover:text-white" :
+                            "bg-gray-100 hover:bg-[#d3dce6] text-[#082158]"
                         }`}
                     >
                       {vocero.nombre} {vocero.nombre_dos} {vocero.apellido}{" "}
@@ -223,7 +231,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                 totalRecords={totalRecords}
                 onPageChange={onPageChange}
                 template={template1}
-                className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-md"
+                className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-lg"
               /> */}
             </div>
           </>
@@ -528,7 +536,7 @@ export default function TemplateDemo() {
 
 //   return (
 //     <div className="w-full p-6 bg-[#f4f6f9] rounded-md shadow-lg space-y-6 text-gray-800">
-//       <div className=" bg-[#eef1f5] p-4 rounded-md shadow-md gap-4 border border-gray-300">
+//       <div className=" bg-[#eef1f5] p-4 rounded-md shadow-lg gap-4 border border-gray-300">
 //         <Input
 //           type="text"
 //           placeholder="🔍 Buscar por nombre, cédula, parroquia, curso..."
@@ -540,9 +548,9 @@ export default function TemplateDemo() {
 //         />
 //       </div>
 
-//       <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-4 rounded-md bg-[#f4f6f9] shadow-md">
+//       <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-4 rounded-md bg-[#f4f6f9] shadow-lg">
 //         {vocerosPagina.length === 0 && searchTerm !== "" ? (
-//           <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-md">
+//           <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-lg">
 //             No se encontraron voceros que coincidan con la búsqueda.
 //           </div>
 //         ) : (
@@ -556,7 +564,7 @@ export default function TemplateDemo() {
 //                 return (
 //                   <div
 //                     key={vocero.cedula || index}
-//                     className="bg-[#eef1f5] rounded-md shadow-md border border-gray-300 transition-all"
+//                     className="bg-[#eef1f5] rounded-md shadow-lg border border-gray-300 transition-all"
 //                   >
 //                     <button
 //                       onClick={() => toggleVocero(index)}

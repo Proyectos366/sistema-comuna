@@ -262,6 +262,9 @@ export default function FormEditarVocero({
               setValue={setCedula}
               validarCedula={validarCedula}
               setValidarCedula={setValidarCedula}
+              readOnly={true}
+              className={`cursor-not-allowed`}
+              titulo={"No puede modificar la cédula"}
             />
           </LabelInput>
 
@@ -406,7 +409,6 @@ export default function FormEditarVocero({
             indice={"limpiar"}
             aceptar={() => {
               limpiarCampos({
-                setCedula,
                 setEdad,
                 setNombre,
                 setNombreDos,
@@ -420,7 +422,6 @@ export default function FormEditarVocero({
             }}
             nombre={"Limpiar"}
             campos={{
-              cedula,
               edad,
               nombre,
               nombreDos,

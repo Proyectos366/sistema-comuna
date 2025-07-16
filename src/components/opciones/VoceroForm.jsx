@@ -277,8 +277,15 @@ export default function VoceroForm({
     return () => window.removeEventListener("keydown", handleEnter);
   }, [validarCedula, cedulaVocero]);
 
+  useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setGeneroVocero("");
+    }
+  }, [accion, mostrar]);
+
   const toggleGenero = (id) => {
-    setGeneroVocero(generoVocero === id ? null : id); // Cambia el estado, permitiendo deselección
+    setGeneroVocero(generoVocero === id ? "" : id); // Cambia el estado, permitiendo deselección
   };
 
   const cambiarDondeGuardar = (e) => {

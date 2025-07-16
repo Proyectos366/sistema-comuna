@@ -20,6 +20,7 @@ export default function InputCedula({
   validarCedula,
   setValidarCedula,
   setValue,
+  titulo,
 }) {
   // Elimina puntos y prefijo V-
   const limpiarCedula = (valor) => valor.replace(/^V-/, "").replace(/\./g, "");
@@ -67,7 +68,7 @@ export default function InputCedula({
   };
 
   return (
-    <div className="space-y-2 relative">
+    <div className="space-y-2 relative" title={titulo}>
       <Input
         type={type}
         id={id}
@@ -76,7 +77,7 @@ export default function InputCedula({
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={"inserte cédula"}
+        placeholder={placeholder ? placeholder : "inserte cédula"}
         autoComplete={autoComplete}
         readOnly={readOnly}
         ref={ref}
