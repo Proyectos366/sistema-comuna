@@ -229,7 +229,7 @@ export default function FormEditarVocero({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="overflow-y-auto h-[390px] no-scrollbar space-y-2 px-1">
+      <div className="overflow-y-auto h-[390px] no-scrollbar flex flex-col w-full gap-2 px-1">
         <SelectOpcion
           idOpcion={idComuna}
           nombre="Comuna"
@@ -253,7 +253,7 @@ export default function FormEditarVocero({
           />
         )}
 
-        <div className="flex flex-col sm:flex-row justify-between space-x-4">
+        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
           <LabelInput nombre={"Cedula"}>
             <InputCedula
               type={"text"}
@@ -280,7 +280,7 @@ export default function FormEditarVocero({
           </LabelInput>
         </div>
 
-        <div className="flex flex-col sm:flex-row space-x-4">
+        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
           <LabelInput nombre={"Primer nombre"}>
             <InputNombre
               type={"text"}
@@ -304,7 +304,7 @@ export default function FormEditarVocero({
           </LabelInput>
         </div>
 
-        <div className="flex flex-col sm:flex-row space-x-4">
+        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
           <LabelInput nombre={"Primer apellido"}>
             <InputNombre
               type={"text"}
@@ -328,7 +328,7 @@ export default function FormEditarVocero({
           </LabelInput>
         </div>
 
-        <div className="flex flex-col sm:flex-row space-x-4">
+        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
           <div className="flex flex-col w-full">
             <span>Genero</span>
             <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
@@ -360,7 +360,7 @@ export default function FormEditarVocero({
           </LabelInput>
         </div>
 
-        <div className="flex flex-col sm:flex-row space-x-4">
+        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
           <LabelInput nombre={"Correo"}>
             <InputCorreo
               type="text"
@@ -382,6 +382,23 @@ export default function FormEditarVocero({
               setValidarNombre={setValidarActividadLaboral}
             />
           </LabelInput>
+        </div>
+
+        <div className="flex flex-col">
+          <span className="text-gray-700 font-medium">Cargos</span>
+          {cargos?.length > 0 && (
+            <div className="uppercase flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-[#082158] focus:border-0 hover:border hover:border-[#082158] focus:outline-none transition-all">
+              {cargos?.map((cargo) => (
+                <InputCheckBox
+                  key={cargo.id}
+                  id={cargo.id}
+                  nombre={cargo.nombre}
+                  isChecked={seleccionarCargo.includes(cargo.id)}
+                  onToggle={toggleCargo}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="">

@@ -58,7 +58,6 @@ export default function VoceroForm({
   const [todosVoceros, setTodosVoceros] = useState([]);
 
   const [circuitoComuna, setCircuitoComuna] = useState("");
-  const [perteneceComunaCircuito, setPerteneceComunaCircuito] = useState("");
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
   const [validarCedula, setValidarCedula] = useState(false);
@@ -293,22 +292,10 @@ export default function VoceroForm({
     setCircuitoComuna(valor);
   };
 
-  const cambiarDondeCrear = (e) => {
-    const valor = e.target.value;
-    setPerteneceComunaCircuito(valor);
-  };
-
   const cambiarSeleccionParroquia = (e) => {
     const valor = e.target.value;
     setIdParroquia(valor);
   };
-
-  /**
-    const cambiarSeleccionComunaCircuito = (e) => {
-      const valor = e.target.value;
-      setIdComuna(valor);
-    };
-  */
 
   const cambiarSeleccionComunaCircuito = (e) => {
     const valor = e.target.value; // ID de la comuna seleccionada
@@ -327,10 +314,16 @@ export default function VoceroForm({
     setIdConsejoComunal(valor);
   };
 
+  /**
+    const toggleCargos = (id) => {
+      setSeleccionarCargo((prev) =>
+        prev.includes(id) ? prev.filter((cargo) => cargo !== id) : [...prev, id]
+      );
+    };
+  */
+
   const toggleCargos = (id) => {
-    setSeleccionarCargo((prev) =>
-      prev.includes(id) ? prev.filter((cargo) => cargo !== id) : [...prev, id]
-    );
+    setSeleccionarCargo([id]);
   };
 
   const toggleFormacion = (id, nombre) => {
@@ -421,6 +414,7 @@ export default function VoceroForm({
           { accion: () => setTelefonoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCorreoVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setActividadLaboralVocero(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setSeleccionarCargo([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
         console.log("Error, al crear el vocero: " + error);
@@ -437,23 +431,6 @@ export default function VoceroForm({
   const toggleConsultar = (id) => {
     const nuevoId = seleccionarConsulta === id ? null : id;
     setSeleccionarConsulta(nuevoId);
-  };
-
-  const getTitulo = (accion) => {
-    switch (accion) {
-      case 2:
-        return "Voceros por parroquia";
-      case 3:
-        return "Voceros por comuna";
-      case 4:
-        return "Voceros por consejo comunal";
-      case 5:
-        return "Todos los voceros";
-      case 6:
-        return "Vocero por cédula";
-      default:
-        return ""; // Or a default title if none of the cases match
-    }
   };
 
   const consultarVoceroCedula = async () => {
@@ -501,6 +478,7 @@ export default function VoceroForm({
       setDireccionVocero(datos.direccion);
       setCorreoVocero(datos.correo);
       setActividadLaboralVocero(datos.laboral);
+      setSeleccionarCargo([datos.cargos?.[0]?.id ? datos.cargos?.[0]?.id : []]);
 
       abrirModal();
     } catch (error) {
@@ -710,6 +688,13 @@ export default function VoceroForm({
                   descripcion={nombreConsejoComunal}
                 />
               )}
+
+              {nombreParroquia && (
+                <ModalDatos
+                  titulo={"Parroquia"}
+                  descripcion={nombreParroquia}
+                />
+              )}
             </ModalDatosContenedor>
 
             <MostarMsjEnModal
@@ -787,20 +772,15 @@ export default function VoceroForm({
           <>
             <DivUnoDentroSectionRegistroMostrar nombre={"Crear vocero"}>
               <FormCrearVocero
-                idParroquia={idParroquia}
                 idComuna={idComuna}
                 idConsejo={idConsejoComunal}
-                cambiarSeleccionParroquia={cambiarSeleccionParroquia}
                 cambiarSeleccionComunaCircuito={cambiarSeleccionComunaCircuito}
                 cambiarSeleccionConsejo={cambiarSeleccionConsejo}
                 cambiarDondeGuardar={cambiarDondeGuardar}
-                cambiarDondeCrear={cambiarDondeCrear}
                 toggleGenero={toggleGenero}
-                parroquias={todasParroquias}
                 comunasCircuitos={todasComunas}
                 consejos={todosConsejos}
                 dondeGuardar={circuitoComuna}
-                dondeCrear={perteneceComunaCircuito}
                 setDondeGuardar={setCircuitoComuna}
                 nombre={nombreVocero}
                 setNombre={setNombreVocero}
@@ -825,7 +805,6 @@ export default function VoceroForm({
                 actividadLaboral={actividadLaboralVocero}
                 setActividadLaboral={setActividadLaboralVocero}
                 seleccionarCargo={seleccionarCargo}
-                setSeleccionarCargo={setSeleccionarCargo}
                 cargos={cargos}
                 toggleCargo={toggleCargos}
                 seleccionarFormacion={seleccionarFormacion}
@@ -1013,67 +992,3 @@ export default function VoceroForm({
     </>
   );
 }
-
-/*
-  <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-4 space-y-4 border border-gray-300">
-    <div
-              className="grid gap-2 sm:gap-4 
-                grid-cols-1 
-                sm:grid-cols-2 
-                md:grid-cols-3"
-            >
-              <div className="w-full">
-                <InputCheckBox
-                  id={1}
-                  isChecked={seleccionarConsulta === 1}
-                  onToggle={toggleConsultar}
-                  nombre="Crear"
-                />
-              </div>
-
-              <div className="w-full">
-                <InputCheckBox
-                  id={6}
-                  isChecked={seleccionarConsulta === 6}
-                  onToggle={toggleConsultar}
-                  nombre="Por cédula"
-                />
-              </div>
-
-              <div className="w-full">
-                <InputCheckBox
-                  id={2}
-                  isChecked={seleccionarConsulta === 2}
-                  onToggle={toggleConsultar}
-                  nombre="Por parroquia"
-                />
-              </div>
-
-              <div className="w-full">
-                <InputCheckBox
-                  id={3}
-                  isChecked={seleccionarConsulta === 3}
-                  onToggle={toggleConsultar}
-                  nombre="Por comuna"
-                />
-              </div>
-
-              <div className="w-full">
-                <InputCheckBox
-                  id={4}
-                  isChecked={seleccionarConsulta === 4}
-                  onToggle={toggleConsultar}
-                  nombre="Por consejo comunal"
-                />
-              </div>
-
-              <div className="w-full">
-                <InputCheckBox
-                  id={5}
-                  isChecked={seleccionarConsulta === 5}
-                  onToggle={toggleConsultar}
-                  nombre="Todos"
-                />
-              </div>
-            </div>
-          </div> */

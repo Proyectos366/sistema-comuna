@@ -18,7 +18,6 @@ export async function GET() {
       );
     }
 
-
     const todosVoceros = await prisma.vocero.findMany({
       where: {
         borrado: false,
@@ -36,16 +35,16 @@ export async function GET() {
         genero: true,
         laboral: true,
         comunas: {
-          select: { nombre: true, id: true, id_parroquia: true},
+          select: { nombre: true, id: true, id_parroquia: true },
         },
         circuitos: {
-          select: { nombre: true, id: true }
+          select: { nombre: true, id: true },
         },
         parroquias: {
           select: { nombre: true },
         },
         consejos: {
-          select: { nombre: true, id: true},
+          select: { nombre: true, id: true },
         },
         cursos: {
           where: { borrado: false },
@@ -70,6 +69,9 @@ export async function GET() {
               },
             },
           },
+        },
+        cargos: {
+          select: { nombre: true, id: true },
         },
       },
     });

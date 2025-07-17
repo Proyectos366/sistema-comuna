@@ -151,14 +151,6 @@ export default function MenuLateralUsuario({
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
-                    vistaActual={"parroquias"}
-                    nombre={"Parroquias"}
-                    volverInicio={volverInicio}
-                  />
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
                     vistaActual={"cargos"}
                     nombre={"Cargos"}
                     volverInicio={volverInicio}
@@ -171,6 +163,17 @@ export default function MenuLateralUsuario({
                     nombre={"Formaciones"}
                     volverInicio={volverInicio}
                   />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"participantes"}
+                    nombre={"Participantes"}
+                    volverInicio={volverInicio}
+                  />
+
+                  
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -179,14 +182,14 @@ export default function MenuLateralUsuario({
                     nombre={"Comunas"}
                     volverInicio={volverInicio}
                   />
-                  <EnlacesBarraLateral
+                  {/* <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
                     nombre={"Circuitos"}
                     volverInicio={volverInicio}
-                  />
+                  /> */}
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}

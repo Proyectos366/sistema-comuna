@@ -1,0 +1,811 @@
+const prismaFuturo = {
+  /** 
+  generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model usuario {
+  id        Int      @id @default(autoincrement())
+  cedula    Int
+  nombre    String
+  correo    String   @unique
+  token     String   @unique
+  clave     String
+  borrado   Boolean
+  id_rol    Int
+  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+  paises                 pais[]         @relation(name: "CreadorPais")
+  estados                estado[]       @relation(name: "CreadorEstado")
+  municipios             municipio[]    @relation(name: "CreadorMunicipio")
+  parroquias             parroquia[]    @relation(name: "CreadorParroquia")
+  comunas                comuna[]       @relation(name: "CreadorComuna")
+  cargos                 cargo[]        @relation(name: "CreadorCargo")
+  circuitos              circuito[]     @relation(name: "CreadorCircuito")
+  consejos               consejo[]      @relation(name: "CreadorConsejo")
+  voceros                vocero[]       @relation(name: "CreadorVocero")
+  modulos                modulo[]       @relation(name: "CreadorModulo")
+  formaciones            formacion[]    @relation(name: "CreadorFormacion")
+  cursos                 curso[]        @relation(name: "CreadorCurso")
+  asistencias            asistencia[]   @relation(name: "CreadorAsistencia")
+}
+
+model role {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("")
+  borrado     Boolean  @default(false)
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  usuarios usuario[] @relation(name: "UsuarioRole")
+}
+
+model departamento {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("")
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation(name: "MiembrosDepartamento")
+}
+
+model cargo {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String
+  borrado     Boolean
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  usuarios usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+  voceros  vocero[]
+}
+
+model pais {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  capital    String?  @default("")
+  cod_postal String?  @default("")
+  id_usuario Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuarios   usuario     @relation(name: "CreadorPais", fields: [id_usuario], references: [id])
+  estados    estado[]    @relation(name: "PaisEstado")
+  municipios municipio[]
+  parroquias parroquia[]
+
+  comunas   comuna[]
+  circuitos circuito[]
+  consejos  consejo[]
+  voceros   vocero[]
+}
+
+model estado {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  cod_postal String?  @default("")
+  id_usuario Int
+  id_pais    Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuarios   usuario     @relation(name: "CreadorEstado", fields: [id_usuario], references: [id])
+  pais       pais        @relation(name: "PaisEstado", fields: [id_pais], references: [id])
+  municipios municipio[]
+  parroquias parroquia[]
+
+  comunas   comuna[]
+  circuitos circuito[]
+  consejos  consejo[]
+  voceros   vocero[]
+}
+
+model municipio {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  id_usuario Int
+  id_pais    Int
+  id_estado  Int
+  borrado    Boolean
+  updatedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  usuarios   usuario     @relation(name: "CreadorMunicipio", fields: [id_usuario], references: [id])
+  pais       pais        @relation(fields: [id_pais], references: [id])
+  estado     estado      @relation(fields: [id_estado], references: [id])
+  parroquias parroquia[]
+
+  comunas   comuna[]
+  circuitos circuito[]
+  consejos  consejo[]
+  voceros   vocero[]
+}
+
+model parroquia {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  id_usuario   Int
+  id_pais      Int
+  id_estado    Int
+  id_municipio Int
+  borrado      Boolean
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  usuarios  usuario   @relation(name: "CreadorParroquia", fields: [id_usuario], references: [id])
+  pais      pais      @relation(fields: [id_pais], references: [id])
+  estado    estado    @relation(fields: [id_estado], references: [id])
+  municipio municipio @relation(fields: [id_municipio], references: [id])
+
+  comunas   comuna[]
+  circuitos circuito[]
+  consejos  consejo[]
+  voceros   vocero[]
+}
+
+model comuna {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  norte        String
+  sur          String
+  este         String
+  oeste        String
+  direccion    String
+  punto        String
+  rif          String?  @unique
+  codigo       String   @unique
+  borrado      Boolean
+  id_usuario   Int
+  id_pais      Int
+  id_estado    Int
+  id_municipio Int
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  usuarios  usuario   @relation(name: "CreadorComuna", fields: [id_usuario], references: [id])
+  pais      pais      @relation(fields: [id_pais], references: [id])
+  estado    estado    @relation(fields: [id_estado], references: [id])
+  municipio municipio @relation(fields: [id_municipio], references: [id])
+  parroquia parroquia @relation(fields: [id_parroquia], references: [id])
+  voceros   vocero[]
+}
+
+model circuito {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  norte        String
+  sur          String
+  este         String
+  oeste        String
+  direccion    String
+  punto        String
+  borrado      Boolean
+  validado     Boolean
+  id_usuario   Int
+  id_pais      Int
+  id_estado    Int
+  id_municipio Int
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  usuarios  usuario   @relation(name: "CreadorCircuito", fields: [id_usuario], references: [id])
+  pais      pais      @relation(fields: [id_pais], references: [id])
+  estado    estado    @relation(fields: [id_estado], references: [id])
+  municipio municipio @relation(fields: [id_municipio], references: [id])
+  parroquia parroquia @relation(fields: [id_parroquia], references: [id])
+  voceros   vocero[]
+}
+
+model consejo {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  norte        String
+  sur          String
+  este         String
+  oeste        String
+  direccion    String
+  punto        String
+  rif          String?  @unique
+  codigo       String   @unique
+  borrado      Boolean
+  id_usuario   Int
+  id_pais      Int
+  id_estado    Int
+  id_municipio Int
+  id_parroquia Int
+  id_comuna    Int?
+  id_circuito  Int?
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  usuarios  usuario   @relation(name: "CreadorConsejo", fields: [id_usuario], references: [id])
+  pais      pais      @relation(fields: [id_pais], references: [id])
+  estado    estado    @relation(fields: [id_estado], references: [id])
+  municipio municipio @relation(fields: [id_municipio], references: [id])
+  parroquia parroquia @relation(fields: [id_parroquia], references: [id])
+
+  voceros vocero[]
+}
+
+model vocero {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  nombre_dos   String?
+  apellido     String
+  apellido_dos String?
+  cedula       Int      @unique
+  genero       Boolean
+  edad         Int
+  telefono     String
+  direccion    String?
+  correo       String
+  token        String   @unique
+  laboral      String
+  f_n          DateTime
+  borrado      Boolean
+  id_usuario   Int
+  id_pais      Int
+  id_estado    Int
+  id_municipio Int
+  id_comuna    Int?
+  id_consejo   Int?
+  id_circuito  Int?
+  id_parroquia Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  usuarios  usuario   @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
+  pais      pais      @relation(fields: [id_pais], references: [id])
+  estado    estado    @relation(fields: [id_estado], references: [id])
+  municipio municipio @relation(fields: [id_municipio], references: [id])
+  parroquia parroquia @relation(fields: [id_parroquia], references: [id])
+  comuna    comuna?   @relation(fields: [id_comuna], references: [id])
+  consejo   consejo?  @relation(fields: [id_consejo], references: [id])
+  circuito  circuito? @relation(fields: [id_circuito], references: [id])
+
+  cursos      curso[]
+  asistencias asistencia[]
+  cargos      cargo[]
+}
+
+model formacion {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  id_usuario Int
+  borrado    Boolean  @default(false)
+  culminada  Boolean  @default(false)
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+
+  usuarios usuario  @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
+  modulos  modulo[]
+  cursos   curso[]
+}
+
+model modulo {
+  id         Int      @id @default(autoincrement())
+  nombre     String   @unique
+  borrado    Boolean  @default(false)
+  id_usuario Int
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+
+  usuarios    usuario      @relation(name: "CreadorModulo", fields: [id_usuario], references: [id])
+  formaciones formacion[]
+  asistencias asistencia[]
+}
+
+model curso {
+  id               Int       @id @default(autoincrement())
+  id_vocero        Int
+  id_formacion     Int
+  id_usuario       Int
+  fecha_completado DateTime?
+  verificado       Boolean   @default(false)
+  certificado      Boolean   @default(false)
+  culminado        Boolean   @default(false)
+  borrado          Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now()) @updatedAt
+
+  usuarios    usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
+  voceros     vocero       @relation(fields: [id_vocero], references: [id])
+  formaciones formacion    @relation(fields: [id_formacion], references: [id])
+  asistencias asistencia[]
+}
+
+model asistencia {
+  id             Int      @id @default(autoincrement())
+  id_vocero      Int
+  id_modulo      Int
+  id_curso       Int
+  id_usuario     Int
+  presente       Boolean
+  formador       String?  @default("")
+  borrado        Boolean  @default(false)
+  fecha_registro DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  usuarios usuario @relation(name: "CreadorAsistencia", fields: [id_usuario], references: [id])
+  voceros  vocero  @relation(fields: [id_vocero], references: [id])
+  modulos  modulo  @relation(fields: [id_modulo], references: [id])
+  cursos   curso   @relation(fields: [id_curso], references: [id])
+}
+*/
+
+
+
+
+
+
+
+
+
+// model role {
+//   id          Int      @id @default(autoincrement())
+//   nombre      String   @unique
+//   descripcion String?  @default("")
+//   borrado     Boolean  @default(false)
+//   updatedAt   DateTime @default(now())
+//   createdAt   DateTime @default(now())
+
+//   // Relaciones
+//   usuarios usuario[] @relation(name: "UsuarioRole")
+// }
+
+// model departamento {
+//   id          Int      @id @default(autoincrement())
+//   nombre      String   @unique
+//   descripcion String?  @default("")
+//   borrado     Boolean  @default(false)
+//   id_usuario  Int
+//   updatedAt   DateTime @default(now())
+//   createdAt   DateTime @default(now())
+
+//   // Relaciones
+//   creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+//   miembros usuario[] @relation("MiembrosDepartamento")
+// }
+
+// model usuario {
+//   id        Int      @id @default(autoincrement())
+//   cedula    Int
+//   nombre    String
+//   correo    String   @unique
+//   token     String   @unique
+//   clave     String
+//   borrado   Boolean
+//   id_rol    Int // Clave foránea hacia role
+//   updatedAt DateTime @default(now())
+//   createdAt DateTime @default(now())
+
+//   // Relaciones
+//   roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+//   CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+//   MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+//   creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
+//   creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
+//   creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
+//   voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+//   parroquias             parroquia[]    @relation(name: "CreadorParroquia")
+//   cargos                 cargo[]        @relation(name: "CreadorCargo")
+//   modulos                modulo[]       @relation(name: "CreadorModulo")
+//   formaciones            formacion[]    @relation(name: "CreadorFormacion")
+//   cursos                 curso[]        @relation(name: "CreadorCurso")
+//   asistencias            asistencia[]   @relation(name: "CreadorAsistencia")
+// }
+
+// model cargo {
+//   id          Int      @id @default(autoincrement())
+//   nombre      String   @unique
+//   id_usuario  Int
+//   descripcion String
+//   borrado     Boolean
+//   updatedAt   DateTime @default(now())
+//   createdAt   DateTime @default(now())
+
+//   usuarios usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+//   voceros  vocero[]
+// }
+
+// model parroquia {
+//   id         Int      @id @default(autoincrement())
+//   nombre     String
+//   id_usuario Int
+//   borrado    Boolean
+//   updatedAt  DateTime @default(now())
+//   createdAt  DateTime @default(now())
+
+//   // Relaciones
+//   usuarios  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
+//   comunas   comuna[]   @relation("ComunaParroquia")
+//   circuitos circuito[] @relation("CircuitoParroquia")
+//   consejos  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
+//   voceros   vocero[]   @relation("VoceroParroquia")
+// }
+
+// model comuna {
+//   id           Int      @id @default(autoincrement())
+//   nombre       String
+//   norte        String
+//   sur          String
+//   este         String
+//   oeste        String
+//   direccion    String
+//   punto        String
+//   rif          String?  @unique
+//   codigo       String   @unique
+//   borrado      Boolean
+//   id_usuario   Int // Clave foránea hacia usuario (administrador que crea la comuna)
+//   id_parroquia Int
+//   updatedAt    DateTime @default(now())
+//   createdAt    DateTime @default(now())
+
+//   // Relaciones
+//   usuarios   usuario   @relation(name: "CreadorComuna", fields: [id_usuario], references: [id])
+//   voceros    vocero[] // Voceros que pertenecen directamente a la comuna
+//   consejos   consejo[] // Consejos que están dentro de la comuna
+//   parroquias parroquia @relation("ComunaParroquia", fields: [id_parroquia], references: [id])
+// }
+
+// model circuito {
+//   id           Int      @id @default(autoincrement())
+//   nombre       String
+//   norte        String
+//   sur          String
+//   este         String
+//   oeste        String
+//   direccion    String
+//   punto        String
+//   borrado      Boolean
+//   validado     Boolean
+//   id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
+//   id_parroquia Int
+//   updatedAt    DateTime @default(now())
+//   createdAt    DateTime @default(now())
+
+//   // Relaciones
+//   usuarios   usuario   @relation(name: "CreadorCircuito", fields: [id_usuario], references: [id])
+//   consejos   consejo[] // Consejos que pueden estar dentro de un circuito
+//   voceros    vocero[] // Voceros que pertenecen directamente a un circuito
+//   parroquias parroquia @relation("CircuitoParroquia", fields: [id_parroquia], references: [id])
+// }
+
+// model consejo {
+//   id           Int      @id @default(autoincrement())
+//   nombre       String
+//   norte        String
+//   sur          String
+//   este         String
+//   oeste        String
+//   direccion    String
+//   punto        String
+//   rif          String?  @unique
+//   codigo       String   @unique
+//   borrado      Boolean
+//   id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
+//   id_comuna    Int? // Este consejo pertenece a una comuna
+//   id_circuito  Int? // Este consejo puede estar vinculado a un circuito
+//   id_parroquia Int // Nueva clave foránea para relacionar con parroquia
+//   updatedAt    DateTime @default(now())
+//   createdAt    DateTime @default(now())
+
+//   // Relaciones
+//   usuarios   usuario   @relation(name: "CreadorConsejo", fields: [id_usuario], references: [id])
+//   comunas    comuna?   @relation(fields: [id_comuna], references: [id])
+//   circuitos  circuito? @relation(fields: [id_circuito], references: [id])
+//   voceros    vocero[] // Voceros que pertenecen a este consejo
+//   parroquias parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
+// }
+
+// model vocero {
+//   id           Int      @id @default(autoincrement())
+//   nombre       String
+//   nombre_dos   String?
+//   apellido     String
+//   apellido_dos String?
+//   cedula       Int      @unique
+//   genero       Boolean
+//   edad         Int
+//   telefono     String
+//   direccion    String?
+//   correo       String
+//   token        String   @unique
+//   laboral      String
+//   f_n          DateTime
+//   borrado      Boolean
+//   id_usuario   Int
+//   id_comuna    Int?
+//   id_consejo   Int?
+//   id_circuito  Int?
+//   id_parroquia Int
+//   updatedAt    DateTime @default(now())
+//   createdAt    DateTime @default(now())
+
+//   usuarios   usuario   @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
+//   parroquias parroquia @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
+//   comunas    comuna?   @relation(fields: [id_comuna], references: [id])
+//   consejos   consejo?  @relation(fields: [id_consejo], references: [id])
+//   circuitos  circuito? @relation(fields: [id_circuito], references: [id])
+
+//   cursos      curso[]
+//   asistencias asistencia[]
+//   cargos      cargo[]
+// }
+
+// model formacion {
+//   id         Int      @id @default(autoincrement())
+//   nombre     String   @unique
+//   id_usuario Int
+//   borrado    Boolean  @default(false)
+//   culminada  Boolean  @default(false)
+//   updatedAt  DateTime @default(now()) @updatedAt
+//   createdAt  DateTime @default(now())
+
+//   usuarios usuario  @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
+//   modulos  modulo[]
+//   cursos   curso[]
+// }
+
+// model modulo {
+//   id         Int      @id @default(autoincrement())
+//   nombre     String   @unique
+//   borrado    Boolean  @default(false)
+//   id_usuario Int
+//   updatedAt  DateTime @default(now()) @updatedAt
+//   createdAt  DateTime @default(now())
+
+//   usuarios    usuario      @relation(name: "CreadorModulo", fields: [id_usuario], references: [id])
+//   formaciones formacion[]
+//   asistencias asistencia[]
+// }
+
+// model curso {
+//   id               Int       @id @default(autoincrement())
+//   id_vocero        Int
+//   id_formacion     Int
+//   id_usuario       Int
+//   fecha_completado DateTime?
+//   verificado       Boolean   @default(false)
+//   certificado      Boolean   @default(false)
+//   culminado        Boolean   @default(false)
+//   borrado          Boolean   @default(false)
+//   createdAt        DateTime  @default(now())
+//   updatedAt        DateTime  @default(now()) @updatedAt
+
+//   usuarios    usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
+//   voceros     vocero       @relation(fields: [id_vocero], references: [id])
+//   formaciones formacion    @relation(fields: [id_formacion], references: [id])
+//   asistencias asistencia[]
+// }
+
+// model asistencia {
+//   id             Int      @id @default(autoincrement())
+//   id_vocero      Int
+//   id_modulo      Int
+//   id_curso       Int
+//   id_usuario     Int
+//   presente       Boolean
+//   formador       String?  @default("")
+//   borrado        Boolean  @default(false)
+//   fecha_registro DateTime @default(now())
+//   createdAt      DateTime @default(now())
+//   updatedAt      DateTime @default(now())
+
+//   usuarios usuario @relation(name: "CreadorAsistencia", fields: [id_usuario], references: [id])
+//   voceros  vocero  @relation(fields: [id_vocero], references: [id])
+//   modulos  modulo  @relation(fields: [id_modulo], references: [id])
+//   cursos   curso   @relation(fields: [id_curso], references: [id])
+// }
+
+/**
+ * generator client {
+ * provider = "prisma-client-js"
+ * }
+ * datasource db {
+ * provider = "sqlite"
+ * url      = env("DATABASE_URL")
+ * }
+ * model role {
+ * id          Int      @id @default(autoincrement())
+ * nombre      String   @unique
+ * descripcion String
+ * updatedAt   DateTime @default(now())
+ * createdAt   DateTime @default(now())
+ * // Relaciones
+ * usuarios usuario[] @relation(name: "UsuarioRole")
+ * }
+ * model usuario {
+ * id        Int      @id @default(autoincrement())
+ * cedula    String
+ * nombre    String
+ * correo    String   @unique
+ * token     String   @unique
+ * clave     String
+ * borrado   Boolean
+ * id_rol    Int // Clave foránea hacia role
+ * updatedAt DateTime @default(now())
+ * createdAt DateTime @default(now())
+ * // Relaciones
+ * role               role        @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+ * creadorDeComunas   comuna[]    @relation(name: "CreadorComuna")
+ * creadorDeCircuitos circuito[]  @relation(name: "CreadorCircuito")
+ * creadorDeConsejos  consejo[]   @relation(name: "CreadorConsejo")
+ * voceros            vocero[]    @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+ * parroquias         parroquia[] @relation(name: "CreadorParroquia")
+ * cargos             cargo[]     @relation(name: "CreadorCargo")
+ * modulos            modulo[]    @relation(name: "CreadorModulo")
+ * formaciones        formacion[] @relation(name: "CreadorFormacion")
+ * }
+ * model parroquia {
+ * id         Int      @id @default(autoincrement())
+ * nombre     String
+ * id_usuario Int
+ * borrado    Boolean
+ * updatedAt  DateTime @default(now())
+ * createdAt  DateTime @default(now())
+ * // Relaciones
+ * usuario  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
+ * comuna   comuna[]   @relation("ComunaParroquia")
+ * circuito circuito[] @relation("CircuitoParroquia")
+ * consejo  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
+ * vocero   vocero[]   @relation("VoceroParroquia")
+ * }
+ * model cargo {
+ * id         Int      @id @default(autoincrement())
+ * nombre     String   @unique
+ * id_usuario Int
+ * borrado    Boolean
+ * updatedAt  DateTime @default(now())
+ * createdAt  DateTime @default(now())
+ * usuario usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+ * voceros vocero[]
+ * }
+ * model modulo {
+ * id         Int      @id @default(autoincrement())
+ * nombre     String   @unique
+ * id_usuario Int
+ * borrado    Boolean
+ * updatedAt  DateTime @default(now())
+ * createdAt  DateTime @default(now())
+ * usuario usuario  @relation(name: "CreadorModulo", fields: [id_usuario], references: [id])
+ * voceros vocero[]
+ * }
+ * model formacion {
+ * id         Int      @id @default(autoincrement())
+ * nombre     String   @unique
+ * id_usuario Int
+ * borrado    Boolean
+ * culminada  Boolean
+ * updatedAt  DateTime @default(now())
+ * createdAt  DateTime @default(now())
+ * usuario usuario  @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
+ * voceros vocero[]
+ * }
+ * model comuna {
+ * id           Int      @id @default(autoincrement())
+ * nombre       String
+ * norte        String
+ * sur          String
+ * este         String
+ * oeste        String
+ * direccion    String
+ * punto        String
+ * rif          String?  @unique
+ * codigo       String   @unique
+ * borrado      Boolean
+ * id_usuario   Int // Clave foránea hacia usuario (administrador que crea la comuna)
+ * id_parroquia Int
+ * updatedAt    DateTime @default(now())
+ * createdAt    DateTime @default(now())
+ * // Relaciones
+ * usuario   usuario   @relation(name: "CreadorComuna", fields: [id_usuario], references: [id])
+ * voceros   vocero[] // Voceros que pertenecen directamente a la comuna
+ * consejos  consejo[] // Consejos que están dentro de la comuna
+ * parroquia parroquia @relation("ComunaParroquia", fields: [id_parroquia], references: [id])
+ * }
+ * model circuito {
+ * id           Int      @id @default(autoincrement())
+ * nombre       String
+ * norte        String
+ * sur          String
+ * este         String
+ * oeste        String
+ * direccion    String
+ * punto        String
+ * borrado      Boolean
+ * validado     Boolean
+ * id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
+ * id_parroquia Int
+ * updatedAt    DateTime @default(now())
+ * createdAt    DateTime @default(now())
+ * // Relaciones
+ * usuario   usuario   @relation(name: "CreadorCircuito", fields: [id_usuario], references: [id])
+ * consejos  consejo[] // Consejos que pueden estar dentro de un circuito
+ * voceros   vocero[] // Voceros que pertenecen directamente a un circuito
+ * parroquia parroquia @relation("CircuitoParroquia", fields: [id_parroquia], references: [id])
+ * }
+ * model consejo {
+ * id           Int      @id @default(autoincrement())
+ * nombre       String
+ * norte        String
+ * sur          String
+ * este         String
+ * oeste        String
+ * direccion    String
+ * punto        String
+ * rif          String?  @unique
+ * codigo       String   @unique
+ * borrado      Boolean
+ * id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
+ * id_comuna    Int? // Este consejo pertenece a una comuna
+ * id_circuito  Int? // Este consejo puede estar vinculado a un circuito
+ * id_parroquia Int // Nueva clave foránea para relacionar con parroquia
+ * updatedAt    DateTime @default(now())
+ * createdAt    DateTime @default(now())
+ * // Relaciones
+ * usuario   usuario   @relation(name: "CreadorConsejo", fields: [id_usuario], references: [id])
+ * comuna    comuna?   @relation(fields: [id_comuna], references: [id])
+ * circuito  circuito? @relation(fields: [id_circuito], references: [id])
+ * voceros   vocero[] // Voceros que pertenecen a este consejo
+ * parroquia parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
+ * }
+ * model vocero {
+ * id           Int      @id @default(autoincrement())
+ * nombre       String
+ * nombre_dos   String
+ * apellido     String
+ * apellido_dos String
+ * cedula       Int      @unique
+ * genero       Boolean
+ * edad         Int
+ * telefono     String
+ * direccion    String
+ * correo       String   @unique
+ * token        String   @unique
+ * laboral      String
+ * proyecto     Boolean
+ * certificado  Boolean
+ * verificado   Boolean
+ * borrado      Boolean
+ * id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
+ * id_comuna    Int? // Puede pertenecer directamente a una comuna
+ * id_consejo   Int? // También puede pertenecer a un consejo, que está en una comuna
+ * id_circuito  Int? // Puede pertenecer a un circuito
+ * id_parroquia Int
+ * updatedAt    DateTime @default(now())
+ * createdAt    DateTime @default(now())
+ * // Relaciones
+ * usuario     usuario     @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
+ * comuna      comuna?     @relation(fields: [id_comuna], references: [id])
+ * consejo     consejo?    @relation(fields: [id_consejo], references: [id])
+ * circuito    circuito?   @relation(fields: [id_circuito], references: [id])
+ * parroquia   parroquia   @relation("VoceroParroquia", fields: [id_parroquia], references: [id])
+ * cargos      cargo[]
+ * modulos     modulo[]
+ * formaciones formacion[]
+ * }
+ */
+
+}

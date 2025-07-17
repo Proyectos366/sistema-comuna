@@ -391,8 +391,8 @@ export default function ParticipantesForm({
 
   if (!Array.isArray(cursos) || cursos.length === 0) {
     return (
-      <div className="w-full bg-white p-4 rounded-md shadow-lg text-center">
-        <p className="text-red-600 font-semibold">
+      <div className="w-full p-4 rounded-md shadow-lg text-center h-full flex items-center justify-center">
+        <p className="text-red-600 font-semibold bg-white border px-20 py-10 rounded-md text-2xl ">
           No hay voceros disponibles.
         </p>
       </div>

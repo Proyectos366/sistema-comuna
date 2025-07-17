@@ -34,7 +34,18 @@ export default function Paginador({
         onClick={options.onClick}
         disabled={options.disabled}
       >
-        <span className="py-2 px-3">Anterior</span>
+        <span className="px-3 hidden sm:block">Anterior</span>
+        <span className="block sm:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="20"
+            fill={options.disabled ? "#08215880" : "white"}
+            viewBox="0 0 24 24"
+          >
+            <path d="M4 12l8 8v-6h8v-4h-8V4z" />
+          </svg>
+        </span>
         <Ripple />
       </button>
     ),
@@ -49,7 +60,18 @@ export default function Paginador({
         onClick={options.onClick}
         disabled={options.disabled}
       >
-        <span className="py-2 px-3">Siguiente</span>
+        <span className="px-3 hidden sm:block">Siguiente</span>
+        <span className="block sm:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="20"
+            fill={options.disabled ? "#08215880" : "white"}
+            viewBox="0 0 24 24"
+          >
+            <path d="M20 12l-8-8v6H4v4h8v6z" />
+          </svg>
+        </span>
         <Ripple />
       </button>
     ),
@@ -67,7 +89,7 @@ export default function Paginador({
       return (
         <button
           type="button"
-          className={`px-2 rounded mx-[3px] ${
+          className={`px-2 rounded mx-[3px] h-full ${
             options.page === options.currentPage
               ? `bg-[${color}] text-white`
               : "bg-white border border-gray-300"
@@ -157,7 +179,7 @@ export default function Paginador({
       totalRecords={totalRecords}
       onPageChange={onPageChange}
       template={template}
-      className={`!flex ${
+      className={`!flex  ${
         colorFondo ? colorFondo : "!bg-gray-200"
       }  !border !border-gray-300 !rounded-md !shadow-md`}
     />

@@ -2,7 +2,7 @@
 CREATE TABLE "role" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
-    "descripcion" TEXT NOT NULL,
+    "descripcion" TEXT DEFAULT '',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -12,7 +12,7 @@ CREATE TABLE "role" (
 CREATE TABLE "departamento" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
-    "descripcion" TEXT NOT NULL,
+    "descripcion" TEXT DEFAULT '',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_usuario" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -23,7 +23,7 @@ CREATE TABLE "departamento" (
 -- CreateTable
 CREATE TABLE "usuario" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "cedula" TEXT NOT NULL,
+    "cedula" INTEGER NOT NULL,
     "nombre" TEXT NOT NULL,
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
@@ -204,6 +204,7 @@ CREATE TABLE "asistencia" (
     "id_curso" INTEGER NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "presente" BOOLEAN NOT NULL,
+    "formador" TEXT DEFAULT '',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "fecha_registro" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -212,34 +213,6 @@ CREATE TABLE "asistencia" (
     CONSTRAINT "asistencia_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_modulo_fkey" FOREIGN KEY ("id_modulo") REFERENCES "modulo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_curso_fkey" FOREIGN KEY ("id_curso") REFERENCES "curso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "clase" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "id_usuario" INTEGER NOT NULL,
-    "borrado" BOOLEAN NOT NULL DEFAULT false,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- CreateTable
-CREATE TABLE "cursando" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "cedula" INTEGER NOT NULL,
-    "edad" INTEGER NOT NULL,
-    "genero" BOOLEAN NOT NULL,
-    "f_n" DATETIME NOT NULL,
-    "id_usuario" INTEGER NOT NULL,
-    "id_parroquia" INTEGER NOT NULL,
-    "id_comuna" INTEGER,
-    "id_consejo" INTEGER,
-    "id_clase" INTEGER NOT NULL,
-    "borrado" BOOLEAN NOT NULL DEFAULT false,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "cursando_id_clase_fkey" FOREIGN KEY ("id_clase") REFERENCES "clase" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -297,9 +270,6 @@ CREATE UNIQUE INDEX "consejo_codigo_key" ON "consejo"("codigo");
 CREATE UNIQUE INDEX "vocero_cedula_key" ON "vocero"("cedula");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "vocero_correo_key" ON "vocero"("correo");
-
--- CreateIndex
 CREATE UNIQUE INDEX "vocero_token_key" ON "vocero"("token");
 
 -- CreateIndex
@@ -307,9 +277,6 @@ CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "modulo_nombre_key" ON "modulo"("nombre");
-
--- CreateIndex
-CREATE UNIQUE INDEX "clase_nombre_key" ON "clase"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_MiembrosDepartamento_AB_unique" ON "_MiembrosDepartamento"("A", "B");

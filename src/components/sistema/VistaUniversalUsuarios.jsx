@@ -17,7 +17,7 @@ import VoceroForm from "../opciones/VoceroForm";
 import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
-import FormOac from "../oac/FormOac";
+//import FormOac from "../oac/FormOac";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -326,7 +326,7 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-                  {vista === "oac" && departamento.nombre === 'oac' && (
+                  {/* {vista === "oac" && departamento.nombre === 'oac' && (
                     <FormOac
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
@@ -337,7 +337,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                     />
-                  )}
+                  )} */}
 
                   {vista === "perfil" && (
                     <MostrarPerfilUsuario abrirPanel={abrirPanel} />

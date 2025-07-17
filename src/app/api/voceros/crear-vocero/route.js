@@ -159,6 +159,9 @@ export async function POST(request) {
             },
           },
         },
+        cargos: {
+          select: { nombre: true, id: true },
+        },
       },
     });
 

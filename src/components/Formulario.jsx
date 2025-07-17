@@ -1,5 +1,5 @@
 export default function Formulario({ children, onSubmit, className, encType }) {
-  const clasePorDefecto = `space-y-4 sm:space-y-2 w-full`;
+  const clasePorDefecto = `flex flex-col w-full gap-2`;
   const nuevaClase = className
     ? `${clasePorDefecto} ${className}`
     : clasePorDefecto;

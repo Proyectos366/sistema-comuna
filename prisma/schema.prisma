@@ -10,7 +10,7 @@ datasource db {
 model role {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  descripcion String
+  descripcion String?  @default("")
   borrado     Boolean  @default(false)
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -22,7 +22,7 @@ model role {
 model departamento {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  descripcion String
+  descripcion String?  @default("")
   borrado     Boolean  @default(false)
   id_usuario  Int
   updatedAt   DateTime @default(now())
@@ -175,7 +175,7 @@ model vocero {
   edad         Int
   telefono     String
   direccion    String?
-  correo       String   @unique
+  correo       String
   token        String   @unique
   laboral      String
   f_n          DateTime
@@ -262,35 +262,6 @@ model asistencia {
   voceros  vocero  @relation(fields: [id_vocero], references: [id])
   modulos  modulo  @relation(fields: [id_modulo], references: [id])
   cursos   curso   @relation(fields: [id_curso], references: [id])
-}
-
-model clase {
-  id         Int      @id @default(autoincrement())
-  nombre     String   @unique
-  id_usuario Int
-  borrado    Boolean  @default(false)
-  updatedAt  DateTime @default(now()) @updatedAt
-  createdAt  DateTime @default(now())
-
-  cursandos cursando[]
-}
-
-model cursando {
-  id           Int      @id @default(autoincrement())
-  cedula       Int
-  edad         Int
-  genero       Boolean
-  f_n          DateTime
-  id_usuario   Int
-  id_parroquia Int
-  id_comuna    Int?
-  id_consejo   Int?
-  id_clase     Int
-  borrado      Boolean  @default(false)
-  updatedAt    DateTime @default(now()) @updatedAt
-  createdAt    DateTime @default(now())
-
-  clases clase @relation(fields: [id_clase], references: [id])
 }
 
 /**

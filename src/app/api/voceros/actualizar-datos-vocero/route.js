@@ -69,6 +69,9 @@ export async function POST(request) {
           id_comuna: validaciones.id_comuna,
           id_consejo: validaciones.id_consejo,
           id_circuito: validaciones.id_circuito,
+          cargos: {
+            set: cargos.map(({ id }) => ({ id })),
+          },
         },
       }),
 
@@ -104,6 +107,9 @@ export async function POST(request) {
                 },
               },
             },
+          },
+          cargos: {
+            select: { nombre: true, id: true },
           },
         },
       }),

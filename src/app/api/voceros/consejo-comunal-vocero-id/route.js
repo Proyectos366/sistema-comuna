@@ -50,10 +50,10 @@ export async function GET(req) {
         genero: true,
         laboral: true,
         comunas: {
-          select: { nombre: true, id: true, id_parroquia: true},
+          select: { nombre: true, id: true, id_parroquia: true },
         },
         circuitos: {
-          select: { nombre: true, id: true }
+          select: { nombre: true, id: true },
         },
         parroquias: {
           select: { nombre: true },
@@ -74,6 +74,9 @@ export async function GET(req) {
               },
             },
           },
+        },
+        cargos: {
+          select: { nombre: true, id: true },
         },
       },
     });

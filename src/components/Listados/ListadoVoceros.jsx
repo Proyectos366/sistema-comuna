@@ -1,18 +1,8 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Input from "../inputs/Input";
 import DetallesListadoVoceros from "./DetallesListadoVoceros";
 import Leyenda from "./Leyenda";
-//import { Paginator } from "primereact/paginator";
 import OrdenarLista from "./Ordenar";
-
-import { Button } from "primereact/button";
-import { Ripple } from "primereact/ripple";
-import { Divider } from "primereact/divider";
-import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
-import { Slider } from "primereact/slider";
-import { Tooltip } from "primereact/tooltip";
-import { classNames } from "primereact/utils";
 import Paginador from "../templates/PlantillaPaginacion";
 
 export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
@@ -178,10 +168,9 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                     className={`bg-[#eef1f5] rounded-md shadow-lg border ${
                       tieneCursosNoCertificados
                         ? "border-[#2FA807] hover:text-white"
-                        : tieneCursosNoVerificados ? "border-[#E61C45] hover:text-white"
+                        : tieneCursosNoVerificados
+                        ? "border-[#E61C45] hover:text-white"
                         : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158] border-gray-300"
-                        
-                        
                     } transition-all`}
                   >
                     <button
@@ -195,8 +184,9 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                         ${
                           tieneCursosNoCertificados
                             ? "border-[#2FA807] hover:bg-[#15EA0E] text-[#2FA807] hover:text-white"
-                            : tieneCursosNoVerificados ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45] hover:text-white" :
-                            "bg-gray-100 hover:bg-[#d3dce6] text-[#082158]"
+                            : tieneCursosNoVerificados
+                            ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45] hover:text-white"
+                            : "bg-gray-100 hover:bg-[#d3dce6] text-[#082158]"
                         }`}
                     >
                       {vocero.nombre} {vocero.nombre_dos} {vocero.apellido}{" "}
@@ -224,15 +214,6 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                 open={open}
                 setOpen={setOpen}
               />
-
-              {/* <Paginator
-                first={first}
-                rows={rows}
-                totalRecords={totalRecords}
-                onPageChange={onPageChange}
-                template={template1}
-                className="!flex !bg-gray-200 !border !border-gray-300 !rounded-md !shadow-lg"
-              /> */}
             </div>
           </>
         )}

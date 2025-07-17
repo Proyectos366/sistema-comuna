@@ -45,6 +45,12 @@ export default function DetallesListadoVoceros({
 
           <ListaDetallesVocero
             indice={1}
+            nombre={"Cargo"}
+            valor={vocero?.cargos?.[0]?.nombre ?? "No asignado"}
+          />
+
+          <ListaDetallesVocero
+            indice={1}
             nombre={"Comuna"}
             valor={vocero.comunas?.nombre || "Sin comuna"}
           />
