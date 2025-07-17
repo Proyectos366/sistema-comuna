@@ -29,6 +29,7 @@ export default function ComunasForm({
 
   const [todasComunas, setTodasComunas] = useState([]);
   const [parroquias, setParroquias] = useState([]);
+  const [nombreParroquia, setNombreParroquia] = useState("");
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
@@ -114,7 +115,10 @@ export default function ComunasForm({
         titulo={"¿Crear esta comuna?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo={"Nombre"} descripcion={nombreComuna} />
+          <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
+          {nombreParroquia && (
+            <ModalDatos titulo={"Parroquia"} descripcion={nombreParroquia} />
+          )}
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -139,6 +143,7 @@ export default function ComunasForm({
             parroquias={parroquias}
             nombre={nombreComuna}
             setNombre={setNombreComuna}
+            setNombreParroquia={setNombreParroquia}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
           />

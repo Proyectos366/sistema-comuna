@@ -3,12 +3,10 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 
 export async function GET() {
   try {
-    
-
     const todosDepartamentos = await prisma.departamento.findMany({
       where: {
-        borrado: false
-      }
+        borrado: false,
+      },
     });
 
     if (!todosDepartamentos) {

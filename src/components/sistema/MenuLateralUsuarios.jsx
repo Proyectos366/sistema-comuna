@@ -43,14 +43,14 @@ export default function MenuLateralUsuario({
                     nombre={"Inicio"}
                     volverInicio={volverInicio}
                   />
-                  <EnlacesBarraLateral
+                  {/* <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"oac"}
                     nombre={"OAC"}
                     volverInicio={volverInicio}
-                  />
+                  /> */}
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}

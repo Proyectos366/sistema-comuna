@@ -10,6 +10,7 @@ export default function FormCrearComuna({
   parroquias,
   nombre,
   setNombre,
+  setNombreParroquia,
   abrirModal,
   limpiarCampos,
 }) {
@@ -26,6 +27,7 @@ export default function FormCrearComuna({
         opciones={parroquias}
         seleccione={"Seleccione"}
         indice={1}
+        setNombre={setNombreParroquia}
       />
 
       {idParroquia && (

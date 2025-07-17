@@ -1,25 +1,41 @@
+"use client";
+
+import { useEffect } from "react";
 import SelectOpcion from "../SelectOpcion";
 import Formulario from "../Formulario";
 import LabelInput from "../inputs/LabelInput";
 import Input from "../inputs/Input";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import MenuDesplegable from "../MenuDesplegable";
 
 export default function FormCrearConsejo({
-  idParroquia,
-  idComunaCircuito,
-  cambiarSeleccionParroquia,
-  cambiarSeleccionComunaCircuito,
+  setIdParroquia,
+  idComuna,
+  idCircuito,
+  cambiarSeleccionComuna,
+  cambiarSeleccionCircuito,
   cambiarDondeGuardar,
   parroquias,
-  comunasCircuitos,
+  comunas,
+  circuitos,
   dondeGuardar,
-  setDondeGuardar,
-  nombre,
-  setNombre,
+  nombreComuna,
+  nombreCircuito,
+  nombreConsejo,
+  setNombreParroquia,
+  setNombreComuna,
+  setNombreCircuito,
+  setNombreConsejo,
   abrirModal,
   limpiarCampos,
 }) {
+  useEffect(() => {
+    if (idComuna || idCircuito) {
+      const parroquia = parroquias.find((c) => c.id === idComuna);
+      setNombreParroquia(parroquia?.nombre);
+      setIdParroquia(parroquia?.id);
+    }
+  }, [idComuna, idCircuito]);
+
   return (
     <Formulario
       onSubmit={(e) => {
@@ -38,37 +54,38 @@ export default function FormCrearConsejo({
         seleccione={"Seleccione"}
         indice={1}
       />
-      <MenuDesplegable>
-        {dondeGuardar !== 0 && (
-          <SelectOpcion
-            idOpcion={idParroquia}
-            nombre={"Parroquias"}
-            handleChange={cambiarSeleccionParroquia}
-            opciones={parroquias}
-            seleccione={"Seleccione"}
-            indice={1}
-          />
-        )}
 
-        {dondeGuardar !== 0 && idParroquia && (
-          <SelectOpcion
-            idOpcion={idComunaCircuito}
-            nombre={dondeGuardar === 1 ? "Comunas" : "Circuitos"}
-            handleChange={cambiarSeleccionComunaCircuito}
-            opciones={comunasCircuitos}
-            seleccione={"Seleccione"}
-            indice={1}
-          />
-        )}
-      </MenuDesplegable>
+      {dondeGuardar === 1 && (
+        <SelectOpcion
+          idOpcion={idComuna}
+          nombre={"Comunas"}
+          handleChange={cambiarSeleccionComuna}
+          opciones={comunas}
+          seleccione={"Seleccione"}
+          indice={1}
+          setNombre={setNombreComuna}
+        />
+      )}
 
-      {dondeGuardar !== 0 && idParroquia && idComunaCircuito && (
+      {dondeGuardar === 2 && (
+        <SelectOpcion
+          idOpcion={idCircuito}
+          nombre={"Circuitos"}
+          handleChange={cambiarSeleccionCircuito}
+          opciones={circuitos}
+          seleccione={"Seleccione"}
+          indice={1}
+          setNombre={setNombreCircuito}
+        />
+      )}
+
+      {dondeGuardar !== 0 && (idComuna || idCircuito) && (
         <>
           <LabelInput nombre={"Nombre"}>
             <Input
               type={"text"}
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              value={nombreConsejo}
+              onChange={(e) => setNombreConsejo(e.target.value)}
             />
           </LabelInput>
 
@@ -78,22 +95,20 @@ export default function FormCrearConsejo({
               aceptar={abrirModal}
               nombre={"Crear"}
               campos={{
-                nombre,
-                idParroquia,
-                idComunaCircuito,
+                nombreConsejo,
+                idComuna,
               }}
             />
 
             <BotonAceptarCancelar
               indice={"limpiar"}
               aceptar={() => {
-                limpiarCampos({ setNombre });
+                limpiarCampos({ setNombreConsejo });
               }}
               nombre={"Limpiar"}
               campos={{
-                nombre,
-                idParroquia,
-                idComunaCircuito,
+                nombreConsejo,
+                idComuna,
               }}
             />
           </div>

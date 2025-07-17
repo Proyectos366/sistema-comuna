@@ -17,6 +17,7 @@ import VoceroForm from "../opciones/VoceroForm";
 import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
+import UsuariosForm from "../opciones/UsuariosForm";
 //import FormOac from "../oac/FormOac";
 
 export default function VistaUniversalUsuarios({ children }) {
@@ -44,9 +45,8 @@ export default function VistaUniversalUsuarios({ children }) {
   const pathname = usePathname();
   const userType = usuarioActivo?.id_rol;
 
-  const idDepartamento = departamento?.id;
-  const nombreDepartamento = departamento?.nombre;
-  
+  // const idDepartamento = departamento?.id;
+  // const nombreDepartamento = departamento?.nombre;
 
   useEffect(() => {
     if (screenSize?.width > 640) {
@@ -122,7 +122,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
+        "oac",
       ],
       2: [
         "parroquias",
@@ -137,7 +137,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
+        "oac",
       ],
       3: [
         "comunas",
@@ -155,7 +155,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
+        "oac",
       ],
     };
 
@@ -222,6 +222,19 @@ export default function VistaUniversalUsuarios({ children }) {
                 </p>
               ) : (
                 <>
+                  {vista === "usuarios" && (
+                    <UsuariosForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
+                  )}
+
                   {vista === "parroquias" && (
                     <ParroquiasForm
                       mostrar={mostrarModal}

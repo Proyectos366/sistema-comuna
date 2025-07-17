@@ -24,16 +24,34 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
+    // const todosUsuarios = await prisma.usuario.findMany({
+    //   where: {
+    //     correo: {
+    //       not: {
+    //         in: [correo, "master@gmail.com"],
+    //       },
+    //     },
+    //     borrado: false,
+    //   },
+    //   orderBy: {
+    //     nombre: "asc",
+    //   },
+    // });
+
     const todosUsuarios = await prisma.usuario.findMany({
       where: {
         correo: {
           not: {
-            in: [correo, 'master@gmail.com'],
+            in: [correo, "master@gmail.com"],
           },
         },
+        borrado: false,
       },
       orderBy: {
         nombre: "asc",
+      },
+      include: {
+        MiembrosDepartamentos: true
       },
     });
 
@@ -48,7 +66,7 @@ export async function GET() {
       return generarRespuesta(
         msjCorrectos.ok,
         msjCorrectos.okConsultarTodosUsuarios.usuariosEncontrados,
-        { todosUsuarios: todosUsuarios },
+        { usuarios: todosUsuarios },
         msjCorrectos.codigo.codigo200
       );
     }
