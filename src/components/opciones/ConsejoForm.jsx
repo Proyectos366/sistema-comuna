@@ -122,8 +122,6 @@ export default function ConsejoForm({
 
   const cambiarSeleccionComunas = (e) => {
     const valor = e.target.value;
-    console.log(valor);
-
     setIdComuna(valor);
   };
 

@@ -44,6 +44,40 @@ export async function POST(request) {
       },
     });
 
+    /**
+      const nuevoUsuario = await prisma.$transaction(
+        async (tx) => {
+          const nuevoUsuarioCreado = await tx.usuario.create({
+            data: {
+              cedula: validaciones.cedula,
+              nombre: validaciones.nombre,
+              correo: validaciones.correo,
+              token: token,
+              clave: validaciones.claveEncriptada,
+              borrado: false,
+              id_rol: 4,
+            },
+          });
+
+          // Intentamos conectar los departamentos
+          await Promise.all(
+            departamento.map(({ id }) =>
+              tx.departamento.update({
+                where: { id },
+                data: {
+                  miembros: {
+                    connect: { id: nuevoUsuarioCreado.id },
+                  },
+                },
+              })
+            )
+          );
+
+          return nuevoUsuarioCreado;
+        }
+      );
+    */
+
     if (!nuevoUsuario) {
       return generarRespuesta(
         msjErrores.error,

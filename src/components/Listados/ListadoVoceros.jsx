@@ -198,6 +198,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                       index={index}
                       vocero={vocero}
                       editar={editar}
+                      setAbierto={setAbierto}
                     />
                   </div>
                 );

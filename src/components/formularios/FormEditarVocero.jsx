@@ -238,7 +238,7 @@ export default function FormEditarVocero({
           seleccione="Seleccione una comuna"
           setNombre={setNombreComuna}
           setDatos={setDatos}
-          indice={1}
+          // indice={1}
         />
 
         {idComuna && consejosFiltrados.length > 0 && (
@@ -249,7 +249,7 @@ export default function FormEditarVocero({
             opciones={consejosFiltrados}
             seleccione="Seleccione un consejo"
             setNombre={setNombreConsejoComunal}
-            indice={1}
+            // indice={1}
           />
         )}
 

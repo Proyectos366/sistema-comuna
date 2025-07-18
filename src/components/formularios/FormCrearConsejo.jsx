@@ -9,6 +9,7 @@ import BotonAceptarCancelar from "../BotonAceptarCancelar";
 
 export default function FormCrearConsejo({
   setIdParroquia,
+  idParroquia,
   idComuna,
   idCircuito,
   cambiarSeleccionComuna,
@@ -30,9 +31,9 @@ export default function FormCrearConsejo({
 }) {
   useEffect(() => {
     if (idComuna || idCircuito) {
-      const parroquia = parroquias.find((c) => c.id === idComuna);
-      setNombreParroquia(parroquia?.nombre);
-      setIdParroquia(parroquia?.id);
+      const resultComuna = comunas.find((c) => c.id === idComuna);
+      setNombreParroquia(resultComuna?.nombre);
+      setIdParroquia(resultComuna?.id_parroquia);
     }
   }, [idComuna, idCircuito]);
 

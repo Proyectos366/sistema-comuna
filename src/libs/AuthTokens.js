@@ -67,7 +67,7 @@ export default class AuthTokens {
       };
     }
   }
-  
+
   static descifrarToken(token) {
     try {
       if (!token) {
@@ -78,6 +78,8 @@ export default class AuthTokens {
       }
 
       const descifrada = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+
+      const correo = descifrada.correo;
 
       if (!descifrada || !descifrada.correo || !descifrada.rol) {
         return {
@@ -92,7 +94,7 @@ export default class AuthTokens {
         numero: 1,
         message: "Token válido...",
         isValido: true,
-        correo: descifrada.correo,
+        correo: correo.toLowerCase(),
         id_rol: descifrada.rol,
       };
     } catch (error) {

@@ -56,34 +56,6 @@ export default function VistaUniversalUsuarios({ children }) {
     }
   }, [screenSize]);
 
-  // **Función para cambiar la ruta correctamente**
-  const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
-    let baseRuta = [
-      null,
-      "/dashboard/master",
-      "/dashboard/administrador",
-      "/dashboard/director",
-      "/dashboard/empleados",
-    ][id_rol];
-
-    if (!baseRuta) {
-      console.error("ID de rol inválido o no especificado.");
-      return;
-    }
-
-    setCargandoVista(true);
-    setVistaCargando(nuevaVista);
-
-    // **Primero cambiar la URL**
-    router.push(`${baseRuta}/${subRuta || "inicio"}`, { shallow: true });
-
-    // **Luego actualizar la vista después de que la URL cambie**
-    setTimeout(() => {
-      setVista(nuevaVista);
-      setCargandoVista(false);
-    }, 3000);
-  };
-
   // **Sincronizar URL antes de la vista**
   useEffect(() => {
     const subRuta = pathname.split("/").pop();
@@ -137,7 +109,6 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac",
       ],
       3: [
         "comunas",
@@ -150,12 +121,13 @@ export default function VistaUniversalUsuarios({ children }) {
         "cambiar-clave",
       ],
       4: [
+        "comunas",
         "consejos-comunales",
         "circuitos-comunales",
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac",
+        departamento?.nombre === "oac" ? "oac" : "",
       ],
     };
 
@@ -175,6 +147,34 @@ export default function VistaUniversalUsuarios({ children }) {
       router.replace(rutasPorDefecto[userType], { shallow: true });
     }
   }, [pathname, userType]);
+
+  // **Función para cambiar la ruta correctamente**
+  const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
+    let baseRuta = [
+      null,
+      "/dashboard/master",
+      "/dashboard/administrador",
+      "/dashboard/director",
+      "/dashboard/empleados",
+    ][id_rol];
+
+    if (!baseRuta) {
+      console.error("ID de rol inválido o no especificado.");
+      return;
+    }
+
+    setCargandoVista(true);
+    setVistaCargando(nuevaVista);
+
+    // **Primero cambiar la URL**
+    router.push(`${baseRuta}/${subRuta || "inicio"}`, { shallow: true });
+
+    // **Luego actualizar la vista después de que la URL cambie**
+    setTimeout(() => {
+      setVista(nuevaVista);
+      setCargandoVista(false);
+    }, 3000);
+  };
 
   const abrirDashboar = () => setAbrirPanel(!abrirPanel);
 

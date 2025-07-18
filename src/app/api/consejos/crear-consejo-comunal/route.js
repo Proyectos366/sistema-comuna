@@ -71,16 +71,16 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      return generarRespuesta(
-        "ok",
-        "Consejo comunal creado...",
-        {
-          consejo: nuevoConsejoComunal,
-        },
-        201
-      );
     }
+    
+    return generarRespuesta(
+      "ok",
+      "Consejo comunal creado...",
+      {
+        consejo: nuevoConsejoComunal,
+      },
+      201
+    );
   } catch (error) {
     console.log(`Error interno (consejo comunal): ` + error);
 

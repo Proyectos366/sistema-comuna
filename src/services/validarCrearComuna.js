@@ -56,8 +56,6 @@ export default async function validarCrearComuna(
       );
     }
 
-    console.log(validandoCampos);
-
     const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
     const norteMinuscula = norte ? norte.toLowerCase() : "";
     const surMinuscula = sur ? sur.toLowerCase() : "";

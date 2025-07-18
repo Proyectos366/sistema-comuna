@@ -116,10 +116,10 @@ export default function MostrarAlInicioUsuarios({
 
       <div className="flex flex-col mt-3">
         <div className="flex justify-start">
-          <Titulos indice={2} titulo={"Consultas"} />
+          <Titulos indice={2} titulo={"Bienvenidos"} />
         </div>
 
-        <div className="border border-gray-200 p-2 rounded-md mb-2">
+        {/* <div className="border border-gray-200 p-2 rounded-md mb-2">
           <div className="flex flex-wrap gap-2 sm:justify-between">
             <div className="w-full sm:w-auto">
               <InputCheckBox
@@ -198,7 +198,7 @@ export default function MostrarAlInicioUsuarios({
             cambiarSeleccionConsejo={cambiarSeleccionConsejo}
             consejos={todosConsejos}
           />
-        </DivDosConsultas>
+        </DivDosConsultas> */}
       </div>
     </>
   );

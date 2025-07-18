@@ -28,10 +28,7 @@ export default async function validarInicioSesion(correo, clave) {
     });
 
     if (!datosInicioSesion) {
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.credencialesInvalidas
-      );
+      return retornarRespuestaFunciones("error", "Credenciales invalidas...");
     }
 
     const claveEncriptada = await CifrarDescifrarClaves.compararClave(

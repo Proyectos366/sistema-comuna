@@ -3,7 +3,19 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 
 export async function GET() {
   try {
-    const departamentos = ["oac", "despacho", "informatica"].map((nombre) => ({
+    const departamentos = [
+      "oac",
+      "despacho",
+      "informatica",
+      "determinacion y responsabilidad",
+      "direccion general",
+      "administracion y presupuesto",
+      "talento humano",
+      "control posterior",
+      "auditoria interna",
+      "potestad e investigacion",
+      "archivos",
+    ].map((nombre) => ({
       nombre,
       descripcion: "sin descripcion",
       borrado: false,

@@ -62,7 +62,7 @@ export default function ParticipantesForm({
 
   const [searchTerm, setSearchTerm] = useState("");
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(20);
 
   const [ordenCampo, setOrdenCampo] = useState("nombre");
   const [ordenAscendente, setOrdenAscendente] = useState(true);
@@ -77,10 +77,8 @@ export default function ParticipantesForm({
           axios.get("/api/usuarios/todos-usuarios"),
         ]);
 
-        //console.log(formadoresRes.data.todosUsuarios);
-
         setCursos(cursosRes.data.cursos || []);
-        setFormadores(formadoresRes.data.todosUsuarios || []);
+        setFormadores(formadoresRes.data.usuarios || []);
       } catch (error) {
         console.log("Error, al obtener datos: " + error);
       }
@@ -663,7 +661,7 @@ export default function ParticipantesForm({
               </div>
 
               {vocerosPagina?.length === 0 && searchTerm !== "" ? (
-                <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-md">
+                <div className="w-full p-4 bg-white rounded-md text-center text-[#E61C45] font-semibold shadow-md border border-[#E61C45]">
                   No se encontraron voceros que coincidan con la búsqueda.
                 </div>
               ) : (
@@ -790,7 +788,7 @@ export default function ParticipantesForm({
                                   <ListaDetallesVocero
                                     nombre={"Consejo comunal"}
                                     valor={
-                                      curso.voceros.consejo?.nombre ||
+                                      curso.voceros.consejos?.nombre ||
                                       "No asignado"
                                     }
                                     indice={1}

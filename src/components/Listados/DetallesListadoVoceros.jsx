@@ -1,19 +1,41 @@
+"use client";
 import { formatearFecha } from "@/utils/Fechas";
 import ListaDetallesVocero from "./ListaDetalleVocero";
 import BotonEditar from "../botones/BotonEditar";
 import { formatearCedula } from "@/utils/formatearCedula";
 import { formatearTelefono } from "@/utils/formatearTelefono";
 
+import { useEffect, useRef } from "react";
+
 export default function DetallesListadoVoceros({
   abierto,
   index,
   vocero,
   editar,
+  setAbierto, // ← Necesitarás pasar esta función desde el padre
 }) {
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setAbierto(null); // o `false`, depende cómo estés manejando el estado
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setAbierto]);
+
   return (
     <>
       {abierto === index && (
-        <div className="bg-white text-gray-800 text-base sm:text-sm rounded-b-md p-4 shadow-lg">
+        <div
+          ref={wrapperRef}
+          className="bg-white text-gray-800 text-base sm:text-sm rounded-b-md p-4 shadow-lg"
+        >
           <div className="relative w-full flex items-center">
             <ListaDetallesVocero
               indice={1}
