@@ -1,11 +1,7 @@
 "use client";
 
-import ImagenFondo from "@/components/ImagenFondo";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Input from "@/components/Input";
-import Label from "@/components/Label";
-import Boton from "@/components/Boton";
 import LinkPaginas from "@/components/Link";
 import Modal from "@/components/Modal";
 import ModalDatos from "@/components/ModalDatos";
@@ -13,18 +9,17 @@ import MostrarMsj from "@/components/MostrarMensaje";
 import Formulario from "@/components/Formulario";
 import Titulos from "@/components/Titulos";
 import ModalPequena from "@/components/ModalPeque";
-import Main from "@/components/Main";
-//import LabelInput from "@/components/LabelInput";
 import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
 import InputClave from "@/components/inputs/InputClave";
 import ModalDatosContenedor from "@/components/ModalDatosContenedor";
 import BotonesModal from "@/components/BotonesModal";
-
 import LabelInput from "@/components/inputs/LabelInput";
 import InputCedula from "@/components/inputs/InputCedula";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputCorreo from "@/components/inputs/InputCorreo";
+import ImgRegistroLogin from "@/components/ImgRegistroLogin";
+import ImgDosRegistroLogin from "@/components/ImgDosRegistroLogin";
 
 export default function RegistrarUsuario() {
   const [cedula, setCedula] = useState("");
@@ -45,7 +40,7 @@ export default function RegistrarUsuario() {
   const [verModal, setVerModal] = useState(false);
 
   const [todosDepartamentos, setTodosDepartamentos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
   const [idDepartamento, setIdDepartamento] = useState("");
   const [nombreDepartamento, setNombreDepartamento] = useState("");
 
@@ -63,8 +58,6 @@ export default function RegistrarUsuario() {
         setTodosDepartamentos(response.data.departamentos || []);
       } catch (error) {
         console.log("Error, al obtener los departamentos: " + error);
-      } finally {
-        setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
       }
     };
 
@@ -173,46 +166,39 @@ export default function RegistrarUsuario() {
 
   const crearUsuario = async () => {
     try {
-      const data = {
-        cedula: cedula,
-        nombre: nombre,
-        correo: correo,
-        claveUno: claveUno,
-        claveDos: claveDos,
-        departamento:
-          seleccionarDepartamentos.length > 0
-            ? seleccionarDepartamentos.map(({ id }) => ({ id }))
-            : [],
+      setIsLoading(true);
+
+      const payload = {
+        cedula,
+        nombre,
+        correo,
+        claveUno,
+        claveDos,
+        departamento: seleccionarDepartamentos.map(({ id }) => ({ id })),
       };
 
-      const respuesta = await axios.post(`/api/usuarios/crear-usuario`, data);
+      const { data } = await axios.post("/api/usuarios/crear-usuario", payload);
 
-      console.log(respuesta.data);
+      setMensajeBackEnd(data.message);
 
-      if (respuesta.data.status === "ok") {
-        setMensajeBackEnd(respuesta.data.message);
-        setTimeout(() => {
-          setCedula("");
-          setNombre("");
-          setCorreo("");
-          setClaveUno("");
-          setClaveDos("");
-          setMensajeBackEnd("");
-          window.location.href = respuesta.data.redirect;
-        }, 5000);
-      }
+      setTimeout(() => {
+        limpiarCampos(); // agrupamos limpieza de estados
+        setMensajeBackEnd("");
+        window.location.href = data.redirect;
+      }, 3000);
     } catch (error) {
       console.log("Error, al crear el usuario: " + error);
 
-      if (error && error.response && error.response.status === 400) {
-        setMensajeBackEnd(error.response.data.message);
-      } else {
-        setMensajeBackEnd("Error interno");
-      }
+      const mensajeError =
+        error?.response?.data?.message || "Error inesperado.";
+      setMensajeBackEnd(mensajeError);
 
       setTimeout(() => {
         cerrarModal();
-      }, 5000);
+        setMensajeBackEnd("");
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -249,8 +235,6 @@ export default function RegistrarUsuario() {
 
   return (
     <>
-      {/* <ImagenFondo /> */}
-
       <Modal
         isVisible={mostrar}
         onClose={cerrarModal}
@@ -264,8 +248,12 @@ export default function RegistrarUsuario() {
             titulo={"Departamento"}
             descripcion={nombreDepartamento}
           />
-          <ModalDatos titulo={"Clave"} descripcion={claveUno} />
-          <ModalDatos titulo={"Confirmar clave"} descripcion={claveDos} />
+          <ModalDatos titulo={"Clave"} descripcion={claveUno} indice={1} />
+          <ModalDatos
+            titulo={"Confirmar clave"}
+            descripcion={claveDos}
+            indice={1}
+          />
           <ModalDatos
             titulo={"Departamento"}
             descripcion={nombreDepartamento}
@@ -283,7 +271,7 @@ export default function RegistrarUsuario() {
           cancelar={cerrarModal}
           indiceUno={"crear"}
           indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
+          nombreUno={isLoading ? "Procesando..." : "Aceptar"}
           nombreDos={"Cancelar"}
           campos={{
             nombre,
@@ -291,259 +279,195 @@ export default function RegistrarUsuario() {
         />
       </Modal>
 
-      <Main>
-        <div className="flex flex-col items-center max-w-[700px] bg-white w-full rounded-md px-2 py-5 sm:px-10 sm:py-10 border border-black shadow-lg">
-          <Titulos indice={2} titulo={"Crear usuario"} />
+      <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4 py-10">
+        <section className="flex flex-col gap-4  sm:max-w-[400px] md:max-w-none w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+          <ImgRegistroLogin />
 
-          <Formulario
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <div className="w-full flex flex-col sm:flex-row sm:space-x-4 space-y-2">
-              <LabelInput nombre={"Cedula"}>
-                <InputCedula
-                  type="text"
-                  indice={"cedula"}
-                  value={cedula}
-                  setValue={setCedula}
-                  validarCedula={validarCedula}
-                  setValidarCedula={setValidarCedula}
+          <div className="flex flex-col w-full mt-4">
+            <Titulos
+              indice={1}
+              titulo={"Entrar al Sistema"}
+              className="text-center text-xl font-semibold text-gray-700 mb-4"
+            />
+
+            <Formulario
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <div className="w-full flex flex-col space-y-2">
+                <LabelInput nombre={"Cedula"}>
+                  <InputCedula
+                    type="text"
+                    indice={"cedula"}
+                    value={cedula}
+                    setValue={setCedula}
+                    validarCedula={validarCedula}
+                    setValidarCedula={setValidarCedula}
+                  />
+                </LabelInput>
+
+                <LabelInput nombre={"Correo"}>
+                  <InputCorreo
+                    type="text"
+                    indice="email"
+                    value={correo}
+                    setValue={setCorreo}
+                    validarCorreo={validarCorreo}
+                    setValidarCorreo={setValidarCorreo}
+                  />
+                </LabelInput>
+
+                <LabelInput nombre={"Nombre"}>
+                  <InputNombre
+                    type="text"
+                    indice="nombre"
+                    value={nombre}
+                    setValue={setNombre}
+                    validarNombre={validarNombre}
+                    setValidarNombre={setValidarNombre}
+                  />
+                </LabelInput>
+
+                <SelectOpcion
+                  idOpcion={idDepartamento}
+                  nombre={"Departamentos"}
+                  handleChange={cambiarSeleccionDepartamento}
+                  opciones={todosDepartamentos}
+                  seleccione={"Seleccione"}
+                  setNombre={setNombreDepartamento}
                 />
-              </LabelInput>
 
-              <LabelInput nombre={"Correo"}>
-                <InputCorreo
-                  type="text"
-                  indice="email"
-                  value={correo}
-                  setValue={setCorreo}
-                  validarCorreo={validarCorreo}
-                  setValidarCorreo={setValidarCorreo}
-                />
-              </LabelInput>
-            </div>
+                <LabelInput nombre={"Clave"}>
+                  <InputClave
+                    type={"password"}
+                    value={claveUno}
+                    onChange={leyendoClave1}
+                    indice={"clave"}
+                    validarClave={validarClave}
+                    setValidarClave={setValidarClave}
+                  />
+                </LabelInput>
 
-            <div className="w-full flex flex-col sm:flex-row sm:space-x-4 -mt-2 space-y-2">
-              <LabelInput nombre={"Nombre"}>
-                <InputNombre
-                  type="text"
-                  indice="nombre"
-                  value={nombre}
-                  setValue={setNombre}
-                  validarNombre={validarNombre}
-                  setValidarNombre={setValidarNombre}
-                />
-              </LabelInput>
-
-              <SelectOpcion
-                idOpcion={idDepartamento}
-                nombre={"Departamentos"}
-                handleChange={cambiarSeleccionDepartamento}
-                opciones={todosDepartamentos}
-                seleccione={"Seleccione"}
-                setNombre={setNombreDepartamento}
-              />
-            </div>
-
-            <div className="w-full flex flex-col space-y-2 -mt-2">
-              <LabelInput nombre={"Clave"}>
-                <InputClave
-                  type={"password"}
-                  value={claveUno}
-                  onChange={leyendoClave1}
-                  indice={"clave"}
-                  validarClave={validarClave}
-                  setValidarClave={setValidarClave}
-                />
-              </LabelInput>
-
-              <LabelInput nombre={"Clave confirmar"}>
-                <InputClave
-                  type={"password"}
-                  value={claveDos}
-                  onChange={leyendoClave2}
-                  indice={"clave2"}
-                  mostrarModalS={mostrarModalS}
-                  ocultarModal={ocultarModal}
-                />
-              </LabelInput>
-
-              {/* <div className="flex justify-between w-full space-x-4 border">
-                <div className="w-[80%]">
-                  <LabelInput nombre={"Clave"}>
-                    <InputClave
-                      type={"password"}
-                      nombre={"Clave confirmar"}
-                      value={claveDos}
-                      onChange={leyendoClave2}
-                      indice={"clave2"}
-                    />
-                  </LabelInput>
-                </div>
-
-                <div className="flex w-[20%]">
-                  <div
-                    onMouseEnter={mostrarModalS}
-                    onMouseLeave={ocultarModal}
-                    className="w-full bg-white h-10 flex justify-center items-center rounded-md border border-gray-300 hover:border-[#082158]"
-                  >
-                    <svg
-                      fill="#082158"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 52 52"
-                      enableBackground="new 0 0 52 52"
-                      xmlSpace="preserve"
-                    >
-                      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                      <g
-                        id="SVGRepo_tracerCarrier"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      ></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <g>
-                          <path d="M26.7,42.8c0.8,0,1.5,0.7,1.5,1.5v3.2c0,0.8-0.7,1.5-1.5,1.5h-3.2c-0.8,0-1.5-0.7-1.5-1.5v-3.2 c0-0.8,0.7-1.5,1.5-1.5H26.7z"></path>
-                          <path d="M28.2,35.1c0-2.1,1.3-4,3.1-4.8h0.1c5.2-2.1,8.8-7.2,8.8-13.2c0-7.8-6.4-14.2-14.2-14.2 c-7.2,0-13.2,5.3-14.2,12.2v0.1c-0.1,0.9,0.6,1.6,1.5,1.6h3.2c0.8,0,1.4-0.5,1.5-1.1v-0.2c0.7-3.7,4-6.5,7.9-6.5 c4.5,0,8.1,3.6,8.1,8.1c0,2.1-0.8,4-2.1,5.5l-0.1,0.1c-0.9,1-2.1,1.6-3.3,2c-4,1.4-6.7,5.2-6.7,9.4v1.5c0,0.8,0.6,1.4,1.4,1.4h3.2 c0.8,0,1.6-0.6,1.6-1.5L28.2,35.1z"></path>
-                        </g>
-                      </g>
-                    </svg>
-                  </div>
-                </div>
-              </div> */}
-            </div>
-
-            <ModalPequena visible={visible} />
-
-            <div className="flex items-center justify-between -mt-3 sm:mt-0">
-              <LinkPaginas href="/" nombre={"Login"} />
-              <LinkPaginas
-                href="/recuperar-clave-correo"
-                nombre={"Olvido su clave?"}
-              />
-            </div>
-
-            {mensaje && (
-              <div className="w-full mb-3">
-                <MostrarMsj mensaje={mensaje} />
+                <LabelInput nombre={"Clave confirmar"}>
+                  <InputClave
+                    type={"password"}
+                    value={claveDos}
+                    onChange={leyendoClave2}
+                    indice={"clave2"}
+                    mostrarModalS={mostrarModalS}
+                    ocultarModal={ocultarModal}
+                  />
+                </LabelInput>
               </div>
-            )}
 
-            <div className="flex space-x-4">
-              <BotonAceptarCancelar
-                indice={"aceptar"}
-                aceptar={mostrarModal}
-                nombre={"Crear"}
-                campos={{
-                  cedula,
-                  correo,
-                  nombre,
-                  idDepartamento,
-                  claveUno,
-                  claveDos,
-                }}
-              />
+              <ModalPequena visible={visible} />
 
-              <BotonAceptarCancelar
-                indice={"limpiar"}
-                aceptar={() => {
-                  limpiarCampos({
-                    setCedula,
-                    setCorreo,
-                    setNombre,
-                    setIdDepartamento,
-                    setClaveUno,
-                    setClaveDos,
-                  });
-                }}
-                nombre={"Limpiar"}
-                campos={{
-                  cedula,
-                  correo,
-                  nombre,
-                  idDepartamento,
-                  claveUno,
-                  claveDos,
-                }}
-              />
-            </div>
-          </Formulario>
-        </div>
-      </Main>
+              <div className="flex items-center justify-between -mt-3 sm:mt-0">
+                <LinkPaginas href="/" nombre={"Login"} />
+                <LinkPaginas
+                  href="/recuperar-clave-correo"
+                  nombre={"Olvido su clave?"}
+                />
+              </div>
+
+              {mensaje && (
+                <div className="w-full mb-3">
+                  <MostrarMsj mensaje={mensaje} />
+                </div>
+              )}
+
+              <div className="flex space-x-4">
+                <BotonAceptarCancelar
+                  indice={"aceptar"}
+                  aceptar={mostrarModal}
+                  nombre={"Crear"}
+                  campos={{
+                    cedula,
+                    correo,
+                    nombre,
+                    idDepartamento,
+                    claveUno,
+                    claveDos,
+                  }}
+                />
+
+                <BotonAceptarCancelar
+                  indice={"limpiar"}
+                  aceptar={() => {
+                    limpiarCampos({
+                      setCedula,
+                      setCorreo,
+                      setNombre,
+                      setIdDepartamento,
+                      setClaveUno,
+                      setClaveDos,
+                    });
+                  }}
+                  nombre={"Limpiar"}
+                  campos={{
+                    cedula,
+                    correo,
+                    nombre,
+                    idDepartamento,
+                    claveUno,
+                    claveDos,
+                  }}
+                />
+              </div>
+            </Formulario>
+          </div>
+        </section>
+
+        <ImgDosRegistroLogin />
+      </div>
     </>
   );
 }
 
-/** 
-const crearUsuario = async (
-  cedula,
-  nombre,
-  correo,
-  claveUno,
-  claveDos,
-  setCedula,
-  setNombre,
-  setCorreo,
-  setClaveUno,
-  setClaveDos,
-  setMensaje,
-  seleccionarDepartamentos
-) => {
-  try {
-    console.log(seleccionarDepartamentos);
+/**
+    const crearUsuario = async () => {
+      try {
+        const data = {
+          cedula: cedula,
+          nombre: nombre,
+          correo: correo,
+          claveUno: claveUno,
+          claveDos: claveDos,
+          departamento:
+            seleccionarDepartamentos.length > 0
+              ? seleccionarDepartamentos.map(({ id }) => ({ id }))
+              : [],
+        };
 
-    const data = {
-      cedula: cedula,
-      nombre: nombre,
-      correo: correo,
-      claveUno: claveUno,
-      claveDos: claveDos,
-      departamento:
-        seleccionarDepartamentos.length > 0
-          ? seleccionarDepartamentos.map(({ id }) => ({ id }))
-          : [],
+        const respuesta = await axios.post(`/api/usuarios/crear-usuario`, data);
+
+        console.log(respuesta.data);
+
+        if (respuesta.data.status === "ok") {
+          setMensajeBackEnd(respuesta.data.message);
+          setTimeout(() => {
+            setCedula("");
+            setNombre("");
+            setCorreo("");
+            setClaveUno("");
+            setClaveDos("");
+            setMensajeBackEnd("");
+            window.location.href = respuesta.data.redirect;
+          }, 5000);
+        }
+      } catch (error) {
+        console.log("Error, al crear el usuario: " + error);
+
+        if (error && error.response && error.response.status === 400) {
+          setMensajeBackEnd(error.response.data.message);
+        } else {
+          setMensajeBackEnd("Error interno");
+        }
+
+        setTimeout(() => {
+          cerrarModal();
+        }, 5000);
+      }
     };
-
-    const respuesta = await axios.post(`/api/usuarios/crear-usuario`, data);
-
-    console.log(respuesta.data);
-
-    if (respuesta.data.status === "ok") {
-      setMensaje(respuesta.data.message);
-      setTimeout(() => {
-        setCedula("");
-        setNombre("");
-        setCorreo("");
-        setClaveUno("");
-        setClaveDos("");
-        setMensaje("");
-        window.location.href = respuesta.data.redirect;
-      }, 5000);
-    } else {
-      setMensaje(respuesta.data.message);
-
-      setTimeout(() => {
-        setClaveUno("");
-        setClaveDos("");
-        setMensaje("");
-      }, 5000);
-    }
-  } catch (error) {
-    console.log("Error, al crear el usuario: " + error);
-
-    if (error && error.response && error.response.status === 400) {
-      setMensaje(error.response.data.message);
-    } else {
-      setMensaje("Error interno");
-    }
-
-    setTimeout(() => {
-      setClaveUno("");
-      setClaveDos("");
-      setMensaje("");
-    }, 5000);
-  }
-};
-*/
+  */

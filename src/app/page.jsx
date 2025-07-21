@@ -13,6 +13,8 @@ import InputClave from "@/components/inputs/InputClave";
 import BotonesModal from "@/components/BotonesModal";
 import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import ImgRegistroLogin from "@/components/ImgRegistroLogin";
+import ImgDosRegistroLogin from "@/components/ImgDosRegistroLogin";
 
 export default function Home() {
   const [correo, setCorreo] = useState("");
@@ -20,6 +22,8 @@ export default function Home() {
   const [mensaje, setMensaje] = useState("");
 
   const [validarCorreo, setValidarCorreo] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -39,31 +43,57 @@ export default function Home() {
     };
   }, [correo, clave]); // Dependencias
 
-  const iniciarSesion = async () => {
-    try {
-      const respuesta = await axios.post(`/api/login`, { correo, clave });
+  /** 
+    const iniciarSesion = async () => {
+      try {
+        const respuesta = await axios.post(`/api/login`, { correo, clave });
 
-      console.log(respuesta.data);
+        if (respuesta.data.status === "ok") {
+          window.location.href = respuesta.data.redirect;
+        } else {
+          setMensaje(respuesta.data.message);
+        }
 
-      if (respuesta.data.status === "ok") {
-        window.location.href = respuesta.data.redirect;
-      } else {
-        setMensaje(respuesta.data.message);
+        setTimeout(() => {
+          setMensaje("");
+          setCorreo("");
+          setClave("");
+        }, 5000);
+      } catch (error) {
+        console.log("Error, al iniciar sesión: " + error);
+
+        setMensaje(error?.response?.data?.message);
+        setTimeout(() => {
+          setMensaje("");
+          setClave("");
+        }, 5000);
       }
+    };
+  */
 
-      setTimeout(() => {
-        setMensaje("");
-        setCorreo("");
-        setClave("");
-      }, 5000);
+  const iniciarSesion = async () => {
+    if (isLoading) return; // Evita múltiples envíos rápidos
+
+    try {
+      setIsLoading(true);
+
+      const { data } = await axios.post("/api/login", { correo, clave });
+
+      setMensaje("");
+      setCorreo("");
+      setClave("");
+      window.location.href = data.redirect;
     } catch (error) {
-      console.log("Error al iniciar sesión: " + error);
+      console.log("Error, al iniciar sesión: " + error);
 
       setMensaje(error?.response?.data?.message);
+
       setTimeout(() => {
         setMensaje("");
         setClave("");
-      }, 5000);
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,11 +108,16 @@ export default function Home() {
   };
 
   return (
-    <>
-      {/* <ImagenFondo /> */}
-      <Main>
-        <div className="flex flex-col items-center max-w-[700px] bg-white w-full rounded-md px-2 py-5 sm:px-10 sm:py-10 space-y-5 border border-black shadow-lg">
-          <Titulos indice={1} titulo={"Entrar al sistema"} />
+    <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4">
+      <section className="flex flex-col items-center justify-center gap-4 h-[500px] sm:max-w-[400px] md:max-w-none w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+        <ImgRegistroLogin />
+
+        <div className="flex flex-col w-full mt-4">
+          <Titulos
+            indice={1}
+            titulo={"Entrar al Sistema"}
+            className="text-center text-xl font-semibold text-gray-700 mb-2"
+          />
 
           <Formulario
             onSubmit={(e) => {
@@ -113,45 +148,6 @@ export default function Home() {
               </LabelInput>
             </div>
 
-            {/* <div className="space-y-1">
-              <Label
-                htmlFor={"correo_login"}
-                nombre={"Correo"}
-                className={`font-semibold`}
-              />
-
-              <Input
-                id={"correo_login"}
-                indice={"email"}
-                type={"email"}
-                placeholder={"name@company.com"}
-                name={"email"}
-                value={correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                validarCorreo={validarCorreo}
-                setValidarCorreo={setValidarCorreo}
-                autoComplete={"email"}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <Label
-                htmlFor={"clave_login"}
-                nombre={"Clave"}
-                className={`font-semibold`}
-              />
-
-              <Input
-                id={"clave_login"}
-                indice={"clave1"}
-                type={"password"}
-                placeholder={"**********************"}
-                name={"clave"}
-                value={clave}
-                onChange={(e) => setClave(e.target.value)}
-              />
-            </div> */}
-
             <div className="flex items-center justify-between">
               <LinkPaginas
                 href="/registro-usuario"
@@ -173,7 +169,7 @@ export default function Home() {
               <BotonAceptarCancelar
                 indice={"aceptar"}
                 aceptar={iniciarSesion}
-                nombre={"Iniciar sesion"}
+                nombre={isLoading ? "Iniciando..." : "Iniciar sesion"}
                 campos={{
                   correo,
                   clave,
@@ -190,41 +186,11 @@ export default function Home() {
                 }}
               />
             </div>
-
-            {/* <BotonesModal
-              aceptar={iniciarSesion}
-              cancelar={limpiar}
-              indiceUno={"crear"}
-              indiceDos={"cancelar"}
-              nombreUno={"Aceptar"}
-              nombreDos={"Cancelar"}
-              campos={{
-                correo,
-              }}
-            /> */}
-
-            {/* <div className="flex space-x-2">
-              <Boton
-                onClick={() =>
-                  iniciarSesion(correo, clave, setCorreo, setClave, setMensaje)
-                }
-                type={"button"}
-                disabled={!correo || !clave}
-                nombre={"Iniciar sesion"}
-                className={`py-3 text-lg hover:border-blue-500 hover:bg-[#f1e6e6]`}
-              />
-
-              <Boton
-                onClick={() => limpiar(setCorreo, setClave)}
-                disabled={!correo && !clave}
-                type={"button"}
-                nombre={"Limpiar campos"}
-                className={`py-3 text-lg hover:border-blue-500 hover:bg-[#f1e6e6]`}
-              />
-            </div> */}
           </Formulario>
         </div>
-      </Main>
-    </>
+      </section>
+
+      <ImgDosRegistroLogin />
+    </div>
   );
 }
