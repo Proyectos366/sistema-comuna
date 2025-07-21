@@ -3,59 +3,59 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 
 export async function GET() {
   try {
-    const cargos = [
+    const beneficios = [
       {
-        nombre: "unidad ejecutiva",
+        nombre: "beneficio uno",
         id_usuario: 1,
         descripcion: "sin descripcion",
         borrado: false,
       },
       {
-        nombre: "unidad financiera",
+        nombre: "beneficio dos",
         id_usuario: 1,
         descripcion: "sin descripcion",
         borrado: false,
       },
       {
-        nombre: "contraloria social",
+        nombre: "beneficio tres",
         id_usuario: 1,
         descripcion: "sin descripcion",
         borrado: false,
       },
     ];
 
-    for (const cargo of cargos) {
-      const existente = await prisma.cargo.upsert({
+    for (const beneficio of beneficios) {
+      const existente = await prisma.beneficio.upsert({
         where: {
-          nombre: cargo.nombre,
-          id_usuario: cargo.id_usuario,
-          descripcion: cargo.descripcion,
+          nombre: beneficio.nombre,
+          id_usuario: beneficio.id_usuario,
+          descripcion: beneficio.descripcion,
           borrado: false,
         },
         update: {}, // Aquí puedes especificar los valores a actualizar si el registro existe
         create: {
-          nombre: cargo.nombre,
-          id_usuario: cargo.id_usuario,
-          descripcion: cargo.descripcion,
+          nombre: beneficio.nombre,
+          id_usuario: beneficio.id_usuario,
+          descripcion: beneficio.descripcion,
           borrado: false,
         }, // Aquí se definen los valores para crear el registro si no existe
       });
 
       if (!existente) {
-        await prisma.cargo.create({ data: cargo });
+        await prisma.beneficio.create({ data: beneficio });
       } else {
-        await prisma.cargo.update({
+        await prisma.beneficio.update({
           where: { id: existente.id },
-          data: cargo, // Puedes modificarlo según tu lógica
+          data: beneficio, // Puedes modificarlo según tu lógica
         });
       }
     }
-    return generarRespuesta("ok", "Cargos creados correctamente.", {}, 201);
+    return generarRespuesta("ok", "Beneficios creados correctamente.", {}, 201);
   } catch (error) {
-    console.error("Error al guardar cargos:", error);
+    console.log("Error, al crear beneficios: " + error);
     return generarRespuesta(
       "error",
-      "Error interno al guardar cargos.",
+      "Error interno al crear beneficios.",
       {},
       500
     );

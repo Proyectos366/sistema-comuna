@@ -26,3 +26,7 @@
   -ms-overflow-style: none; /* IE y Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.icono-filter {
+  filter: drop-shadow(1px 1px 10px #1b52e7cc);
+}

@@ -52,6 +52,8 @@ model usuario {
   creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
   creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
   creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
+  beneficios             beneficio[]    @relation(name: "CreadorBeneficio")
+  familiares             familiar[]     @relation(name: "CreadorFamiliar")
   voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
   parroquias             parroquia[]    @relation(name: "CreadorParroquia")
   cargos                 cargo[]        @relation(name: "CreadorCargo")
@@ -164,6 +166,20 @@ model consejo {
   parroquias parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
 }
 
+model beneficio {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("")
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  usuarios usuario  @relation(name: "CreadorBeneficio", fields: [id_usuario], references: [id])
+  voceros  vocero[]
+}
+
 model vocero {
   id           Int      @id @default(autoincrement())
   nombre       String
@@ -174,12 +190,13 @@ model vocero {
   genero       Boolean
   edad         Int
   telefono     String
-  direccion    String?
+  direccion    String   @default("sin especificar")
   correo       String
   token        String   @unique
   laboral      String
   f_n          DateTime
-  borrado      Boolean
+  j_c          Boolean  @default(false)
+  borrado      Boolean  @default(false)
   id_usuario   Int
   id_comuna    Int?
   id_consejo   Int?
@@ -194,9 +211,32 @@ model vocero {
   consejos   consejo?  @relation(fields: [id_consejo], references: [id])
   circuitos  circuito? @relation(fields: [id_circuito], references: [id])
 
+  beneficios  beneficio[]
   cursos      curso[]
   asistencias asistencia[]
   cargos      cargo[]
+  familiares  familiar[]
+}
+
+model familiar {
+  id         Int     @id @default(autoincrement())
+  nombre     String
+  apellido   String
+  cedula     Int     @unique
+  parentesco String // ejemplo: madre, padre, hijo, etc.
+  f_n        Int
+  genero     Boolean
+  telefono   String?
+  direccion  String?
+
+  id_vocero  Int
+  id_usuario Int
+
+  usuarios usuario @relation(name: "CreadorFamiliar", fields: [id_usuario], references: [id])
+  vocero   vocero  @relation(fields: [id_vocero], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model formacion {

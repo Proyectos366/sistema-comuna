@@ -125,6 +125,18 @@ CREATE TABLE "consejo" (
 );
 
 -- CreateTable
+CREATE TABLE "beneficio" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT DEFAULT '',
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_usuario" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "beneficio_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "vocero" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
@@ -135,12 +147,13 @@ CREATE TABLE "vocero" (
     "genero" BOOLEAN NOT NULL,
     "edad" INTEGER NOT NULL,
     "telefono" TEXT NOT NULL,
-    "direccion" TEXT,
+    "direccion" TEXT NOT NULL DEFAULT 'sin especificar',
     "correo" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "laboral" TEXT NOT NULL,
     "f_n" DATETIME NOT NULL,
-    "borrado" BOOLEAN NOT NULL,
+    "j_c" BOOLEAN NOT NULL DEFAULT false,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_usuario" INTEGER NOT NULL,
     "id_comuna" INTEGER,
     "id_consejo" INTEGER,
@@ -153,6 +166,25 @@ CREATE TABLE "vocero" (
     CONSTRAINT "vocero_id_comuna_fkey" FOREIGN KEY ("id_comuna") REFERENCES "comuna" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "vocero_id_consejo_fkey" FOREIGN KEY ("id_consejo") REFERENCES "consejo" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "vocero_id_circuito_fkey" FOREIGN KEY ("id_circuito") REFERENCES "circuito" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "familiar" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "apellido" TEXT NOT NULL,
+    "cedula" INTEGER NOT NULL,
+    "parentesco" TEXT NOT NULL,
+    "f_n" INTEGER NOT NULL,
+    "genero" BOOLEAN NOT NULL,
+    "telefono" TEXT,
+    "direccion" TEXT,
+    "id_vocero" INTEGER NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "familiar_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "familiar_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -232,6 +264,14 @@ CREATE TABLE "_cargoTovocero" (
 );
 
 -- CreateTable
+CREATE TABLE "_beneficioTovocero" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_beneficioTovocero_A_fkey" FOREIGN KEY ("A") REFERENCES "beneficio" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_beneficioTovocero_B_fkey" FOREIGN KEY ("B") REFERENCES "vocero" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_formacionTomodulo" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
@@ -267,10 +307,16 @@ CREATE UNIQUE INDEX "consejo_rif_key" ON "consejo"("rif");
 CREATE UNIQUE INDEX "consejo_codigo_key" ON "consejo"("codigo");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "beneficio_nombre_key" ON "beneficio"("nombre");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "vocero_cedula_key" ON "vocero"("cedula");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "vocero_token_key" ON "vocero"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "familiar_cedula_key" ON "familiar"("cedula");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
@@ -289,6 +335,12 @@ CREATE UNIQUE INDEX "_cargoTovocero_AB_unique" ON "_cargoTovocero"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_cargoTovocero_B_index" ON "_cargoTovocero"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_beneficioTovocero_AB_unique" ON "_beneficioTovocero"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_beneficioTovocero_B_index" ON "_beneficioTovocero"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_formacionTomodulo_AB_unique" ON "_formacionTomodulo"("A", "B");

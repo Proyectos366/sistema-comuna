@@ -24,20 +24,6 @@ export async function GET() {
 
     const correo = descifrarToken.correo;
 
-    // const todosUsuarios = await prisma.usuario.findMany({
-    //   where: {
-    //     correo: {
-    //       not: {
-    //         in: [correo, "master@gmail.com"],
-    //       },
-    //     },
-    //     borrado: false,
-    //   },
-    //   orderBy: {
-    //     nombre: "asc",
-    //   },
-    // });
-
     const todosUsuarios = await prisma.usuario.findMany({
       where: {
         correo: {
@@ -51,7 +37,7 @@ export async function GET() {
         nombre: "asc",
       },
       include: {
-        MiembrosDepartamentos: true
+        MiembrosDepartamentos: true,
       },
     });
 
