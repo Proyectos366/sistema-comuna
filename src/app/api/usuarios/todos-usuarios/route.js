@@ -31,7 +31,6 @@ export async function GET() {
             in: [correo, "master@gmail.com"],
           },
         },
-        borrado: false,
       },
       orderBy: {
         nombre: "asc",
@@ -40,6 +39,25 @@ export async function GET() {
         MiembrosDepartamentos: true,
       },
     });
+
+    /**
+      const todosUsuarios = await prisma.usuario.findMany({
+        where: {
+          correo: {
+            not: {
+              in: [correo, "master@gmail.com"],
+            },
+          },
+          borrado: false,
+        },
+        orderBy: {
+          nombre: "asc",
+        },
+        include: {
+          MiembrosDepartamentos: true,
+        },
+      });
+    */
 
     if (!todosUsuarios) {
       return generarRespuesta(

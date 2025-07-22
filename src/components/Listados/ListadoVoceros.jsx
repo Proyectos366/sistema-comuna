@@ -116,7 +116,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
   if (!Array.isArray(voceros) || voceros.length === 0) {
     return (
       <div className="w-full bg-white p-4 rounded-md shadow-lg text-center">
-        <p className="text-red-600 font-semibold">
+        <p className="text-[#E61C45] font-semibold">
           No hay voceros disponibles.
         </p>
       </div>
@@ -147,7 +147,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
 
       <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-1 sm:p-4 rounded-md bg-[#f4f6f9] shadow-lg">
         {vocerosPagina.length === 0 && searchTerm !== "" ? (
-          <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-lg">
+          <div className="p-4 bg-white rounded-lg text-center text-[#E61C45] font-semibold shadow-lg">
             No se encontraron voceros que coincidan con la búsqueda.
           </div>
         ) : (
@@ -509,7 +509,7 @@ export default function TemplateDemo() {
 //   if (!Array.isArray(voceros) || voceros.length === 0) {
 //     return (
 //       <div className="w-full bg-white p-4 rounded-md shadow-lg text-center">
-//         <p className="text-red-600 font-semibold">
+//         <p className="text-[#E61C45] font-semibold">
 //           No hay voceros disponibles.
 //         </p>
 //       </div>
@@ -532,7 +532,7 @@ export default function TemplateDemo() {
 
 //       <div className="flex flex-col gap-4 border border-gray-300 hover:border-[#082158] p-4 rounded-md bg-[#f4f6f9] shadow-lg">
 //         {vocerosPagina.length === 0 && searchTerm !== "" ? (
-//           <div className="p-4 bg-white rounded-lg text-center text-red-600 font-semibold shadow-lg">
+//           <div className="p-4 bg-white rounded-lg text-center text-[#E61C45] font-semibold shadow-lg">
 //             No se encontraron voceros que coincidan con la búsqueda.
 //           </div>
 //         ) : (

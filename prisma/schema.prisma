@@ -19,34 +19,53 @@ model role {
   usuarios usuario[] @relation(name: "UsuarioRole")
 }
 
-model departamento {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  descripcion String?  @default("")
-  borrado     Boolean  @default(false)
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
+model imagen {
+  id            Int      @id @default(autoincrement())
+  id_usuario    Int
+  path          String
+  nombreArchivo String
+  tipoMime      String
+  formato       String
+  pesoKb        Float
+  ancho         Int
+  alto          Int
+  esPerfil      Boolean  @default(true)
+  descripcion   String?  @default("")
+  fechaSubida   DateTime @default(now())
 
-  // Relaciones
-  creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
-  miembros usuario[] @relation("MiembrosDepartamento")
+  usuarios usuario @relation(fields: [id_usuario], references: [id]) // Corrección: relación bien definida
 }
 
 model usuario {
-  id        Int      @id @default(autoincrement())
-  cedula    Int
-  nombre    String
-  correo    String   @unique
-  token     String   @unique
-  clave     String
-  borrado   Boolean
-  id_rol    Int // Clave foránea hacia role
-  updatedAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  cedula       Int      @unique
+  nombre       String
+  nombre_dos   String?  @default("")
+  apellido     String?
+  apellido_dos String?  @default("")
+  pais         String?  @default("")
+  estado       String?  @default("")
+  municipio    String?  @default("")
+  parroquia    String?  @default("")
+  sector       String?  @default("")
+  direccion    String?  @default("")
+  path         String?  @default("")
+  f_n          DateTime @default(now())
+  cargo        String?  @default("")
+  f_ingreso    DateTime @default(now())
+  profesion    String?  @default("")
+  correo       String   @unique
+  token        String   @unique
+  clave        String
+  borrado      Boolean
+  validado     Boolean  @default(false)
+  id_rol       Int // Clave foránea hacia role
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
 
   // Relaciones
   roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  imagenes               imagen[] // Relación uno a muchos con Imagen
   CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
   MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
   creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
@@ -61,6 +80,20 @@ model usuario {
   formaciones            formacion[]    @relation(name: "CreadorFormacion")
   cursos                 curso[]        @relation(name: "CreadorCurso")
   asistencias            asistencia[]   @relation(name: "CreadorAsistencia")
+}
+
+model departamento {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("")
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosDepartamento")
 }
 
 model cargo {
@@ -181,29 +214,29 @@ model beneficio {
 }
 
 model vocero {
-  id           Int      @id @default(autoincrement())
-  nombre       String
-  nombre_dos   String?
-  apellido     String
-  apellido_dos String?
-  cedula       Int      @unique
-  genero       Boolean
-  edad         Int
-  telefono     String
-  direccion    String   @default("sin especificar")
-  correo       String
-  token        String   @unique
-  laboral      String
-  f_n          DateTime
-  j_c          Boolean  @default(false)
-  borrado      Boolean  @default(false)
-  id_usuario   Int
-  id_comuna    Int?
-  id_consejo   Int?
-  id_circuito  Int?
-  id_parroquia Int
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  nombre_dos     String?
+  apellido       String
+  apellido_dos   String?
+  cedula         Int      @unique
+  genero         Boolean
+  edad           Int
+  telefono       String
+  direccion      String   @default("sin especificar")
+  correo         String
+  token          String   @unique
+  laboral        String
+  f_n            DateTime
+  jefe_comunidad Boolean  @default(false)
+  borrado        Boolean  @default(false)
+  id_usuario     Int
+  id_comuna      Int?
+  id_consejo     Int?
+  id_circuito    Int?
+  id_parroquia   Int
+  updatedAt      DateTime @default(now())
+  createdAt      DateTime @default(now())
 
   usuarios   usuario   @relation(name: "CreadorVocero", fields: [id_usuario], references: [id])
   parroquias parroquia @relation("VoceroParroquia", fields: [id_parroquia], references: [id])

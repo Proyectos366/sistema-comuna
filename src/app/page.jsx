@@ -1,16 +1,13 @@
 "use client";
 
-import ImagenFondo from "@/components/ImagenFondo";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import LinkPaginas from "@/components/Link";
-import Main from "@/components/Main";
 import MostrarMsj from "@/components/MostrarMensaje";
 import Titulos from "@/components/Titulos";
 import Formulario from "@/components/Formulario";
 import InputCorreo from "@/components/inputs/InputCorreo";
 import InputClave from "@/components/inputs/InputClave";
-import BotonesModal from "@/components/BotonesModal";
 import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
 import ImgRegistroLogin from "@/components/ImgRegistroLogin";
@@ -42,34 +39,6 @@ export default function Home() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [correo, clave]); // Dependencias
-
-  /** 
-    const iniciarSesion = async () => {
-      try {
-        const respuesta = await axios.post(`/api/login`, { correo, clave });
-
-        if (respuesta.data.status === "ok") {
-          window.location.href = respuesta.data.redirect;
-        } else {
-          setMensaje(respuesta.data.message);
-        }
-
-        setTimeout(() => {
-          setMensaje("");
-          setCorreo("");
-          setClave("");
-        }, 5000);
-      } catch (error) {
-        console.log("Error, al iniciar sesión: " + error);
-
-        setMensaje(error?.response?.data?.message);
-        setTimeout(() => {
-          setMensaje("");
-          setClave("");
-        }, 5000);
-      }
-    };
-  */
 
   const iniciarSesion = async () => {
     if (isLoading) return; // Evita múltiples envíos rápidos

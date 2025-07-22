@@ -110,7 +110,7 @@ export default function HeaderUsuarios({
                   />
                 </li>
                 <li
-                  className="px-4 py-2 text-center hover:bg-red-400 hover:text-black hover:rounded-md hover:font-semibold cursor-pointer text-red-500"
+                  className="px-4 py-2 text-center hover:bg-[#E61C45] hover:text-white hover:rounded-md hover:font-semibold cursor-pointer text-red-500"
                   onClick={() => {
                     cerrarSesion();
                     setMenuOpcionesUsuario(false);

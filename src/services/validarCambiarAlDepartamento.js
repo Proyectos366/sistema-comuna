@@ -5,7 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarAsignarAlDepartamento(
+export default async function validarCambiarAlDepartamento(
   idDepartamento,
   idUsuario
 ) {
@@ -79,10 +79,10 @@ export default async function validarAsignarAlDepartamento(
       id_usuario_miembro: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno asignar al departamento: ` + error);
+    console.log(`Error, interno cambiar al departamento: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno asignar al departamento"
+      "Error, interno cambiar al departamento"
     );
   }
 }

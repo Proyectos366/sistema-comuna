@@ -14,11 +14,11 @@ import ComunasForm from "../opciones/ComunasForm";
 import CircuitoForm from "../opciones/CircuitosForm";
 import ConsejoForm from "../opciones/ConsejoForm";
 import VoceroForm from "../opciones/VoceroForm";
-import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
+//import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
 import UsuariosForm from "../opciones/UsuariosForm";
-//import FormOac from "../oac/FormOac";
+import OacDepartamento from "../departamentos/Oac";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -45,8 +45,11 @@ export default function VistaUniversalUsuarios({ children }) {
   const pathname = usePathname();
   const userType = usuarioActivo?.id_rol;
 
-  // const idDepartamento = departamento?.id;
-  // const nombreDepartamento = departamento?.nombre;
+  useEffect(() => {
+    if (!usuarioActivo?.validado) {
+      router.push(`/`, { shallow: true });
+    }
+  }, [usuarioActivo]);
 
   useEffect(() => {
     if (screenSize?.width > 640) {
@@ -339,18 +342,20 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-                  {/* {vista === "oac" && departamento.nombre === 'oac' && (
-                    <FormOac
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                    />
-                  )} */}
+                  {vista === "oac" &&
+                    (departamento?.nombre === "oac" ||
+                      usuarioActivo?.id_rol === 1) && (
+                      <OacDepartamento
+                        mostrar={mostrarModal}
+                        abrirModal={abrirModal}
+                        cerrarModal={cerrarModal}
+                        mensaje={mensaje}
+                        mostrarMensaje={mostrarMensaje}
+                        abrirMensaje={abrirMensaje}
+                        limpiarCampos={limpiarCampos}
+                        ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      />
+                    )}
 
                   {vista === "perfil" && (
                     <MostrarPerfilUsuario abrirPanel={abrirPanel} />

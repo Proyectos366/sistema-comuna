@@ -5,10 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarAsignarAlDepartamento(
-  idDepartamento,
-  idUsuario
-) {
+export default async function validarCambiarRol(idRol, idUsuario) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -31,13 +28,13 @@ export default async function validarAsignarAlDepartamento(
 
     const correo = descifrarToken.correo;
 
-    const validarIdDepartamento = ValidarCampos.validarCampoId(idDepartamento);
+    const validarIdRol = ValidarCampos.validarCampoId(idRol);
     const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario);
 
-    if (validarIdDepartamento.status === "error") {
+    if (validarIdRol.status === "error") {
       return retornarRespuestaFunciones(
-        validarIdDepartamento.status,
-        validarIdDepartamento.message
+        validarIdRol.status,
+        validarIdRol.message
       );
     }
 
@@ -57,32 +54,29 @@ export default async function validarAsignarAlDepartamento(
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    const yaEsMiembro = await prisma.departamento.findFirst({
+    const yaTieneRol = await prisma.usuario.findFirst({
       where: {
-        id: validarIdDepartamento.id,
-        miembros: {
-          some: { id: validarIdUsuario.id },
-        },
+        id: validarIdUsuario.id,
+        id_rol: validarIdRol.id,
+        borrado: false,
       },
+      select: { id: true },
     });
 
-    if (yaEsMiembro) {
+    if (yaTieneRol) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, el usuario ya esta en este departamento... "
+        "Error, el usuario ya tiene este rol... "
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      id_departamento: validarIdDepartamento.id,
-      id_usuario_miembro: validarIdUsuario.id,
+      id_rol: validarIdRol.id,
+      id_usuario_rol: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno asignar al departamento: ` + error);
-    return retornarRespuestaFunciones(
-      "error",
-      "Error, interno asignar al departamento"
-    );
+    console.log(`Error, interno al cambiar rol: ` + error);
+    return retornarRespuestaFunciones("error", "Error, interno al cambiar rol");
   }
 }

@@ -31,6 +31,10 @@ export default async function validarInicioSesion(correo, clave) {
       return retornarRespuestaFunciones("error", "Credenciales invalidas...");
     }
 
+    if (!datosInicioSesion.validado) {
+      return retornarRespuestaFunciones("error", "Usuario no autorizado...");
+    }
+
     const claveEncriptada = await CifrarDescifrarClaves.compararClave(
       clave,
       datosInicioSesion.clave

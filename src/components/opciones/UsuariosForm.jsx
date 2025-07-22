@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Modal from "../Modal";
 import ModalDatos from "../ModalDatos";
@@ -13,6 +13,15 @@ import FormCrearComuna from "../formularios/FormCrearComuna";
 import ListadoGenaral from "../ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import SelectOpcion from "../SelectOpcion";
+import Titulos from "../Titulos";
+import ListaDetallesVocero from "../listados/ListaDetalleVocero";
+import { formatearCedula } from "@/utils/formatearCedula";
+import { formatearFecha } from "@/utils/Fechas";
+import Input from "../inputs/Input";
+import OrdenarLista from "../listados/Ordenar";
+import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
+import Paginador from "../templates/PlantillaPaginacion";
+import ListadoUsuarios from "../listados/ListadoUsuarios";
 
 export default function UsuariosForm({
   mostrar,
@@ -38,6 +47,74 @@ export default function UsuariosForm({
   const [isLoading, setIsLoading] = useState(false);
   const [expanded, setExpanded] = useState("");
   const [accion, setAccion] = useState("");
+
+  const [estado, setEstado] = useState(null);
+  const [validado, setValidado] = useState(null);
+
+  const [abierto, setAbierto] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+
+  const [open, setOpen] = useState(false);
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenAscendente, setOrdenAscendente] = useState(true);
+
+  const usuariosFiltrados = useMemo(() => {
+    if (!searchTerm) return todosUsuarios;
+
+    const lower = searchTerm.toLowerCase();
+
+    return todosUsuarios?.filter((usuario) => {
+      return (
+        // Buscar por nombre
+        usuario.nombre?.toLowerCase().includes(lower) ||
+        // Buscar por cédula
+        String(usuario.cedula).includes(lower) ||
+        // Buscar por correo
+        usuario.correo?.toLowerCase().includes(lower) ||
+        // Buscar por estado (activo/inactivo)
+        (typeof usuario.borrado === "boolean" &&
+          (usuario.borrado ? "inactivo" : "activo").includes(lower)) ||
+        // Buscar por rol textual
+        (usuario.id_rol === 2 && "administrador".includes(lower)) ||
+        (usuario.id_rol === 3 && "director".includes(lower)) ||
+        (usuario.id_rol === 4 && "empleado".includes(lower))
+      );
+    });
+  }, [todosUsuarios, searchTerm]);
+
+  const ordenarVoceros = (lista, campo, asc) => {
+    const listaClonada = [...lista];
+
+    return listaClonada.sort((a, b) => {
+      const valorA = a[campo];
+      const valorB = b[campo];
+
+      if (valorA == null || valorB == null) return 0;
+
+      if (typeof valorA === "number" && typeof valorB === "number") {
+        return asc ? valorA - valorB : valorB - valorA;
+      }
+
+      return asc
+        ? String(valorA)
+            .toLowerCase()
+            .localeCompare(String(valorB).toLowerCase())
+        : String(valorB)
+            .toLowerCase()
+            .localeCompare(String(valorA).toLowerCase());
+    });
+  };
+
+  const usuariosOrdenados = ordenarVoceros(
+    usuariosFiltrados,
+    ordenCampo,
+    ordenAscendente
+  );
+
+  const usuarioPorPagina = usuariosOrdenados.slice(first, first + rows);
+  const totalRecords = usuariosFiltrados.length;
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -73,84 +150,54 @@ export default function UsuariosForm({
     setIdRol(e.target.value);
   };
 
-
-
-  /** 
-    const asignarUsuarioDepartamento = async () => {
-      try {
-        console.log("Asignando departamento");
-        console.log(idDepartamento);
-        console.log(idUsuario);
-
-        const res = await axios.patch("/api/usuarios/asignar-al-departamento", {
+  const asignarUsuarioDepartamento = async () => {
+    try {
+      const response = await axios.patch(
+        "/api/usuarios/asignar-al-departamento",
+        {
           idUsuario,
           idDepartamento,
-        });
-
-        setTodosUsuarios((usuarios = []) => {
-          return usuarios.map((u) => {
-            if (u.id === usuarioActualizado.id) {
-              return usuarioActualizado; // lo reemplaza completamente
-            }
-            return u; // mantiene el resto igual
-          });
-        });
-
-        abrirMensaje(res.data.message);
-        ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
-      } catch (error) {
-        abrirMensaje(
-          error?.response?.data?.message || "Error al asignar departamento"
-        );
-        ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
-      }
-    };
-  */
-
-    const asignarUsuarioDepartamento = async () => {
-  try {
-    console.log("Asignando departamento");
-    console.log(idDepartamento);
-    console.log(idUsuario);
-
-    const res = await axios.patch("/api/usuarios/asignar-al-departamento", {
-      idUsuario,
-      idDepartamento,
-    });
-
-    const usuarioActualizado = res.data.usuario;
-
-    setTodosUsuarios((usuarios = []) => {
-      return usuarios.map((u) =>
-        u.id === usuarioActualizado.id ? usuarioActualizado : u
+        }
       );
-    });
 
-    abrirMensaje(res.data.message);
-    ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
-  } catch (error) {
-    abrirMensaje(
-      error?.response?.data?.message || "Error al asignar departamento"
-    );
-    ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
-  }
-};
+      const usuarioActualizado = response.data.usuario;
 
+      setTodosUsuarios((usuarios = []) => {
+        return usuarios.map((u) =>
+          u.id === usuarioActualizado.id ? usuarioActualizado : u
+        );
+      });
 
+      abrirMensaje(response.data.message);
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+    } catch (error) {
+      abrirMensaje(
+        error?.response?.data?.message || "Error al asignar departamento"
+      );
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+    }
+  };
 
   const cambiarUsuarioDepartamento = async () => {
     try {
-      console.log("Cambiando departamento");
-      console.log(idDepartamento);
-      console.log(idUsuario);
+      const response = await axios.patch(
+        "/api/usuarios/cambiar-al-departamento",
+        {
+          idUsuario,
+          idDepartamento,
+        }
+      );
 
-      // const res = await axios.patch("/api/usuarios/asignar-al-departamento", {
-      //   idUsuario,
-      //   idDepartamento,
-      // });
+      const usuarioActualizado = response.data.usuario;
 
-      // abrirMensaje(res.data.message);
-      // ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+      setTodosUsuarios((usuarios = []) => {
+        return usuarios.map((u) =>
+          u.id === usuarioActualizado.id ? usuarioActualizado : u
+        );
+      });
+
+      abrirMensaje(response.data.message);
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
     } catch (error) {
       abrirMensaje(
         error?.response?.data?.message || "Error al cambiar departamento"
@@ -161,17 +208,79 @@ export default function UsuariosForm({
 
   const cambiarUsuarioRol = async () => {
     try {
-      console.log("Cambiando rol");
+      const response = await axios.patch("/api/usuarios/cambiar-rol", {
+        idUsuario,
+        idRol,
+      });
 
-      // const res = await axios.patch("/api/usuarios/asignar-al-departamento", {
-      //   idUsuario,
-      //   idDepartamento,
-      // });
+      const usuarioActualizado = response.data.usuario;
 
-      // abrirMensaje(res.data.message);
-      // ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+      setTodosUsuarios((usuarios = []) => {
+        return usuarios.map((u) =>
+          u.id === usuarioActualizado.id ? usuarioActualizado : u
+        );
+      });
+
+      abrirMensaje(response.data.message);
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
     } catch (error) {
-      abrirMensaje(error?.response?.data?.message || "Error al cambiar rol");
+      abrirMensaje(error?.response?.data?.message || "Error, al cambiar rol");
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+    }
+  };
+
+  const cambiarUsuarioEstado = async () => {
+    try {
+      const response = await axios.patch("/api/usuarios/cambiar-estado", {
+        idUsuario,
+        estado,
+      });
+
+      const usuarioActualizado = response.data.usuario;
+
+      setTodosUsuarios((usuarios = []) => {
+        return usuarios.map((u) =>
+          u.id === usuarioActualizado.id ? usuarioActualizado : u
+        );
+      });
+
+      abrirMensaje(response.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 },
+        { accion: () => setEstado(null), tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      abrirMensaje(
+        error?.response?.data?.message || "Error, al cambiar estado"
+      );
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
+    }
+  };
+
+  const cambiarUsuarioAcceso = async () => {
+    try {
+      const response = await axios.patch("/api/usuarios/cambiar-acceso", {
+        idUsuario: idUsuario,
+        validado: validado,
+      });
+
+      const usuarioActualizado = response.data.usuario;
+
+      setTodosUsuarios((usuarios = []) => {
+        return usuarios.map((u) =>
+          u.id === usuarioActualizado.id ? usuarioActualizado : u
+        );
+      });
+
+      abrirMensaje(response.data.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 },
+        { accion: () => setEstado(null), tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      abrirMensaje(
+        error?.response?.data?.message || "Error, al cambiar acceso"
+      );
       ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
     }
   };
@@ -184,6 +293,10 @@ export default function UsuariosForm({
         return asignarUsuarioDepartamento;
       case "cambiarRol":
         return cambiarUsuarioRol;
+      case "cambiarEstado":
+        return cambiarUsuarioEstado;
+      case "cambiarAutorizacion":
+        return cambiarUsuarioAcceso;
       default:
         return () => {}; // función vacía si no hay acción
     }
@@ -197,6 +310,14 @@ export default function UsuariosForm({
         return "¿Asignar al departamento?";
       case "cambiarRol":
         return "¿Cambiar rol?";
+      case "cambiarEstado":
+        return estado
+          ? "¿Habilitar este usuario?"
+          : "¿Inhabilitar este usuario?";
+      case "cambiarAutorizacion":
+        return validado
+          ? "¿Restringir este usuario?"
+          : "¿Autorizar este usuario?";
       default:
         return () => {}; // función vacía si no hay acción
     }
@@ -221,7 +342,7 @@ export default function UsuariosForm({
             <ModalDatos titulo="Rol" descripcion={nombreRol} />
           )}
 
-          {accion && accion === "cambiarRol" ? (
+          {accion === "cambiarRol" && (
             <SelectOpcion
               idOpcion={idRol}
               nombre={"Cambiar a"}
@@ -231,7 +352,10 @@ export default function UsuariosForm({
               setNombre={setNombreRol}
               indice={1}
             />
-          ) : (
+          )}
+
+          {(accion === "cambiarDepartamento" ||
+            accion === "asignarDepartamento") && (
             <SelectOpcion
               idOpcion={idDepartamento}
               nombre={
@@ -260,129 +384,285 @@ export default function UsuariosForm({
       </Modal>
 
       <SectionRegistroMostrar>
-        <main className="p-6 max-w-4xl mx-auto space-y-4">
-          <h1 className="text-3xl font-bold mb-4 text-center">
-            📋 Usuarios Registrados
-          </h1>
-
-          {todosUsuarios.map((usuario) => {
-            const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
-
-            return (
-              <div
-                key={usuario.id}
-                className="border border-gray-300 rounded-md shadow-sm overflow-hidden"
-              >
-                <button
-                  onClick={() =>
-                    setExpanded(expanded === usuario.id ? null : usuario.id)
-                  }
-                  className="w-full text-left px-4 py-3 bg-gray-100 hover:bg-gray-200 font-medium text-lg"
-                >
-                  👤 {usuario.nombre}
-                </button>
-
-                {expanded === usuario.id && (
-                  <div className="bg-white px-4 py-3 space-y-2 text-sm">
-                    <div>
-                      <strong>ID:</strong> {usuario.id}
-                    </div>
-                    <div>
-                      <strong>Cédula:</strong> {usuario.cedula}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <strong>Departamento:</strong>{" "}
-                      <div className="flex items-center gap-4">
-                        {departamentoActual?.nombre ? (
-                          <>
-                            <span>{departamentoActual.nombre}</span>
-                            <button
-                              title="Cambiar departamento"
-                              onClick={() => {
-                                abrirModal();
-                                setAccion("cambiarDepartamento");
-                                setNombreUsuario(usuario.nombre);
-                                setNombreDepartamento(
-                                  departamentoActual.nombre
-                                );
-                                setIdDepartamento("");
-                                setIdUsuario(usuario.id);
-                              }}
-                              className="px-4 py-1 rounded-md bg-[#2FA807] text-white shadow-md hover:scale-105 transition"
-                            >
-                              Cambiar
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            title="Asignar departamento"
-                            onClick={() => {
-                              abrirModal();
-                              setAccion("asignarDepartamento");
-                              setNombreUsuario(usuario.nombre);
-                              setNombreDepartamento("");
-                              setIdUsuario(usuario.id);
-                              setIdDepartamento("");
-                            }}
-                            className="px-4 py-1 rounded-md bg-[#082158] text-white shadow-md hover:scale-105 transition"
-                          >
-                            Asignar
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <strong>Correo:</strong> {usuario.correo}
-                    </div>
-                    <div>
-                      <strong>Rol:</strong>{" "}
-                      {usuario.id_rol === 2 && "Administrador"}
-                      {usuario.id_rol === 3 && "Director"}
-                      {usuario.id_rol === 4 && "Empleado"}
-                      <button
-                        title="Cambiar rol"
-                        onClick={() => {
-                          abrirModal();
-                          setAccion("cambiarRol");
-                          setNombreUsuario(usuario.nombre);
-                          setIdRol("");
-                          setIdUsuario(usuario.id);
-                        }}
-                        className="px-4 py-1 rounded-md bg-[#2FA807] text-white shadow-md hover:scale-105 transition"
-                      >
-                        Cambiar
-                      </button>
-                    </div>
-                    <div>
-                      <strong>Token:</strong>{" "}
-                      <span className="text-xs text-gray-500">
-                        {usuario.token}
-                      </span>
-                    </div>
-                    <div>
-                      <strong>Estado:</strong>{" "}
-                      <span
-                        className={`px-2 py-1 rounded text-xs ${
-                          usuario.borrado
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {usuario.borrado ? "Inactivo" : "Activo"}
-                      </span>
-                    </div>
-                    <div>
-                      <strong>Creado:</strong>{" "}
-                      {new Date(usuario.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                )}
+        <DivUnoDentroSectionRegistroMostrar nombre={"Representación"}>
+          <div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-[#082158]"></div>
+                <span className="font-medium">Administradores</span>
               </div>
-            );
-          })}
-        </main>
+
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-[#2FA807]"></div>
+                <span className="font-medium">Directores</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-[#A62A69]"></div>
+                <span className="font-medium">Obreros</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-[#E61C45]"></div>
+                <span className="font-medium">Inhabilitados</span>
+              </div>
+            </div>
+          </div>
+        </DivUnoDentroSectionRegistroMostrar>
+
+        <DivUnoDentroSectionRegistroMostrar nombre={"Todos los usuarios"}>
+          <div className="flex flex-col w-full gap-4 ">
+            <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-lg">
+              <Input
+                type="text"
+                placeholder="🔍 Buscar..."
+                value={searchTerm}
+                className={`bg-white ps-4 placeholder:px-5`}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setFirst(0);
+                }}
+              />
+
+              <OrdenarListaUsuarios
+                ordenCampo={ordenCampo}
+                setOrdenCampo={setOrdenCampo}
+                setOrdenAscendente={setOrdenAscendente}
+                ordenAscendente={ordenAscendente}
+              />
+            </div>
+
+            {usuarioPorPagina.map((usuario) => {
+              const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
+
+              return (
+                <div
+                  key={usuario.id}
+                  className={`bg-[#e2e8f0] rounded-md shadow-md border 
+                              ${
+                                usuario.borrado
+                                  ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45]  hover:text-white"
+                                  : usuario.id_rol === 1
+                                  ? "bg-[#e2e8f0] hover:bg-gray-100 text-[#082158] border-gray-300"
+                                  : usuario.id_rol === 2
+                                  ? "border-[#082158] hover:bg-[#082158] text-[#082158] hover:text-white"
+                                  : usuario.id_rol === 3
+                                  ? "border-[#2FA807] hover:bg-[#2FA807] text-[#2FA807] hover:text-white"
+                                  : usuario.id_rol === 4
+                                  ? "border-[#A62A69] hover:bg-[#A62A69] text-[#A62A69] hover:text-white"
+                                  : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
+                              }
+                              transition-all`}
+                >
+                  <button
+                    onClick={() =>
+                      setExpanded(expanded === usuario.id ? null : usuario.id)
+                    }
+                    className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
+                    ${
+                      expanded === usuario.id
+                        ? "rounded-t-md mb-2 sm:mb-0 hover:text-white"
+                        : "rounded-md"
+                    }
+                  ${
+                    usuario.borrado
+                      ? "border-[#E61C45] hover:bg-[#E61C45] hover:text-[white] hover:border-[#E61C45]"
+                      : usuario.id_rol === 1
+                      ? "bg-[#e2e8f0] hover:bg-gray-100 text-[#082158] border-gray-300"
+                      : usuario.id_rol === 2
+                      ? "border-[#082158] hover:bg-[#082158] hover:text-[white]"
+                      : usuario.id_rol === 3
+                      ? "border-[#2FA807] hover:bg-[#2FA807] hover:text-[white]"
+                      : usuario.id_rol === 4
+                      ? "border-[#A62A69] hover:bg-[#A62A69] hover:text-[white]"
+                      : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
+                  }
+                  cursor-pointer transition-colors duration-200`}
+                  >
+                    👤 {usuario.nombre}
+                  </button>
+
+                  {expanded === usuario.id && (
+                    <ListadoUsuarios
+                      usuario={usuario}
+                      departamentoActual={departamentoActual}
+                      abrirModal={abrirModal}
+                      setAccion={setAccion}
+                      setNombreUsuario={setNombreUsuario}
+                      setNombreDepartamento={setNombreDepartamento}
+                      setIdDepartamento={setIdDepartamento}
+                      setIdUsuario={setIdUsuario}
+                      setIdRol={setIdRol}
+                      setEstado={setEstado}
+                      setValidado={setValidado}
+                    />
+                    // <div className="bg-white px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
+                    //   <ListaDetallesVocero
+                    //     indice={1}
+                    //     nombre={"Cédula"}
+                    //     valor={formatearCedula(usuario.cedula)}
+                    //   />
+
+                    //   <div className="flex items-center justify-between gap-2">
+                    //     <ListaDetallesVocero
+                    //       indice={1}
+                    //       nombre={"Departamento"}
+                    //       valor={departamentoActual?.nombre}
+                    //     />
+
+                    //     <div className="flex items-center justify-between gap-2">
+                    //       {departamentoActual?.nombre ? (
+                    //         <>
+                    //           <button
+                    //             title="Cambiar departamento"
+                    //             onClick={() => {
+                    //               abrirModal();
+                    //               setAccion("cambiarDepartamento");
+                    //               setNombreUsuario(usuario.nombre);
+                    //               setNombreDepartamento(
+                    //                 departamentoActual.nombre
+                    //               );
+                    //               setIdDepartamento("");
+                    //               setIdUsuario(usuario.id);
+                    //             }}
+                    //             className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
+                    //           >
+                    //             <span className="hidden sm:block">Cambiar</span>
+                    //             <div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                    //               <img
+                    //                 className="w-6 h-5"
+                    //                 src="/img/editar.png"
+                    //                 alt=""
+                    //               />
+                    //             </div>
+                    //           </button>
+                    //         </>
+                    //       ) : (
+                    //         <button
+                    //           title="Asignar departamento"
+                    //           onClick={() => {
+                    //             abrirModal();
+                    //             setAccion("asignarDepartamento");
+                    //             setNombreUsuario(usuario.nombre);
+                    //             setNombreDepartamento("");
+                    //             setIdUsuario(usuario.id);
+                    //             setIdDepartamento("");
+                    //           }}
+                    //           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#2FA807] text-white shadow-md hover:scale-105 transition cursor-pointer"
+                    //         >
+                    //           <span className="hidden sm:block">Asignar</span>
+                    //           <div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                    //             <img
+                    //               className="w-6 h-5"
+                    //               src="/img/editar.png"
+                    //               alt=""
+                    //             />
+                    //           </div>
+                    //         </button>
+                    //       )}
+                    //     </div>
+                    //   </div>
+
+                    //   <ListaDetallesVocero
+                    //     indice={1}
+                    //     nombre={"Correo"}
+                    //     valor={usuario.correo}
+                    //   />
+
+                    //   <div className="flex items-center justify-between gap-2">
+                    //     <ListaDetallesVocero
+                    //       indice={1}
+                    //       nombre={"Rol"}
+                    //       valor={
+                    //         usuario.id_rol === 2
+                    //           ? "Administrador"
+                    //           : usuario.id_rol === 3
+                    //           ? "Director"
+                    //           : usuario.id_rol === 4
+                    //           ? "Empleado"
+                    //           : "Sin rol asignado"
+                    //       }
+                    //     />
+
+                    //     <button
+                    //       title="Cambiar rol"
+                    //       onClick={() => {
+                    //         abrirModal();
+                    //         setAccion("cambiarRol");
+                    //         setNombreUsuario(usuario.nombre);
+                    //         setIdRol("");
+                    //         setIdUsuario(usuario.id);
+                    //       }}
+                    //       className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158] text-white shadow-md hover:scale-105 transition cursor-pointer"
+                    //     >
+                    //       <span className="hidden sm:block">Cambiar</span>
+                    //       <div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                    //         <img
+                    //           className="w-6 h-5"
+                    //           src="/img/editar.png"
+                    //           alt=""
+                    //         />
+                    //       </div>
+                    //     </button>
+                    //   </div>
+
+                    //   <div className="flex items-center justify-between gap-2">
+                    //     <ListaDetallesVocero
+                    //       indice={4}
+                    //       nombre={"Estado"}
+                    //       valor={usuario.borrado}
+                    //     />
+
+                    //     <button
+                    //       title="Cambiar estado"
+                    //       onClick={() => {
+                    //         abrirModal();
+                    //         setAccion("cambiarEstado");
+                    //         setEstado(usuario.borrado);
+                    //         setNombreUsuario(usuario.nombre);
+                    //         setIdUsuario(usuario.id);
+                    //       }}
+                    //       className={`p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md ${
+                    //         usuario.borrado ? "bg-[#E61C45]" : "bg-[#082158]"
+                    //       } text-white shadow-md hover:scale-105 transition cursor-pointer`}
+                    //     >
+                    //       <span className="hidden sm:block">
+                    //         {usuario.borrado ? "Habilitar" : "Deshabilitar"}
+                    //       </span>
+                    //       <div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                    //         <img
+                    //           className="w-6 h-5"
+                    //           src="/img/editar.png"
+                    //           alt=""
+                    //         />
+                    //       </div>
+                    //     </button>
+                    //   </div>
+
+                    //   <ListaDetallesVocero
+                    //     indice={1}
+                    //     nombre={"Creado"}
+                    //     valor={formatearFecha(usuario.createdAt)}
+                    //   />
+                    // </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <div className="mt-6">
+              <Paginador
+                first={first}
+                setFirst={setFirst}
+                rows={rows}
+                setRows={setRows}
+                totalRecords={totalRecords}
+                open={open}
+                setOpen={setOpen}
+              />
+            </div>
+          </div>
+        </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>
   );

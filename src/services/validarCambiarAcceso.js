@@ -5,10 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarAsignarAlDepartamento(
-  idDepartamento,
-  idUsuario
-) {
+export default async function validarCambiarAcceso(validado, idUsuario) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -31,15 +28,11 @@ export default async function validarAsignarAlDepartamento(
 
     const correo = descifrarToken.correo;
 
-    const validarIdDepartamento = ValidarCampos.validarCampoId(idDepartamento);
-    const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario);
-
-    if (validarIdDepartamento.status === "error") {
-      return retornarRespuestaFunciones(
-        validarIdDepartamento.status,
-        validarIdDepartamento.message
-      );
+    if (validado !== true && validado !== false) {
+      return retornarRespuestaFunciones("error", "Error, validado inválido...");
     }
+
+    const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario);
 
     if (validarIdUsuario.status === "error") {
       return retornarRespuestaFunciones(
@@ -57,32 +50,16 @@ export default async function validarAsignarAlDepartamento(
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    const yaEsMiembro = await prisma.departamento.findFirst({
-      where: {
-        id: validarIdDepartamento.id,
-        miembros: {
-          some: { id: validarIdUsuario.id },
-        },
-      },
-    });
-
-    if (yaEsMiembro) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, el usuario ya esta en este departamento... "
-      );
-    }
-
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      id_departamento: validarIdDepartamento.id,
-      id_usuario_miembro: validarIdUsuario.id,
+      validado: validado ? false : true,
+      id_usuario_validado: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno asignar al departamento: ` + error);
+    console.log(`Error, interno al cambiar acceso: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno asignar al departamento"
+      "Error, interno al cambiar acceso"
     );
   }
 }
