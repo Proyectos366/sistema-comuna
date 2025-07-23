@@ -349,14 +349,23 @@ export default class ValidarCampos {
     }
   }
 
-  static validarCamposRegistro(cedula, nombre, correo, claveUno, claveDos) {
+  static validarCamposRegistro(
+    cedula,
+    nombre,
+    apellido,
+    correo,
+    claveUno,
+    claveDos
+  ) {
     try {
       const validarCorreo = this.validarCampoCorreo(correo);
       const validarCedula = this.validarCampoCedula(cedula);
       const validarNombre = this.validarCampoNombre(nombre);
+      const validarApellido = this.validarCampoNombre(apellido);
 
       if (validarCedula.status === "error") return validarCedula;
       if (validarNombre.status === "error") return validarNombre;
+      if (validarApellido.status === "error") return validarApellido;
       if (validarCorreo.status === "error") return validarCorreo;
 
       const validarClave = this.validarCampoClave(claveUno, claveDos);
@@ -368,6 +377,7 @@ export default class ValidarCampos {
         {
           cedula: validarCedula.cedula,
           nombre: validarNombre.nombre,
+          apellido: validarApellido.nombre,
           correo: validarCorreo.correo,
         }
       );

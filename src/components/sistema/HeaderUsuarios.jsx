@@ -13,7 +13,6 @@ export default function HeaderUsuarios({
   usuarioActivo,
   cambiarRuta,
   vista,
-  id_rol,
 }) {
   const router = useRouter();
   const [menuOpcionesUsuario, setMenuOpcionesUsuario] = useState(false); // Estado para la modal
@@ -90,10 +89,10 @@ export default function HeaderUsuarios({
               ref={refMenuPerfil}
               className="absolute w-48 top-0 mt-8 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-2 z-50"
             >
-              <ul>
+              <ul className="flex flex-col gap-2">
                 <li onClick={() => setMenuOpcionesUsuario(false)}>
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"perfil"}
@@ -102,7 +101,7 @@ export default function HeaderUsuarios({
                 </li>
                 <li onClick={() => setMenuOpcionesUsuario(false)}>
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"cambiar-clave"}

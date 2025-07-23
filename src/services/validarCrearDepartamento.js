@@ -37,7 +37,7 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
       : "sin descripción";
 
     const idUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
+      where: { correo: descifrarToken.correo },
       select: { id: true },
     });
 

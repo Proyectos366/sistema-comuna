@@ -68,9 +68,8 @@ export default function VistaUniversalInicio() {
   const pathname = usePathname();
 
   const userType = usuarioActivo?.id_rol;
-  const idDepartamento = departamento?.id;
-  const nombreDepartamento = departamento?.nombre;
-  
+  // const idDepartamento = departamento?.id;
+  // const nombreDepartamento = departamento?.nombre;
 
   useEffect(() => {
     if (screenSize?.width > 640) {
@@ -113,6 +112,7 @@ export default function VistaUniversalInicio() {
       subRuta === "formaciones" ||
       subRuta === "modulos" ||
       subRuta === "participantes" ||
+      subRuta === "departamentos" ||
       subRuta === "oac"
     ) {
       setVista(subRuta);
@@ -156,11 +156,12 @@ export default function VistaUniversalInicio() {
         "modulos",
         "formaciones",
         "participantes",
+        "departamentos",
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
-      ], // Rol 1: Master
+        "oac",
+      ],
       2: [
         "parroquias",
         "comunas",
@@ -171,12 +172,13 @@ export default function VistaUniversalInicio() {
         "modulos",
         "formaciones",
         "participantes",
+        "departamentos",
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
-      ], // Rol 2: Administrador
+      ],
       3: [
+        "comunas",
         "consejos-comunales",
         "circuitos-comunales",
         "cargos",
@@ -184,16 +186,16 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
-      ], // Rol 3: Director
+      ],
       4: [
+        "comunas",
         "consejos-comunales",
         "circuitos-comunales",
-        "cargos",
         "voceros",
         "perfil",
         "cambiar-clave",
-        "oac"
-      ], // Rol 4: Empleados
+        departamento?.nombre === "oac" ? "oac" : "",
+      ],
     };
 
     // Define las rutas por defecto para cada tipo de usuario
@@ -225,7 +227,6 @@ export default function VistaUniversalInicio() {
       return; // Termina la ejecución después de redirigir
     }
   }, [pathname, router, userType]);
-
 
   useEffect(() => {
     if (todasParroquias.length !== 0 && idOpcion) {
@@ -432,17 +433,8 @@ export default function VistaUniversalInicio() {
                 abrirDashboar={abrirDashboar}
                 abrirPanel={abrirPanel}
                 usuarioActivo={usuarioActivo}
-                cambiarRuta={cambiarRuta}
                 vista={vista}
-                id_rol={usuarioActivo.id_rol}
-                toggleMenu={toggleMenu}
-                menuNotificaciones={menuNotificaciones}
-                menuOpcionesUsuario={menuOpcionesUsuario}
-                setMenuNotificaciones={setMenuNotificaciones}
-                setMenuOpcionesUsuario={setMenuOpcionesUsuario}
-                refMenuPerfil={refMenuPerfil}
-                refMenuNotificaciones={refMenuNotificaciones}
-                volverInicio={volverInicio}
+                cambiarRuta={cambiarRuta}
               />
             </header>
 

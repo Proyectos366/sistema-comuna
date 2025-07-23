@@ -1,34 +1,38 @@
 import prisma from "@/libs/prisma";
-import AuthTokens from "@/libs/AuthTokens";
-import { cookies } from "next/headers";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import msjErrores from "../../../../msj_validaciones/consultar_todos_usuarios/msjErrores.json";
 import msjCorrectos from "../../../../msj_validaciones/consultar_todos_usuarios/msjCorrectos.json";
-import nombreToken from "@/utils/nombreToken";
+import validarConsultarTodosUsuarios from "@/services/validarConsultarTodosUsuarios";
+import registrarEventoSeguro from "@/libs/trigget";
 
-export async function GET() {
+export async function GET(request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await validarConsultarTodosUsuarios();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
+    if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "usuario",
+        accion: "INTENTO_FALLIDO_TODOS_USUARIOS",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Validacion fallida al consultar todos los usuarios",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
 
-    if (descifrarToken.status === "error") {
       return generarRespuesta(
-        descifrarToken.status,
-        descifrarToken.message,
+        validaciones.status,
+        validaciones.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
-
-    const correo = descifrarToken.correo;
 
     const todosUsuarios = await prisma.usuario.findMany({
       where: {
         correo: {
           not: {
-            in: [correo, "master@gmail.com"],
+            in: [validaciones.correo, "master@gmail.com"],
           },
         },
       },
@@ -40,26 +44,19 @@ export async function GET() {
       },
     });
 
-    /**
-      const todosUsuarios = await prisma.usuario.findMany({
-        where: {
-          correo: {
-            not: {
-              in: [correo, "master@gmail.com"],
-            },
-          },
-          borrado: false,
-        },
-        orderBy: {
-          nombre: "asc",
-        },
-        include: {
-          MiembrosDepartamentos: true,
+    if (!todosUsuarios) {
+      await registrarEventoSeguro(request, {
+        tabla: "usuario",
+        accion: "ERROR_GET_TODOS_USUARIOS",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo obtener todos los usuarios",
+        datosAntes: null,
+        datosDespues: {
+          todosUsuarios,
         },
       });
-    */
 
-    if (!todosUsuarios) {
       return generarRespuesta(
         msjErrores.error,
         msjErrores.errorConsultarTodosUsuarios.usuariosNoEncontrados,
@@ -67,6 +64,18 @@ export async function GET() {
         msjErrores.codigo.codigo400
       );
     } else {
+      await registrarEventoSeguro(request, {
+        tabla: "usuario",
+        accion: "GET_TODOS_USUARIOS",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Se obtuvieron todos los usuarios",
+        datosAntes: null,
+        datosDespues: {
+          todosUsuarios,
+        },
+      });
+
       return generarRespuesta(
         msjCorrectos.ok,
         msjCorrectos.okConsultarTodosUsuarios.usuariosEncontrados,
@@ -76,6 +85,17 @@ export async function GET() {
     }
   } catch (error) {
     console.log(`${msjErrores.errorMixto}: ` + error);
+
+    await registrarEventoSeguro(request, {
+      tabla: "usuario",
+      accion: "ERROR_INTERNO_TODOS_USUARIOS",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al consultar todos los usuarios",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
+
     return generarRespuesta(
       msjErrores.error,
       msjErrores.errorConsultarTodosUsuarios.internoValidando,

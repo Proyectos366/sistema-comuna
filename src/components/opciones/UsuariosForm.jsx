@@ -229,12 +229,15 @@ export default function UsuariosForm({
     }
   };
 
-  const cambiarUsuarioEstado = async () => {
+  const eliminarRestaurarUsuario = async () => {
     try {
-      const response = await axios.patch("/api/usuarios/cambiar-estado", {
-        idUsuario,
-        estado,
-      });
+      const response = await axios.patch(
+        `/api/usuarios/${!estado ? "eliminar" : "restaurar"}-usuario`,
+        {
+          idUsuario,
+          estado,
+        }
+      );
 
       const usuarioActualizado = response.data.usuario;
 
@@ -294,7 +297,7 @@ export default function UsuariosForm({
       case "cambiarRol":
         return cambiarUsuarioRol;
       case "cambiarEstado":
-        return cambiarUsuarioEstado;
+        return eliminarRestaurarUsuario;
       case "cambiarAutorizacion":
         return cambiarUsuarioAcceso;
       default:

@@ -24,6 +24,7 @@ import ImgDosRegistroLogin from "@/components/ImgDosRegistroLogin";
 export default function RegistrarUsuario() {
   const [cedula, setCedula] = useState("");
   const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
   const [correo, setCorreo] = useState("");
   const [claveUno, setClaveUno] = useState("");
   const [claveDos, setClaveDos] = useState("");
@@ -34,6 +35,7 @@ export default function RegistrarUsuario() {
   const [validarCorreo, setValidarCorreo] = useState(false);
   const [validarCedula, setValidarCedula] = useState(false);
   const [validarNombre, setValidarNombre] = useState(false);
+  const [validarApellido, setValidarApellido] = useState(false);
   const [validarClave, setValidarClave] = useState(false);
   const [mostrar, setMostrar] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -68,7 +70,7 @@ export default function RegistrarUsuario() {
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && !verModal) {
         // Solo muestra el modal si no está ya abierto
-        if (cedula && nombre && correo && claveUno && claveDos) {
+        if (cedula && nombre && apellido && correo && claveUno && claveDos) {
           setVerModal(true); // Activa el estado para mostrar el modal
           mostrarModal();
         }
@@ -79,21 +81,23 @@ export default function RegistrarUsuario() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [verModal, cedula, nombre, correo, claveUno, claveDos]);
+  }, [verModal, cedula, nombre, apellido, correo, claveUno, claveDos]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && verModal) {
         // Solo confirma si el modal está abierto
-        if (cedula && nombre && correo && claveUno && claveDos) {
+        if (cedula && nombre && apellido && correo && claveUno && claveDos) {
           crearUsuario(
             cedula,
             nombre,
+            apellido,
             correo,
             claveUno,
             claveDos,
             setCedula,
             setNombre,
+            setApellido,
             setCorreo,
             setClaveUno,
             setClaveDos,
@@ -108,7 +112,7 @@ export default function RegistrarUsuario() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [verModal, cedula, nombre, correo, claveUno, claveDos]);
+  }, [verModal, cedula, nombre, apellido, correo, claveUno, claveDos]);
 
   const leyendoClave1 = (e) => {
     const claveUnoUno = e.target.value;
@@ -171,6 +175,7 @@ export default function RegistrarUsuario() {
       const payload = {
         cedula,
         nombre,
+        apellido,
         correo,
         claveUno,
         claveDos,
@@ -185,7 +190,7 @@ export default function RegistrarUsuario() {
         limpiarCampos(); // agrupamos limpieza de estados
         setMensajeBackEnd("");
         window.location.href = data.redirect;
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.log("Error, al crear el usuario: " + error);
 
@@ -227,6 +232,7 @@ export default function RegistrarUsuario() {
   function limpiarCampos() {
     setCedula("");
     setNombre("");
+    setApellido("");
     setCorreo("");
     setClaveUno("");
     setClaveDos("");
@@ -243,6 +249,7 @@ export default function RegistrarUsuario() {
         <ModalDatosContenedor>
           <ModalDatos titulo={"Cedula"} descripcion={cedula} />
           <ModalDatos titulo={"Nombre"} descripcion={nombre} />
+          <ModalDatos titulo={"Apellido"} descripcion={apellido} />
           <ModalDatos titulo={"Correo"} descripcion={correo} />
           <ModalDatos
             titulo={"Departamento"}
@@ -274,7 +281,13 @@ export default function RegistrarUsuario() {
           nombreUno={isLoading ? "Procesando..." : "Aceptar"}
           nombreDos={"Cancelar"}
           campos={{
+            cedula,
             nombre,
+            apellido,
+            correo,
+            claveUno,
+            claveDos,
+            seleccionarDepartamentos,
           }}
         />
       </Modal>
@@ -295,7 +308,7 @@ export default function RegistrarUsuario() {
                 e.preventDefault();
               }}
             >
-              <div className="w-full flex flex-col space-y-2">
+              <div className="w-full flex flex-col gap-2">
                 <LabelInput nombre={"Cedula"}>
                   <InputCedula
                     type="text"
@@ -326,6 +339,17 @@ export default function RegistrarUsuario() {
                     setValue={setNombre}
                     validarNombre={validarNombre}
                     setValidarNombre={setValidarNombre}
+                  />
+                </LabelInput>
+
+                <LabelInput nombre={"Apellido"}>
+                  <InputNombre
+                    type={"text"}
+                    indice={"nombre"}
+                    value={apellido}
+                    setValue={setApellido}
+                    validarNombre={validarApellido}
+                    setValidarNombre={setValidarApellido}
                   />
                 </LabelInput>
 
@@ -386,6 +410,7 @@ export default function RegistrarUsuario() {
                     cedula,
                     correo,
                     nombre,
+                    apellido,
                     idDepartamento,
                     claveUno,
                     claveDos,
@@ -399,6 +424,7 @@ export default function RegistrarUsuario() {
                       setCedula,
                       setCorreo,
                       setNombre,
+                      setApellido,
                       setIdDepartamento,
                       setClaveUno,
                       setClaveDos,
@@ -409,6 +435,7 @@ export default function RegistrarUsuario() {
                     cedula,
                     correo,
                     nombre,
+                    apellido,
                     idDepartamento,
                     claveUno,
                     claveDos,
@@ -424,50 +451,3 @@ export default function RegistrarUsuario() {
     </>
   );
 }
-
-/**
-    const crearUsuario = async () => {
-      try {
-        const data = {
-          cedula: cedula,
-          nombre: nombre,
-          correo: correo,
-          claveUno: claveUno,
-          claveDos: claveDos,
-          departamento:
-            seleccionarDepartamentos.length > 0
-              ? seleccionarDepartamentos.map(({ id }) => ({ id }))
-              : [],
-        };
-
-        const respuesta = await axios.post(`/api/usuarios/crear-usuario`, data);
-
-        console.log(respuesta.data);
-
-        if (respuesta.data.status === "ok") {
-          setMensajeBackEnd(respuesta.data.message);
-          setTimeout(() => {
-            setCedula("");
-            setNombre("");
-            setCorreo("");
-            setClaveUno("");
-            setClaveDos("");
-            setMensajeBackEnd("");
-            window.location.href = respuesta.data.redirect;
-          }, 5000);
-        }
-      } catch (error) {
-        console.log("Error, al crear el usuario: " + error);
-
-        if (error && error.response && error.response.status === 400) {
-          setMensajeBackEnd(error.response.data.message);
-        } else {
-          setMensajeBackEnd("Error interno");
-        }
-
-        setTimeout(() => {
-          cerrarModal();
-        }, 5000);
-      }
-    };
-  */

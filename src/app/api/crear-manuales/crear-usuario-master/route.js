@@ -13,33 +13,6 @@ export async function GET() {
         id_rol: 1,
         clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
       },
-      {
-        cedula: 2222222,
-        nombre: "admin",
-        correo: "admin@gmail.com",
-        token: "uw8j3v5ks6b82jh3",
-        borrado: false,
-        id_rol: 2,
-        clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
-      },
-      {
-        cedula: 3333333,
-        nombre: "director",
-        correo: "director@gmail.com",
-        token: "4hj24ksm9rr3uejf",
-        borrado: false,
-        id_rol: 3,
-        clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
-      },
-      {
-        cedula: 4444444,
-        nombre: "empleado",
-        correo: "empleado@gmail.com",
-        token: "7ds92msn1pp2keow",
-        borrado: false,
-        id_rol: 4,
-        clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
-      },
     ];
 
     await Promise.all(
@@ -51,6 +24,7 @@ export async function GET() {
             clave: user.clave,
             id_rol: user.id_rol,
             borrado: user.borrado,
+            validado: true
           },
           create: user,
         })

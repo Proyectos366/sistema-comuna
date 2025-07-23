@@ -21,6 +21,7 @@ export async function POST(request) {
       data: {
         nombre: validaciones.nombre,
         id_usuario: validaciones.id_usuario,
+        id_departamento: validaciones.id_departamento,
         modulos: {
           connect: validaciones.todosModulos.map(({ id }) => ({ id })),
         },

@@ -19,6 +19,7 @@ import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
 import UsuariosForm from "../opciones/UsuariosForm";
 import OacDepartamento from "../departamentos/Oac";
+import DepartamentosForm from "../opciones/DepartamentosForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -94,6 +95,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "modulos",
         "formaciones",
         "participantes",
+        "departamentos",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -109,6 +111,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "modulos",
         "formaciones",
         "participantes",
+        "departamentos",
         "voceros",
         "perfil",
         "cambiar-clave",
@@ -227,6 +230,19 @@ export default function VistaUniversalUsuarios({ children }) {
                 <>
                   {vista === "usuarios" && (
                     <UsuariosForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
+                  )}
+
+                  {vista === "departamentos" && (
+                    <DepartamentosForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

@@ -8,16 +8,16 @@ import msjCorrectos from "../msj_validaciones/crear_usuario/msjCorrectos.json";
 export default async function validarCrearUsuario(
   cedula,
   nombre,
+  apellido,
   correo,
   claveUno,
   claveDos
 ) {
   try {
-    const cedulaSinPunto = cedula.replace(/\./g, "");
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposRegistro(
       cedula,
       nombre,
+      apellido,
       correo,
       claveUno,
       claveDos
@@ -63,6 +63,7 @@ export default async function validarCrearUsuario(
       {
         cedula: validandoCampos.cedula,
         nombre: validandoCampos.nombre,
+        apellido: validandoCampos.apellido,
         claveEncriptada: claveEncriptada.claveEncriptada,
         correo: validandoCampos.correo,
       }

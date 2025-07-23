@@ -1,21 +1,21 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCambiarRol from "@/services/validarCambiarRol";
+import validarRestaurarUsuario from "@/services/validarRestaurarUsuario";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function PATCH(request) {
   try {
-    const { idRol, idUsuario } = await request.json();
+    const { estado, idUsuario } = await request.json();
 
-    const validaciones = await validarCambiarRol(idRol, idUsuario);
+    const validaciones = await validarRestaurarUsuario(estado, idUsuario);
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
-        accion: "INTENTO_FALLIDO_CAMBIAR_ROL",
+        accion: "INTENTO_FALLIDO_RESTAURAR",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "Validacion fallida al cambiar rol al usuario",
+        descripcion: "Validacion fallida al restaurar usuario",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -28,19 +28,19 @@ export async function PATCH(request) {
       );
     }
 
-    const [cambiadoRol, usuarioActualizado] = await prisma.$transaction([
+    const [restaurandoUsuario, usuarioActualizado] = await prisma.$transaction([
       // Primero se actualiza el usuario con solo el nuevo departamento
       prisma.usuario.update({
-        where: { id: validaciones.id_usuario_rol },
+        where: { id: validaciones.id_usuario_estado },
         data: {
-          id_rol: validaciones.id_rol, // Asegúrate que este sea el nuevo rol
+          borrado: validaciones.borrado, // Asegúrate que este sea el nuevo rol
         },
       }),
 
       // Luego se consulta al usuario ya actualizado
       prisma.usuario.findFirst({
         where: {
-          id: validaciones.id_usuario_rol,
+          id: validaciones.id_usuario_estado,
         },
         orderBy: { nombre: "asc" },
         include: { MiembrosDepartamentos: true },
@@ -48,38 +48,43 @@ export async function PATCH(request) {
     ]);
 
     // Validación de los resultados después de la transacción
-    if (!cambiadoRol || !usuarioActualizado) {
+    if (!restaurandoUsuario || !usuarioActualizado) {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
-        accion: "ERROR_UPDATE_CAMBIAR_ROL",
+        accion: "ERROR_RESTAURAR_USUARIO",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo cambiar el rol al usuario",
+        descripcion: "No se pudo restaurar el usuario",
         datosAntes: null,
         datosDespues: {
-          cambiadoRol,
+          restaurandoUsuario,
           usuarioActualizado,
         },
       });
 
-      return generarRespuesta("error", "Error, al cambiar de rol...", {}, 400);
+      return generarRespuesta(
+        "error",
+        "Error, al restaurar usuario...",
+        {},
+        400
+      );
     } else {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
-        accion: "UPDATE_CAMBIAR_ROL",
+        accion: "RESTAURAR_USUARIO",
         id_objeto: usuarioActualizado.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: "Rol cambiado con exito",
+        descripcion: "Usuario restaurado con exito",
         datosAntes: null,
         datosDespues: {
-          cambiadoRol,
+          restaurandoUsuario,
           usuarioActualizado,
         },
       });
 
       return generarRespuesta(
         "ok",
-        "Cambio exitoso...",
+        "Usuario restaurado correctamente...",
         {
           usuario: usuarioActualizado,
         },
@@ -87,21 +92,21 @@ export async function PATCH(request) {
       );
     }
   } catch (error) {
-    console.log(`Error interno (cambiar de rol): ` + error);
+    console.log(`Error interno (restaurar usuario): ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
-      accion: "ERROR_INTERNO_CAMBIAR_ROL",
+      accion: "ERROR_INTERNO_RESTAURAR",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al cambiar rol de usuario",
+      descripcion: "Error inesperado al restaurar usuario",
       datosAntes: null,
       datosDespues: error.message,
     });
 
     return generarRespuesta(
       "error",
-      "Error, interno (cambiar de rol)",
+      "Error, interno (restaurar usuario)",
       {},
       500
     );

@@ -20,18 +20,19 @@ model role {
 }
 
 model imagen {
-  id            Int      @id @default(autoincrement())
-  id_usuario    Int
-  path          String
-  nombreArchivo String
-  tipoMime      String
-  formato       String
-  pesoKb        Float
-  ancho         Int
-  alto          Int
-  esPerfil      Boolean  @default(true)
-  descripcion   String?  @default("")
-  fechaSubida   DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  id_usuario  Int
+  path        String
+  nombre      String
+  tipo_mime   String
+  formato     String
+  peso        Float
+  ancho       Int
+  alto        Int
+  perfil      Boolean  @default(true)
+  descripcion String?  @default("")
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   usuarios usuario @relation(fields: [id_usuario], references: [id]) // Corrección: relación bien definida
 }
@@ -94,6 +95,8 @@ model departamento {
   // Relaciones
   creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
   miembros usuario[] @relation("MiembrosDepartamento")
+
+  formaciones formacion[] @relation(name: "FormacionDepartamento")
 }
 
 model cargo {
@@ -273,17 +276,19 @@ model familiar {
 }
 
 model formacion {
-  id         Int      @id @default(autoincrement())
-  nombre     String   @unique
-  id_usuario Int
-  borrado    Boolean  @default(false)
-  culminada  Boolean  @default(false)
-  updatedAt  DateTime @default(now()) @updatedAt
-  createdAt  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  nombre          String   @unique
+  id_usuario      Int
+  id_departamento Int?
+  borrado         Boolean  @default(false)
+  culminada       Boolean  @default(false)
+  updatedAt       DateTime @default(now()) @updatedAt
+  createdAt       DateTime @default(now())
 
-  usuarios usuario  @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
-  modulos  modulo[]
-  cursos   curso[]
+  usuarios      usuario       @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
+  departamentos departamento? @relation(name: "FormacionDepartamento", fields: [id_departamento], references: [id])
+  modulos       modulo[]
+  cursos        curso[]
 }
 
 model modulo {
@@ -335,6 +340,20 @@ model asistencia {
   voceros  vocero  @relation(fields: [id_vocero], references: [id])
   modulos  modulo  @relation(fields: [id_modulo], references: [id])
   cursos   curso   @relation(fields: [id_curso], references: [id])
+}
+
+model eventos {
+  id           Int      @id @default(autoincrement())
+  tabla        String
+  accion       String
+  id_objeto    Int
+  id_usuario   Int
+  ip           String?  @default("") // Dirección IP del usuario
+  descripcion  String?  @default("") // Texto explicativo o personalizado
+  datosAntes   Json? // Datos anteriores (UPDATE o DELETE)
+  datosDespues Json? // Datos nuevos (INSERT o UPDATE)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 /**

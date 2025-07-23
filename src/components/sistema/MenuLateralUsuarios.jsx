@@ -51,6 +51,16 @@ export default function MenuLateralUsuario({
                     nombre={"OAC"}
                     volverInicio={volverInicio}
                   />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"departamentos"}
+                    nombre={"Departamentos"}
+                    volverInicio={volverInicio}
+                  />
+
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -146,6 +156,15 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"usuarios"}
                     nombre={"Usuarios"}
+                    volverInicio={volverInicio}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"departamentos"}
+                    nombre={"Departamentos"}
                     volverInicio={volverInicio}
                   />
 

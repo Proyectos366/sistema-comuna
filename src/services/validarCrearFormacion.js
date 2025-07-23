@@ -35,8 +35,10 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
     const nombreMinuscula = nombre.toLowerCase();
 
     const idUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
+      where: { correo },
+      include: {
+        MiembrosDepartamentos: true,
+      },
     });
 
     if (!idUsuario) {
@@ -67,6 +69,9 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
       nombre: nombreMinuscula,
       cantidadModulos: todoscantidadModulos,
       todosModulos: todoscantidadModulos,
+      id_departamento: idUsuario?.MiembrosDepartamentos?.[0]?.id
+        ? idUsuario?.MiembrosDepartamentos?.[0]?.id
+        : null,
     });
   } catch (error) {
     console.log(`Error, interno al validar crear formacion: ` + error);

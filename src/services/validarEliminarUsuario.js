@@ -5,7 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarCambiarEstado(estado, idUsuario) {
+export default async function validarEliminarUsuario(estado, idUsuario) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -29,7 +29,10 @@ export default async function validarCambiarEstado(estado, idUsuario) {
     const correo = descifrarToken.correo;
 
     if (estado !== true && estado !== false) {
-      return retornarRespuestaFunciones("error", "Error, estado inválido...");
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, opcion de eliminar invalida..."
+      );
     }
 
     const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario);
@@ -52,14 +55,14 @@ export default async function validarCambiarEstado(estado, idUsuario) {
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      borrado: estado ? false : true,
+      borrado: true,
       id_usuario_estado: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno al cambiar estado: ` + error);
+    console.log(`Error, interno al eliminar usuario: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al cambiar estado"
+      "Error, interno al eliminar usuario"
     );
   }
 }
