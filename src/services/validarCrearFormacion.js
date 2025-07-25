@@ -48,6 +48,22 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
       );
     }
 
+    const nombreRepetido = await prisma.formacion.findFirst({
+      where: {
+        nombre: nombre,
+      },
+    });
+
+    if (nombreRepetido) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, formacion ya existe...",
+        {
+          id_usuario: idUsuario.id,
+        }
+      );
+    }
+
     const todoscantidadModulos = await prisma.modulo.findMany({
       where: { borrado: false },
       select: { id: true },
@@ -60,7 +76,10 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
     if (!todoscantidadModulos || todoscantidadModulos.length === 0) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, no hay cantidadModulos..."
+        "Error, no hay cantidad modulos...",
+        {
+          id_usuario: idUsuario.id,
+        }
       );
     }
 

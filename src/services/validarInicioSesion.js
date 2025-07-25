@@ -1,5 +1,3 @@
-import path from "path";
-import fs from "fs";
 import ValidarCampos from "@/services/ValidarCampos";
 import prisma from "@/libs/prisma";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
@@ -68,24 +66,6 @@ export default async function validarInicioSesion(correo, clave) {
       );
     }
 
-    const rutaCarpeta = path.resolve(
-      process.cwd(),
-      "public",
-      "uploads",
-      String(datosInicioSesion.id)
-    );
-
-    // Verificar si la carpeta existe antes de intentar acceder a ella
-    if (fs.existsSync(rutaCarpeta)) {
-      // Leer archivos dentro de la carpeta y eliminarlos
-      const archivos = fs.readdirSync(rutaCarpeta);
-
-      archivos.forEach((archivo) => {
-        const rutaArchivo = path.join(rutaCarpeta, archivo);
-        fs.unlinkSync(rutaArchivo);
-      });
-    }
-
     return retornarRespuestaFunciones(
       msjCorrectos.ok,
       msjCorrectos.validacionCorrecta,
@@ -94,6 +74,7 @@ export default async function validarInicioSesion(correo, clave) {
         cookie: crearTokenInicioSesion.cookieOption,
         redirect: redirect,
         id_usuario: datosInicioSesion.id,
+        datosUsuario: datosInicioSesion,
       }
     );
   } catch (error) {

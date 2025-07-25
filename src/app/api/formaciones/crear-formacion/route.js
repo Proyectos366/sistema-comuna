@@ -1,6 +1,7 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import validarCrearFormacion from "@/services/validarCrearFormacion";
+import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
@@ -9,6 +10,16 @@ export async function POST(request) {
     const validaciones = await validarCrearFormacion(nombre, cantidadModulos);
 
     if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "formacion",
+        accion: "INTENTO_FALLIDO_FORMACION",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario ?? 0,
+        descripcion: "Validación fallida al intentar crear formación",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
+
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
@@ -29,6 +40,16 @@ export async function POST(request) {
     });
 
     if (!nuevaFormacion) {
+      await registrarEventoSeguro(request, {
+        tabla: "formacion",
+        accion: "ERROR_CREAR_FORMACION",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario ?? 0,
+        descripcion: "No se pudo crear la formación",
+        datosAntes: null,
+        datosDespues: nuevoCargo,
+      });
+
       return generarRespuesta(
         "error",
         "Error, no se creo la formacion",
@@ -36,6 +57,16 @@ export async function POST(request) {
         400
       );
     } else {
+      await registrarEventoSeguro(request, {
+        tabla: "formacion",
+        accion: "CREAR_FORMACION",
+        id_objeto: nuevaFormacion.id,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Formacion creada con exito",
+        datosAntes: null,
+        datosDespues: nuevaFormacion,
+      });
+
       return generarRespuesta(
         "ok",
         "Formacion creada...",
@@ -48,19 +79,16 @@ export async function POST(request) {
   } catch (error) {
     console.log(`Error interno (formaciones): ` + error);
 
+    await registrarEventoSeguro(request, {
+      tabla: "formacion",
+      accion: "ERROR_INTERNO",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al crear formacion",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
+
     return generarRespuesta("error", "Error, interno (formaciones)", {}, 500);
   }
 }
-
-/**
-  // Recibiendo por parametro los cantidadModulos que quiero puedo usar esta consulta
-  const todoscantidadModulos = await prisma.modulo.findMany({
-    where: {
-      borrado: false,
-        id: {
-          in: cantidadModulos, // cantidadModulos debe ser un array de IDs que tú escojas
-        },
-    },
-    select: { id: true },
-  });
-*/

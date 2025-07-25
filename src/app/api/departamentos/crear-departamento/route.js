@@ -1,7 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import validarCrearDepartamento from "@/services/validarCrearDepartamento";
-import obtenerIp from "@/utils/obtenerIp";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
@@ -13,9 +12,9 @@ export async function POST(request) {
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "departamento",
-        accion: "INTENTO_FALLIDO",
+        accion: "INTENTO_FALLIDO_DEPARTAMENTO",
         id_objeto: 0,
-        id_usuario: 0,
+        id_usuario: validaciones.id_usuario,
         descripcion: "Validacion fallida al intentar crear departamento",
         datosAntes: null,
         datosDespues: validaciones,
@@ -40,7 +39,7 @@ export async function POST(request) {
     if (!nuevoDepartamento) {
       await registrarEventoSeguro(request, {
         tabla: "departamento",
-        accion: "ERROR_CREAR",
+        accion: "ERROR_CREAR_DEPARTAMENTO",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
         descripcion: "No se pudo crear el departamento",
@@ -57,7 +56,7 @@ export async function POST(request) {
     } else {
       await registrarEventoSeguro(request, {
         tabla: "departamento",
-        accion: "CREAR",
+        accion: "CREAR_DEPARTAMENTO",
         id_objeto: nuevoDepartamento.id,
         id_usuario: validaciones.id_usuario,
         descripcion: "Departamento creado con exito",
@@ -76,6 +75,7 @@ export async function POST(request) {
     }
   } catch (error) {
     console.log(`Error interno (departamento): ` + error);
+
     await registrarEventoSeguro(request, {
       tabla: "departamento",
       accion: "ERROR_INTERNO",
@@ -85,6 +85,7 @@ export async function POST(request) {
       datosAntes: null,
       datosDespues: error.message,
     });
+
     return generarRespuesta("error", "Error, interno (departamento)", {}, 500);
   }
 }

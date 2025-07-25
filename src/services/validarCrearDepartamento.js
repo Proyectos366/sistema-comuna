@@ -63,7 +63,10 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, departamento ya existe..."
+        "Error, departamento ya existe...",
+        {
+          id_usuario: usuario_id,
+        }
       );
     }
 

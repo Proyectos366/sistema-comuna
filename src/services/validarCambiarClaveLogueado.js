@@ -26,16 +26,6 @@ export default async function validarCambiarClaveLogueado(
         descifrarToken.message
       );
     }
-
-    const validandoCampos = ValidarCampos.validarCampoClave(claveUno, claveDos);
-
-    if (validandoCampos.status === "error") {
-      return retornarRespuestaFunciones(
-        validandoCampos.status,
-        validandoCampos.message
-      );
-    }
-
     const correo = descifrarToken.correo.toLowerCase();
 
     const claveUsuarioActivo = await prisma.usuario.findFirst({
@@ -46,13 +36,33 @@ export default async function validarCambiarClaveLogueado(
       },
     });
 
+    if (!claveUsuarioActivo) {
+      return retornarRespuestaFunciones("error", "Error, usuario invalido...", {
+        id_usuario: 0,
+      });
+    }
+
+    const validandoCampos = ValidarCampos.validarCampoClave(claveUno, claveDos);
+
+    if (validandoCampos.status === "error") {
+      return retornarRespuestaFunciones(
+        validandoCampos.status,
+        validandoCampos.message,
+        {
+          id_usuario: claveUsuarioActivo.id,
+        }
+      );
+    }
+
     const comparada = await CifrarDescifrarClaves.compararClave(
       claveVieja,
       claveUsuarioActivo.clave
     );
 
     if (comparada.status === "error") {
-      return retornarRespuestaFunciones(comparada.status, comparada.message);
+      return retornarRespuestaFunciones(comparada.status, comparada.message, {
+        id_usuario: claveUsuarioActivo.id,
+      });
     }
 
     // Encriptar clave
@@ -61,7 +71,10 @@ export default async function validarCambiarClaveLogueado(
     if (claveEncriptada.status === "error") {
       return retornarRespuestaFunciones(
         claveEncriptada.status,
-        claveEncriptada.message
+        claveEncriptada.message,
+        {
+          id_usuario: claveUsuarioActivo.id,
+        }
       );
     }
 

@@ -5,7 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarCrearCargo(nombre) {
+export default async function validarCrearCargo(nombre, descripcion) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -30,11 +30,18 @@ export default async function validarCrearCargo(nombre) {
 
     const correo = descifrarToken.correo;
     const nombreMinuscula = nombre.toLowerCase();
+    const descripcionMinuscula = descripcion
+      ? descripcion.toLowerCase()
+      : "sin descripción";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: { id: true },
     });
+
+    if (!idUsuario) {
+      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
+    }
 
     const nombreRepetido = await prisma.cargo.findFirst({
       where: {
@@ -43,12 +50,15 @@ export default async function validarCrearCargo(nombre) {
     });
 
     if (nombreRepetido) {
-      return retornarRespuestaFunciones("error", "Error, cargo ya existe...");
+      return retornarRespuestaFunciones("error", "Error, cargo ya existe...", {
+        id_usuario: idUsuario.id,
+      });
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: idUsuario.id,
       nombre: nombreMinuscula,
+      descripcion: descripcionMinuscula,
     });
   } catch (error) {
     console.log(`Error, interno al crear cargo: ` + error);

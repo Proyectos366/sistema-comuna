@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useUser } from "@/app/context/AuthContext";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
-import { useUser } from "@/app/context/AuthContext";
 import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
 import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 import ParroquiasForm from "../opciones/ParroquiasForm";
@@ -202,7 +202,7 @@ export default function VistaUniversalUsuarios({ children }) {
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
-              nombreDepartamento={departamento.nombre}
+              nombreDepartamento={departamento?.nombre}
             />
           </div>
 
@@ -377,7 +377,16 @@ export default function VistaUniversalUsuarios({ children }) {
                     <MostrarPerfilUsuario abrirPanel={abrirPanel} />
                   )}
                   {vista === "cambiar-clave" && (
-                    <MostrarCambiarClaveUsuario abrirPanel={abrirPanel} />
+                    <MostrarCambiarClaveUsuario
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
                   )}
                 </>
               )}

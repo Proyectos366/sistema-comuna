@@ -24,6 +24,7 @@ export default function CargosForm({
   ejecutarAccionesConRetraso,
 }) {
   const [nombreCargo, setNombreCargo] = useState("");
+  const [descripcionCargo, setDescripcionCargo] = useState("");
   const [todosCargos, setTodosCargos] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const [validarNombre, setValidarNombre] = useState(false);
@@ -48,13 +49,15 @@ export default function CargosForm({
       try {
         const response = await axios.post("/api/cargos/crear-cargo", {
           nombre: nombreCargo,
+          descripcion: descripcionCargo,
         });
         setTodosCargos([...todosCargos, response.data.cargo]); // Suponiendo que la API devuelve el nombre guardado
         abrirMensaje(response.data.message);
 
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setNombreCargo(""), tiempo: 3000 }, // Se ejecutará en 5 segundos
+          { accion: () => setNombreCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
         console.log("Error, al crear el cargo: " + error);
@@ -75,6 +78,7 @@ export default function CargosForm({
       >
         <ModalDatosContenedor>
           <ModalDatos titulo={"Nombre"} descripcion={nombreCargo} />
+          <ModalDatos titulo={"Descripción"} descripcion={descripcionCargo} />
         </ModalDatosContenedor>
 
         <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -87,6 +91,7 @@ export default function CargosForm({
           nombreDos={"Cancelar"}
           campos={{
             nombreCargo,
+            descripcionCargo
           }}
         />
       </Modal>
@@ -96,6 +101,8 @@ export default function CargosForm({
           <FormCrearCargo
             nombre={nombreCargo}
             setNombre={setNombreCargo}
+            descripcion={descripcionCargo}
+            setDescripcion={setDescripcionCargo}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
             validarNombre={validarNombre}

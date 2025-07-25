@@ -8,7 +8,6 @@ import ModalDatos from "@/components/ModalDatos";
 import MostrarMsj from "@/components/MostrarMensaje";
 import Formulario from "@/components/Formulario";
 import Titulos from "@/components/Titulos";
-import ModalPequena from "@/components/ModalPeque";
 import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
 import InputClave from "@/components/inputs/InputClave";
@@ -38,7 +37,6 @@ export default function RegistrarUsuario() {
   const [validarApellido, setValidarApellido] = useState(false);
   const [validarClave, setValidarClave] = useState(false);
   const [mostrar, setMostrar] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [verModal, setVerModal] = useState(false);
 
   const [todosDepartamentos, setTodosDepartamentos] = useState([]);
@@ -47,9 +45,6 @@ export default function RegistrarUsuario() {
   const [nombreDepartamento, setNombreDepartamento] = useState("");
 
   const [seleccionarDepartamentos, setSeleccionarDepartamentos] = useState([]);
-
-  const mostrarModalS = () => setVisible(true);
-  const ocultarModal = () => setVisible(false);
 
   useEffect(() => {
     const fetchDatosDepartamentos = async () => {
@@ -379,13 +374,9 @@ export default function RegistrarUsuario() {
                     value={claveDos}
                     onChange={leyendoClave2}
                     indice={"clave2"}
-                    mostrarModalS={mostrarModalS}
-                    ocultarModal={ocultarModal}
                   />
                 </LabelInput>
               </div>
-
-              <ModalPequena visible={visible} />
 
               <div className="flex items-center justify-between -mt-3 sm:mt-0">
                 <LinkPaginas href="/" nombre={"Login"} />
