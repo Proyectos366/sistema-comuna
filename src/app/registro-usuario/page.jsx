@@ -50,7 +50,7 @@ export default function RegistrarUsuario() {
     const fetchDatosDepartamentos = async () => {
       try {
         const response = await axios.get(
-          "/api/departamentos/todos-departamentos"
+          "/api/departamentos/todos-departamentos-fuera"
         );
         setTodosDepartamentos(response.data.departamentos || []);
       } catch (error) {

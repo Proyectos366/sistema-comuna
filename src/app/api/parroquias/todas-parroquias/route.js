@@ -1,28 +1,48 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
+import registrarEventoSeguro from "@/libs/trigget";
+import validarConsultarTodasParroquias from "@/services/validarConsultarTodasParroquias";
 
-export async function GET() {
+export async function GET(request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await validarConsultarTodasParroquias();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
+    if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "INTENTO_FALLIDO_TODAS_PARROQUIAS",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Validacion fallida al consultar todas las parroquias",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
 
-    if (descifrarToken.status === "error") {
-      return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+      return generarRespuesta(
+        validaciones.status,
+        validaciones.message,
+        {},
+        400
       );
     }
 
-    const correo = descifrarToken.correo;
-
-    const todasParroquias = await prisma.parroquia.findMany();
+    const todasParroquias = await prisma.parroquia.findMany({
+      where: {
+        borrado: false,
+      },
+    });
 
     if (!todasParroquias) {
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "ERROR_GET_TODAS_PARROQUIAS",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo obtener todas las parroquias",
+        datosAntes: null,
+        datosDespues: null,
+      });
+
       return generarRespuesta(
         "error",
         "Error, al consultar parroquias...",
@@ -30,6 +50,18 @@ export async function GET() {
         400
       );
     } else {
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "GET_TODAS_PARROQUIAS ",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Se obtuvieron todas las parroquias",
+        datosAntes: null,
+        datosDespues: {
+          todasParroquias,
+        },
+      });
+
       return generarRespuesta(
         "ok",
         "Todas las parroquias...",
@@ -41,6 +73,16 @@ export async function GET() {
     }
   } catch (error) {
     console.log(`Error interno consultar (parroquias): ` + error);
+
+    await registrarEventoSeguro(request, {
+      tabla: "parroquia",
+      accion: "ERROR_INTERNO_TODAS_PARROQUIAS ",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al consultar todas las parroquias",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta(
       "error",

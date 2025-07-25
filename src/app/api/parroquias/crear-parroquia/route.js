@@ -1,6 +1,7 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import validarCrearParroquia from "@/services/validarCrearParroquia";
+import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
@@ -9,11 +10,21 @@ export async function POST(request) {
     const validaciones = await validarCrearParroquia(nombre);
 
     if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "INTENTO_FALLIDO_PARROQUIA",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario ?? 0,
+        descripcion: "Validacion fallida al intentar crear parroquia",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
+
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
         {},
-       400
+        400
       );
     }
 
@@ -21,11 +32,21 @@ export async function POST(request) {
       data: {
         nombre: validaciones.nombre,
         id_usuario: validaciones.id_usuario,
-        borrado: false
+        borrado: false,
       },
     });
 
     if (!nuevaParroquia) {
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "ERROR_CREAR_PARROQUIA",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo crear la parroquia",
+        datosAntes: null,
+        datosDespues: nuevaParroquia,
+      });
+
       return generarRespuesta(
         "error",
         "Error, no se creo la parroquia",
@@ -33,12 +54,37 @@ export async function POST(request) {
         400
       );
     } else {
-      return generarRespuesta("ok", "Parroquia creada...", {
-        parroquia: nuevaParroquia
-      }, 201);
+      await registrarEventoSeguro(request, {
+        tabla: "parroquia",
+        accion: "CREAR_PARROQUIA",
+        id_objeto: nuevaParroquia.id,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Parroquia creada con exito",
+        datosAntes: null,
+        datosDespues: nuevaParroquia,
+      });
+
+      return generarRespuesta(
+        "ok",
+        "Parroquia creada...",
+        {
+          parroquia: nuevaParroquia,
+        },
+        201
+      );
     }
   } catch (error) {
     console.log(`Error interno (parroquias): ` + error);
+
+    await registrarEventoSeguro(request, {
+      tabla: "parroquia",
+      accion: "ERROR_INTERNO",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al crear parroquia",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta("error", "Error, interno (parroquias)", {}, 500);
   }

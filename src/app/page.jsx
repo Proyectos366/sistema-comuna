@@ -78,7 +78,7 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4">
-      <section className="flex flex-col items-center justify-center gap-4 h-[500px] sm:max-w-[400px] md:max-w-none w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+      <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] md:max-w-none w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
         <ImgRegistroLogin />
 
         <div className="flex flex-col w-full mt-4">
@@ -94,7 +94,7 @@ export default function Home() {
               iniciarSesion(correo, clave, setCorreo, setClave, setMensaje);
             }}
           >
-            <div className="w-full flex flex-col space-y-2">
+            
               <LabelInput nombre={"Correo"}>
                 <InputCorreo
                   type="text"
@@ -115,7 +115,7 @@ export default function Home() {
                   indice={"clave"}
                 />
               </LabelInput>
-            </div>
+            
 
             <div className="flex items-center justify-between">
               <LinkPaginas

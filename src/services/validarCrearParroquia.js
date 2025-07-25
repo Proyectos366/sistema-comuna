@@ -49,7 +49,10 @@ export default async function validarCrearParroquia(nombre) {
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, parroquia ya existe..."
+        "Error, parroquia ya existe...",
+        {
+          id_usuario: idUsuario.id,
+        }
       );
     }
 
