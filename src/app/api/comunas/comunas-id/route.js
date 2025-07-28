@@ -1,40 +1,31 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
+import validarConsultarComunasIdParroquia from "@/services/validarConsultarComunasIdParroquia";
+import registrarEventoSeguro from "@/libs/trigget";
 
-export async function GET(req) {
+export async function GET(request) {
   try {
-    // Obtener el ID desde los parámetros de la solicitud
-    const { searchParams } = new URL(req.url);
-    const idParroquia = searchParams.get("idParroquia");
+    const validaciones = await validarConsultarComunasIdParroquia(request);
 
-    const id_parroquia = Number(idParroquia);
+    if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "comuna",
+        accion: "INTENTO_FALLIDO_COMUNAS_ID_PARROQUIA",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Validacion fallida al consultar comunas por id parroquia",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
-
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    if (!idParroquia) {
-      return generarRespuesta(
-        "error",
-        "El ID de parroquia es obligatorio.",
-        {},
-        400
-      );
-    }
-
-    const comunas = await prisma.comuna.findMany({
-      where: { id_parroquia: id_parroquia, borrado: false },
+    const comunasIdParroquia = await prisma.comuna.findMany({
+      where: { id_parroquia: validaciones.id_parroquia, borrado: false },
       include: {
         voceros: {
           select: {
@@ -53,23 +44,53 @@ export async function GET(req) {
       },
     });
 
-    if (!comunas) {
+    if (!comunasIdParroquia) {
+      await registrarEventoSeguro(request, {
+        tabla: "comuna",
+        accion: "ERROR_GET_COMUNAS_ID_PARROQUIA",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo obtener comunas por id parroquia",
+        datosAntes: null,
+        datosDespues: null,
+      });
+
       return generarRespuesta(
         "ok",
         "No hay comunas en esta parroquia.",
         { comunas: [] },
         200
       );
-    }
+    } else {
+      await registrarEventoSeguro(request, {
+        tabla: "comuna",
+        accion: "GET_COMUNAS_ID_PARROQUIA",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Se obtuvieron las comunas por id parroquia",
+        datosAntes: null,
+        datosDespues: comunasIdParroquia,
+      });
 
-    return generarRespuesta(
-      "ok",
-      "Comunas encontradas.",
-      { comunas: comunas },
-      200
-    );
+      return generarRespuesta(
+        "ok",
+        "Comunas encontradas.",
+        { comunas: comunasIdParroquia },
+        200
+      );
+    }
   } catch (error) {
     console.log(`Error interno al consultar comunas: ${error}`);
+
+    await registrarEventoSeguro(request, {
+      tabla: "comuna",
+      accion: "ERROR_INTERNO_COMUNAS_ID_PARROQUIA ",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al consultar comunas por id parroquia",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta(
       "error",

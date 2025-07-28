@@ -32,6 +32,9 @@ export default function FormCrearConsejo({
   useEffect(() => {
     if (idComuna || idCircuito) {
       const resultComuna = comunas.find((c) => c.id === idComuna);
+
+      console.log(resultComuna.id_parroquia);
+      
       setNombreParroquia(resultComuna?.nombre);
       setIdParroquia(resultComuna?.id_parroquia);
     }
@@ -42,7 +45,7 @@ export default function FormCrearConsejo({
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      className="space-y-4"
+      className="flex flex-col"
     >
       <SelectOpcion
         idOpcion={dondeGuardar}

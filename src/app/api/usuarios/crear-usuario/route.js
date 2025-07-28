@@ -80,7 +80,7 @@ export async function POST(request) {
     if (!nuevoUsuario) {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
-        accion: "ERROR_CREAR",
+        accion: "ERROR_CREAR_USUARIO",
         id_objeto: 0,
         id_usuario: 0,
         descripcion: "No se pudo crear el usuario",
@@ -97,7 +97,7 @@ export async function POST(request) {
     } else {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
-        accion: "CREAR",
+        accion: "CREAR_USUARIO",
         id_objeto: usuarioConDepartamentos?.MiembrosDepartamentos?.[0]?.id ?? 0,
         id_usuario: nuevoUsuario.id,
         descripcion: `Usuario creado y se agrego al departamento ${

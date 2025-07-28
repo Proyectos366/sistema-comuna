@@ -102,32 +102,36 @@ export default class ValidarCampos {
 
   static validarCampoNombreApellidoDos(nombre, opcion) {
     try {
-      if (nombre) {
-        if (!nombreRegex.test(nombre)) {
-          return retornarRespuestaFunciones(
-            "error",
-            `Error, segundo ${
-              opcion === "apellido" ? "apellido" : "nombre"
-            } solo letras`
-          );
-        }
+      if (nombre && !nombreRegex.test(nombre)) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, segundo ${
+            opcion === "apellido" ? "apellido" : "nombre"
+          } solo letras`
+        );
       }
+
+      const campo =
+        opcion === "apellido"
+          ? { apellido_dos: nombre ? nombre.toLowerCase() : "" }
+          : { nombre_dos: nombre ? nombre.toLowerCase() : "" };
 
       return retornarRespuestaFunciones(
         "ok",
         `Campo segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
-        } valido...`
+        } valido...`,
+        campo
       );
     } catch (error) {
       console.log(
-        `Error, interno validando segundo ${
+        `Error interno validando segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
         }: ` + error
       );
       return retornarRespuestaFunciones(
         "error",
-        `Error, interno validadndo segundo ${
+        `Error interno validando segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
         }...`
       );
@@ -309,16 +313,16 @@ export default class ValidarCampos {
 
   static validarCampoGenero(genero) {
     try {
-      const moduloNumero = Number(genero);
+      const generoNumero = Number(genero);
 
-      if (isNaN(moduloNumero)) {
+      if (isNaN(generoNumero)) {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo genero invalido..."
         );
       }
 
-      if (!Number.isInteger(moduloNumero)) {
+      if (!Number.isInteger(generoNumero)) {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo genero invalido..."
@@ -339,7 +343,9 @@ export default class ValidarCampos {
         );
       }
 
-      return retornarRespuestaFunciones("ok", "Campo genero validado...");
+      return retornarRespuestaFunciones("ok", "Campo genero validado...", {
+        genero: generoNumero === 1 ? true : false,
+      });
     } catch (error) {
       console.log(`Error, interno validando genero: ` + error);
       return retornarRespuestaFunciones(
@@ -501,7 +507,13 @@ export default class ValidarCampos {
     correo,
     genero,
     edad,
-    telefono
+    telefono,
+    direccion,
+    laboral,
+    id_parroquia,
+    id_comuna,
+    id_consejo,
+    id_circuito
   ) {
     try {
       const validarCorreo = this.validarCampoCorreo(correo);
@@ -521,6 +533,22 @@ export default class ValidarCampos {
       const validarEdad = this.validarCampoEdad(edad);
       const validarTelefono = this.validarCampoTelefono(telefono);
 
+      const validarActividadLaboral = this.validarCampoNombre(laboral);
+      const validarDireccion = this.validarCampoTexto(
+        direccion ? direccion : "sin direccion"
+      );
+
+      const validarParroquia = this.validarCampoId(id_parroquia);
+      const validarComuna = id_comuna
+        ? this.validarCampoId(id_comuna)
+        : { id: null };
+      const validarCircuito = id_circuito
+        ? this.validarCampoId(id_circuito)
+        : { id: null };
+      const validarConsejo = id_consejo
+        ? this.validarCampoId(id_consejo)
+        : { id: null };
+
       if (validarCorreo.status === "error") return validarCorreo;
       if (validarNombre.status === "error") return validarNombre;
       if (validarNombreDos.status === "error") return validarNombreDos;
@@ -530,11 +558,34 @@ export default class ValidarCampos {
       if (validarGenero.status === "error") return validarGenero;
       if (validarEdad.status === "error") return validarEdad;
       if (validarTelefono.status === "error") return validarTelefono;
+      if (validarActividadLaboral.status === "error")
+        return validarActividadLaboral;
+      if (validarDireccion.status === "error") return validarDireccion;
+      if (validarParroquia.status === "error") return validarParroquia;
+
+      if (validarComuna && validarComuna.status === "error")
+        return validarComuna;
+      if (validarCircuito && validarCircuito.status === "error")
+        return validarCircuito;
+      if (validarConsejo && validarConsejo.status === "error")
+        return validarConsejo;
 
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         cedula: validarCedula.cedula,
-        telefono: validarTelefono.telefono,
         edad: validarEdad.edad,
+        nombre: validarNombre.nombre,
+        nombre_dos: validarNombreDos.nombre_dos,
+        apellido: validarApellido.nombre,
+        apellido_dos: validarApellidoDos.apellido_dos,
+        genero: validarGenero.genero,
+        telefono: validarTelefono.telefono,
+        correo: validarCorreo.correo,
+        laboral: validarActividadLaboral.nombre,
+        direccion: validarDireccion.texto,
+        id_parroquia: validarParroquia.id,
+        id_comuna: validarComuna.id,
+        id_circuito: validarCircuito.id,
+        id_consejo: validarConsejo.id,
       });
     } catch (error) {
       console.log(`Error, interno validando campos vocero: ` + error);

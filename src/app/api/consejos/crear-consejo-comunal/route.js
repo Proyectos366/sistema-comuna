@@ -1,6 +1,7 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import validarCrearConsejoComunal from "@/services/validarCrearConsejoComunal";
+import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
@@ -26,6 +27,16 @@ export async function POST(request) {
     );
 
     if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "INTENTO_FALLIDO_CONSEJO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Validacion fallida al intentar crear consejo comunal",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
+
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
@@ -35,6 +46,16 @@ export async function POST(request) {
     }
 
     if (!["comuna", "circuito"].includes(comunaCircuito)) {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "ERROR_CONSEJO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Error de comuna o circuito comunal",
+        datosAntes: null,
+        datosDespues: comunaCircuito,
+      });
+
       return generarRespuesta(
         "error",
         `Tipo de ${
@@ -65,24 +86,54 @@ export async function POST(request) {
     });
 
     if (!nuevoConsejoComunal) {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "ERROR_CREAR_CONSEJO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo crear el consejo comunal",
+        datosAntes: null,
+        datosDespues: nuevoConsejoComunal,
+      });
+
       return generarRespuesta(
         "error",
         "Error, no se creo el consejo comunal...",
         {},
         400
       );
+    } else {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "CREAR_CONSEJO",
+        id_objeto: nuevoConsejoComunal.id,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Consejo comunal creado con exito",
+        datosAntes: null,
+        datosDespues: nuevoConsejoComunal,
+      });
+
+      return generarRespuesta(
+        "ok",
+        "Consejo comunal creado...",
+        {
+          consejo: nuevoConsejoComunal,
+        },
+        201
+      );
     }
-    
-    return generarRespuesta(
-      "ok",
-      "Consejo comunal creado...",
-      {
-        consejo: nuevoConsejoComunal,
-      },
-      201
-    );
   } catch (error) {
     console.log(`Error interno (consejo comunal): ` + error);
+
+    await registrarEventoSeguro(request, {
+      tabla: "consejo",
+      accion: "ERROR_INTERNO",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al crear consejo comunal",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta(
       "error",

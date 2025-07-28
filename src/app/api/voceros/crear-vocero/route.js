@@ -1,6 +1,7 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import validarCrearVocero from "@/services/validarCrearVocero";
+import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
@@ -43,6 +44,16 @@ export async function POST(request) {
     );
 
     if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "vocero",
+        accion: "INTENTO_FALLIDO",
+        id_objeto: 0,
+        id_usuario: validaciones?.id_usuario ? validaciones.id_usuario : 0,
+        descripcion: "Validacion fallida al intentar crear vocero",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
+
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
@@ -50,6 +61,122 @@ export async function POST(request) {
         400
       );
     }
+
+    /** 
+      const nuevoVoceroCreado = await prisma.$transaction(async (tx) => {
+        const vocero = await tx.vocero.create({
+          data: {
+            nombre: validaciones.nombre,
+            nombre_dos: validaciones.nombreDos,
+            apellido: validaciones.apellido,
+            apellido_dos: validaciones.apellidoDos,
+            cedula: validaciones.cedula,
+            genero: validaciones.genero,
+            edad: validaciones.edad,
+            telefono: validaciones.telefono,
+            direccion: validaciones.direccion,
+            correo: validaciones.correo,
+            token: validaciones.token,
+            laboral: validaciones.laboral,
+            f_n: validaciones.fechaNacimiento,
+            borrado: false,
+            id_usuario: validaciones.id_usuario,
+            id_comuna: validaciones.id_comuna,
+            id_consejo: validaciones.id_consejo,
+            id_circuito: validaciones.id_circuito,
+            id_parroquia: validaciones.id_parroquia,
+            cargos: {
+              connect: cargos.map(({ id }) => ({ id })),
+            },
+          },
+        });
+
+        if (Array.isArray(formaciones) && formaciones.length > 0) {
+          for (const { id: id_formacion } of formaciones) {
+            // Crear el curso asociado al vocero
+            const curso = await tx.curso.create({
+              data: {
+                id_vocero: vocero.id,
+                id_formacion: id_formacion,
+                id_usuario: validaciones.id_usuario,
+                verificado: false,
+                certificado: false,
+              },
+            });
+
+            // Obtener los módulos de la formación actual (filtrando por `id_formacion`)
+            const formacionConModulos = await tx.formacion.findUnique({
+              where: { id: id_formacion },
+              include: {
+                modulos: true, // Esto traerá solo los módulos de esta formación
+              },
+            });
+
+            // Extraer los módulos correctamente
+            const modulos = formacionConModulos?.modulos || [];
+
+            // Crear las asistencias solo para los módulos de esta formación
+            for (const modulo of modulos) {
+              await tx.asistencia.create({
+                data: {
+                  id_vocero: vocero.id,
+                  id_modulo: modulo.id,
+                  id_curso: curso.id,
+                  id_usuario: validaciones.id_usuario,
+                  presente: false, // Inicialmente no aprobado
+                  fecha_registro: new Date(),
+                },
+              });
+            }
+          }
+        }
+
+        return vocero;
+      });
+
+      if (!nuevoVoceroCreado) {
+        return generarRespuesta("error", "Error, al crear vocero...", {}, 400);
+      }
+
+      const nuevoVocero = await prisma.vocero.findFirst({
+        where: { cedula: validaciones.cedula },
+        select: {
+          nombre: true,
+          nombre_dos: true,
+          apellido: true,
+          apellido_dos: true,
+          cedula: true,
+          telefono: true,
+          correo: true,
+          edad: true,
+          genero: true,
+          laboral: true,
+          comunas: { select: { nombre: true, id: true, id_parroquia: true } },
+          circuitos: { select: { nombre: true, id: true } },
+          parroquias: { select: { nombre: true } },
+          consejos: { select: { nombre: true } },
+          cursos: {
+            where: { borrado: false },
+            select: {
+              verificado: true,
+              certificado: true,
+              formaciones: { select: { nombre: true } },
+              asistencias: {
+                select: {
+                  id: true,
+                  presente: true,
+                  fecha_registro: true,
+                  modulos: { select: { id: true, nombre: true } },
+                },
+              },
+            },
+          },
+          cargos: {
+            select: { nombre: true, id: true },
+          },
+        },
+      });
+    */
 
     const nuevoVoceroCreado = await prisma.$transaction(async (tx) => {
       const vocero = await tx.vocero.create({
@@ -81,7 +208,6 @@ export async function POST(request) {
 
       if (Array.isArray(formaciones) && formaciones.length > 0) {
         for (const { id: id_formacion } of formaciones) {
-          // Crear el curso asociado al vocero
           const curso = await tx.curso.create({
             data: {
               id_vocero: vocero.id,
@@ -92,18 +218,15 @@ export async function POST(request) {
             },
           });
 
-          // Obtener los módulos de la formación actual (filtrando por `id_formacion`)
           const formacionConModulos = await tx.formacion.findUnique({
             where: { id: id_formacion },
             include: {
-              modulos: true, // Esto traerá solo los módulos de esta formación
+              modulos: true,
             },
           });
 
-          // Extraer los módulos correctamente
           const modulos = formacionConModulos?.modulos || [];
 
-          // Crear las asistencias solo para los módulos de esta formación
           for (const modulo of modulos) {
             await tx.asistencia.create({
               data: {
@@ -111,7 +234,7 @@ export async function POST(request) {
                 id_modulo: modulo.id,
                 id_curso: curso.id,
                 id_usuario: validaciones.id_usuario,
-                presente: false, // Inicialmente no aprobado
+                presente: false,
                 fecha_registro: new Date(),
               },
             });
@@ -119,73 +242,100 @@ export async function POST(request) {
         }
       }
 
-      return vocero;
-    });
-
-    if (!nuevoVoceroCreado) {
-      return generarRespuesta("error", "Error, al crear vocero...", {}, 400);
-    }
-
-    const nuevoVocero = await prisma.vocero.findFirst({
-      where: { cedula: validaciones.cedula },
-      select: {
-        nombre: true,
-        nombre_dos: true,
-        apellido: true,
-        apellido_dos: true,
-        cedula: true,
-        telefono: true,
-        correo: true,
-        edad: true,
-        genero: true,
-        laboral: true,
-        comunas: { select: { nombre: true, id: true, id_parroquia: true } },
-        circuitos: { select: { nombre: true, id: true } },
-        parroquias: { select: { nombre: true } },
-        consejos: { select: { nombre: true } },
-        cursos: {
-          where: { borrado: false },
-          select: {
-            verificado: true,
-            certificado: true,
-            formaciones: { select: { nombre: true } },
-            asistencias: {
-              select: {
-                id: true,
-                presente: true,
-                fecha_registro: true,
-                modulos: { select: { id: true, nombre: true } },
+      // Esta parte se ejecuta al final de la transacción
+      const voceroCompleto = await tx.vocero.findFirst({
+        where: { cedula: validaciones.cedula },
+        select: {
+          nombre: true,
+          nombre_dos: true,
+          apellido: true,
+          apellido_dos: true,
+          cedula: true,
+          telefono: true,
+          correo: true,
+          edad: true,
+          genero: true,
+          laboral: true,
+          comunas: { select: { nombre: true, id: true, id_parroquia: true } },
+          circuitos: { select: { nombre: true, id: true } },
+          parroquias: { select: { nombre: true } },
+          consejos: { select: { nombre: true } },
+          cursos: {
+            where: { borrado: false },
+            select: {
+              verificado: true,
+              certificado: true,
+              formaciones: { select: { nombre: true } },
+              asistencias: {
+                select: {
+                  id: true,
+                  presente: true,
+                  fecha_registro: true,
+                  modulos: { select: { id: true, nombre: true } },
+                },
               },
             },
           },
+          cargos: {
+            select: { nombre: true, id: true },
+          },
         },
-        cargos: {
-          select: { nombre: true, id: true },
-        },
-      },
+      });
+
+      return voceroCompleto;
     });
 
     //const nuevoVocero = false;
 
-    if (!nuevoVocero) {
+    if (!nuevoVoceroCreado) {
+      await registrarEventoSeguro(request, {
+        tabla: "vocero",
+        accion: "ERROR_CREAR_VOCERO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo crear el vocero",
+        datosAntes: null,
+        datosDespues: nuevoVoceroCreado,
+      });
+
       return generarRespuesta(
         "error",
         "Error, no se creo el vocero...",
         {},
         400
       );
-    }
+    } else {
+      await registrarEventoSeguro(request, {
+        tabla: "vocero",
+        accion: "CREAR_VOCERO",
+        id_objeto: nuevoVoceroCreado.id,
+        id_usuario: validaciones.id_usuario,
+        descripcion: `Vocero creado con exito`,
+        datosAntes: null,
+        datosDespues: nuevoVoceroCreado,
+      });
 
-    return generarRespuesta(
-      "ok",
-      "Vocero creado...",
-      {
-        vocero: nuevoVocero,
-      },
-      201
-    );
+      return generarRespuesta(
+        "ok",
+        "Vocero creado...",
+        {
+          vocero: nuevoVoceroCreado,
+        },
+        201
+      );
+    }
   } catch (error) {
     console.log(`Error interno (crear vocero): ` + error);
+
+    await registrarEventoSeguro(request, {
+      tabla: "vocero",
+      accion: "ERROR_INTERNO",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion: "Error inesperado al crear vocero",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta("error", "Error, interno (crear vocero)", {}, 500);
   }
