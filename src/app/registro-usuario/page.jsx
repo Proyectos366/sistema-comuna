@@ -236,8 +236,8 @@ export default function RegistrarUsuario() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4 py-4">
-      <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+    <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 py-5">
+      <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] md:max-w-[600px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
         <ImgRegistroLogin />
 
         <div className="relative z-10 w-full">
@@ -384,8 +384,6 @@ export default function RegistrarUsuario() {
           </Formulario>
         </div>
       </section>
-
-      <ImgDosRegistroLogin />
     </div>
   );
 }

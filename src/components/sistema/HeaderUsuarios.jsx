@@ -62,32 +62,40 @@ export default function HeaderUsuarios({
 
       <div
         className={`${
-          abrirPanel ? "hidden sm:flex " : "flex"
-        } space-x-5 items-center justify-end w-1/2`}
+          abrirPanel ? "hidden sm:flex" : "flex"
+        } items-center justify-end w-1/2`}
       >
         <div
           onClick={() => setMenuOpcionesUsuario(!menuOpcionesUsuario)}
-          className="relative flex items-center space-x-2 cursor-pointer"
+          className="relative py-1 cursor-pointer transition-all transform group"
         >
-          <div className="borde-fondo p-1 rounded-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="#082158"
-            >
-              <path fill="none" d="M0 0h24v24H0z"></path>
-              <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H18C18 18.6863 15.3137 16 12 16C8.68629 16 6 18.6863 6 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11Z"></path>
-            </svg>
-          </div>
+          <div
+            className={`${
+              menuOpcionesUsuario ? "bg-[#E61C45]" : "bg-[#082158]"
+            } flex items-center gap-4 px-2 py-1 rounded-md  backdrop-blur-md border border-white/20 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg`}
+          >
+            <div className="p-2 rounded-full bg-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                fill="#082158"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H18C18 18.6863 15.3137 16 12 16C8.68629 16 6 18.6863 6 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11Z" />
+              </svg>
+            </div>
 
-          <span>{usuarioActivo?.nombre}</span>
+            <span className="text-white text-md tracking-wide drop-shadow-md truncate text-end">
+              {usuarioActivo?.nombre}
+            </span>
+          </div>
 
           {menuOpcionesUsuario && (
             <div
               ref={refMenuPerfil}
-              className="absolute w-48 top-0 mt-8 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-2 z-50"
+              className="absolute w-48 top-0 mt-12 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-2 z-50"
             >
               <ul className="flex flex-col gap-2">
                 <li onClick={() => setMenuOpcionesUsuario(false)}>

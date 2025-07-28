@@ -30,6 +30,7 @@ export async function GET(request) {
       where: {
         borrado: false,
         culminada: false,
+        id_departamento: validaciones.id_departamento,
       },
     });
 

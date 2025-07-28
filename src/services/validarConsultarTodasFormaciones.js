@@ -33,7 +33,12 @@ export default async function validarConsultarTodasFormaciones() {
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
-      select: { id: true },
+      select: {
+        id: true,
+        MiembrosDepartamentos: {
+          select: { id: true, nombre: true },
+        },
+      },
     });
 
     if (!datosUsuario) {
@@ -43,6 +48,7 @@ export default async function validarConsultarTodasFormaciones() {
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
+      id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
     });
   } catch (error) {
     console.log(`Error, interno validar consultar todas formaciones: ` + error);

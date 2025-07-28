@@ -2,7 +2,9 @@ export default function ToggleMenuLateral({ abrirDashboar, abrirPanel }) {
   return (
     <button
       onClick={abrirDashboar}
-      className=" color-fondo text-white p-2 rounded cursor-pointer"
+      className={`${
+        !abrirPanel ? "bg-[#E61C45]" : "bg-[#082158]"
+      } text-white p-2 rounded cursor-pointer transform group transition-all duration-300 hover:scale-[1.02]`}
     >
       {abrirPanel ? (
         <svg
