@@ -10,6 +10,7 @@ export async function GET() {
         correo: "master@gmail.com",
         token: "6w2r5ks4rb1gd4r1",
         borrado: false,
+        validado: true,
         id_rol: 1,
         clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
       },
@@ -24,7 +25,7 @@ export async function GET() {
             clave: user.clave,
             id_rol: user.id_rol,
             borrado: user.borrado,
-            validado: true
+            validado: user.validado,
           },
           create: user,
         })

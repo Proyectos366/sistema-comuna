@@ -19,6 +19,7 @@ import InputNombre from "@/components/inputs/InputNombre";
 import InputCorreo from "@/components/inputs/InputCorreo";
 import ImgRegistroLogin from "@/components/ImgRegistroLogin";
 import ImgDosRegistroLogin from "@/components/ImgDosRegistroLogin";
+import Footer from "@/components/Footer";
 
 export default function RegistrarUsuario() {
   const [cedula, setCedula] = useState("");
@@ -235,210 +236,156 @@ export default function RegistrarUsuario() {
   }
 
   return (
-    <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Desea registrar usuario?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Cedula"} descripcion={cedula} />
-          <ModalDatos titulo={"Nombre"} descripcion={nombre} />
-          <ModalDatos titulo={"Apellido"} descripcion={apellido} />
-          <ModalDatos titulo={"Correo"} descripcion={correo} />
-          <ModalDatos
-            titulo={"Departamento"}
-            descripcion={nombreDepartamento}
-          />
-          <ModalDatos titulo={"Clave"} descripcion={claveUno} indice={1} />
-          <ModalDatos
-            titulo={"Confirmar clave"}
-            descripcion={claveDos}
+    <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4 py-4">
+      <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+        <ImgRegistroLogin />
+
+        <div className="relative z-10 w-full">
+          <Titulos
             indice={1}
+            titulo={"Crear usuario"}
+            className="text-center text-xl font-semibold text-gray-700 mb-4"
           />
-          <ModalDatos
-            titulo={"Departamento"}
-            descripcion={nombreDepartamento}
-          />
-        </ModalDatosContenedor>
-
-        {mensajeBackEnd && (
-          <div className="w-full mb-3">
-            <MostrarMsj mensaje={mensajeBackEnd} />
-          </div>
-        )}
-
-        <BotonesModal
-          aceptar={crearUsuario}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={isLoading ? "Procesando..." : "Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            cedula,
-            nombre,
-            apellido,
-            correo,
-            claveUno,
-            claveDos,
-            seleccionarDepartamentos,
-          }}
-        />
-      </Modal>
-
-      <div className="min-h-dvh bg-[#f5f6fa] flex items-center justify-center px-2 md:px-10 gap-4 py-10">
-        <section className="flex flex-col gap-4  sm:max-w-[400px] md:max-w-none w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
-          <ImgRegistroLogin />
-
-          <div className="flex flex-col w-full mt-4">
-            <Titulos
-              indice={1}
-              titulo={"Entrar al Sistema"}
-              className="text-center text-xl font-semibold text-gray-700 mb-4"
-            />
-
-            <Formulario
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <div className="w-full flex flex-col gap-2">
-                <LabelInput nombre={"Cedula"}>
-                  <InputCedula
-                    type="text"
-                    indice={"cedula"}
-                    value={cedula}
-                    setValue={setCedula}
-                    validarCedula={validarCedula}
-                    setValidarCedula={setValidarCedula}
-                  />
-                </LabelInput>
-
-                <LabelInput nombre={"Correo"}>
-                  <InputCorreo
-                    type="text"
-                    indice="email"
-                    value={correo}
-                    setValue={setCorreo}
-                    validarCorreo={validarCorreo}
-                    setValidarCorreo={setValidarCorreo}
-                  />
-                </LabelInput>
-
-                <LabelInput nombre={"Nombre"}>
-                  <InputNombre
-                    type="text"
-                    indice="nombre"
-                    value={nombre}
-                    setValue={setNombre}
-                    validarNombre={validarNombre}
-                    setValidarNombre={setValidarNombre}
-                  />
-                </LabelInput>
-
-                <LabelInput nombre={"Apellido"}>
-                  <InputNombre
-                    type={"text"}
-                    indice={"nombre"}
-                    value={apellido}
-                    setValue={setApellido}
-                    validarNombre={validarApellido}
-                    setValidarNombre={setValidarApellido}
-                  />
-                </LabelInput>
-
-                <SelectOpcion
-                  idOpcion={idDepartamento}
-                  nombre={"Departamentos"}
-                  handleChange={cambiarSeleccionDepartamento}
-                  opciones={todosDepartamentos}
-                  seleccione={"Seleccione"}
-                  setNombre={setNombreDepartamento}
+          <Formulario
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <div className="w-full flex flex-col gap-2 hover:bg-white">
+              <LabelInput nombre={"Cedula"}>
+                <InputCedula
+                  type="text"
+                  indice={"cedula"}
+                  value={cedula}
+                  setValue={setCedula}
+                  validarCedula={validarCedula}
+                  setValidarCedula={setValidarCedula}
                 />
+              </LabelInput>
 
-                <LabelInput nombre={"Clave"}>
-                  <InputClave
-                    type={"password"}
-                    value={claveUno}
-                    onChange={leyendoClave1}
-                    indice={"clave"}
-                    validarClave={validarClave}
-                    setValidarClave={setValidarClave}
-                  />
-                </LabelInput>
+              <LabelInput nombre={"Correo"}>
+                <InputCorreo
+                  type="text"
+                  indice="email"
+                  value={correo}
+                  setValue={setCorreo}
+                  validarCorreo={validarCorreo}
+                  setValidarCorreo={setValidarCorreo}
+                />
+              </LabelInput>
 
-                <LabelInput nombre={"Clave confirmar"}>
-                  <InputClave
-                    type={"password"}
-                    value={claveDos}
-                    onChange={leyendoClave2}
-                    indice={"clave2"}
-                  />
-                </LabelInput>
+              <LabelInput nombre={"Nombre"}>
+                <InputNombre
+                  type="text"
+                  indice="nombre"
+                  value={nombre}
+                  setValue={setNombre}
+                  validarNombre={validarNombre}
+                  setValidarNombre={setValidarNombre}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Apellido"}>
+                <InputNombre
+                  type={"text"}
+                  indice={"nombre"}
+                  value={apellido}
+                  setValue={setApellido}
+                  validarNombre={validarApellido}
+                  setValidarNombre={setValidarApellido}
+                />
+              </LabelInput>
+
+              <SelectOpcion
+                idOpcion={idDepartamento}
+                nombre={"Departamentos"}
+                handleChange={cambiarSeleccionDepartamento}
+                opciones={todosDepartamentos}
+                seleccione={"Seleccione"}
+                setNombre={setNombreDepartamento}
+              />
+
+              <LabelInput nombre={"Clave"}>
+                <InputClave
+                  type={"password"}
+                  value={claveUno}
+                  onChange={leyendoClave1}
+                  indice={"clave"}
+                  validarClave={validarClave}
+                  setValidarClave={setValidarClave}
+                />
+              </LabelInput>
+
+              <LabelInput nombre={"Clave confirmar"}>
+                <InputClave
+                  type={"password"}
+                  value={claveDos}
+                  onChange={leyendoClave2}
+                  indice={"clave2"}
+                />
+              </LabelInput>
+            </div>
+
+            <div className="flex items-center justify-between -mt-3 sm:mt-0">
+              <LinkPaginas href="/" nombre={"Login"} />
+              <LinkPaginas
+                href="/recuperar-clave-correo"
+                nombre={"Olvido su clave?"}
+              />
+            </div>
+
+            {mensaje && (
+              <div className="w-full mb-3">
+                <MostrarMsj mensaje={mensaje} />
               </div>
+            )}
 
-              <div className="flex items-center justify-between -mt-3 sm:mt-0">
-                <LinkPaginas href="/" nombre={"Login"} />
-                <LinkPaginas
-                  href="/recuperar-clave-correo"
-                  nombre={"Olvido su clave?"}
-                />
-              </div>
+            <div className="flex space-x-4">
+              <BotonAceptarCancelar
+                indice={"aceptar"}
+                aceptar={mostrarModal}
+                nombre={"Crear"}
+                campos={{
+                  cedula,
+                  correo,
+                  nombre,
+                  apellido,
+                  idDepartamento,
+                  claveUno,
+                  claveDos,
+                }}
+              />
 
-              {mensaje && (
-                <div className="w-full mb-3">
-                  <MostrarMsj mensaje={mensaje} />
-                </div>
-              )}
+              <BotonAceptarCancelar
+                indice={"limpiar"}
+                aceptar={() => {
+                  limpiarCampos({
+                    setCedula,
+                    setCorreo,
+                    setNombre,
+                    setApellido,
+                    setIdDepartamento,
+                    setClaveUno,
+                    setClaveDos,
+                  });
+                }}
+                nombre={"Limpiar"}
+                campos={{
+                  cedula,
+                  correo,
+                  nombre,
+                  apellido,
+                  idDepartamento,
+                  claveUno,
+                  claveDos,
+                }}
+              />
+            </div>
+          </Formulario>
+        </div>
+      </section>
 
-              <div className="flex space-x-4">
-                <BotonAceptarCancelar
-                  indice={"aceptar"}
-                  aceptar={mostrarModal}
-                  nombre={"Crear"}
-                  campos={{
-                    cedula,
-                    correo,
-                    nombre,
-                    apellido,
-                    idDepartamento,
-                    claveUno,
-                    claveDos,
-                  }}
-                />
-
-                <BotonAceptarCancelar
-                  indice={"limpiar"}
-                  aceptar={() => {
-                    limpiarCampos({
-                      setCedula,
-                      setCorreo,
-                      setNombre,
-                      setApellido,
-                      setIdDepartamento,
-                      setClaveUno,
-                      setClaveDos,
-                    });
-                  }}
-                  nombre={"Limpiar"}
-                  campos={{
-                    cedula,
-                    correo,
-                    nombre,
-                    apellido,
-                    idDepartamento,
-                    claveUno,
-                    claveDos,
-                  }}
-                />
-              </div>
-            </Formulario>
-          </div>
-        </section>
-
-        <ImgDosRegistroLogin />
-      </div>
-    </>
+      <ImgDosRegistroLogin />
+    </div>
   );
 }

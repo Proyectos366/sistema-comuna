@@ -6,9 +6,5 @@ export const metadata = {
 };
 
 export default function UsuarioLayout({ children }) {
-  return (
-    <>
-      <div className="min-h-screen">{children}</div>
-    </>
-  );
+  return <>{children}</>;
 }
