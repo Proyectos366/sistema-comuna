@@ -355,6 +355,58 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoFechaISO(fecha) {
+    try {
+      if (!fecha) {
+        return retornarRespuestaFunciones("error", "Campo fecha vacio...");
+      }
+
+      // Formato ISO 8601: "YYYY-MM-DDTHH:MM:SSZ"
+      const formatoISO =
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(Z)?$/;
+      if (!formatoISO.test(fecha)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Formato de fecha invalido..."
+        );
+      }
+
+      const fechaConvertida = new Date(fecha);
+      if (isNaN(fechaConvertida.getTime())) {
+        return retornarRespuestaFunciones(
+          "error",
+          "No se puede interpretar la fecha..."
+        );
+      }
+
+      const ahora = new Date();
+      const fechaMinima = new Date("1900-01-01T00:00:00Z"); // ajustable si necesitas otro límite
+
+      if (fechaConvertida > ahora) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Fecha no puede pasar el dia actual..."
+        );
+      }
+
+      if (fechaConvertida < fechaMinima) {
+        return retornarRespuestaFunciones("error", "Fecha muy antigua...");
+      }
+
+      return retornarRespuestaFunciones(
+        "ok",
+        "Campo fecha validada con exito...",
+        { fecha: fechaConvertida }
+      );
+    } catch (error) {
+      console.log(`Error, interno validando fecha: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando fecha..."
+      );
+    }
+  }
+
   static validarCamposRegistro(
     cedula,
     nombre,
