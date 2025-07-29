@@ -52,7 +52,7 @@ export async function GET(request) {
         id_usuario: validaciones.id_usuario,
         descripcion: "No se pudo obtener comunas por id parroquia",
         datosAntes: null,
-        datosDespues: null,
+        datosDespues: comunasIdParroquia,
       });
 
       return generarRespuesta(

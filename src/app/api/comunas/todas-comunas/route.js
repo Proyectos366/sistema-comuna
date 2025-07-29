@@ -79,7 +79,7 @@ export async function GET(request) {
       accion: "ERROR_INTERNO_TODAS_COMUNAS ",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al consultar todos los cargos",
+      descripcion: "Error inesperado al consultar todas las comunas",
       datosAntes: null,
       datosDespues: error.message,
     });

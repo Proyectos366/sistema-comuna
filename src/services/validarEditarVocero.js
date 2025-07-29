@@ -38,8 +38,15 @@ export default async function validarEditarVocero(
 
     const correoUsuarioActivo = descifrarToken.correo;
 
+    const idUsuario = await prisma.usuario.findFirst({
+      where: { correo: correoUsuarioActivo },
+      select: {
+        id: true,
+      },
+    });
+
     // Validar campos
-    const validandoCampos = ValidarCampos.validarCamposRegistroVocero(
+    const validandoCampos = ValidarCampos.validarCamposEditarVocero(
       nombre,
       nombre_dos,
       apellido,
@@ -48,41 +55,24 @@ export default async function validarEditarVocero(
       correo,
       genero,
       edad,
-      telefono
+      telefono,
+      direccion,
+      laboral,
+      id_parroquia,
+      id_comuna,
+      id_consejo,
+      id_circuito
     );
 
     if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
         validandoCampos.status,
-        validandoCampos.message
+        validandoCampos.message,
+        {
+          id_usuario: idUsuario.id,
+        }
       );
     }
-
-    const idUsuario = await prisma.usuario.findFirst({
-      where: { correo: correoUsuarioActivo },
-      select: {
-        id: true,
-      },
-    });
-
-    const usuarioId = Number(idUsuario.id);
-    const parroquiaId = Number(id_parroquia);
-    const comunaId = id_comuna ? Number(id_comuna) : null;
-    const circuitoId = id_circuito ? Number(id_circuito) : null;
-    const consejoId = id_consejo ? Number(id_consejo) : null;
-
-    const nombreMinuscula = nombre ? nombre.toLowerCase() : null;
-    const nombre_dosMinuscula = nombre_dos ? nombre_dos.toLowerCase() : null;
-    const apellidoMinuscula = apellido ? apellido.toLowerCase() : null;
-    const apellido_dosMinuscula = apellido_dos
-      ? apellido_dos.toLowerCase()
-      : null;
-
-    const correoMinuscula = correo ? correo.toLowerCase() : null;
-
-    const direccionMinuscula = direccion ? direccion.toLowerCase() : null;
-    const laboralMinuscula = laboral ? laboral.toLowerCase() : null;
-    const generoNumero = genero ? Number(genero) : null;
 
     const fechaNacimiento = calcularFechaNacimientoPorEdad(
       validandoCampos.edad
@@ -96,29 +86,29 @@ export default async function validarEditarVocero(
       return retornarRespuestaFunciones(
         "error",
         "Error el vocero no existe",
-        {},
+        { id_usuario: idUsuario.id },
         404
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
-      nombre: nombreMinuscula,
-      nombreDos: nombre_dosMinuscula,
-      apellido: apellidoMinuscula,
-      apellidoDos: apellido_dosMinuscula,
+      nombre: validandoCampos.nombre,
+      nombreDos: validandoCampos.nombre_dos,
+      apellido: validandoCampos.apellido,
+      apellidoDos: validandoCampos.apellido_dos,
       cedula: validandoCampos.cedula,
-      genero: generoNumero === 1 ? true : false,
+      genero: validandoCampos.genero,
       edad: validandoCampos.edad,
       telefono: validandoCampos.telefono,
-      direccion: direccionMinuscula,
-      correo: correoMinuscula,
-      laboral: laboralMinuscula,
+      direccion: validandoCampos.direccion,
+      correo: validandoCampos.correo,
+      laboral: validandoCampos.laboral,
       fechaNacimiento: fechaNacimiento,
-      id_usuario: usuarioId,
-      id_comuna: comunaId,
-      id_consejo: consejoId,
-      id_circuito: circuitoId,
-      id_parroquia: parroquiaId,
+      id_usuario: idUsuario.id,
+      id_parroquia: validandoCampos.id_parroquia,
+      id_comuna: validandoCampos.id_comuna,
+      id_circuito: validandoCampos.id_circuito,
+      id_consejo: validandoCampos.consejo,
     });
   } catch (error) {
     console.log(`Error, interno al editar vocero: ` + error);

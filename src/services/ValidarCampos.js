@@ -596,6 +596,104 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCamposEditarVocero(
+    nombre,
+    nombre_dos,
+    apellido,
+    apellido_dos,
+    cedula,
+    correo,
+    genero,
+    edad,
+    telefono,
+    direccion,
+    laboral,
+    id_parroquia,
+    id_comuna,
+    id_consejo,
+    id_circuito
+  ) {
+    try {
+      const validarCorreo = this.validarCampoCorreo(correo);
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarNombreDos = this.validarCampoNombreApellidoDos(
+        nombre_dos,
+        "nombre"
+      );
+      const validarApellido = this.validarCampoNombre(apellido);
+      const validarApellidoDos = this.validarCampoNombreApellidoDos(
+        apellido_dos,
+        "apellido"
+      );
+      const validarCedula = this.validarCampoCedula(cedula);
+      const validarGenero = this.validarCampoGenero(genero);
+
+      const validarEdad = this.validarCampoEdad(edad);
+      const validarTelefono = this.validarCampoTelefono(telefono);
+
+      const validarActividadLaboral = this.validarCampoNombre(laboral);
+      const validarDireccion = this.validarCampoTexto(
+        direccion ? direccion : "sin direccion"
+      );
+
+      const validarParroquia = this.validarCampoId(id_parroquia);
+      const validarComuna = id_comuna
+        ? this.validarCampoId(id_comuna)
+        : { id: null };
+      const validarCircuito = id_circuito
+        ? this.validarCampoId(id_circuito)
+        : { id: null };
+      const validarConsejo = id_consejo
+        ? this.validarCampoId(id_consejo)
+        : { id: null };
+
+      if (validarCorreo.status === "error") return validarCorreo;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarNombreDos.status === "error") return validarNombreDos;
+      if (validarApellido.status === "error") return validarApellido;
+      if (validarApellidoDos.status === "error") return validarApellidoDos;
+      if (validarCedula.status === "error") return validarCedula;
+      if (validarGenero.status === "error") return validarGenero;
+      if (validarEdad.status === "error") return validarEdad;
+      if (validarTelefono.status === "error") return validarTelefono;
+      if (validarActividadLaboral.status === "error")
+        return validarActividadLaboral;
+      if (validarDireccion.status === "error") return validarDireccion;
+      if (validarParroquia.status === "error") return validarParroquia;
+
+      if (validarComuna && validarComuna.status === "error")
+        return validarComuna;
+      if (validarCircuito && validarCircuito.status === "error")
+        return validarCircuito;
+      if (validarConsejo && validarConsejo.status === "error")
+        return validarConsejo;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        cedula: validarCedula.cedula,
+        edad: validarEdad.edad,
+        nombre: validarNombre.nombre,
+        nombre_dos: validarNombreDos.nombre_dos,
+        apellido: validarApellido.nombre,
+        apellido_dos: validarApellidoDos.apellido_dos,
+        genero: validarGenero.genero,
+        telefono: validarTelefono.telefono,
+        correo: validarCorreo.correo,
+        laboral: validarActividadLaboral.nombre,
+        direccion: validarDireccion.texto,
+        id_parroquia: validarParroquia.id,
+        id_comuna: validarComuna.id,
+        id_circuito: validarCircuito.id,
+        id_consejo: validarConsejo.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos vocero editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos vocero editar..."
+      );
+    }
+  }
+
   static validarCamposCrearFormacion(nombre, modulos) {
     try {
       const validarNombre = this.validarCampoNombre(nombre);

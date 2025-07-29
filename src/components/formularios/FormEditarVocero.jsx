@@ -143,19 +143,56 @@ export default function FormEditarVocero({
       setApellidoDos?.(apellidoDosLimpio);
     }
 
-    if (telefono) {
-      const telefonoSinCaracter = String(telefono)
-        .replace(/\D/g, "")
-        .slice(0, 11); // solo números, máx. 11 dígitos
+    /** 
+      if (telefono) {
+        const telefonoSinCaracter = String(telefono)
+          .replace(/\D/g, "")
+          .slice(0, 11); // solo números, máx. 11 dígitos
 
-      const esValido = /^0(2\d{2}|41\d)\d{7}$/.test(telefonoSinCaracter); // ejemplo: 04141234567
+        const esValido = /^0(2\d{2}|41\d)\d{7}$/.test(telefonoSinCaracter); // ejemplo: 04141234567
+        setValidarTelefono?.(esValido);
+
+        let formateada = telefonoSinCaracter;
+
+        if (formateada.length <= 4) {
+          // Solo código de área
+          formateada = formateada;
+        } else if (formateada.length <= 7) {
+          formateada = `${formateada.slice(0, 4)}-${formateada.slice(4)}`;
+        } else if (formateada.length <= 9) {
+          formateada = `${formateada.slice(0, 4)}-${formateada.slice(
+            4,
+            7
+          )}.${formateada.slice(7)}`;
+        } else {
+          formateada = `${formateada.slice(0, 4)}-${formateada.slice(
+            4,
+            7
+          )}.${formateada.slice(7, 9)}.${formateada.slice(9, 11)}`;
+        }
+
+        setTelefono?.(formateada);
+      }
+    */
+
+    if (telefono) {
+      const soloNumeros = String(telefono).replace(/\D/g, "").slice(0, 11);
+
+      const prefijosValidos = ["0412", "0414", "0416", "0424", "0426"];
+      const prefijo = soloNumeros.slice(0, 4);
+
+      const esValido =
+        soloNumeros.length === 11 &&
+        soloNumeros.charAt(0) === "0" &&
+        /[24]/.test(soloNumeros.charAt(1)) &&
+        prefijosValidos.includes(prefijo);
+
       setValidarTelefono?.(esValido);
 
-      let formateada = telefonoSinCaracter;
+      let formateada = soloNumeros;
 
       if (formateada.length <= 4) {
-        // Solo código de área
-        formateada = formateada;
+        // código de área
       } else if (formateada.length <= 7) {
         formateada = `${formateada.slice(0, 4)}-${formateada.slice(4)}`;
       } else if (formateada.length <= 9) {

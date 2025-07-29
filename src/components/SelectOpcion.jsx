@@ -78,7 +78,7 @@ export default function SelectOpcion({
         <div
           className={`overflow-y-auto max-h-[300px] no-scrollbar ${
             !indice ? "absolute" : "relative"
-          } left-0 top-full border border-[#082158] w-full mt-1 pt-2 bg-white rounded-lg shadow-md z-50`}
+          } left-0 top-full border border-[#082158] w-full mt-1 py-2 bg-white rounded-lg shadow-md z-50`}
         >
           <div className="px-2">
             {/* Contenedor con sticky input */}
@@ -93,7 +93,7 @@ export default function SelectOpcion({
             <ul>
               {!busqueda && (
                 <li
-                  className="p-2 bg-gray-100 hover:bg-gray-300 uppercase cursor-pointer transition duration-150 rounded-md"
+                  className={`p-2 bg-gray-100 hover:bg-gray-300 uppercase cursor-pointer transition duration-150 rounded-md`}
                   onClick={() => manejarSeleccion("", seleccione)}
                 >
                   {seleccione}

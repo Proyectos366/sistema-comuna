@@ -1,60 +1,83 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
+import registrarEventoSeguro from "@/libs/trigget";
+import validarConsultarConsejoIdCircuito from "@/services/validarConsultarConsejosIdCircuito";
 
-export async function GET(req) {
+export async function GET(request) {
   try {
-    // Obtener el ID desde los parámetros de la solicitud
-    const { searchParams } = new URL(req.url);
-    const idCircuito = searchParams.get("idCircuito");
+    const validaciones = await validarConsultarConsejoIdCircuito(request);
 
-    const id_circuito = Number(idCircuito);
+    if (validaciones.status === "error") {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "INTENTO_FALLIDO_CONSEJOS_ID_CIRCUITO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion:
+          "Validacion fallida al consultar consejos comunales por id circuito",
+        datosAntes: null,
+        datosDespues: validaciones,
+      });
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
-
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
-      );
-    }
-
-    if (!idCircuito) {
-      return generarRespuesta(
-        "error",
-        "El ID de circuito es obligatorio.",
-        {},
-        400
+        validaciones.status,
+        validaciones.message
       );
     }
 
     // Consultar los consejos comunales de la comuna específica
     const consejosComunales = await prisma.consejo.findMany({
-      where: { id_circuito: id_circuito },
+      where: { id_circuito: validaciones.id_circuito, borrado: false },
     });
 
     if (!consejosComunales) {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "ERROR_GET_CONSEJOS_ID_CIRCUITO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "No se pudo obtener consejos comunales por id circuito",
+        datosAntes: null,
+        datosDespues: consejosComunales,
+      });
+
       return generarRespuesta(
         "ok",
         "No hay consejos comunales en este circuito.",
         { consejos: [] },
         200
       );
-    }
+    } else {
+      await registrarEventoSeguro(request, {
+        tabla: "consejo",
+        accion: "GET_CONSEJOS_ID_CIRCUITO",
+        id_objeto: 0,
+        id_usuario: validaciones.id_usuario,
+        descripcion: "Se obtuvieron los consejos comunales por id circuito",
+        datosAntes: null,
+        datosDespues: consejosComunales,
+      });
 
-    return generarRespuesta(
-      "ok",
-      "Consejos comunales encontrados.",
-      { consejos: consejosComunales },
-      200
-    );
+      return generarRespuesta(
+        "ok",
+        "Consejos comunales encontrados.",
+        { consejos: consejosComunales },
+        200
+      );
+    }
   } catch (error) {
-    console.log(`Error, interno al consultar consejos comunales: ${error}`);
+    console.log(`Error interno al consultar consejos comunales: ${error}`);
+
+    await registrarEventoSeguro(request, {
+      tabla: "consejo",
+      accion: "ERROR_INTERNO_CONSEJOS_ID_CIRCUITO ",
+      id_objeto: 0,
+      id_usuario: 0,
+      descripcion:
+        "Error inesperado al consultar consejos comunales por id circuito",
+      datosAntes: null,
+      datosDespues: error.message,
+    });
 
     return generarRespuesta(
       "error",

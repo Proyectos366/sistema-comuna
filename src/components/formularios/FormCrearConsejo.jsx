@@ -32,11 +32,12 @@ export default function FormCrearConsejo({
   useEffect(() => {
     if (idComuna || idCircuito) {
       const resultComuna = comunas.find((c) => c.id === idComuna);
+      const resultParroquia = parroquias.find(
+        (c) => c.id === resultComuna.id_parroquia
+      );
 
-      console.log(resultComuna.id_parroquia);
-      
-      setNombreParroquia(resultComuna?.nombre);
-      setIdParroquia(resultComuna?.id_parroquia);
+      setNombreParroquia(resultParroquia?.nombre);
+      setIdParroquia(resultParroquia?.id_parroquia);
     }
   }, [idComuna, idCircuito]);
 
