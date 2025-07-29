@@ -7,12 +7,12 @@ export async function GET() {
       {
         cedula: 21259230,
         nombre: "master",
-        correo: "master@gmail.com",
+        correo: "carlosjperazab@gmail.com",
         token: "6w2r5ks4rb1gd4r1",
         borrado: false,
         validado: true,
         id_rol: 1,
-        clave: "$2a$05$AJYCQmmmCNb/1Mm08M13qOY6XX3SoYOJgiuogCrMMWi1kQoHzVDry",
+        clave: "$2a$05$qv5dKCZmInzicTS5D0BFu.ThM5g99ScAkKKDjqKfQzMraQjhRnqgS",
       },
     ];
 

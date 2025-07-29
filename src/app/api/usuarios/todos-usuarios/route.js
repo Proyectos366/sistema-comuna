@@ -32,7 +32,7 @@ export async function GET(request) {
       where: {
         correo: {
           not: {
-            in: [validaciones.correo, "master@gmail.com"],
+            in: [validaciones.correo, "carlosjperazab@gmail.com"],
           },
         },
       },
