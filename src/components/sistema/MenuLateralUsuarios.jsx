@@ -290,35 +290,35 @@ export default function MenuLateralUsuario({
                         nombre={"OAC"}
                         volverInicio={volverInicio}
                       />
-
-                      <EnlacesBarraLateral
-                        id_rol={id_rol}
-                        cambiarRuta={cambiarRuta}
-                        vista={vista}
-                        vistaActual={"participantes"}
-                        nombre={"Participantes"}
-                        volverInicio={volverInicio}
-                      />
-
-                      <EnlacesBarraLateral
-                        id_rol={id_rol}
-                        cambiarRuta={cambiarRuta}
-                        vista={vista}
-                        vistaActual={"comunas"}
-                        nombre={"Comunas"}
-                        volverInicio={volverInicio}
-                      />
-
-                      <EnlacesBarraLateral
-                        id_rol={id_rol}
-                        cambiarRuta={cambiarRuta}
-                        vista={vista}
-                        vistaActual={"consejos-comunales"}
-                        nombre={"Consejo"}
-                        volverInicio={volverInicio}
-                      />
                     </>
                   )}
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"participantes"}
+                    nombre={"Participantes"}
+                    volverInicio={volverInicio}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"comunas"}
+                    nombre={"Comunas"}
+                    volverInicio={volverInicio}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"consejos-comunales"}
+                    nombre={"Consejo"}
+                    volverInicio={volverInicio}
+                  />
 
                   {nombreDepartamento === "administracion y presupuesto" && (
                     <>
