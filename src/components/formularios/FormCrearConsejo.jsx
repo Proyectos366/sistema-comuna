@@ -37,7 +37,7 @@ export default function FormCrearConsejo({
       );
 
       setNombreParroquia(resultParroquia?.nombre);
-      setIdParroquia(resultParroquia?.id_parroquia);
+      setIdParroquia(resultParroquia?.id);
     }
   }, [idComuna, idCircuito]);
 

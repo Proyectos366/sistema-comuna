@@ -101,7 +101,7 @@ export async function PATCH(request) {
     // Validamos que la actualización ocurrió correctamente antes de continuar
     if (!moduloEnAsistenciaValidado) {
       await registrarEventoSeguro(request, {
-        tabla: "cargo",
+        tabla: "asistencia",
         accion: "ERROR_UPDATE_ASISTENCIA",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
@@ -173,7 +173,7 @@ export async function PATCH(request) {
       await registrarEventoSeguro(request, {
         tabla: "asistencia",
         accion: "UPDATE_ASISTENCIA",
-        id_objeto: nuevoCargo.id,
+        id_objeto: nuevaAsistencia.id,
         id_usuario: validaciones.id_usuario,
         descripcion: `Asistencia actualizada ${validaciones.id_asistencia} y modulo ${validaciones.modulo}`,
         datosAntes: validaciones,
@@ -182,7 +182,7 @@ export async function PATCH(request) {
 
       return generarRespuesta(
         "ok",
-        `Modulo ${moduloNumero} validado...`,
+        `Modulo ${validaciones.modulo} validado...`,
         { curso: nuevaAsistencia },
         201
       );

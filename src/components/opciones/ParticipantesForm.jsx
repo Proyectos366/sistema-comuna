@@ -74,7 +74,7 @@ export default function ParticipantesForm({
       try {
         const [cursosRes, formadoresRes] = await Promise.all([
           axios.get("/api/cursos/todos-cursos"),
-          axios.get("/api/usuarios/todos-usuarios"),
+          axios.get("/api/usuarios/todos-usuarios-nombres"),
         ]);
 
         setCursos(cursosRes.data.cursos || []);
@@ -391,7 +391,7 @@ export default function ParticipantesForm({
     return (
       <div className="w-full p-4 rounded-md shadow-lg text-center h-full flex items-center justify-center">
         <p className="text-red-600 font-semibold bg-white border px-20 py-10 rounded-md text-2xl ">
-          No hay voceros disponibles.
+          No hay participantes disponibles.
         </p>
       </div>
     );

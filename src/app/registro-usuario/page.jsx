@@ -245,12 +245,12 @@ export default function RegistrarUsuario() {
           />
         </ModalDatosContenedor>
 
-        {/* <MostarMsjEnModal mostrarMensaje={mostrar} mensaje={mensajeBackEnd} /> */}
         {mensajeBackEnd && (
           <div className="w-full mb-3">
             <MostrarMsj mensaje={mensajeBackEnd} />
           </div>
         )}
+
         <BotonesModal
           aceptar={crearUsuario}
           cancelar={cerrarModal}
@@ -270,15 +270,15 @@ export default function RegistrarUsuario() {
         />
       </Modal>
 
-      <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 py-5">
+      <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 p-2">
         <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] md:max-w-[600px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
-          <ImgRegistroLogin />
+          <ImgRegistroLogin indice={"usuario"} />
 
           <div className="relative z-10 w-full">
             <Titulos
               indice={1}
               titulo={"Crear usuario"}
-              className="text-center text-xl font-semibold text-gray-700 mb-4"
+              className="text-center text-xl !hidden sm:!block font-semibold text-gray-700 mb-4"
             />
             <Formulario
               onSubmit={(e) => {
@@ -360,7 +360,7 @@ export default function RegistrarUsuario() {
                 </LabelInput>
               </div>
 
-              <div className="flex items-center justify-between -mt-3 sm:mt-0">
+              <div className="flex items-center justify-between">
                 <LinkPaginas href="/" nombre={"Login"} />
                 <LinkPaginas
                   href="/recuperar-clave-correo"

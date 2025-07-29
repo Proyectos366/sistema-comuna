@@ -38,7 +38,7 @@ export default async function validarAsistenciaPorModulo(
     const idAsistencia = ValidarCampos.validarCampoId(id_asistencia);
     const moduloNumero = ValidarCampos.validarCampoId(modulo);
     const validarNombre = ValidarCampos.validarCampoNombre(nombreFormador);
-    const validarFecha = ValidarCampos.validarCampoNombre(fecha);
+    const validarFecha = ValidarCampos.validarCampoFechaISO(fecha);
 
     if (idAsistencia.status === "error") {
       return retornarRespuestaFunciones(
@@ -54,6 +54,26 @@ export default async function validarAsistenciaPorModulo(
       return retornarRespuestaFunciones(
         moduloNumero.status,
         moduloNumero.message,
+        {
+          id_usuario: datosUsuario.id,
+        }
+      );
+    }
+
+    if (validarNombre.status === "error") {
+      return retornarRespuestaFunciones(
+        validarNombre.status,
+        validarNombre.message,
+        {
+          id_usuario: datosUsuario.id,
+        }
+      );
+    }
+
+    if (validarFecha.status === "error") {
+      return retornarRespuestaFunciones(
+        validarFecha.status,
+        validarFecha.message,
         {
           id_usuario: datosUsuario.id,
         }

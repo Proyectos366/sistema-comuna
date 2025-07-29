@@ -1,8 +1,8 @@
 import Titulos from "./Titulos";
 
-export default function ImgRegistroLogin() {
+export default function ImgRegistroLogin({ indice }) {
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="w-full flex items-center justify-between sm:justify-center gap-2">
       <img
         className="w-16 object-cover"
         src="/img/fondo.png"
@@ -13,6 +13,14 @@ export default function ImgRegistroLogin() {
         indice={6}
         titulo={"Contraloria municipio zamora del estado aragua"}
         className={`text-[#082158] !text-xl !hidden sm:!block uppercase text-center`}
+      />
+
+      <Titulos
+        indice={6}
+        titulo={
+          indice === "usuario" ? "Registro de usuario" : "Entrar al sistema"
+        }
+        className={`text-[#082158] !text-xl sm:!hidden !block uppercase text-center`}
       />
 
       <img

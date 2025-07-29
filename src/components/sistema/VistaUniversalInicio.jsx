@@ -192,6 +192,7 @@ export default function VistaUniversalInicio() {
         "consejos-comunales",
         "circuitos-comunales",
         "voceros",
+        "participantes",
         "perfil",
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",

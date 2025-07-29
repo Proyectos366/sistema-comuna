@@ -20,9 +20,18 @@ export default function SelectOpcion({
 
   useEffect(() => {
     const opcionSeleccionada = opciones.find((p) => p.id === idOpcion);
-    setSeleccionado(
-      opcionSeleccionada ? opcionSeleccionada.nombre : seleccione
-    );
+
+    let nombreCompleto = seleccione;
+
+    if (opcionSeleccionada) {
+      nombreCompleto = opcionSeleccionada.apellido
+        ? `${opcionSeleccionada.nombre} ${opcionSeleccionada.apellido}`
+        : opcionSeleccionada.nombre;
+    }
+
+    setSeleccionado(nombreCompleto);
+
+    //setSeleccionado(opcionSeleccionada ? opcionSeleccionada.nombre : seleccione);
   }, [idOpcion, opciones]);
 
   const manejarSeleccion = (id, nombre) => {
@@ -114,12 +123,19 @@ export default function SelectOpcion({
                       }`}
                       onClick={() => {
                         manejarSeleccion(opc.id, opc.nombre);
-                        if (typeof setNombre === "function")
-                          setNombre(opc.nombre);
+                        if (typeof setNombre === "function") {
+                          const nombreCompleto = opc?.apellido
+                            ? `${opc.nombre} ${opc.apellido}`
+                            : opc.nombre;
+                          setNombre(nombreCompleto);
+                        }
+
                         if (typeof setDatos === "function") setDatos(opc);
                       }}
                     >
-                      {opc.nombre}
+                      {opc?.apellido
+                        ? `${opc.nombre} ${opc.apellido}`
+                        : opc.nombre}
                     </li>
                   ))}
             </ul>

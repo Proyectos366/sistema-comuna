@@ -4,7 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 
-export default async function validarConsultarTodasParroquias() {
+export default async function validarConsultarTodosUsuariosNombres() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -34,10 +34,10 @@ export default async function validarConsultarTodasParroquias() {
       correo: correo,
     });
   } catch (error) {
-    console.log(`Error, interno validar consultar todas parroquias: ` + error);
+    console.log(`Error, interno validar consultar todos usuarios: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar consultar todas parroquias"
+      "Error, interno validar consultar todos usuarios"
     );
   }
 }

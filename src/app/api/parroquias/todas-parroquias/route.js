@@ -57,9 +57,7 @@ export async function GET(request) {
         id_usuario: validaciones.id_usuario,
         descripcion: "Se obtuvieron todas las parroquias",
         datosAntes: null,
-        datosDespues: {
-          todasParroquias,
-        },
+        datosDespues: todasParroquias,
       });
 
       return generarRespuesta(

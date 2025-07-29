@@ -131,6 +131,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "consejos-comunales",
         "circuitos-comunales",
         "voceros",
+        "participantes",
         "perfil",
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",

@@ -77,15 +77,15 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 py-5">
-      <section className="flex flex-col items-center justify-center gap-4 min-h-[400px] sm:max-w-[400px] md:max-w-[600px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
-        <ImgRegistroLogin />
+    <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 px-2">
+      <section className="flex flex-col items-center justify-center gap-4 min-h-[200px] sm:max-w-[400px] md:max-w-[600px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
+        <ImgRegistroLogin indice={"login"} />
 
-        <div className="flex flex-col w-full mt-4">
+        <div className="flex flex-col w-full">
           <Titulos
             indice={1}
             titulo={"Entrar al Sistema"}
-            className="text-center text-xl font-semibold text-gray-700 mb-2"
+            className="text-center text-xl !hidden sm:!block font-semibold text-gray-700 mb-2"
           />
 
           <Formulario
