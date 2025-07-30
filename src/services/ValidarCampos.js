@@ -822,4 +822,29 @@ export default class ValidarCampos {
       );
     }
   }
+
+  static validarCamposEditarComuna(nombre, id_parroquia, id_comuna) {
+    try {
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarParroquia = this.validarCampoId(id_parroquia);
+      const validarComuna = this.validarCampoId(id_comuna);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarParroquia.status === "error") return validarParroquia;
+      if (validarComuna.status === "error") return validarComuna;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.texto,
+        id_parroquia: validarParroquia.id,
+        id_comuna: validarComuna.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos comuna editar: ` + error);
+      
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos comuna editar..."
+      );
+    }
+  }
 }

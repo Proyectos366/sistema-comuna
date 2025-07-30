@@ -571,7 +571,7 @@ export default function VoceroForm({
           onClose={cerrarModal}
           titulo={"Editar vocero"}
         >
-          <div className="-mt-5 w-full">
+          <div className="w-full">
             <FormEditarVocero
               idComuna={idComuna}
               idConsejo={idConsejoComunal}

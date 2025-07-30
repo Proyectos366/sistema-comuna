@@ -10,8 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearComuna from "../formularios/FormCrearComuna";
-import ListadoGenaral from "../ListadoGeneral";
+import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import FormEditarComuna from "../formularios/FormEditarComuna";
+import ModalEditar from "../modales/ModalEditar";
 
 export default function ComunasForm({
   mostrar,
@@ -26,12 +28,15 @@ export default function ComunasForm({
   const [nombreComuna, setNombreComuna] = useState("");
   const [rifComuna, setRifComuna] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
+  const [idComuna, setIdComuna] = useState("");
 
   const [todasComunas, setTodasComunas] = useState([]);
   const [parroquias, setParroquias] = useState([]);
   const [nombreParroquia, setNombreParroquia] = useState("");
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
+
+  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchParroquias = async () => {
@@ -68,8 +73,17 @@ export default function ComunasForm({
       }
     };
 
-    fetchComunasPorParroquia();
-  }, [idParroquia]);
+    if (accion !== "editar") {
+      fetchComunasPorParroquia();
+    }
+  }, [idParroquia, accion]);
+
+  useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setIdComuna("");
+    }
+  }, [accion, mostrar]);
 
   const cambiarSeleccionParroquia = (e) => {
     const valor = e.target.value;
@@ -107,34 +121,114 @@ export default function ComunasForm({
     }
   };
 
+  const editando = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdParroquia(datos.id_parroquia);
+      setIdComuna(datos.id);
+      setNombreComuna(datos.nombre);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando comuna: " + error);
+    }
+  };
+
+  const editar = async () => {
+    if (nombreComuna.trim()) {
+      try {
+        const data = {
+          nombre: nombreComuna.trim(),
+          id_parroquia: idParroquia,
+          id_comuna: idComuna,
+        };
+
+        const response = await axios.post(
+          "/api/comunas/actualizar-datos-comuna",
+          data
+        );
+
+        setTodasComunas((prevComunas) =>
+          prevComunas.map((comuna) =>
+            comuna.id === response.data.comuna.id
+              ? response.data.comuna
+              : comuna
+          )
+        );
+
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreComuna(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdComuna(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al actualizar datos de la comuna: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Crear esta comuna?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
-          {nombreParroquia && (
-            <ModalDatos titulo={"Parroquia"} descripcion={nombreParroquia} />
-          )}
-        </ModalDatosContenedor>
+      {accion === "editar" ? (
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Actualizar esta comuna?"}
+        >
+          <div className="w-full">
+            <FormEditarComuna
+              idParroquia={idParroquia}
+              cambiarSeleccionParroquia={cambiarSeleccionParroquia}
+              nombre={nombreComuna}
+              setNombre={setNombreComuna}
+              parroquias={parroquias}
+              limpiarCampos={limpiarCampos}
+              setNombreParroquia={setNombreParroquia}
+              mostrarMensaje={mostrarMensaje}
+              editar={editar}
+              mensaje={mensaje}
+            />
+          </div>
+        </ModalEditar>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear esta comuna?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Comuna"} descripcion={nombreComuna} />
+            {nombreParroquia && (
+              <ModalDatos titulo={"Parroquia"} descripcion={nombreParroquia} />
+            )}
+          </ModalDatosContenedor>
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
-          aceptar={crearComuna}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            nombreComuna,
-            idParroquia,
-          }}
-        />
-      </Modal>
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+          <BotonesModal
+            aceptar={crearComuna}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              nombreComuna,
+              idParroquia,
+            }}
+          />
+        </Modal>
+      )}
+
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Crear comuna"}>
           <FormCrearComuna
@@ -155,6 +249,7 @@ export default function ComunasForm({
             listado={todasComunas}
             nombreListado={"Comunas"}
             mensajeVacio={"No hay comunas disponibles..."}
+            editando={editando}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

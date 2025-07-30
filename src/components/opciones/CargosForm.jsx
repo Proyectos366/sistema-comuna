@@ -10,7 +10,7 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCargo from "../formularios/FormCrearCargo";
-import ListadoGenaral from "../ListadoGeneral";
+import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function CargosForm({

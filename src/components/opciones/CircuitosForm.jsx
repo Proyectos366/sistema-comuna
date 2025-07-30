@@ -10,7 +10,7 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCircuito from "../formularios/FormCrearCircuito";
-import ListadoGenaral from "../ListadoGeneral";
+import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 
 export default function CircuitosForm({
