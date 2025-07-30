@@ -2,7 +2,7 @@ import "@/app/globals.css";
 import { UserProvider } from "@/app/context/AuthContext";
 
 export const metadata = {
-  title: "S.C Empleados",
+  title: "Empleados",
   description: "Sistema de comuna contraloría, dashboard-empleados",
 };
 

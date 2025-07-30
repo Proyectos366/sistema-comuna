@@ -6,7 +6,7 @@ import "primeicons/primeicons.css";
 import { PrimeReactProvider } from "primereact/api";
 
 export const metadata = {
-  title: "S.C Contraloria",
+  title: "Login",
   description: "Sistema de comuna contraloria",
   manifest: "/manifest.json",
 };

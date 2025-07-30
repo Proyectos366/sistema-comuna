@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 
 export const metadata = {
-  title: "S.A.C Registro usuario",
+  title: "Registro usuario",
   description: "Sistema de archivos contraloría",
 };
 
