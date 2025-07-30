@@ -4,10 +4,10 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 
-export async function GET(req) {
+export async function GET(request) {
   try {
     // Obtener el ID desde los parámetros de la solicitud
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(request.url);
     const idConsejo = searchParams.get("idConsejo");
 
     const id_consejo = Number(idConsejo);

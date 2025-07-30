@@ -1,6 +1,5 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import registrarEventoSeguro from "@/libs/trigget";
 import validarConsultarConsejoIdCircuito from "@/services/validarConsultarConsejosIdCircuito";
 
 export async function GET(request) {
@@ -8,17 +7,6 @@ export async function GET(request) {
     const validaciones = await validarConsultarConsejoIdCircuito(request);
 
     if (validaciones.status === "error") {
-      await registrarEventoSeguro(request, {
-        tabla: "consejo",
-        accion: "INTENTO_FALLIDO_CONSEJOS_ID_CIRCUITO",
-        id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
-        descripcion:
-          "Validacion fallida al consultar consejos comunales por id circuito",
-        datosAntes: null,
-        datosDespues: validaciones,
-      });
-
       return retornarRespuestaFunciones(
         validaciones.status,
         validaciones.message
@@ -31,16 +19,6 @@ export async function GET(request) {
     });
 
     if (!consejosComunales) {
-      await registrarEventoSeguro(request, {
-        tabla: "consejo",
-        accion: "ERROR_GET_CONSEJOS_ID_CIRCUITO",
-        id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo obtener consejos comunales por id circuito",
-        datosAntes: null,
-        datosDespues: consejosComunales,
-      });
-
       return generarRespuesta(
         "ok",
         "No hay consejos comunales en este circuito.",
@@ -48,16 +26,6 @@ export async function GET(request) {
         200
       );
     } else {
-      await registrarEventoSeguro(request, {
-        tabla: "consejo",
-        accion: "GET_CONSEJOS_ID_CIRCUITO",
-        id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Se obtuvieron los consejos comunales por id circuito",
-        datosAntes: null,
-        datosDespues: consejosComunales,
-      });
-
       return generarRespuesta(
         "ok",
         "Consejos comunales encontrados.",
@@ -67,17 +35,6 @@ export async function GET(request) {
     }
   } catch (error) {
     console.log(`Error interno al consultar consejos comunales: ${error}`);
-
-    await registrarEventoSeguro(request, {
-      tabla: "consejo",
-      accion: "ERROR_INTERNO_CONSEJOS_ID_CIRCUITO ",
-      id_objeto: 0,
-      id_usuario: 0,
-      descripcion:
-        "Error inesperado al consultar consejos comunales por id circuito",
-      datosAntes: null,
-      datosDespues: error.message,
-    });
 
     return generarRespuesta(
       "error",
