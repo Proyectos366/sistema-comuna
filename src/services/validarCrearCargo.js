@@ -19,20 +19,19 @@ export default async function validarCrearCargo(nombre, descripcion) {
       );
     }
 
-    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
+    const validarCampos = ValidarCampos.validarCamposCrearCargo(
+      nombre,
+      descripcion
+    );
 
-    if (validarNombre.status === "error") {
+    if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
+        validarCampos.status,
+        validarCampos.message
       );
     }
 
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
-    const descripcionMinuscula = descripcion
-      ? descripcion.toLowerCase()
-      : "sin descripción";
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -45,7 +44,7 @@ export default async function validarCrearCargo(nombre, descripcion) {
 
     const nombreRepetido = await prisma.cargo.findFirst({
       where: {
-        nombre: nombre,
+        nombre: validarCampos.nombre,
       },
     });
 
@@ -57,8 +56,8 @@ export default async function validarCrearCargo(nombre, descripcion) {
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: idUsuario.id,
-      nombre: nombreMinuscula,
-      descripcion: descripcionMinuscula,
+      nombre: validarCampos.nombre,
+      descripcion: validarCampos.descripcion,
     });
   } catch (error) {
     console.log(`Error, interno al crear cargo: ` + error);

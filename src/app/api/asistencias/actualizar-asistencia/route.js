@@ -34,20 +34,6 @@ export async function PATCH(request) {
       );
     }
 
-    /** 
-      const moduloEnAsistenciaValidado = await prisma.asistencia.update({
-        where: {
-          id: validaciones.id_asistencia,
-          id_modulo: validaciones.modulo,
-        },
-        data: {
-          presente: true,
-          fecha_registro: validaciones.fecha,
-          formador: validaciones.nombreFormador,
-        },
-      });
-    */
-
     const [moduloEnAsistenciaValidado, nuevaAsistencia] =
       await prisma.$transaction(async (tx) => {
         const asistenciaActualizada = await tx.asistencia.update({
@@ -117,39 +103,6 @@ export async function PATCH(request) {
         400
       );
     }
-
-    /** 
-      // Solo ejecuta la consulta si la asistencia fue actualizada con éxito
-      const nuevaAsistencia = await prisma.curso.findFirst({
-        where: { id: moduloEnAsistenciaValidado.id_curso, borrado: false }, // Filtra solo el curso afectado
-        include: {
-          voceros: {
-            select: {
-              nombre: true,
-              nombre_dos: true,
-              apellido: true,
-              apellido_dos: true,
-              cedula: true,
-              telefono: true,
-              correo: true,
-              edad: true,
-              genero: true,
-              comunas: { select: { nombre: true } },
-            },
-          },
-          formaciones: {
-            include: {
-              modulos: {
-                include: {
-                  asistencias: true,
-                },
-              },
-            },
-          },
-          asistencias: true, // Solo las asistencias relacionadas con el curso afectado
-        },
-      });
-    */
 
     // Validamos que `nuevaAsistencia` realmente existe antes de responder
     if (!nuevaAsistencia) {

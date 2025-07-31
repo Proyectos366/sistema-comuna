@@ -407,6 +407,51 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoModulo(modulo) {
+    try {
+      if (!modulo) {
+        return retornarRespuestaFunciones("error", "Campo modulo vacio...");
+      }
+
+      const moduloNumero = Number(id);
+
+      if (isNaN(moduloNumero) || moduloNumero <= 0) {
+        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
+        return retornarRespuestaFunciones("error", "Error, modulo inválido...");
+      }
+
+      if (!Number.isInteger(moduloNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, debe ser un número entero..."
+        );
+      }
+
+      if (moduloNumero < 1) {
+        return retornarRespuestaFunciones("error", "Error, minimo 1 modulo...");
+      }
+
+      const MAX_MODULOS = 9;
+
+      if (moduloNumero > MAX_MODULOS) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, maximo ${MAX_MODULOS} módulos`
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", "Campo modulo valido...", {
+        modulo: moduloNumero,
+      });
+    } catch (error) {
+      console.log(`Error, interno al (validar modulo): ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno (validar modulo)"
+      );
+    }
+  }
+
   static validarCamposRegistro(
     cedula,
     nombre,
@@ -648,6 +693,72 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCamposCrearFormacion(nombre, modulos, descripcion) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarModulo = this.validarCampoModulo(modulos);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarModulo.status === "error") return validarModulo;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        cantidadModulos: validarModulo.modulo,
+        descripcion: validarDescripcion.texto,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos formaciones: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos formaciones..."
+      );
+    }
+  }
+
+  static validarCamposCrearCargo(nombre, descripcion) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+      });
+    } catch (error) {
+      console.log(`Error interno crear cargo: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno crear cargo");
+    }
+  }
+
+  static validarCamposCrearDepartamento(nombre, descripcion) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+
+      if (validarNombre.status === "error") return validarNombre;
+
+      /**
+        if (!descripcion) {
+          return retornarRespuestaFunciones(
+            "error",
+            "Error, campo descripción vacio..."
+          );
+        }
+      */
+      return retornarRespuestaFunciones("ok", "Campos validados...");
+    } catch (error) {
+      console.log(`Error, interno validando campos departamento: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos departamento..."
+      );
+    }
+  }
+
   static validarCamposEditarVocero(
     nombre,
     nombre_dos,
@@ -746,83 +857,6 @@ export default class ValidarCampos {
     }
   }
 
-  static validarCamposCrearFormacion(nombre, modulos) {
-    try {
-      const validarNombre = this.validarCampoNombre(nombre);
-
-      if (validarNombre.status === "error") return validarNombre;
-
-      if (!modulos) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo modulos vacio..."
-        );
-      }
-      const moduloNumero = Number(modulos);
-
-      if (isNaN(moduloNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo modulo debe ser un numero..."
-        );
-      }
-
-      if (!Number.isInteger(moduloNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, debe ser un número entero..."
-        );
-      }
-
-      if (moduloNumero < 1) {
-        return retornarRespuestaFunciones("error", "Error, minimo 1 modulo...");
-      }
-
-      const MAX_MODULOS = 3;
-
-      if (moduloNumero > MAX_MODULOS) {
-        return retornarRespuestaFunciones(
-          "error",
-          `Error, maximo ${MAX_MODULOS} módulos`
-        );
-      }
-
-      return retornarRespuestaFunciones("ok", "Campos validados...", {
-        cantidadModulos: moduloNumero,
-      });
-    } catch (error) {
-      console.log(`Error, interno validando campos formaciones: ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, interno validando campos formaciones..."
-      );
-    }
-  }
-
-  static validarCamposCrearDepartamento(nombre, descripcion) {
-    try {
-      const validarNombre = this.validarCampoNombre(nombre);
-
-      if (validarNombre.status === "error") return validarNombre;
-
-      /**
-        if (!descripcion) {
-          return retornarRespuestaFunciones(
-            "error",
-            "Error, campo descripción vacio..."
-          );
-        }
-      */
-      return retornarRespuestaFunciones("ok", "Campos validados...");
-    } catch (error) {
-      console.log(`Error, interno validando campos departamento: ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, interno validando campos departamento..."
-      );
-    }
-  }
-
   static validarCamposEditarComuna(nombre, id_parroquia, id_comuna) {
     try {
       const validarNombre = this.validarCampoTexto(nombre);
@@ -840,10 +874,118 @@ export default class ValidarCampos {
       });
     } catch (error) {
       console.log(`Error, interno validando campos comuna editar: ` + error);
-      
+
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando campos comuna editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarConsejo(nombre, id_comuna, id_consejo) {
+    try {
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarComuna = this.validarCampoId(id_comuna);
+      const validarConsejo = this.validarCampoId(id_consejo);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarComuna.status === "error") return validarComuna;
+      if (validarConsejo.status === "error") return validarConsejo;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.texto,
+        id_comuna: validarComuna.id,
+        id_consejo: validarConsejo.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos consejo editar: ` + error);
+
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos consejo editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarDepartamento(nombre, descripcion, id_departamento) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdDepartamento = this.validarCampoId(id_departamento);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdDepartamento.status === "error")
+        return validarIdDepartamento;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_departamento: validarIdDepartamento.id,
+      });
+    } catch (error) {
+      console.log(
+        `Error, interno validando campos departamento editar: ` + error
+      );
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos departamento editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarCargo(nombre, descripcion, id_cargo) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdCargo = this.validarCampoId(id_cargo);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdCargo.status === "error") return validarIdCargo;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_cargo: validarIdCargo.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos cargo editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos cargo editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarFormacion(
+    nombre,
+    modulos,
+    descripcion,
+    id_formacion
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarModulo = this.validarCampoModulo(modulos);
+      const validarIdFormacion = this.validarCampoId(id_formacion);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarModulo.status === "error") return validarModulo;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdFormacion.status === "error") return validarIdFormacion;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        cantidadModulos: validarModulo.modulo,
+        descripcion: validarDescripcion.texto,
+        id_formacion: validarIdFormacion.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos formacion editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos formacion editar..."
       );
     }
   }

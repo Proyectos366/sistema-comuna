@@ -12,6 +12,8 @@ import BotonesModal from "../BotonesModal";
 import FormCrearCargo from "../formularios/FormCrearCargo";
 import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import ModalEditar from "../modales/ModalEditar";
+import FormEditarCargo from "../formularios/FormEditarCargo";
 
 export default function CargosForm({
   mostrar,
@@ -29,6 +31,9 @@ export default function CargosForm({
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const [validarNombre, setValidarNombre] = useState(false);
 
+  const [idCargo, setIdCargo] = useState("");
+  const [accion, setAccion] = useState("");
+
   useEffect(() => {
     const fetchDatosCargos = async () => {
       try {
@@ -43,6 +48,15 @@ export default function CargosForm({
 
     fetchDatosCargos();
   }, []);
+
+  useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setNombreCargo("");
+      setDescripcionCargo("");
+      setIdCargo("");
+    }
+  }, [accion, mostrar]);
 
   const crearCargo = async () => {
     if (nombreCargo.trim()) {
@@ -69,32 +83,112 @@ export default function CargosForm({
     }
   };
 
+  const editandoCargo = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdCargo(datos.id);
+      setNombreCargo(datos.nombre);
+      setDescripcionCargo(datos.descripcion);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando cargo: " + error);
+    }
+  };
+
+  const editarCargo = async () => {
+    if (nombreCargo.trim()) {
+      try {
+        const data = {
+          nombre: nombreCargo.trim(),
+          descripcion: descripcionCargo,
+          id_cargo: idCargo,
+        };
+
+        const response = await axios.post(
+          "/api/cargos/actualizar-datos-cargo",
+          data
+        );
+
+        setTodosCargos((prevCargos) =>
+          prevCargos.map((cargo) =>
+            cargo.id === response.data.cargo.id ? response.data.cargo : cargo
+          )
+        );
+
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al actualizar datos del cargo: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdCargo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Crear este cargo?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Nombre"} descripcion={nombreCargo} />
-          <ModalDatos titulo={"Descripción"} descripcion={descripcionCargo} />
-        </ModalDatosContenedor>
+      {accion === "editar" ? (
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Actualizar este cargo?"}
+        >
+          <div className="w-full">
+            <FormEditarCargo
+              nombre={nombreCargo}
+              setNombre={setNombreCargo}
+              descripcion={descripcionCargo}
+              setDescripcion={setDescripcionCargo}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarCargo}
+              mensaje={mensaje}
+            />
+          </div>
+        </ModalEditar>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear este cargo?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Nombre"} descripcion={nombreCargo} />
+            <ModalDatos titulo={"Descripción"} descripcion={descripcionCargo} />
+          </ModalDatosContenedor>
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
-          aceptar={crearCargo}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            nombreCargo,
-            descripcionCargo
-          }}
-        />
-      </Modal>
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
+          <BotonesModal
+            aceptar={crearCargo}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              nombreCargo,
+              descripcionCargo,
+            }}
+          />
+        </Modal>
+      )}
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Crear cargo"}>
@@ -116,6 +210,7 @@ export default function CargosForm({
               listado={todosCargos}
               nombreListado="Cargos"
               mensajeVacio="No hay cargos disponibles..."
+              editando={editandoCargo}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

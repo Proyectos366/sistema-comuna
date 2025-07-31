@@ -12,6 +12,8 @@ import BotonesModal from "../BotonesModal";
 import FormCrearDepartamento from "../formularios/FormCrearDepartamento";
 import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import FormEditarDepartamento from "../formularios/FormEditarDepartamento";
+import ModalEditar from "../modales/ModalEditar";
 
 export default function DepartamentosForm({
   mostrar,
@@ -29,6 +31,9 @@ export default function DepartamentosForm({
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const [validarNombre, setValidarNombre] = useState(false);
 
+  const [idDepartamento, setIdDepartamento] = useState("");
+  const [accion, setAccion] = useState("");
+
   useEffect(() => {
     const fetchDatosDepartamentos = async () => {
       try {
@@ -45,6 +50,13 @@ export default function DepartamentosForm({
 
     fetchDatosDepartamentos();
   }, []);
+
+  useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setIdDepartamento("");
+    }
+  }, [accion, mostrar]);
 
   const crearDepartamento = async () => {
     if (nombreDepartamento.trim()) {
@@ -77,30 +89,112 @@ export default function DepartamentosForm({
     }
   };
 
+  const editandoDepartamento = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdDepartamento(datos.id);
+      setNombreDepartamento(datos.nombre);
+      setDescripcionDepartamento(datos.descripcion);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando departamento: " + error);
+    }
+  };
+
+  const editarDepartamento = async () => {
+    if (nombreDepartamento.trim()) {
+      try {
+        const data = {
+          nombre: nombreDepartamento.trim(),
+          descripcion: descripcionDepartamento,
+          id_departamento: idDepartamento,
+        };
+
+        const response = await axios.post(
+          "/api/departamentos/actualizar-datos-departamento",
+          data
+        );
+
+        setTodosDepartamentos((prevDepartamentos) =>
+          prevDepartamentos.map((departamento) =>
+            departamento.id === response.data.departamento.id
+              ? response.data.departamento
+              : departamento
+          )
+        );
+
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreDepartamento(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionDepartamento(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdDepartamento(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al actualizar datos del departamento: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Crear este departamento?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Nombre"} descripcion={nombreDepartamento} />
-        </ModalDatosContenedor>
+      {accion === "editar" ? (
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Actualizar este departamento?"}
+        >
+          <div className="w-full">
+            <FormEditarDepartamento
+              nombre={nombreDepartamento}
+              setNombre={setNombreDepartamento}
+              descripcion={descripcionDepartamento}
+              setDescripcion={setDescripcionDepartamento}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarDepartamento}
+              mensaje={mensaje}
+            />
+          </div>
+        </ModalEditar>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear este departamento?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Nombre"} descripcion={nombreDepartamento} />
+            <ModalDatos
+              titulo={"Descripción"}
+              descripcion={descripcionDepartamento}
+            />
+          </ModalDatosContenedor>
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
-          aceptar={crearDepartamento}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            nombreDepartamento,
-          }}
-        />
-      </Modal>
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+          <BotonesModal
+            aceptar={crearDepartamento}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              nombreDepartamento,
+            }}
+          />
+        </Modal>
+      )}
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Crear departamento"}>
@@ -115,6 +209,7 @@ export default function DepartamentosForm({
             setValidarNombre={setValidarNombre}
           />
         </DivUnoDentroSectionRegistroMostrar>
+
         <DivDosDentroSectionRegistroMostrar>
           <DivDosDentroSectionRegistroMostrar>
             <ListadoGenaral
@@ -122,6 +217,7 @@ export default function DepartamentosForm({
               listado={todosDepartamentos}
               nombreListado="Departamentos"
               mensajeVacio="No hay departamentos disponibles..."
+              editando={editandoDepartamento}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

@@ -76,7 +76,7 @@ export default function UsuariosForm({
     });
   }, [todosUsuarios, searchTerm]);
 
-  const ordenarVoceros = (lista, campo, asc) => {
+  const ordenarUsuarios = (lista, campo, asc) => {
     const listaClonada = [...lista];
 
     return listaClonada.sort((a, b) => {
@@ -99,7 +99,7 @@ export default function UsuariosForm({
     });
   };
 
-  const usuariosOrdenados = ordenarVoceros(
+  const usuariosOrdenados = ordenarUsuarios(
     usuariosFiltrados,
     ordenCampo,
     ordenAscendente

@@ -5,7 +5,11 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "./ValidarCampos";
 
-export default async function validarCrearFormacion(nombre, cantidadModulos) {
+export default async function validarCrearFormacion(
+  nombre,
+  cantidadModulos,
+  descripcion
+) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -21,7 +25,8 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
 
     const validandoCampos = ValidarCampos.validarCamposCrearFormacion(
       nombre,
-      cantidadModulos
+      cantidadModulos,
+      descripcion
     );
 
     if (validandoCampos.status === "error") {
@@ -32,7 +37,6 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
     }
 
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
 
     const idUsuario = await prisma.usuario.findFirst({
       where: { correo },
@@ -50,7 +54,7 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
 
     const nombreRepetido = await prisma.formacion.findFirst({
       where: {
-        nombre: nombre,
+        nombre: validandoCampos.nombre,
       },
     });
 
@@ -85,9 +89,10 @@ export default async function validarCrearFormacion(nombre, cantidadModulos) {
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: idUsuario.id,
-      nombre: nombreMinuscula,
-      cantidadModulos: todoscantidadModulos,
+      nombre: validandoCampos.nombre,
+      cantidadModulos: validandoCampos.cantidadModulos,
       todosModulos: todoscantidadModulos,
+      descripcion: validandoCampos.descripcion,
       id_departamento: idUsuario?.MiembrosDepartamentos?.[0]?.id
         ? idUsuario?.MiembrosDepartamentos?.[0]?.id
         : null,

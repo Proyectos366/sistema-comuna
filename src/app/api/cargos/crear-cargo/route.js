@@ -5,9 +5,9 @@ import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
-    const { nombre } = await request.json();
+    const { nombre, descripcion } = await request.json();
 
-    const validaciones = await validarCrearCargo(nombre);
+    const validaciones = await validarCrearCargo(nombre, descripcion);
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {

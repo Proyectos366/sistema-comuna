@@ -5,9 +5,13 @@ import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
-    const { nombre, cantidadModulos } = await request.json();
+    const { nombre, cantidadModulos, descripcion } = await request.json();
 
-    const validaciones = await validarCrearFormacion(nombre, cantidadModulos);
+    const validaciones = await validarCrearFormacion(
+      nombre,
+      cantidadModulos,
+      descripcion
+    );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
@@ -31,6 +35,7 @@ export async function POST(request) {
     const nuevaFormacion = await prisma.formacion.create({
       data: {
         nombre: validaciones.nombre,
+        descripcion: validaciones.descripcion,
         id_usuario: validaciones.id_usuario,
         id_departamento: validaciones.id_departamento,
         modulos: {

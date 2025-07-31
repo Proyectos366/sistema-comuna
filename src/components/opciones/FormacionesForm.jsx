@@ -12,6 +12,8 @@ import BotonesModal from "../BotonesModal";
 import FormCrearFormacion from "../formularios/FormCrearFormacion";
 import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import FormEditarFormacion from "../formularios/FormEditarFormacion";
+import ModalEditar from "../modales/ModalEditar";
 
 export default function FormacionesForm({
   mostrar,
@@ -24,12 +26,16 @@ export default function FormacionesForm({
   ejecutarAccionesConRetraso,
 }) {
   const [nombreFormacion, setNombreFormacion] = useState("");
+  const [descripcionFormacion, setDescripcionFormacion] = useState("");
   const [cantidadModulos, setCantidadModulos] = useState("");
   const [todasFormaciones, setTodasFormaciones] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
   const [validarNombre, setValidarNombre] = useState(false);
   const [validarModulo, setValidarModulo] = useState(false);
+
+  const [idFormacion, setIdFormacion] = useState("");
+  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchDatosFormaciones = async () => {
@@ -46,12 +52,22 @@ export default function FormacionesForm({
     fetchDatosFormaciones();
   }, []);
 
+  useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setNombreFormacion("");
+      setDescripcionFormacion("");
+      setIdFormacion("");
+    }
+  }, [accion, mostrar]);
+
   const crearFormacion = async () => {
     if (nombreFormacion.trim()) {
       try {
         const response = await axios.post("/api/formaciones/crear-formacion", {
           nombre: nombreFormacion,
           cantidadModulos: cantidadModulos,
+          descripcion: descripcionFormacion,
         });
 
         setTodasFormaciones((prev) =>
@@ -64,6 +80,7 @@ export default function FormacionesForm({
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setNombreFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCantidadModulos(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
         console.log("Error, al crear formacion: " + error);
@@ -75,32 +92,121 @@ export default function FormacionesForm({
     }
   };
 
+  const editandoFormacion = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdFormacion(datos.id);
+      setNombreFormacion(datos.nombre);
+      setDescripcionFormacion(datos.descripcion);
+      setCantidadModulos(datos.modulos)
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando formación: " + error);
+    }
+  };
+
+  const editarFormacion = async () => {
+    if (nombreFormacion.trim()) {
+      try {
+        const data = {
+          nombre: nombreFormacion.trim(),
+          descripcion: descripcionFormacion,
+          cantidadModulos: cantidadModulos,
+          id_formacion: idFormacion,
+        };
+
+        const response = await axios.post(
+          "/api/formaciones/actualizar-datos-formacion",
+          data
+        );
+
+        setTodasFormaciones((prevFormaciones) =>
+          prevFormaciones.map((formacion) =>
+            formacion.id === response.data.formacion.id
+              ? response.data.formacion
+              : formacion
+          )
+        );
+
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCantidadModulos(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      } catch (error) {
+        console.log("Error, al actualizar datos de la formación: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setCantidadModulos(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdFormacion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
+    } else {
+      console.log("Todos los campos son obligatorios.");
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={"¿Crear esta formacion?"}
-      >
-        <ModalDatosContenedor>
-          <ModalDatos titulo={"Nombre"} descripcion={nombreFormacion} />
-          <ModalDatos titulo={"Modulos"} descripcion={cantidadModulos} />
-        </ModalDatosContenedor>
+      {accion === "editar" ? (
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Actualizar esta formación?"}
+        >
+          <div className="w-full">
+            <FormEditarFormacion
+              nombre={nombreFormacion}
+              setNombre={setNombreFormacion}
+              descripcion={descripcionFormacion}
+              setDescripcion={setDescripcionFormacion}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarFormacion}
+              mensaje={mensaje}
+            />
+          </div>
+        </ModalEditar>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear esta formación?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Nombre"} descripcion={nombreFormacion} />
+            <ModalDatos
+              titulo={"Descripción"}
+              descripcion={descripcionFormacion}
+            />
+          </ModalDatosContenedor>
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        <BotonesModal
-          aceptar={crearFormacion}
-          cancelar={cerrarModal}
-          indiceUno={"crear"}
-          indiceDos={"cancelar"}
-          nombreUno={"Aceptar"}
-          nombreDos={"Cancelar"}
-          campos={{
-            nombreFormacion,
-            cantidadModulos,
-          }}
-        />
-      </Modal>
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
+          <BotonesModal
+            aceptar={crearFormacion}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              nombreFormacion,
+              descripcionFormacion,
+            }}
+          />
+        </Modal>
+      )}
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Crear formación"}>
@@ -124,6 +230,7 @@ export default function FormacionesForm({
               listado={todasFormaciones}
               nombreListado="Formaciones"
               mensajeVacio="No hay formaciones disponibles..."
+              editando={editandoFormacion}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

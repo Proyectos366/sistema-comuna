@@ -278,6 +278,7 @@ model familiar {
 model formacion {
   id              Int      @id @default(autoincrement())
   nombre          String   @unique
+  descripcion     String?
   id_usuario      Int
   id_departamento Int?
   borrado         Boolean  @default(false)
