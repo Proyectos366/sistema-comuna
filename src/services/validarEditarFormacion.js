@@ -78,10 +78,124 @@ export default async function validarEditarFormacion(
       );
     }
 
+    // 🔍 Obtener los módulos antes de actualizar
+    const formacionAntes = await prisma.formacion.findUnique({
+      where: { id: validandoCampos.id_formacion },
+      include: { modulos: true },
+    });
+
+    const todoscantidadModulos = await prisma.modulo.findMany({
+      where: { borrado: false },
+      select: { id: true },
+      take: validandoCampos.cantidadModulos,
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    if (!todoscantidadModulos || todoscantidadModulos.length === 0) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, no hay cantidad modulos...",
+        {
+          id_usuario: idUsuario.id,
+        }
+      );
+    }
+
+    // 🛠️ Actualizar formación con nuevos módulos
+    const actualizarFormacion = await prisma.formacion.update({
+      where: { id: validandoCampos.id_formacion },
+      data: {
+        nombre: validandoCampos.nombre,
+        descripcion: validandoCampos.descripcion,
+        modulos: {
+          set: todoscantidadModulos.map(({ id }) => ({ id })),
+        },
+      },
+    });
+
+    if (!actualizarFormacion) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, no se actualizo la formacion...",
+        {
+          id_usuario: idUsuario.id,
+        }
+      );
+    }
+
+    const formacionId = validandoCampos.id_formacion;
+
+    const cursos = await prisma.curso.findMany({
+      where: {
+        id_formacion: formacionId,
+        borrado: false,
+      },
+    });
+
+    const formacionConModulos = await prisma.formacion.findUnique({
+      where: { id: formacionId },
+      include: { modulos: true },
+    });
+
+    const modulosActualizados = formacionConModulos?.modulos || [];
+
+    for (const curso of cursos) {
+      const asistenciasActuales = await prisma.asistencia.findMany({
+        where: { id_curso: curso.id, borrado: false },
+      });
+
+      const modulosActualesIds = asistenciasActuales.map((a) => a.id_modulo);
+      const nuevosModulos = modulosActualizados.filter(
+        (modulo) => !modulosActualesIds.includes(modulo.id)
+      );
+
+      for (const modulo of nuevosModulos) {
+        await prisma.asistencia.create({
+          data: {
+            id_vocero: curso.id_vocero,
+            id_modulo: modulo.id,
+            id_curso: curso.id,
+            id_usuario: curso.id_usuario,
+            presente: false,
+            fecha_registro: new Date(),
+          },
+        });
+      }
+
+      // Eliminar asistencias que ya no tienen módulo
+      const modulosPermitidos = modulosActualizados.map((m) => m.id);
+      const asistenciasAEliminar = asistenciasActuales.filter(
+        (a) => !modulosPermitidos.includes(a.id_modulo)
+      );
+
+      /**
+        await Promise.all(
+          asistenciasAEliminar.map((a) =>
+            prisma.asistencia.delete({
+              where: { id: a.id },
+            })
+          )
+        );
+      */
+
+      await Promise.all(
+        asistenciasAEliminar.map((a) =>
+          prisma.asistencia.update({
+            where: { id: a.id },
+            data: { borrado: true }, // Marcamos como "borrado"
+          })
+        )
+      );
+    }
+
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       nombre: validandoCampos.nombre,
       cantidadModulos: validandoCampos.cantidadModulos,
       descripcion: validandoCampos.descripcion,
+      todosModulos: todoscantidadModulos,
+      formacionAntes: formacionAntes,
       id_usuario: idUsuario.id,
       id_formacion: validandoCampos.id_formacion,
     });

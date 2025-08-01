@@ -69,7 +69,10 @@ export default function ParticipantesForm({
 
   const [cantidadModulos, setCantidadModulos] = useState(0);
 
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+
   useEffect(() => {
+    setIsLoading(true);
     const fetchDatos = async () => {
       try {
         const [cursosRes, formadoresRes] = await Promise.all([
@@ -81,6 +84,8 @@ export default function ParticipantesForm({
         setFormadores(formadoresRes.data.usuarios || []);
       } catch (error) {
         console.log("Error, al obtener datos: " + error);
+      } finally {
+        setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
       }
     };
 
@@ -389,11 +394,21 @@ export default function ParticipantesForm({
 
   if (!Array.isArray(cursos) || cursos.length === 0) {
     return (
-      <div className="w-full p-4 rounded-md shadow-lg text-center h-full flex items-center justify-center">
-        <p className="text-red-600 font-semibold bg-white border px-20 py-10 rounded-md text-2xl ">
-          No hay participantes disponibles.
-        </p>
-      </div>
+      <>
+        {isLoading ? (
+          <div className="w-full p-4 rounded-md shadow-lg text-center h-full flex items-center justify-center">
+            <p className="text-center text-gray-600 border px-20 py-10 rounded-md font-semibold text-2xl">
+              Cargando participantes...
+            </p>
+          </div>
+        ) : (
+          <div className="w-full p-4 rounded-md shadow-lg text-center h-full flex items-center justify-center">
+            <p className="text-red-600 font-semibold bg-white border px-20 py-10 rounded-md text-2xl ">
+              No hay participantes disponibles.
+            </p>
+          </div>
+        )}
+      </>
     );
   }
 

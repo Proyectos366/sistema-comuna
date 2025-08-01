@@ -1,19 +1,40 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";
+import InputModulo from "../inputs/InputModulo";
 
 export default function FormEditarFormacion({
   nombre,
   setNombre,
   descripcion,
   setDescripcion,
+  modulo,
+  setModulo,
+  validarModulo,
+  setValidarModulo,
   limpiarCampos,
   mostrarMensaje,
   editar,
   mensaje,
 }) {
+  useEffect(() => {
+    if (modulo !== undefined && modulo !== null) {
+      const valorSinEspacios = String(modulo).trim();
+
+      // Validar que sea un número entre 1 y 9
+      const esValido = /^[1-9]$/.test(valorSinEspacios);
+      setValidarModulo?.(esValido);
+
+      // Si deseas guardar el valor limpio (sin espacios, por ejemplo)
+      setModulo?.(valorSinEspacios);
+    }
+  }, [modulo]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <div className="flex flex-col w-full gap-2 px-1">
@@ -22,6 +43,17 @@ export default function FormEditarFormacion({
             type={"text"}
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
+          />
+        </LabelInput>
+
+        <LabelInput nombre={"Cantidad de modulos"}>
+          <InputModulo
+            type="text"
+            indice="modulo"
+            value={modulo}
+            setValue={setModulo}
+            validarModulo={validarModulo}
+            setValidarModulo={setValidarModulo}
           />
         </LabelInput>
 

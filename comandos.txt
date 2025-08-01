@@ -51,6 +51,9 @@ rm -rf prisma/migrations
 // Eliminar los node_modules
 rm -rf node_modules
 
+// Resetear toda la base de datos
+npx prisma migrate reset
+
 
 // Usuarios del sistema
 

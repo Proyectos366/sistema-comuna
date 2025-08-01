@@ -87,7 +87,7 @@ export default function HeaderUsuarios({
               </svg>
             </div>
 
-            <span className="text-white text-md tracking-wide drop-shadow-md truncate text-end">
+            <span className="text-white text-md tracking-wide drop-shadow-md truncate text-end uppercase">
               {usuarioActivo?.nombre}
             </span>
           </div>

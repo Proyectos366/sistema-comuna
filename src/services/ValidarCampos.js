@@ -413,7 +413,7 @@ export default class ValidarCampos {
         return retornarRespuestaFunciones("error", "Campo modulo vacio...");
       }
 
-      const moduloNumero = Number(id);
+      const moduloNumero = Number(modulo);
 
       if (isNaN(moduloNumero) || moduloNumero <= 0) {
         // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)

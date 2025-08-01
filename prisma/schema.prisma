@@ -10,7 +10,7 @@ datasource db {
 model role {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  descripcion String?  @default("")
+  descripcion String?  @default("sin descripcion")
   borrado     Boolean  @default(false)
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -30,7 +30,8 @@ model imagen {
   ancho       Int
   alto        Int
   perfil      Boolean  @default(true)
-  descripcion String?  @default("")
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean  @default(false)
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
 
@@ -86,7 +87,7 @@ model usuario {
 model departamento {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  descripcion String?  @default("")
+  descripcion String?  @default("sin descripcion")
   borrado     Boolean  @default(false)
   id_usuario  Int
   updatedAt   DateTime @default(now())
@@ -103,7 +104,7 @@ model cargo {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
   id_usuario  Int
-  descripcion String
+  descripcion String?  @default("sin descripcion")
   borrado     Boolean
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -113,12 +114,13 @@ model cargo {
 }
 
 model parroquia {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  id_usuario Int
-  borrado    Boolean
-  updatedAt  DateTime @default(now())
-  createdAt  DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  id_usuario  Int
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   // Relaciones
   usuarios  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
@@ -186,6 +188,7 @@ model consejo {
   punto        String
   rif          String?  @unique
   codigo       String   @unique
+  descripcion  String?  @default("sin descripcion")
   borrado      Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
   id_comuna    Int? // Este consejo pertenece a una comuna
@@ -205,7 +208,7 @@ model consejo {
 model beneficio {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  descripcion String?  @default("")
+  descripcion String?  @default("sin descripcion")
   borrado     Boolean  @default(false)
   id_usuario  Int
   updatedAt   DateTime @default(now())
@@ -278,7 +281,7 @@ model familiar {
 model formacion {
   id              Int      @id @default(autoincrement())
   nombre          String   @unique
-  descripcion     String?
+  descripcion     String?  @default("sin descripcion")
   id_usuario      Int
   id_departamento Int?
   borrado         Boolean  @default(false)
@@ -293,12 +296,13 @@ model formacion {
 }
 
 model modulo {
-  id         Int      @id @default(autoincrement())
-  nombre     String   @unique
-  borrado    Boolean  @default(false)
-  id_usuario Int
-  updatedAt  DateTime @default(now()) @updatedAt
-  createdAt  DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now()) @updatedAt
+  createdAt   DateTime @default(now())
 
   usuarios    usuario      @relation(name: "CreadorModulo", fields: [id_usuario], references: [id])
   formaciones formacion[]
@@ -314,6 +318,7 @@ model curso {
   verificado       Boolean   @default(false)
   certificado      Boolean   @default(false)
   culminado        Boolean   @default(false)
+  descripcion      String?   @default("sin descripcion")
   borrado          Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @default(now()) @updatedAt
@@ -332,8 +337,9 @@ model asistencia {
   id_usuario     Int
   presente       Boolean
   formador       String?  @default("")
-  borrado        Boolean  @default(false)
   fecha_registro DateTime @default(now())
+  descripcion    String?  @default("sin descripcion")
+  borrado        Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 
@@ -350,7 +356,7 @@ model eventos {
   id_objeto    Int
   id_usuario   Int
   ip           String?  @default("") // Dirección IP del usuario
-  descripcion  String?  @default("") // Texto explicativo o personalizado
+  descripcion  String?  @default("")
   datosAntes   Json? // Datos anteriores (UPDATE o DELETE)
   datosDespues Json? // Datos nuevos (INSERT o UPDATE)
   createdAt    DateTime @default(now())

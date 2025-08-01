@@ -18,13 +18,6 @@ export default async function validarConsultarTodosCargos() {
       );
     }
 
-    if (descifrarToken.id_rol !== 1 && descifrarToken.id_rol !== 2) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, usuario no tiene permisos..."
-      );
-    }
-
     const correo = descifrarToken.correo;
 
     const datosUsuario = await prisma.usuario.findFirst({

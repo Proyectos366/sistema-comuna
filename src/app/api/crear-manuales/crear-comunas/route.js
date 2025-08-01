@@ -26,6 +26,7 @@ export async function GET() {
       id_usuario: 1,
       id_parroquia: 1,
       borrado: false,
+      codigo: `j-${Date.now() + contador++}`,
       norte: "",
       sur: "",
       este: "",

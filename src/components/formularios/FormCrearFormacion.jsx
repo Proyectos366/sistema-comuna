@@ -7,6 +7,8 @@ import LabelInput from "../inputs/LabelInput";
 export default function FormCrearFormacion({
   nombre,
   setNombre,
+  descripcion,
+  setDescripcion,
   modulo,
   setModulo,
   abrirModal,
@@ -21,7 +23,6 @@ export default function FormCrearFormacion({
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      className="space-y-4"
     >
       <LabelInput nombre={"Nombre"}>
         <InputNombre
@@ -45,6 +46,14 @@ export default function FormCrearFormacion({
         />
       </LabelInput>
 
+      <LabelInput nombre={"Descripción"}>
+        <InputNombre
+          type="text"
+          value={descripcion}
+          setValue={setDescripcion}
+        />
+      </LabelInput>
+
       <div className="flex space-x-3">
         <BotonAceptarCancelar
           indice={"aceptar"}
@@ -53,18 +62,20 @@ export default function FormCrearFormacion({
           campos={{
             nombre,
             modulo,
+            descripcion,
           }}
         />
 
         <BotonAceptarCancelar
           indice={"limpiar"}
           aceptar={() => {
-            limpiarCampos({ setNombre, setModulo });
+            limpiarCampos({ setNombre, setModulo, setDescripcion });
           }}
           nombre={"Limpiar"}
           campos={{
             nombre,
             modulo,
+            descripcion,
           }}
         />
       </div>

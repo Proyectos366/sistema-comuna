@@ -33,16 +33,17 @@ export default function MenuLateralUsuario({
             </div>
 
             <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[390px] no-scrollbar">
+              <EnlacesBarraLateral
+                id_rol={id_rol}
+                cambiarRuta={cambiarRuta}
+                vista={vista}
+                vistaActual={"inicio"}
+                nombre={"Inicio"}
+                volverInicio={volverInicio}
+              />
+
               {id_rol === 1 && (
                 <>
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"inicio"}
-                    nombre={"Inicio"}
-                    volverInicio={volverInicio}
-                  />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -145,15 +146,6 @@ export default function MenuLateralUsuario({
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
-                    vistaActual={"inicio"}
-                    nombre={"Inicio"}
-                    volverInicio={volverInicio}
-                  />
-
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
                     vistaActual={"usuarios"}
                     nombre={"Usuarios"}
                     volverInicio={volverInicio}
@@ -203,14 +195,16 @@ export default function MenuLateralUsuario({
                     nombre={"Comunas"}
                     volverInicio={volverInicio}
                   />
-                  {/* <EnlacesBarraLateral
+
+                  <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
                     nombre={"Circuitos"}
                     volverInicio={volverInicio}
-                  /> */}
+                  />
+
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -219,6 +213,7 @@ export default function MenuLateralUsuario({
                     nombre={"Consejo"}
                     volverInicio={volverInicio}
                   />
+
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
@@ -232,54 +227,6 @@ export default function MenuLateralUsuario({
 
               {id_rol === 3 && (
                 <>
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"inicio"}
-                    nombre={"Inicio"}
-                    volverInicio={volverInicio}
-                  />
-
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"comunas"}
-                    nombre={"Comunas"}
-                    volverInicio={volverInicio}
-                  />
-
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"consejos-comunales"}
-                    nombre={"Consejo"}
-                    volverInicio={volverInicio}
-                  />
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"voceros"}
-                    nombre={"Voceros"}
-                    volverInicio={volverInicio}
-                  />
-                </>
-              )}
-
-              {id_rol === 4 && (
-                <>
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"inicio"}
-                    nombre={"Inicio"}
-                    volverInicio={volverInicio}
-                  />
-
                   {nombreDepartamento === "oac" && (
                     <>
                       <EnlacesBarraLateral
@@ -290,35 +237,96 @@ export default function MenuLateralUsuario({
                         nombre={"OAC"}
                         volverInicio={volverInicio}
                       />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"participantes"}
+                        nombre={"Participantes"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"comunas"}
+                        nombre={"Comunas"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"consejos-comunales"}
+                        nombre={"Consejo"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"voceros"}
+                        nombre={"Voceros"}
+                        volverInicio={volverInicio}
+                      />
                     </>
                   )}
+                </>
+              )}
 
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"participantes"}
-                    nombre={"Participantes"}
-                    volverInicio={volverInicio}
-                  />
+              {id_rol === 4 && (
+                <>
+                  {nombreDepartamento === "oac" && (
+                    <>
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"oac"}
+                        nombre={"OAC"}
+                        volverInicio={volverInicio}
+                      />
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"participantes"}
+                        nombre={"Participantes"}
+                        volverInicio={volverInicio}
+                      />
 
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"comunas"}
-                    nombre={"Comunas"}
-                    volverInicio={volverInicio}
-                  />
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"comunas"}
+                        nombre={"Comunas"}
+                        volverInicio={volverInicio}
+                      />
 
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"consejos-comunales"}
-                    nombre={"Consejo"}
-                    volverInicio={volverInicio}
-                  />
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"consejos-comunales"}
+                        nombre={"Consejo"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"voceros"}
+                        nombre={"Voceros"}
+                        volverInicio={volverInicio}
+                      />
+                    </>
+                  )}
 
                   {nombreDepartamento === "administracion y presupuesto" && (
                     <>
@@ -332,14 +340,6 @@ export default function MenuLateralUsuario({
                       />
                     </>
                   )}
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"voceros"}
-                    nombre={"Voceros"}
-                    volverInicio={volverInicio}
-                  />
                 </>
               )}
             </div>

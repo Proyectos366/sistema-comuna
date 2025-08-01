@@ -18,17 +18,6 @@ export default async function validarConsultarTodasFormaciones() {
       );
     }
 
-    if (
-      descifrarToken.id_rol !== 1 &&
-      descifrarToken.id_rol !== 2 &&
-      descifrarToken.id_rol !== 3
-    ) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, usuario no tiene permisos..."
-      );
-    }
-
     const correo = descifrarToken.correo;
 
     const datosUsuario = await prisma.usuario.findFirst({

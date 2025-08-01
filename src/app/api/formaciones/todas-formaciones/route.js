@@ -31,6 +31,7 @@ export async function GET() {
         borrado: false,
         culminada: false,
       },
+      include: { modulos: true },
     });
 
     if (!todasFormaciones) {

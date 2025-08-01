@@ -56,6 +56,7 @@ export default function FormacionesForm({
     if (accion === "editar" && !mostrar) {
       setAccion("");
       setNombreFormacion("");
+      setCantidadModulos("");
       setDescripcionFormacion("");
       setIdFormacion("");
     }
@@ -98,7 +99,7 @@ export default function FormacionesForm({
       setIdFormacion(datos.id);
       setNombreFormacion(datos.nombre);
       setDescripcionFormacion(datos.descripcion);
-      setCantidadModulos(datos.modulos)
+      setCantidadModulos(datos?.modulos?.length);
 
       abrirModal();
     } catch (error) {
@@ -140,7 +141,9 @@ export default function FormacionesForm({
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
-        console.log("Error, al actualizar datos de la formación: " + error);
+        console.log(error.response.data);
+
+        //console.log("Error, al actualizar datos de la formación: " + error);
         abrirMensaje(error?.response?.data?.message);
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
@@ -170,6 +173,10 @@ export default function FormacionesForm({
               setNombre={setNombreFormacion}
               descripcion={descripcionFormacion}
               setDescripcion={setDescripcionFormacion}
+              modulo={cantidadModulos}
+              setModulo={setCantidadModulos}
+              validarModulo={validarModulo}
+              setValidarModulo={setValidarModulo}
               limpiarCampos={limpiarCampos}
               mostrarMensaje={mostrarMensaje}
               editar={editarFormacion}
@@ -185,6 +192,10 @@ export default function FormacionesForm({
         >
           <ModalDatosContenedor>
             <ModalDatos titulo={"Nombre"} descripcion={nombreFormacion} />
+            <ModalDatos
+              titulo={"Cantidad de modulos"}
+              descripcion={cantidadModulos}
+            />
             <ModalDatos
               titulo={"Descripción"}
               descripcion={descripcionFormacion}
@@ -213,6 +224,8 @@ export default function FormacionesForm({
           <FormCrearFormacion
             nombre={nombreFormacion}
             setNombre={setNombreFormacion}
+            descripcion={descripcionFormacion}
+            setDescripcion={setDescripcionFormacion}
             modulo={cantidadModulos}
             setModulo={setCantidadModulos}
             abrirModal={abrirModal}

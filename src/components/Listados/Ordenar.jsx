@@ -49,7 +49,7 @@ export default function OrdenarLista({
     <div className="flex gap-2 items-center relative" ref={selectRef}>
       <div className="w-full">
         <div
-          className={`uppercase flex justify-between items-center border w-full py-2 px-4 rounded-md shadow-sm transition-all cursor-pointer hover:font-semibold
+          className={`flex justify-between items-center border w-full py-2 px-4 rounded-md shadow-sm transition-all cursor-pointer hover:font-semibold
           ${
             ordenAscendente
               ? "border-[#2FA807] text-[#2FA807]"
@@ -77,7 +77,7 @@ export default function OrdenarLista({
             {opcionesOrden.map((opcion, index) => (
               <li
                 key={opcion.id}
-                className={`uppercase p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
+                className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
                   index === opcionesOrden.length - 1 ? "mb-2" : ""
                 }`}
                 onClick={() => {
@@ -101,7 +101,7 @@ export default function OrdenarLista({
             }`}
           >
             <span className="hidden sm:block">
-              {ordenAscendente ? "ASCENDENTE" : "DESCENDENTE"}
+              {ordenAscendente ? "Ascendente" : "Descendente"}
             </span>
             <span className="block sm:hidden">
               {ordenAscendente ? (
