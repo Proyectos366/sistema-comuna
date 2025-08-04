@@ -36,6 +36,7 @@ export async function GET(request) {
     const vocerosPorConsejoComunal = await prisma.vocero.findMany({
       where: {
         id_consejo: id_consejo,
+        borrado: false,
       },
       select: {
         id: true,
@@ -69,6 +70,7 @@ export async function GET(request) {
               select: {
                 id: true,
                 presente: true,
+                formador: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
               },

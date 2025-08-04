@@ -9,7 +9,7 @@ export default function ListadoGenaral({
   editando,
 }) {
   return (
-    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
+    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-2">
       <Titulos indice={2} titulo={nombreListado} />
 
       {isLoading ? (
@@ -23,7 +23,7 @@ export default function ListadoGenaral({
               key={index}
               className="bg-gray-200 rounded-md transition-all duration-700 ease-in-out 
                  hover:bg-gray-300 hover:border hover:border-gray-300 
-                 hover:shadow-md hover:scale-101 flex items-center justify-between uppercase py-1 px-4"
+                 hover:shadow-md hover:scale-101 flex gap-4 sm:gap-1 items-center justify-between uppercase py-1 px-4"
             >
               <div className="flex gap-2">
                 {!lista.cedula ? null : (
@@ -39,6 +39,7 @@ export default function ListadoGenaral({
                   </span>
                 )}
               </div>
+
               {typeof editando === "function" && (
                 <div>
                   <BotonEditar editar={() => editando(lista)} />

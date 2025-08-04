@@ -21,7 +21,7 @@ export default function ListaDetallesVocero({
           <span className="font-semibold text-md">{nombre}:</span>
           <span
             className={`${
-              valor ? "text-[#E61C45]" : "text-[#E61C45]"
+              valor ? "text-[#2FA807]" : "text-[#E61C45]"
             } uppercase`}
           >
             {valor ? "Sí" : "No"}
@@ -33,7 +33,11 @@ export default function ListaDetallesVocero({
         <div className="w-full flex flex-col">
           <div>
             <span className="font-semibold text-md">Formador: </span>
-            <span className={`${formador ? "uppercase" : "text-[#E61C45]"}`}>
+            <span
+              className={`${
+                formador ? "uppercase font-medium" : "text-[#E61C45]"
+              }`}
+            >
               {formador ? formador : "Sin asignar"}
             </span>
           </div>
@@ -45,7 +49,7 @@ export default function ListaDetallesVocero({
             <div>
               <span
                 className={`${
-                  valor ? "text-[#E61C45]" : "text-[#E61C45]"
+                  valor ? "text-[#2FA807]" : "text-[#E61C45]"
                 } uppercase`}
               >
                 {valor ? "Asistio" : "No asistio"}

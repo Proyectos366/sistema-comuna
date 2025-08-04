@@ -242,6 +242,15 @@ export default function MenuLateralUsuario({
                         id_rol={id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
+                        vistaActual={"cargos"}
+                        nombre={"Cargos"}
+                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
                         vistaActual={"participantes"}
                         nombre={"Participantes"}
                         volverInicio={volverInicio}

@@ -31,6 +31,7 @@ export async function GET(request) {
     const voceroPorParroquia = await prisma.vocero.findMany({
       where: {
         id_parroquia: idParroquiaNumero,
+        borrado: false,
       },
       select: {
         id: true,
@@ -68,6 +69,7 @@ export async function GET(request) {
               select: {
                 id: true,
                 presente: true,
+                formador: true,
                 fecha_registro: true,
                 modulos: {
                   select: {

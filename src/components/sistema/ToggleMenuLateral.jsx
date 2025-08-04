@@ -3,7 +3,9 @@ export default function ToggleMenuLateral({ abrirDashboar, abrirPanel }) {
     <button
       onClick={abrirDashboar}
       className={`${
-        !abrirPanel ? "bg-[#E61C45]" : "bg-[#082158]"
+        !abrirPanel
+          ? "bg-[#082158] sm:bg-[#E61C45]"
+          : "sm:bg-[#082158] bg-[#E61C45]"
       } text-white p-2 rounded cursor-pointer transform group transition-all duration-300 hover:scale-[1.02]`}
     >
       {abrirPanel ? (

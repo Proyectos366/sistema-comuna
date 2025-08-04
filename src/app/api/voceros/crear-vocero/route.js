@@ -268,7 +268,7 @@ export async function POST(request) {
     }
 
     const nuevoVoceroCreado = await prisma.vocero.findFirst({
-      where: { cedula: validaciones.cedula },
+      where: { cedula: validaciones.cedula, borrado: false },
       select: {
         id: true,
         nombre: true,
@@ -295,6 +295,7 @@ export async function POST(request) {
               select: {
                 id: true,
                 presente: true,
+                formador: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
               },

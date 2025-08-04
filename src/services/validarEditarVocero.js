@@ -108,7 +108,7 @@ export default async function validarEditarVocero(
       id_parroquia: validandoCampos.id_parroquia,
       id_comuna: validandoCampos.id_comuna,
       id_circuito: validandoCampos.id_circuito,
-      id_consejo: validandoCampos.consejo,
+      id_consejo: validandoCampos.id_consejo,
     });
   } catch (error) {
     console.log(`Error, interno al editar vocero: ` + error);

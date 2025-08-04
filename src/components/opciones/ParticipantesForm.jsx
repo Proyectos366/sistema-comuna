@@ -301,13 +301,13 @@ export default function ParticipantesForm({
       abrirMensaje(response.data.message);
 
       ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setIdModulo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setFechaAprobacionModulo(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setDatosActualizar([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setDatos([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setIdFormador(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        { accion: () => setNombreFormador(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: cerrarModal, tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setIdModulo(""), tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setFechaAprobacionModulo(""), tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setDatosActualizar([]), tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setDatos([]), tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setIdFormador(""), tiempo: 2000 }, // Se ejecutará en 3 segundos
+        { accion: () => setNombreFormador(""), tiempo: 2000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
       console.log("Error, al validar modulo: " + error);

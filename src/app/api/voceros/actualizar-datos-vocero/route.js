@@ -114,6 +114,7 @@ export async function POST(request) {
                 select: {
                   id: true,
                   presente: true,
+                  formador: true,
                   fecha_registro: true,
                   modulos: { select: { id: true, nombre: true } },
                 },

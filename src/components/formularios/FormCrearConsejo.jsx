@@ -113,7 +113,6 @@ export default function FormCrearConsejo({
               nombre={"Limpiar"}
               campos={{
                 nombreConsejo,
-                idComuna,
               }}
             />
           </div>

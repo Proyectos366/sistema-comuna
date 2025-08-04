@@ -175,7 +175,7 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
                   >
                     <button
                       onClick={() => toggleVocero(index)}
-                      className={`w-full text-left font-semibold tracking-wide uppercase px-6 py-2 cursor-pointer transition-colors duration-200
+                      className={`w-full sm:text-left font-semibold tracking-wide uppercase px-6 py-2 cursor-pointer transition-colors duration-200
                         ${
                           abierto === index
                             ? "rounded-t-md mb-2 sm:mb-0"

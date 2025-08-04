@@ -951,7 +951,7 @@ export default function VoceroForm({
         {seleccionarConsulta === 6 && (
           <>
             <DivUnoDentroSectionRegistroMostrar>
-              <div className="w-full flex flex-col justify-center sm:flex-row items-center sm:space-x-4 p-2 bg-gray-100 shadow-lg rounded-md border border-gray-300 ">
+              <div className="w-full flex flex-col gap-2 justify-center sm:flex-row items-center sm:space-x-4 p-2 bg-gray-100 shadow-lg rounded-md border border-gray-300 ">
                 <div className="w-full">
                   <InputCedula
                     type={"text"}
@@ -963,6 +963,7 @@ export default function VoceroForm({
                     className={`bg-white`}
                   />
                 </div>
+
                 <div className="w-1/3">
                   <Boton
                     disabled={!cedulaVocero}

@@ -32,8 +32,10 @@ export async function POST(request) {
     const voceroPorCedula = await prisma.vocero.findUnique({
       where: {
         cedula: cedulaNumero,
+        borrado: false,
       },
       select: {
+        id: true,
         nombre: true,
         nombre_dos: true,
         apellido: true,
@@ -68,6 +70,7 @@ export async function POST(request) {
               select: {
                 id: true,
                 presente: true,
+                formador: true,
                 fecha_registro: true,
                 modulos: {
                   select: {

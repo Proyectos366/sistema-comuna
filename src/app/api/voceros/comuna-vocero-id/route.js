@@ -37,6 +37,7 @@ export async function GET(req) {
       where: {
         id_comuna: id_comuna,
         id_consejo: null,
+        borrado: false,
       },
       select: {
         id: true,
@@ -70,6 +71,7 @@ export async function GET(req) {
               select: {
                 id: true,
                 presente: true,
+                formador: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
               },
