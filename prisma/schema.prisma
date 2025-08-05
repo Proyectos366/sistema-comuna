@@ -20,20 +20,19 @@ model role {
 }
 
 model imagen {
-  id          Int      @id @default(autoincrement())
-  id_usuario  Int
-  path        String
-  nombre      String
-  tipo_mime   String
-  formato     String
-  peso        Float
-  ancho       Int
-  alto        Int
-  perfil      Boolean  @default(true)
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  id_usuario     Int
+  path           String
+  nombreOriginal String
+  nombreSistema  String
+  tipo           String
+  formato        String
+  peso           Int
+  perfil         Boolean  @default(true)
+  descripcion    String?  @default("sin descripcion")
+  borrado        Boolean  @default(false)
+  updatedAt      DateTime @default(now())
+  createdAt      DateTime @default(now())
 
   usuarios usuario @relation(fields: [id_usuario], references: [id]) // Corrección: relación bien definida
 }

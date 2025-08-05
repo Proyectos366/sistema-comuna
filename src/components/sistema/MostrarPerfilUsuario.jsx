@@ -7,6 +7,8 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarUsuario from "../formularios/FormEditarUsuario";
 import { formatearFecha } from "@/utils/Fechas";
+import FormCrearEditarImg from "../formularios/FormCrearEditarImg";
+import ListaDetallesVocero from "../listados/ListaDetalleVocero";
 
 export default function MostrarPerfilUsuario({
   mostrar,
@@ -23,9 +25,14 @@ export default function MostrarPerfilUsuario({
   const [correoUsuario, setCorreoUsuario] = useState("");
   const [perfilUsuario, setPerfilUsuario] = useState([]);
 
+  const [imagen, setImagen] = useState(null);
+  const [file, setFile] = useState(null);
+
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const [validarNombre, setValidarNombre] = useState(false);
   const [validarApellido, setValidarApellido] = useState(false);
+
+  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchDatosUsuario = async () => {
@@ -85,88 +92,151 @@ export default function MostrarPerfilUsuario({
     }
   };
 
-  function obtenerRol(id_rol) {
-    switch (id_rol) {
-      case 1:
-        return "🛠️ master";
-      case 2:
-        return "👥 administrador";
-      case 3:
-        return "📊 director";
-      case 4:
-        return "📁 empleado";
-      default:
-        return "❓ desconocido";
+  const crearEditarImgPerfil = async () => {
+    console.log("Imagen de perfil");
+
+    try {
+      const formData = new FormData();
+      formData.append("imagen", file); // asegúrate de que `imagen` sea tipo File
+
+      const response = await axios.post(
+        "/api/usuarios/actualizar-img-perfil-usuario",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setPerfilUsuario(response.data.usuarioPerfil); // Suponiendo que la API devuelve el usuario actualizado
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 },
+        { accion: () => setNombreUsuario(""), tiempo: 3000 },
+        { accion: () => setApellidoUsuario(""), tiempo: 3000 },
+        { accion: () => setImagen(null), tiempo: 3000 },
+      ]);
+    } catch (error) {
+      console.log("Error al actualizar la imagen de perfil: " + error);
+      abrirMensaje(error?.response?.data?.message);
+
+      ejecutarAccionesConRetraso([{ accion: cerrarModal, tiempo: 3000 }]);
     }
-  }
+  };
 
   return (
     <>
       <ModalEditar
         isVisible={mostrar}
         onClose={cerrarModal}
-        titulo={"¿Actualizar este cargo?"}
+        titulo={
+          accion === "imagen" ? "Imagen de perfil" : "¿Actualizar este cargo?"
+        }
       >
-        <div className="w-full">
-          <FormEditarUsuario
-            nombre={nombreUsuario}
-            setNombre={setNombreUsuario}
-            apellido={apellidoUsuario}
-            setApellido={setApellidoUsuario}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-            validarApellido={validarApellido}
-            setValidarApellido={setValidarApellido}
+        {accion === "imagen" ? (
+          <FormCrearEditarImg
+            imgPrevia={imagen}
+            setImgVistaPrevia={setImagen}
+            setFile={setFile}
+            abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
-            mostrarMensaje={mostrarMensaje}
-            editar={editarUsuario}
-            mensaje={mensaje}
+            crearEditar={crearEditarImgPerfil}
           />
-        </div>
+        ) : (
+          <div className="w-full">
+            <FormEditarUsuario
+              nombre={nombreUsuario}
+              setNombre={setNombreUsuario}
+              apellido={apellidoUsuario}
+              setApellido={setApellidoUsuario}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+              validarApellido={validarApellido}
+              setValidarApellido={setValidarApellido}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarUsuario}
+              mensaje={mensaje}
+            />
+          </div>
+        )}
       </ModalEditar>
 
       <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar nombre={"Datos de usuario"}>
-          <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
-            <ul className="space-y-2 text-gray-700">
-              <li>
-                <span className="font-semibold">Nombre:</span>
-                <span>{perfilUsuario.nombre}</span>
-              </li>
-              <li>
-                <span className="font-semibold">Cédula:</span>
-                <span>{perfilUsuario.apellido}</span>
-              </li>
-              <li>
-                <span className="font-semibold">Correo:</span>
-                <span>{perfilUsuario.correo}</span>
-              </li>
-              <li>
-                <span className="font-semibold">Rol:</span>
-                <span>{obtenerRol(perfilUsuario.id_rol)}</span>
-              </li>
-              <li>
-                <span className="font-semibold">Acceso:</span>{" "}
-                <span
-                  className={`${perfilUsuario.validado ? "text-[green]" : ""}`}
+        <DivUnoDentroSectionRegistroMostrar nombre={"Perfil de usuario"}>
+          <div className="flex flex-col items-center gap-4 w-full bg-gray-100 rounded-md p-2 sm:p-6">
+            <div className="flex items-center justify-center">
+              <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <img
+                  src={
+                    perfilUsuario?.imagenes?.[0]?.path
+                      ? perfilUsuario.imagenes[0].path
+                      : "/img/logo2.png"
+                  }
+                  alt="Foto de perfil"
+                  className="rounded-full w-full h-full object-cover group-hover:scale-105 transform transition-transform duration-300 ease-in-out"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    abrirModal();
+                    setAccion("imagen");
+                  }}
+                  className="absolute bottom-0 w-full bg-black bg-opacity-40 text-white text-sm text-center py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                 >
-                  {perfilUsuario.validado ? "autorizado" : "negado"}
-                </span>
-              </li>
-              <li>
-                <span className="font-semibold">Fecha de creación:</span>
-                <span>{formatearFecha(perfilUsuario.createdAt)}</span>
-              </li>
-              <li>
-                <span className="font-semibold">
-                  Miembros de Departamentos:
-                </span>{" "}
-                <span>
-                  {perfilUsuario.MiembrosDepartamentos.nombre
+                  {perfilUsuario?.imagenes?.[0]?.path ? "Cambiar" : "Asignar"}
+                </button>
+              </div>
+            </div>
+
+            <ul className="flex flex-col gap-2 text-gray-700 w-full">
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Nombre"}
+                valor={perfilUsuario?.nombre}
+              />
+
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Apellido"}
+                valor={perfilUsuario?.apellido}
+              />
+
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Correo"}
+                valor={perfilUsuario?.correo}
+              />
+
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Rol"}
+                valor={perfilUsuario?.roles?.nombre}
+              />
+
+              <ListaDetallesVocero
+                indice={5}
+                nombre={"Acceso"}
+                valor={perfilUsuario?.validado}
+              />
+
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Creado"}
+                valor={formatearFecha(perfilUsuario?.createdAt)}
+              />
+
+              <ListaDetallesVocero
+                indice={1}
+                nombre={"Departamento"}
+                valor={
+                  perfilUsuario?.MiembrosDepartamentos?.nombre
                     ? perfilUsuario.MiembrosDepartamentos.nombre
-                    : "sin asignar"}
-                </span>
-              </li>
+                    : "sin asignar"
+                }
+              />
             </ul>
           </div>
         </DivUnoDentroSectionRegistroMostrar>

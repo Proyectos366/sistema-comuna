@@ -375,7 +375,16 @@ export default function VistaUniversalUsuarios({ children }) {
                     )}
 
                   {vista === "perfil" && (
-                    <MostrarPerfilUsuario abrirPanel={abrirPanel} />
+                    <MostrarPerfilUsuario
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                    />
                   )}
                   {vista === "cambiar-clave" && (
                     <MostrarCambiarClaveUsuario
