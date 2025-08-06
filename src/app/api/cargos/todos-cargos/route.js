@@ -1,6 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarConsultarTodosCargos from "@/services/validarConsultarTodosCargos";
+import validarConsultarTodosCargos from "@/services/cargos/validarConsultarTodosCargos";
 
 export async function GET(request) {
   try {

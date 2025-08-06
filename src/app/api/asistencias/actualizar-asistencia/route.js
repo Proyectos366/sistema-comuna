@@ -1,6 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarAsistenciaPorModulo from "@/services/validarAsistenciaPorModulo";
+import validarAsistenciaPorModulo from "@/services/asistencias/validarAsistenciaPorModulo";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function PATCH(request) {

@@ -1,8 +1,6 @@
 import prisma from "@/libs/prisma";
-import validarCambiarClaveLogueado from "@/services/validarCambiarClaveLogueado";
+import validarCambiarClaveLogueado from "@/services/usuarios/validarCambiarClaveLogueado";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../../msj_validaciones/cambiar_clave/msjErrores.json";
-import msjCorrectos from "../../../../msj_validaciones/cambiar_clave/msjCorrectos.json";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
@@ -30,7 +28,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
 
@@ -53,10 +51,10 @@ export async function POST(request) {
       });
 
       return generarRespuesta(
-        msjErrores.error,
-        msjErrores.errorCambioClave.cambioFallido,
+        "error",
+        "Error, fallo al cambiar clave",
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     } else {
       await registrarEventoSeguro(request, {
@@ -66,20 +64,13 @@ export async function POST(request) {
         id_usuario: validaciones.id_usuario,
         descripcion: "Cambio de clave exitoso usuario loggeado",
         datosAntes: null,
-        datosDespues: {
-          claveCambiadaUsuarioLoggueado,
-        },
+        datosDespues: claveCambiadaUsuarioLoggueado,
       });
 
-      return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okCambioClave.cambioExitoso,
-        {},
-        msjCorrectos.codigo.codigo201
-      );
+      return generarRespuesta("ok", "Clave cambiada con exito...", {}, 201);
     }
   } catch (error) {
-    console.log(`${msjErrores.errorMixto}: ` + error);
+    console.log(`Error interno al cambiar clave loggeado: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -92,10 +83,10 @@ export async function POST(request) {
     });
 
     return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorCambioClave.internoValidando,
+      "error",
+      "Error interno, al cambiar clave loggeado",
       {},
-      msjErrores.codigo.codigo500
+      500
     );
   }
 }

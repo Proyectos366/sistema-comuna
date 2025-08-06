@@ -14,11 +14,13 @@ export default function MostrarAlInicioUsuarios({
   mostrar,
   cerrarModal,
   mostrarMensaje,
-  mensaje, abrirModal,
+  mensaje,
+  abrirModal,
   mostrarModal,
-    abrirMensaje,
-    limpiarCampos,
-    ejecutarAccionesConRetraso,
+  abrirMensaje,
+  limpiarCampos,
+  ejecutarAccionesConRetraso,
+  id_usuario,
   buscador,
   setBuscador,
   validarCedula,
@@ -47,7 +49,8 @@ export default function MostrarAlInicioUsuarios({
   todasComunas,
   todosConsejos,
   loading,
-  expandido, setExpandido
+  expandido,
+  setExpandido,
 }) {
   const toggleConsultar = (id) => {
     const nuevoId = seleccionarConsulta === id ? null : id;
@@ -104,9 +107,6 @@ export default function MostrarAlInicioUsuarios({
     const valor = e.target.value;
     setIdOpcion(valor);
   };
-
-  
-  
 
   return (
     <>

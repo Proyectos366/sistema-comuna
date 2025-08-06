@@ -1,6 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearComuna from "@/services/validarCrearComuna";
+import validarCrearComuna from "@/services/comunas/validarCrearComuna";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {

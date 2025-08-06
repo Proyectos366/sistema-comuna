@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
@@ -27,17 +27,6 @@ export default function VistaUniversalInicio() {
 
   const [abrirPanel, setAbrirPanel] = useState(true);
 
-  //Esto es para el header, donde esta el icono de notificaciones y el de usuario
-  const [menuOpcionesUsuario, setMenuOpcionesUsuario] = useState(false);
-  const [menuNotificaciones, setMenuNotificaciones] = useState(false);
-
-  //Carpetas y rutas que se usan  en las carpetas
-  const [carpetaActual, setCarpetaActual] = useState(null);
-  const [rutaCarpetas, setRutaCarpetas] = useState(null);
-  const [haRetrocedido, setHaRetrocedido] = useState(null);
-  const [historialRutas, setHistorialRutas] = useState([]);
-  const [indiceHistorial, setIndiceHistorial] = useState(-1);
-
   const [buscador, setBuscador] = useState("");
   const [validarCedula, setValidarCedula] = useState(false);
 
@@ -60,9 +49,6 @@ export default function VistaUniversalInicio() {
   const [idOpcion, setIdOpcion] = useState("");
 
   const [loading, setLoading] = useState(false);
-
-  const refMenuPerfil = useRef(null);
-  const refMenuNotificaciones = useRef(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -120,16 +106,6 @@ export default function VistaUniversalInicio() {
       setVista("inicio");
       router.push("/", { shallow: true }); // Redirige a la principal
     }
-
-    const clickListener = (event) => {
-      clickFueraCierraMenu(event);
-    };
-
-    document.addEventListener("mousedown", clickListener);
-
-    return () => {
-      document.removeEventListener("mousedown", clickListener);
-    };
   }, [pathname, router]);
 
   useEffect(() => {
@@ -181,6 +157,7 @@ export default function VistaUniversalInicio() {
         "comunas",
         "consejos-comunales",
         "circuitos-comunales",
+        "formaciones",
         "cargos",
         "participantes",
         "voceros",
@@ -260,49 +237,24 @@ export default function VistaUniversalInicio() {
     setVista(nuevaVista);
   };
 
-  const clickFueraCierraMenu = (event) => {
-    if (
-      refMenuPerfil.current &&
-      !refMenuPerfil.current.contains(event.target)
-    ) {
-      setMenuOpcionesUsuario(false);
-    }
+  // const clickFueraCierraMenu = (event) => {
+  //   if (
+  //     refMenuPerfil.current &&
+  //     !refMenuPerfil.current.contains(event.target)
+  //   ) {
+  //     setMenuOpcionesUsuario(false);
+  //   }
 
-    if (
-      refMenuNotificaciones.current &&
-      !refMenuNotificaciones.current.contains(event.target)
-    ) {
-      setMenuNotificaciones(false);
-    }
-  };
+  //   if (
+  //     refMenuNotificaciones.current &&
+  //     !refMenuNotificaciones.current.contains(event.target)
+  //   ) {
+  //     setMenuNotificaciones(false);
+  //   }
+  // };
 
   const abrirDashboar = () => {
     setAbrirPanel(!abrirPanel);
-  };
-
-  const toggleMenu = (setFunctionToToggle, setFunctionsToClose = []) => {
-    setFunctionToToggle((prevState) => !prevState); // Cambia el estado del menú objetivo
-
-    // Verifica que los elementos del arreglo sean funciones antes de ejecutarlas
-    setFunctionsToClose.forEach((setFunction) => {
-      if (typeof setFunction === "function") {
-        setFunction(false);
-      }
-    });
-  };
-
-  const volverInicio = () => {
-    setRutaCarpetas(null); // Limpiar la ruta porque volvemos al nivel principal
-    setCarpetaActual(null); // Opcional: Limpiar carpeta actual
-    setHaRetrocedido(null);
-    setHistorialRutas([]);
-    setIndiceHistorial(-1);
-
-    // Limpiar localStorage
-    localStorage.removeItem("rutaCarpeta"); // Eliminar la ruta almacenada
-    localStorage.removeItem("carpetaActual"); // Eliminar la carpeta almacenada
-    localStorage.removeItem("estadoCarpeta");
-    localStorage.removeItem("historialRutas");
   };
 
   const consultarVoceroCedula = async () => {
@@ -419,7 +371,6 @@ export default function VistaUniversalInicio() {
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
               id_rol={usuarioActivo.id_rol}
-              volverInicio={volverInicio}
               nombreDepartamento={departamento?.nombre}
             />
           </div>
@@ -479,6 +430,7 @@ export default function VistaUniversalInicio() {
                 ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                 expandido={expandido}
                 setExpandido={setExpandido}
+                id_usuario={usuarioActivo?.id}
               />
             </main>
 

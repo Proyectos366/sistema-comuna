@@ -1,8 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../../msj_validaciones/consultar_todos_usuarios/msjErrores.json";
-import msjCorrectos from "../../../../msj_validaciones/consultar_todos_usuarios/msjCorrectos.json";
-import validarConsultarTodosUsuarios from "@/services/validarConsultarTodosUsuarios";
+import validarConsultarTodosUsuarios from "@/services/usuarios/validarConsultarTodosUsuarios";
 
 export async function GET() {
   try {
@@ -35,27 +33,22 @@ export async function GET() {
 
     if (!todosUsuarios) {
       return generarRespuesta(
-        msjErrores.error,
-        msjErrores.errorConsultarTodosUsuarios.usuariosNoEncontrados,
+        "error",
+        "Error, al consultar todos usuarios",
         {},
-        msjErrores.codigo.codigo400
+        404
       );
     } else {
       return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okConsultarTodosUsuarios.usuariosEncontrados,
+        "ok",
+        "Usuarios encontrados",
         { usuarios: todosUsuarios },
-        msjCorrectos.codigo.codigo200
+        200
       );
     }
   } catch (error) {
-    console.log(`${msjErrores.errorMixto}: ` + error);
+    console.log(`Error interno, todos usuarios: ` + error);
 
-    return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorConsultarTodosUsuarios.internoValidando,
-      {},
-      msjErrores.codigo.codigo500
-    );
+    return generarRespuesta("error", "Error interno todos usuarios", {}, 500);
   }
 }

@@ -22,12 +22,17 @@ export default function ParroquiasForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreParroquia, setNombreParroquia] = useState("");
+  const [descripcionParroquia, setDescripcionParroquia] = useState("");
   const [todasParroquias, setTodasParroquias] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
   const [validarNombre, setValidarNombre] = useState(false);
+
+  const [idParroquia, setIdParroquia] = useState("");
+  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchDatosParroquia = async () => {
@@ -71,6 +76,19 @@ export default function ParroquiasForm({
     }
   };
 
+  const editandoParroquia = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdParroquia(datos.id);
+      setNombreParroquia(datos.nombre);
+      setDescripcionParroquia(datos.descripcion);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando parroquia: " + error);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -107,15 +125,16 @@ export default function ParroquiasForm({
             setValidarNombre={setValidarNombre}
           />
         </DivUnoDentroSectionRegistroMostrar>
+
         <DivDosDentroSectionRegistroMostrar>
-          <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
-              isLoading={isLoading}
-              listado={todasParroquias}
-              nombreListado="Parroquias"
-              mensajeVacio="No hay parroquias disponibles..."
-            />
-          </DivDosDentroSectionRegistroMostrar>
+          <ListadoGenaral
+            isLoading={isLoading}
+            listado={todasParroquias}
+            nombreListado="Parroquias"
+            mensajeVacio="No hay parroquias disponibles..."
+            editando={editandoParroquia}
+            id_usuario={id_usuario}
+          />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>

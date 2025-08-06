@@ -2,8 +2,6 @@ import prisma from "@/libs/prisma";
 import AuthTokens from "@/libs/AuthTokens";
 import { cookies } from "next/headers";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../../msj_validaciones/consultar_usuario_activo/msjErrores.json";
-import msjCorrectos from "../../../../msj_validaciones/consultar_usuario_activo/msjCorrectos.json";
 import nombreToken from "@/utils/nombreToken";
 import registrarEventoSeguro from "@/libs/trigget";
 
@@ -29,7 +27,7 @@ export async function GET(request) {
         descifrarToken.status,
         descifrarToken.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
 
@@ -68,12 +66,7 @@ export async function GET(request) {
         datosDespues: null,
       });
 
-      return generarRespuesta(
-        msjErrores.error,
-        msjErrores.errorConsultarUsuarioActivo.usuarioNoEncontrado,
-        {},
-        msjErrores.codigo.codigo400
-      );
+      return generarRespuesta("error", "Error, usuario no activo", {}, 400);
     } else {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -88,8 +81,8 @@ export async function GET(request) {
       });
 
       return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okConsultarUsuarioActivo.usuarioEncontrado,
+        "ok",
+        "Usuario activo",
         {
           usuarioActivo: datosUsuarioActivo,
           departamento:
@@ -98,11 +91,11 @@ export async function GET(request) {
               ? datosUsuarioActivo.MiembrosDepartamentos[0]
               : null,
         },
-        msjCorrectos.codigo.codigo200
+        200
       );
     }
   } catch (error) {
-    console.log(`${msjErrores.errorMixto}: ` + error);
+    console.log(`Error interno, usuario activo: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -115,11 +108,6 @@ export async function GET(request) {
       datosDespues: error.message,
     });
 
-    return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorConsultarUsuarioActivo.internoValidando,
-      {},
-      msjErrores.codigo.codigo500
-    );
+    return generarRespuesta("error", "Error interno, usuario activo", {}, 500);
   }
 }

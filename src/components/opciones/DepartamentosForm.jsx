@@ -24,6 +24,7 @@ export default function DepartamentosForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [descripcionDepartamento, setDescripcionDepartamento] = useState("");
@@ -211,15 +212,14 @@ export default function DepartamentosForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
-              isLoading={isLoading}
-              listado={todosDepartamentos}
-              nombreListado="Departamentos"
-              mensajeVacio="No hay departamentos disponibles..."
-              editando={editandoDepartamento}
-            />
-          </DivDosDentroSectionRegistroMostrar>
+          <ListadoGenaral
+            isLoading={isLoading}
+            listado={todosDepartamentos}
+            nombreListado="Departamentos"
+            mensajeVacio="No hay departamentos disponibles..."
+            editando={editandoDepartamento}
+            id_usuario={id_usuario}
+          />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>

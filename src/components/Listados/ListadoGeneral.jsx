@@ -7,6 +7,7 @@ export default function ListadoGenaral({
   nombreListado,
   mensajeVacio,
   editando,
+  id_usuario,
 }) {
   return (
     <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-2">
@@ -40,11 +41,14 @@ export default function ListadoGenaral({
                 )}
               </div>
 
-              {typeof editando === "function" && (
-                <div>
-                  <BotonEditar editar={() => editando(lista)} />
-                </div>
-              )}
+              {typeof editando === "function" &&
+                (lista.id_usuario === id_usuario ||
+                  id_usuario === 1 ||
+                  id_usuario === 2) && (
+                  <div>
+                    <BotonEditar editar={() => editando(lista)} />
+                  </div>
+                )}
             </div>
           ))}
         </div>

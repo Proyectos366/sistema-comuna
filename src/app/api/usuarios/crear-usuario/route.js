@@ -1,8 +1,6 @@
 import prisma from "@/libs/prisma";
-import validarCrearUsuario from "@/services/validarCrearUsuario";
+import validarCrearUsuario from "@/services/usuarios/validarCrearUsuario";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../../msj_validaciones/crear_usuario/msjErrores.json";
-import msjCorrectos from "../../../../msj_validaciones/crear_usuario/msjCorrectos.json";
 import AuthTokens from "@/libs/AuthTokens";
 import registrarEventoSeguro from "@/libs/trigget";
 
@@ -42,7 +40,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
 
@@ -88,12 +86,7 @@ export async function POST(request) {
         datosDespues: nuevoUsuario,
       });
 
-      return generarRespuesta(
-        msjErrores.error,
-        msjErrores.errorCrearUsuario.creandoUsuario,
-        {},
-        msjErrores.codigo.codigo400
-      );
+      return generarRespuesta("error", "Error, no se creo el usuario", {}, 400);
     } else {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -109,14 +102,14 @@ export async function POST(request) {
       });
 
       return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okCrearUsuario.creandoUsuario,
+        "ok",
+        "Usuario creado con exito",
         { redirect: "/" },
-        msjCorrectos.codigo.codigo201
+        201
       );
     }
   } catch (error) {
-    console.log(`${msjErrores.errorMixto}: ` + error);
+    console.log(`Error interno, crear usuario: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -128,11 +121,6 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
-    return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorCrearUsuario.internoValidando,
-      {},
-      msjErrores.codigo.codigo500
-    );
+    return generarRespuesta("error", "Error interno, crear usuario", {}, 500);
   }
 }

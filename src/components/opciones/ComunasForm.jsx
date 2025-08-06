@@ -24,6 +24,7 @@ export default function ComunasForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreComuna, setNombreComuna] = useState("");
   const [rifComuna, setRifComuna] = useState("");
@@ -61,7 +62,7 @@ export default function ComunasForm({
       setIsLoading(true); // Activa la carga antes de la consulta
 
       try {
-        const response = await axios.get(`/api/comunas/comunas-id`, {
+        const response = await axios.get(`/api/comunas/comunas-id-parroquia`, {
           params: { idParroquia: idParroquia },
         });
 
@@ -250,6 +251,7 @@ export default function ComunasForm({
             nombreListado={"Comunas"}
             mensajeVacio={"No hay comunas disponibles..."}
             editando={editando}
+            id_usuario={id_usuario}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

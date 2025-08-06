@@ -24,6 +24,7 @@ export default function ConsejoForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   // Estados para los selectores
   const [nombreParroquia, setNombreParroquia] = useState("");
@@ -339,6 +340,7 @@ export default function ConsejoForm({
             nombreListado={"Consejos comunales"}
             mensajeVacio={"No hay consejos comunales disponibles..."}
             editando={editandoConsejoComunal}
+            id_usuario={id_usuario}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

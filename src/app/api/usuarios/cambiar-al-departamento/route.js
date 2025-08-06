@@ -1,6 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCambiarAlDepartamento from "@/services/validarCambiarAlDepartamento";
+import validarCambiarAlDepartamento from "@/services/usuarios/validarCambiarAlDepartamento";
 import registrarEventoSeguro from "@/libs/trigget";
 
 export async function PATCH(request) {

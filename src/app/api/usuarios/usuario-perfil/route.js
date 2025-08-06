@@ -3,7 +3,6 @@ import AuthTokens from "@/libs/AuthTokens";
 import { cookies } from "next/headers";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import nombreToken from "@/utils/nombreToken";
-import registrarEventoSeguro from "@/libs/trigget";
 
 export async function GET(request) {
   try {

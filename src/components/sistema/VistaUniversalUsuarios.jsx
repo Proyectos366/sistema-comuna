@@ -120,6 +120,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "comunas",
         "consejos-comunales",
         "circuitos-comunales",
+        "formaciones",
         "cargos",
         "participantes",
         "voceros",
@@ -239,6 +240,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -252,6 +254,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -265,6 +268,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -278,6 +282,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -291,6 +296,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -304,6 +310,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -317,6 +324,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -330,6 +338,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -343,6 +352,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -356,6 +366,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
 
@@ -371,6 +382,7 @@ export default function VistaUniversalUsuarios({ children }) {
                         abrirMensaje={abrirMensaje}
                         limpiarCampos={limpiarCampos}
                         ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                        id_usuario={usuarioActivo?.id}
                       />
                     )}
 
@@ -384,8 +396,10 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
+
                   {vista === "cambiar-clave" && (
                     <MostrarCambiarClaveUsuario
                       mostrar={mostrarModal}
@@ -396,6 +410,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      id_usuario={usuarioActivo?.id}
                     />
                   )}
                 </>

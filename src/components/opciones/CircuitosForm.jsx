@@ -22,14 +22,18 @@ export default function CircuitosForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreCircuito, setNombreCircuito] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
+  const [idCircuito, setIdCircuito] = useState("");
 
   const [todosCircuitos, setTodosCircuitos] = useState([]);
   const [parroquias, setParroquias] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
+
+  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchParroquias = async () => {
@@ -106,6 +110,19 @@ export default function CircuitosForm({
     }
   };
 
+  const editandoCircuito = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdParroquia(datos.id_parroquia);
+      setIdCircuito(datos.id);
+      setNombreCircuito(datos.nombre);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando circuito: " + error);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -131,6 +148,7 @@ export default function CircuitosForm({
           }}
         />
       </Modal>
+
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Crear circuito"}>
           <FormCrearCircuito
@@ -150,6 +168,8 @@ export default function CircuitosForm({
             listado={todosCircuitos}
             nombreListado={"Circuitos"}
             mensajeVacio={"No hay circuitos disponibles..."}
+            editando={editandoCircuito}
+            id_usuario={id_usuario}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

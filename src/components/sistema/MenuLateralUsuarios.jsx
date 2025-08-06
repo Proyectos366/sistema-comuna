@@ -5,7 +5,6 @@ export default function MenuLateralUsuario({
   cambiarRuta,
   vista,
   id_rol,
-  volverInicio,
   nombreDepartamento,
 }) {
   return (
@@ -39,7 +38,6 @@ export default function MenuLateralUsuario({
                 vista={vista}
                 vistaActual={"inicio"}
                 nombre={"Inicio"}
-                volverInicio={volverInicio}
               />
 
               {id_rol === 1 && (
@@ -50,7 +48,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"oac"}
                     nombre={"OAC"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -59,7 +56,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"departamentos"}
                     nombre={"Departamentos"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -68,7 +64,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"usuarios"}
                     nombre={"Usuarios"}
-                    volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -76,7 +71,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"parroquias"}
                     nombre={"Parroquias"}
-                    volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -84,7 +78,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"cargos"}
                     nombre={"Cargos"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -93,7 +86,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"formaciones"}
                     nombre={"Formaciones"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -102,7 +94,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"participantes"}
                     nombre={"Participantes"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -111,7 +102,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"comunas"}
                     nombre={"Comunas"}
-                    volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -119,7 +109,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
                     nombre={"Circuitos comunales"}
-                    volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -127,7 +116,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"consejos-comunales"}
                     nombre={"Consejos comunales"}
-                    volverInicio={volverInicio}
                   />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -135,7 +123,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"voceros"}
                     nombre={"Voceros"}
-                    volverInicio={volverInicio}
                   />
                 </>
               )}
@@ -148,7 +135,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"usuarios"}
                     nombre={"Usuarios"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -157,7 +143,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"departamentos"}
                     nombre={"Departamentos"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -166,7 +151,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"cargos"}
                     nombre={"Cargos"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -175,7 +159,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"formaciones"}
                     nombre={"Formaciones"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -184,7 +167,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"participantes"}
                     nombre={"Participantes"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -193,7 +175,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"comunas"}
                     nombre={"Comunas"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -202,7 +183,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
                     nombre={"Circuitos"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -211,7 +191,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"consejos-comunales"}
                     nombre={"Consejo"}
-                    volverInicio={volverInicio}
                   />
 
                   <EnlacesBarraLateral
@@ -220,7 +199,6 @@ export default function MenuLateralUsuario({
                     vista={vista}
                     vistaActual={"voceros"}
                     nombre={"Voceros"}
-                    volverInicio={volverInicio}
                   />
                 </>
               )}
@@ -235,7 +213,14 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"oac"}
                         nombre={"OAC"}
-                        volverInicio={volverInicio}
+                      />
+
+                      <EnlacesBarraLateral
+                        id_rol={id_rol}
+                        cambiarRuta={cambiarRuta}
+                        vista={vista}
+                        vistaActual={"formaciones"}
+                        nombre={"Formaciones"}
                       />
 
                       <EnlacesBarraLateral
@@ -244,7 +229,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"cargos"}
                         nombre={"Cargos"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -253,7 +237,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"participantes"}
                         nombre={"Participantes"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -262,7 +245,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"comunas"}
                         nombre={"Comunas"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -271,7 +253,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"consejos-comunales"}
                         nombre={"Consejo"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -280,7 +261,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"voceros"}
                         nombre={"Voceros"}
-                        volverInicio={volverInicio}
                       />
                     </>
                   )}
@@ -297,7 +277,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"oac"}
                         nombre={"OAC"}
-                        volverInicio={volverInicio}
                       />
                       <EnlacesBarraLateral
                         id_rol={id_rol}
@@ -305,7 +284,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"participantes"}
                         nombre={"Participantes"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -314,7 +292,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"comunas"}
                         nombre={"Comunas"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -323,7 +300,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"consejos-comunales"}
                         nombre={"Consejo"}
-                        volverInicio={volverInicio}
                       />
 
                       <EnlacesBarraLateral
@@ -332,7 +308,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"voceros"}
                         nombre={"Voceros"}
-                        volverInicio={volverInicio}
                       />
                     </>
                   )}
@@ -345,7 +320,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"administracion"}
                         nombre={"Administración y presupuesto"}
-                        volverInicio={volverInicio}
                       />
                     </>
                   )}

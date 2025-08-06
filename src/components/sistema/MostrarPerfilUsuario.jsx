@@ -126,6 +126,8 @@ export default function MostrarPerfilUsuario({
     }
   };
 
+  console.log(perfilUsuario);
+
   return (
     <>
       <ModalEditar
@@ -166,14 +168,14 @@ export default function MostrarPerfilUsuario({
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Perfil de usuario"}>
-          <div className="flex flex-col items-center gap-4 w-full bg-gray-100 rounded-md p-2 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
             <div className="flex items-center justify-center">
               <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
                 <img
                   src={
                     perfilUsuario?.imagenes?.[0]?.path
                       ? perfilUsuario.imagenes[0].path
-                      : "/img/logo2.png"
+                      : "/img/perfil.png"
                   }
                   alt="Foto de perfil"
                   className="rounded-full w-full h-full object-cover group-hover:scale-105 transform transition-transform duration-300 ease-in-out"
@@ -232,8 +234,8 @@ export default function MostrarPerfilUsuario({
                 indice={1}
                 nombre={"Departamento"}
                 valor={
-                  perfilUsuario?.MiembrosDepartamentos?.nombre
-                    ? perfilUsuario.MiembrosDepartamentos.nombre
+                  perfilUsuario?.MiembrosDepartamentos?.[0]?.nombre
+                    ? perfilUsuario.MiembrosDepartamentos?.[0]?.nombre
                     : "sin asignar"
                 }
               />

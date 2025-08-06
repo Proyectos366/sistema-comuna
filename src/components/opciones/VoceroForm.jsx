@@ -28,6 +28,7 @@ export default function VoceroForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreVocero, setNombreVocero] = useState("");
   const [nombreDosVocero, setNombreDosVocero] = useState("");

@@ -1,5 +1,5 @@
 import prisma from "@/libs/prisma";
-import validarConsultarTodosRoles from "@/services/validarConsultarTodosRoles";
+import validarConsultarTodosRoles from "@/services/roles/validarConsultarTodosRoles";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 
 export async function GET() {

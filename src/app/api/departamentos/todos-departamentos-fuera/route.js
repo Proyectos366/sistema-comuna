@@ -19,7 +19,7 @@ export async function GET(request) {
     } else {
       return generarRespuesta(
         "ok",
-        "Todas los departamentos...",
+        "Todas los departamentos",
         {
           departamentos: todosDepartamentos,
         },

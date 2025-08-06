@@ -24,6 +24,7 @@ export default function CargosForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreCargo, setNombreCargo] = useState("");
   const [descripcionCargo, setDescripcionCargo] = useState("");
@@ -211,6 +212,7 @@ export default function CargosForm({
               nombreListado="Cargos"
               mensajeVacio="No hay cargos disponibles..."
               editando={editandoCargo}
+              id_usuario={id_usuario}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

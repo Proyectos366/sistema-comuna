@@ -24,6 +24,7 @@ export default function FormacionesForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
+  id_usuario,
 }) {
   const [nombreFormacion, setNombreFormacion] = useState("");
   const [descripcionFormacion, setDescripcionFormacion] = useState("");
@@ -236,6 +237,7 @@ export default function FormacionesForm({
             setValidarModulo={setValidarModulo}
           />
         </DivUnoDentroSectionRegistroMostrar>
+
         <DivDosDentroSectionRegistroMostrar>
           <DivDosDentroSectionRegistroMostrar>
             <ListadoGenaral
@@ -244,6 +246,7 @@ export default function FormacionesForm({
               nombreListado="Formaciones"
               mensajeVacio="No hay formaciones disponibles..."
               editando={editandoFormacion}
+              id_usuario={id_usuario}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

@@ -1,8 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../../msj_validaciones/consultar_todos_usuarios/msjErrores.json";
-import msjCorrectos from "../../../../msj_validaciones/consultar_todos_usuarios/msjCorrectos.json";
-import validarConsultarTodosUsuariosNombres from "@/services/validarConsultarTodosUsuariosNombres";
+import validarConsultarTodosUsuariosNombres from "@/services/usuarios/validarConsultarTodosUsuariosNombres";
 
 export async function GET(request) {
   try {
@@ -34,28 +32,23 @@ export async function GET(request) {
     });
 
     if (!todosUsuarios) {
-      return generarRespuesta(
-        msjErrores.error,
-        msjErrores.errorConsultarTodosUsuarios.usuariosNoEncontrados,
-        {},
-        msjErrores.codigo.codigo400
-      );
+      return generarRespuesta("error", "Error, no hay usuarios", {}, 404);
     } else {
       return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okConsultarTodosUsuarios.usuariosEncontrados,
+        "error",
+        "Usuarios encontrados",
         { usuarios: todosUsuarios },
-        msjCorrectos.codigo.codigo200
+        200
       );
     }
   } catch (error) {
-    console.log(`${msjErrores.errorMixto}: ` + error);
+    console.log(`Error interno, todos usuarios nombres: ` + error);
 
     return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorConsultarTodosUsuarios.internoValidando,
+      "error",
+      "Error interno, todos usuarios nombres",
       {},
-      msjErrores.codigo.codigo500
+      500
     );
   }
 }
