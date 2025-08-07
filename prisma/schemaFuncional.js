@@ -1,4 +1,6 @@
-generator client {
+/**
+ const db = {
+  generator client {
   provider = "prisma-client-js"
 }
 
@@ -21,6 +23,7 @@ model role {
 
 model imagen {
   id             Int      @id @default(autoincrement())
+  id_usuario     Int
   path           String
   nombreOriginal String
   nombreSistema  String
@@ -30,41 +33,10 @@ model imagen {
   perfil         Boolean  @default(true)
   descripcion    String?  @default("sin descripcion")
   borrado        Boolean  @default(false)
-  id_usuario     Int
   updatedAt      DateTime @default(now())
   createdAt      DateTime @default(now())
 
   usuarios usuario @relation(fields: [id_usuario], references: [id]) // Corrección: relación bien definida
-}
-
-model entidad {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  usuarios usuario  @relation(name: "CreadorEntidad", fields: [id_usuario], references: [id])
-  voceros  vocero[]
-}
-
-model proyecto {
-  id           Int      @id @default(autoincrement())
-  nombre       String   @unique
-  descripcion  String?  @default("sin descripcion")
-  fecha_creado DateTime @default(now())
-  borrado      Boolean  @default(false)
-  id_usuario   Int
-  estatus      String
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
-
-  // Relaciones
-  usuarios usuario  @relation(name: "CreadorProyecto", fields: [id_usuario], references: [id])
-  voceros  vocero[]
 }
 
 model usuario {
@@ -88,35 +60,29 @@ model usuario {
   correo       String   @unique
   token        String   @unique
   clave        String
-  borrado      Boolean  @default(false)
+  borrado      Boolean
   validado     Boolean  @default(false)
   id_rol       Int // Clave foránea hacia role
   updatedAt    DateTime @default(now())
   createdAt    DateTime @default(now())
 
   // Relaciones
-  roles                  role                    @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
   imagenes               imagen[] // Relación uno a muchos con Imagen
-  CreadorDeDepartamentos departamento[]          @relation(name: "CreadorDepartamento")
-  MiembrosDepartamentos  departamento[]          @relation(name: "MiembrosDepartamento")
-  creadorDeComunas       comuna[]                @relation(name: "CreadorComuna")
-  creadorDeCircuitos     circuito[]              @relation(name: "CreadorCircuito")
-  creadorDeConsejos      consejo[]               @relation(name: "CreadorConsejo")
-  beneficios             beneficio[]             @relation(name: "CreadorBeneficio")
-  familiares             familiar[]              @relation(name: "CreadorFamiliar")
-  voceros                vocero[]                @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
-  paises                 pais[]                  @relation(name: "CreadorPais")
-  estados                estado[]                @relation(name: "CreadorEstado")
-  municipios             municipio[]             @relation(name: "CreadorMunicipio")
-  parroquias             parroquia[]             @relation(name: "CreadorParroquia")
-  asignacion_geograficas asignacion_geografica[] @relation(name: "CreadorAsignacionGeografica")
-  cargos                 cargo[]                 @relation(name: "CreadorCargo")
-  modulos                modulo[]                @relation(name: "CreadorModulo")
-  formaciones            formacion[]             @relation(name: "CreadorFormacion")
-  cursos                 curso[]                 @relation(name: "CreadorCurso")
-  asistencias            asistencia[]            @relation(name: "CreadorAsistencia")
-  entidades              entidad[]               @relation(name: "CreadorEntidad")
-  proyecto               proyecto[]              @relation(name: "CreadorProyecto")
+  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+  creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
+  creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
+  creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
+  beneficios             beneficio[]    @relation(name: "CreadorBeneficio")
+  familiares             familiar[]     @relation(name: "CreadorFamiliar")
+  voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  parroquias             parroquia[]    @relation(name: "CreadorParroquia")
+  cargos                 cargo[]        @relation(name: "CreadorCargo")
+  modulos                modulo[]       @relation(name: "CreadorModulo")
+  formaciones            formacion[]    @relation(name: "CreadorFormacion")
+  cursos                 curso[]        @relation(name: "CreadorCurso")
+  asistencias            asistencia[]   @relation(name: "CreadorAsistencia")
 }
 
 model departamento {
@@ -148,89 +114,21 @@ model cargo {
   voceros  vocero[]
 }
 
-model asignacion_geografica {
-  id         Int     @id @default(autoincrement())
-  pais       String? // Ej: "VE"
-  estado     String? // Ej: "ARAGUA"
-  municipio  String? // Ej: "GIRARDOT"
-  parroquia  String? // Ej: "LAS DELICIAS"
-  nivel      String // "pais", "estado", "municipio", "parroquia"
-  borrado    Boolean @default(false)
-  id_usuario Int
-
-  usuarios usuario @relation("CreadorAsignacionGeografica", fields: [id_usuario], references: [id])
-}
-
-model pais {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  capital     String
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  serial      String   @unique
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  usuarios usuario  @relation("CreadorPais", fields: [id_usuario], references: [id])
-  estados  estado[] @relation("PaisEstados")
-}
-
-model estado {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  capital     String
-  cod_postal  String
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  serial      String   @unique
-  id_usuario  Int
-  id_pais     Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  usuarios   usuario     @relation("CreadorEstado", fields: [id_usuario], references: [id])
-  pais       pais        @relation("PaisEstados", fields: [id_pais], references: [id])
-  municipios municipio[] @relation("EstadoMunicipios")
-}
-
-model municipio {
-  id          Int      @id @default(autoincrement())
-  nombre      String
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  serial      String   @unique
-  id_usuario  Int
-  id_estado   Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  usuarios   usuario     @relation("CreadorMunicipio", fields: [id_usuario], references: [id])
-  estados    estado      @relation("EstadoMunicipios", fields: [id_estado], references: [id])
-  parroquias parroquia[] @relation("MunicipioParroquias")
-}
-
 model parroquia {
-  id           Int      @id @default(autoincrement())
-  nombre       String
-  descripcion  String?  @default("sin descripcion")
-  borrado      Boolean  @default(false)
-  serial       String   @unique
-  id_usuario   Int
-  id_municipio Int
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  id_usuario  Int
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   // Relaciones
-  usuarios   usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
-  municipios municipio  @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
-  comunas    comuna[]   @relation("ComunaParroquia")
-  circuitos  circuito[] @relation("CircuitoParroquia")
-  consejos   consejo[]  @relation("ConsejoParroquia")
-  voceros    vocero[]   @relation("VoceroParroquia")
+  usuarios  usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
+  comunas   comuna[]   @relation("ComunaParroquia")
+  circuitos circuito[] @relation("CircuitoParroquia")
+  consejos  consejo[]  @relation("ConsejoParroquia") // Una parroquia puede tener múltiples consejos
+  voceros   vocero[]   @relation("VoceroParroquia")
 }
 
 model comuna {
@@ -244,7 +142,7 @@ model comuna {
   punto        String
   rif          String?  @unique
   codigo       String   @unique
-  borrado      Boolean  @default(false)
+  borrado      Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que crea la comuna)
   id_parroquia Int
   updatedAt    DateTime @default(now())
@@ -266,7 +164,7 @@ model circuito {
   oeste        String
   direccion    String
   punto        String
-  borrado      Boolean  @default(false)
+  borrado      Boolean
   validado     Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
   id_parroquia Int
@@ -292,7 +190,7 @@ model consejo {
   rif          String?  @unique
   codigo       String   @unique
   descripcion  String?  @default("sin descripcion")
-  borrado      Boolean  @default(false)
+  borrado      Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que lo crea)
   id_comuna    Int? // Este consejo pertenece a una comuna
   id_circuito  Int? // Este consejo puede estar vinculado a un circuito
@@ -338,15 +236,12 @@ model vocero {
   laboral        String
   f_n            DateTime
   jefe_comunidad Boolean  @default(false)
-  jefe_calle     Boolean  @default(false)
   borrado        Boolean  @default(false)
   id_usuario     Int
   id_comuna      Int?
   id_consejo     Int?
   id_circuito    Int?
   id_parroquia   Int
-  id_entidad     Int?
-  id_proyecto    Int?
   updatedAt      DateTime @default(now())
   createdAt      DateTime @default(now())
 
@@ -361,21 +256,19 @@ model vocero {
   asistencias asistencia[]
   cargos      cargo[]
   familiares  familiar[]
-  entidades   entidad[]
-  proyectos   proyecto[]
 }
 
 model familiar {
-  id         Int      @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   nombre     String
   apellido   String
-  cedula     Int      @unique
+  cedula     Int     @unique
   parentesco String // ejemplo: madre, padre, hijo, etc.
-  f_n        DateTime
+  f_n        Int
   genero     Boolean
   telefono   String?
   direccion  String?
-  borrado    Boolean  @default(false)
+
   id_vocero  Int
   id_usuario Int
 
@@ -470,3 +363,4 @@ model eventos {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+}*/

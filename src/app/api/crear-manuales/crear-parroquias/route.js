@@ -4,28 +4,57 @@ import { generarRespuesta } from "@/utils/respuestasAlFront";
 export async function GET() {
   try {
     const parroquias = [
-      { nombre: "villa de cura", id_usuario: 1, borrado: false },
-      { nombre: "magdaleno", id_usuario: 1, borrado: false },
-      { nombre: "valle de tucutunemo", id_usuario: 1, borrado: false },
-      { nombre: "san francisco", id_usuario: 1, borrado: false },
-      { nombre: "augusto mijares", id_usuario: 1, borrado: false },
+      {
+        nombre: "villa de cura",
+        serial: "ven-01-2025-est-04-mun-01-par-01",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
+      {
+        nombre: "magdaleno",
+        serial: "ven-01-2025-est-04-mun-01-par-02",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
+      {
+        nombre: "valle de tucutunemo",
+        serial: "ven-01-2025-est-04-mun-01-par-03",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
+      {
+        nombre: "san francisco",
+        serial: "ven-01-2025-est-04-mun-01-par-04",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
+      {
+        nombre: "augusto mijares",
+        serial: "ven-01-2025-est-04-mun-01-par-05",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
     ];
 
-    for (const parroquia of parroquias) {
-      const existente = await prisma.parroquia.findFirst({
-        where: {
-          nombre: parroquia.nombre,
-          id_usuario: parroquia.id_usuario,
-          borrado: false, // Si `borrado` existe y se usa en la lógica
+    const existentes = await prisma.parroquia.findMany({
+      where: {
+        serial: {
+          in: parroquias.map((e) => e.serial),
         },
-      });
+      },
+    });
+
+    const existentesMap = new Map(existentes.map((e) => [e.serial, e]));
+
+    for (const parroquia of parroquias) {
+      const existente = existentesMap.get(parroquia.serial);
 
       if (!existente) {
         await prisma.parroquia.create({ data: parroquia });
       } else {
         await prisma.parroquia.update({
           where: { id: existente.id },
-          data: parroquia, // Puedes modificarlo según tu lógica
+          data: parroquia,
         });
       }
     }
