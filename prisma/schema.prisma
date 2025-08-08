@@ -90,99 +90,6 @@ model imagen {
   usuarios usuario @relation(fields: [id_usuario], references: [id]) // Corrección: relación bien definida
 }
 
-model entidad {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  usuarios usuario  @relation(name: "CreadorEntidad", fields: [id_usuario], references: [id])
-  voceros  vocero[]
-}
-
-model proyecto {
-  id           Int      @id @default(autoincrement())
-  nombre       String   @unique
-  descripcion  String?  @default("sin descripcion")
-  fecha_creado DateTime @default(now())
-  borrado      Boolean  @default(false)
-  id_usuario   Int
-  estatus      String
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
-
-  // Relaciones
-  usuarios usuario  @relation(name: "CreadorProyecto", fields: [id_usuario], references: [id])
-  voceros  vocero[]
-}
-
-model departamento {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  creador  usuario   @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
-  miembros usuario[] @relation("MiembrosDepartamento")
-
-  formaciones formacion[] @relation(name: "FormacionDepartamento")
-}
-
-model institucion {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  descripcion String?  @default("sin descripcion")
-  rif         String   @unique
-  pais        String
-  estado      String
-  municipio   String
-  parroquia   String
-  sector      String
-  direccion   String
-  borrado     Boolean  @default(false)
-  id_usuario  Int
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  // Relaciones
-  creador  usuario   @relation(name: "CreadorInstitucion", fields: [id_usuario], references: [id])
-  miembros usuario[] @relation("MiembrosInstitucion")
-}
-
-model cargo {
-  id          Int      @id @default(autoincrement())
-  nombre      String   @unique
-  id_usuario  Int
-  descripcion String?  @default("sin descripcion")
-  borrado     Boolean
-  updatedAt   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  usuarios usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
-  voceros  vocero[]
-}
-
-model asignacion_geografica {
-  id         Int     @id @default(autoincrement())
-  pais       String? // Ej: "VE"
-  estado     String? // Ej: "ARAGUA"
-  municipio  String? // Ej: "GIRARDOT"
-  parroquia  String? // Ej: "LAS DELICIAS"
-  nivel      String // "pais", "estado", "municipio", "parroquia"
-  borrado    Boolean @default(false)
-  id_usuario Int
-
-  usuarios usuario @relation("CreadorAsignacionGeografica", fields: [id_usuario], references: [id])
-}
-
 model pais {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
@@ -230,9 +137,10 @@ model municipio {
   createdAt   DateTime @default(now())
 
   // Relaciones
-  usuarios   usuario     @relation("CreadorMunicipio", fields: [id_usuario], references: [id])
-  estados    estado      @relation("EstadoMunicipios", fields: [id_estado], references: [id])
-  parroquias parroquia[] @relation("MunicipioParroquias")
+  usuarios      usuario       @relation("CreadorMunicipio", fields: [id_usuario], references: [id])
+  estados       estado        @relation("EstadoMunicipios", fields: [id_estado], references: [id])
+  parroquias    parroquia[]   @relation("MunicipioParroquias")
+  instituciones institucion[]
 }
 
 model parroquia {
@@ -253,6 +161,74 @@ model parroquia {
   circuitos  circuito[] @relation("CircuitoParroquia")
   consejos   consejo[]  @relation("ConsejoParroquia")
   voceros    vocero[]   @relation("VoceroParroquia")
+}
+
+model institucion {
+  id           Int      @id @default(autoincrement())
+  nombre       String   @unique
+  descripcion  String?  @default("sin descripcion")
+  rif          String   @unique
+  pais         String
+  estado       String
+  municipio    String
+  parroquia    String
+  sector       String
+  direccion    String
+  borrado      Boolean  @default(false)
+  id_usuario   Int
+  id_municipio Int
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  creador       usuario        @relation(name: "CreadorInstitucion", fields: [id_usuario], references: [id])
+  miembros      usuario[]      @relation("MiembrosInstitucion")
+  municipios    municipio      @relation(fields: [id_municipio], references: [id])
+  departamentos departamento[]
+}
+
+model departamento {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @unique
+  descripcion    String?  @default("sin descripcion")
+  borrado        Boolean  @default(false)
+  id_usuario     Int
+  id_institucion Int
+  updatedAt      DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  // Relaciones
+  creador     usuario     @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+  miembros    usuario[]   @relation("MiembrosDepartamento")
+  institucion institucion @relation(fields: [id_institucion], references: [id])
+
+  formaciones formacion[] @relation(name: "FormacionDepartamento")
+}
+
+model cargo {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  id_usuario  Int
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  usuarios usuario  @relation(name: "CreadorCargo", fields: [id_usuario], references: [id])
+  voceros  vocero[]
+}
+
+model asignacion_geografica {
+  id         Int     @id @default(autoincrement())
+  pais       String? // Ej: "VE"
+  estado     String? // Ej: "ARAGUA"
+  municipio  String? // Ej: "GIRARDOT"
+  parroquia  String? // Ej: "LAS DELICIAS"
+  nivel      String // "pais", "estado", "municipio", "parroquia"
+  borrado    Boolean @default(false)
+  id_usuario Int
+
+  usuarios usuario @relation("CreadorAsignacionGeografica", fields: [id_usuario], references: [id])
 }
 
 model comuna {
@@ -330,6 +306,36 @@ model consejo {
   parroquias parroquia @relation("ConsejoParroquia", fields: [id_parroquia], references: [id]) // Relación con parroquia
 }
 
+model entidad {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("sin descripcion")
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  usuarios usuario  @relation(name: "CreadorEntidad", fields: [id_usuario], references: [id])
+  voceros  vocero[]
+}
+
+model proyecto {
+  id           Int      @id @default(autoincrement())
+  nombre       String   @unique
+  descripcion  String?  @default("sin descripcion")
+  fecha_creado DateTime @default(now())
+  borrado      Boolean  @default(false)
+  id_usuario   Int
+  estatus      String
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  usuarios usuario  @relation(name: "CreadorProyecto", fields: [id_usuario], references: [id])
+  voceros  vocero[]
+}
+
 model beneficio {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
@@ -342,6 +348,27 @@ model beneficio {
   // Relaciones
   usuarios usuario  @relation(name: "CreadorBeneficio", fields: [id_usuario], references: [id])
   voceros  vocero[]
+}
+
+model familiar {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  apellido   String
+  cedula     Int      @unique
+  parentesco String // ejemplo: madre, padre, hijo, etc.
+  f_n        DateTime
+  genero     Boolean
+  telefono   String?
+  direccion  String?
+  borrado    Boolean  @default(false)
+  id_vocero  Int
+  id_usuario Int
+
+  usuarios usuario @relation(name: "CreadorFamiliar", fields: [id_usuario], references: [id])
+  vocero   vocero  @relation(fields: [id_vocero], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model vocero {
@@ -390,27 +417,6 @@ model vocero {
   familiares  familiar[]
   entidades   entidad[]
   proyectos   proyecto[]
-}
-
-model familiar {
-  id         Int      @id @default(autoincrement())
-  nombre     String
-  apellido   String
-  cedula     Int      @unique
-  parentesco String // ejemplo: madre, padre, hijo, etc.
-  f_n        DateTime
-  genero     Boolean
-  telefono   String?
-  direccion  String?
-  borrado    Boolean  @default(false)
-  id_vocero  Int
-  id_usuario Int
-
-  usuarios usuario @relation(name: "CreadorFamiliar", fields: [id_usuario], references: [id])
-  vocero   vocero  @relation(fields: [id_vocero], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
 }
 
 model formacion {

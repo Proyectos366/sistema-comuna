@@ -46,6 +46,54 @@ export default function MenuLateralUsuario({
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
+                    vistaActual={"usuarios"}
+                    nombre={"Usuarios"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"paises"}
+                    nombre={"Paises"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"estados"}
+                    nombre={"Estados"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"municipios"}
+                    nombre={"Municipios"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"parroquias"}
+                    nombre={"Parroquias"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
+                    vistaActual={"instituciones"}
+                    nombre={"Instituciones"}
+                  />
+
+                  <EnlacesBarraLateral
+                    id_rol={id_rol}
+                    cambiarRuta={cambiarRuta}
+                    vista={vista}
                     vistaActual={"oac"}
                     nombre={"OAC"}
                   />
@@ -58,20 +106,6 @@ export default function MenuLateralUsuario({
                     nombre={"Departamentos"}
                   />
 
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"usuarios"}
-                    nombre={"Usuarios"}
-                  />
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
-                    vistaActual={"parroquias"}
-                    nombre={"Parroquias"}
-                  />
                   <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}

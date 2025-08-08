@@ -20,6 +20,7 @@ export async function GET() {
       descripcion: "sin descripcion",
       borrado: false,
       id_usuario: 1,
+      id_institucion: 1,
     }));
 
     for (const departamento of departamentos) {

@@ -10,6 +10,7 @@ const claveRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,16}$/;
 const cedulaRegex = /^[1-9]\d{5,7}$/;
 const nombreRegex = /^[a-zA-ZñÑ\s]+$/;
+const rifRegex = /^[VEJPGCL]-\d{8}-\d$/;
 
 export default class ValidarCampos {
   static validarCampoCorreo(correo) {
@@ -452,6 +453,76 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoRif(rif) {
+    try {
+      if (!rif) {
+        return retornarRespuestaFunciones("error", "Campo RIF vacío...");
+      }
+
+      // Limpia el RIF: elimina espacios y lo convierte a mayúsculas
+      const rifLimpio = rif.trim().toUpperCase();
+
+      // Regex para validar formato: letra-8dígitos-dígito
+
+      if (!rifRegex.test(rifLimpio)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, formato de RIF inválido..."
+        );
+      }
+
+      // Validación del dígito verificador según SENIAT
+      const letra = rifLimpio.charAt(0);
+      const cuerpo = rifLimpio.slice(2, 10); // 8 dígitos
+      const digitoOriginal = parseInt(rifLimpio.slice(-1), 10);
+
+      const valoresLetra = {
+        V: 1,
+        E: 2,
+        J: 3,
+        P: 4,
+        G: 5,
+        C: 6,
+        L: 7,
+      };
+
+      const pesos = [4, 3, 2, 7, 6, 5, 4, 3, 2];
+
+      if (!valoresLetra[letra]) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, letra de RIF inválida..."
+        );
+      }
+
+      const rifNumerico = [
+        valoresLetra[letra],
+        ...cuerpo.split("").map(Number),
+      ];
+
+      const suma = rifNumerico.reduce((acc, num, i) => acc + num * pesos[i], 0);
+      const resto = suma % 11;
+      const digitoCalculado = resto < 2 ? resto : 11 - resto;
+
+      if (digitoCalculado !== digitoOriginal) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, dígito verificador incorrecto según SENIAT"
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", "RIF válido.", {
+        rif: rifLimpio,
+      });
+    } catch (error) {
+      console.log(`Error interno validando campo RIF: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno validando campo RIF"
+      );
+    }
+  }
+
   static validarCamposRegistro(
     cedula,
     nombre,
@@ -489,6 +560,62 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         msjErrores.error,
         msjErrores.errorMixto
+      );
+    }
+  }
+
+  static validarCamposCrearInstitucion(
+    nombre,
+    descripcion,
+    rif,
+    pais,
+    estado,
+    municipio,
+    parroquia,
+    sector,
+    direccion,
+    id_municipio
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarRif = this.validarCampoRif(rif);
+      const validarPais = this.validarCampoTexto(pais);
+      const validarEstado = this.validarCampoTexto(estado);
+      const validarMunicipio = this.validarCampoTexto(municipio);
+      const validarParroquia = this.validarCampoTexto(parroquia);
+      const validarSector = this.validarCampoTexto(sector);
+      const validarDireccion = this.validarCampoTexto(direccion);
+      const validarIdParroquia = this.validarCampoId(id_municipio);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarRif.status === "error") return validarRif;
+      if (validarPais.status === "error") return validarPais;
+      if (validarEstado.status === "error") return validarEstado;
+      if (validarMunicipio.status === "error") return validarMunicipio;
+      if (validarParroquia.status === "error") return validarParroquia;
+      if (validarSector.status === "error") return validarSector;
+      if (validarDireccion.status === "error") return validarDireccion;
+      if (validarIdParroquia.status === "error") return validarIdParroquia;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        rif: validarRif.rif,
+        pais: validarPais.texto,
+        estado: validarEstado.texto,
+        municipio: validarMunicipio.texto,
+        parroquia: validarParroquia.texto,
+        sector: validarSector.texto,
+        direccion: validarDireccion.texto,
+        id_municipio: validarIdParroquia.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos institucion: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos institucion..."
       );
     }
   }

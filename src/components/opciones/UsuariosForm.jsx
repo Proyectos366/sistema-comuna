@@ -14,6 +14,40 @@ import Input from "../inputs/Input";
 import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
 import Paginador from "../templates/PlantillaPaginacion";
 import ListadoUsuarios from "../listados/ListadoUsuarios";
+import MostrarMsj from "../MostrarMensaje";
+import FormCrearUsuario from "../formularios/FormCrearUsuario";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ Necesitamos arreglar lkos datos del usuario porque se envian indefinidos
+ 
+ */
+
+
+
 
 export default function UsuariosForm({
   mostrar,
@@ -26,16 +60,28 @@ export default function UsuariosForm({
   ejecutarAccionesConRetraso,
   id_usuario,
 }) {
+  const [cedulaUsuario, setCedulaUsuario] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
+  const [apellidoUsuario, setApellidoUsuario] = useState("");
+  const [correoUsuario, setCorreoUsuario] = useState("");
+  const [claveUnoUsuario, setClaveUnoUsuario] = useState("");
+  const [claveDosUsuario, setClaveDosUsuario] = useState("");
+  const [mensajeValidar, setMensajeValidar] = useState("");
+
   const [todosUsuarios, setTodosUsuarios] = useState([]);
   const [todosRoles, setTodosRoles] = useState([]);
   const [todosDepartamentos, setTodosDepartamentos] = useState([]);
+  const [institucionMiembro, setInstitucionMiembro] = useState([]);
+  const [todasInstituciones, setTodasInstituciones] = useState([]);
 
   const [nombreDepartamento, setNombreDepartamento] = useState("");
+  const [nombreInstitucion, setNombreInstitucion] = useState("");
+
   const [idDepartamento, setIdDepartamento] = useState("");
   const [idRol, setIdRol] = useState("");
   const [nombreRol, setNombreRol] = useState("");
   const [idUsuario, setIdUsuario] = useState("");
+  const [idInstitucion, setIdInstitucion] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [expanded, setExpanded] = useState("");
@@ -52,6 +98,19 @@ export default function UsuariosForm({
   const [open, setOpen] = useState(false);
   const [ordenCampo, setOrdenCampo] = useState("nombre");
   const [ordenAscendente, setOrdenAscendente] = useState(true);
+
+  const [opcion, setOpcion] = useState("crear");
+  const [mensajeBackEnd, setMensajeBackEnd] = useState("");
+  
+
+  const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
+  const [validarCorreoUsuario, setValidarCorreoUsuario] = useState(false);
+  const [validarNombreUsuario, setValidarNombreUsuario] = useState(false);
+  const [validarApellidoUsuario, setValidarApellidoUsuario] = useState(false);
+  const [validarClaveUsuario, setValidarClaveUsuario] = useState(false);
+
+  const [seleccionarDepartamentos, setSeleccionarDepartamentos] = useState([]);
+  const [seleccionarInstitucion, setSeleccionarInstitucion] = useState([]);
 
   const usuariosFiltrados = useMemo(() => {
     if (!searchTerm) return todosUsuarios;
@@ -112,15 +171,25 @@ export default function UsuariosForm({
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const [usuariosRes, departamentosRes, rolesRes] = await Promise.all([
+        const [
+          usuariosRes,
+          departamentosRes,
+          rolesRes,
+          institucionRes,
+          institucionesRes,
+        ] = await Promise.all([
           axios.get("/api/usuarios/todos-usuarios"),
           axios.get("/api/departamentos/todos-departamentos"),
           axios.get("/api/roles/todos-roles"),
+          axios.get("/api/instituciones/institucion-miembro-id"),
+          axios.get("/api/instituciones/todas-instituciones"),
         ]);
 
         setTodosUsuarios(usuariosRes.data.usuarios || []);
         setTodosDepartamentos(departamentosRes.data.departamentos || []);
         setTodosRoles(rolesRes.data.roles || []);
+        setInstitucionMiembro(institucionRes.data.instituciones || []);
+        setTodasInstituciones(institucionesRes.data.instituciones || []);
       } catch (error) {
         console.log("Error al obtener datos:", error);
       }
@@ -135,8 +204,58 @@ export default function UsuariosForm({
     }
   }, [mostrar]);
 
+  /**
+    const cambiarSeleccionInstitucion = (e) => {
+      setIdInstitucion(e.target.value);
+    };
+  
+    const cambiarSeleccionDepartamento = (e) => {
+      setIdDepartamento(e.target.value);
+    };
+  */
+
+  const cambiarSeleccionInstitucion = (e) => {
+    const valor = parseInt(e.target.value);
+
+    // Si el valor es vacío o no es un número válido, vaciar selección
+    if (isNaN(valor)) {
+      setSeleccionarInstitucion([]);
+      setIdInstitucion("");
+      return;
+    }
+
+    const nuevo = { id: valor };
+
+    setSeleccionarInstitucion((prev) => {
+      const existe = prev.some((institucion) => institucion.id === valor);
+      return existe
+        ? prev.filter((institucion) => institucion.id !== valor)
+        : [...prev, nuevo];
+    });
+
+    setIdInstitucion(valor);
+  };
+
   const cambiarSeleccionDepartamento = (e) => {
-    setIdDepartamento(e.target.value);
+    const valor = parseInt(e.target.value);
+
+    // Si el valor es vacío o no es un número válido, vaciar selección
+    if (isNaN(valor)) {
+      setSeleccionarDepartamentos([]);
+      setIdDepartamento("");
+      return;
+    }
+
+    const nuevo = { id: valor };
+
+    setSeleccionarDepartamentos((prev) => {
+      const existe = prev.some((departamento) => departamento.id === valor);
+      return existe
+        ? prev.filter((departamento) => departamento.id !== valor)
+        : [...prev, nuevo];
+    });
+
+    setIdDepartamento(valor);
   };
 
   const cambiarSeleccionRol = (e) => {
@@ -319,65 +438,166 @@ export default function UsuariosForm({
     }
   };
 
+  const crearUsuario = async () => {
+    try {
+      setIsLoading(true);
+
+      const payload = {
+        cedulaUsuario,
+        nombreUsuario,
+        apellidoUsuario,
+        correoUsuario,
+        claveUnoUsuario,
+        claveDosUsuario,
+        institucion: seleccionarInstitucion.map(({ id }) => ({ id })),
+        departamento: seleccionarDepartamentos.map(({ id }) => ({ id })),
+      };
+
+      const { data } = await axios.post("/api/usuarios/crear-usuario", payload);
+
+      setMensajeBackEnd(data.message);
+
+      setTimeout(() => {
+        limpiarCampos(); // agrupamos limpieza de estados
+        setMensajeBackEnd("");
+        window.location.href = data.redirect;
+      }, 2000);
+    } catch (error) {
+      console.log("Error, al crear el usuario: " + error);
+
+      const mensajeError =
+        error?.response?.data?.message || "Error inesperado.";
+      setMensajeBackEnd(mensajeError);
+
+      setTimeout(() => {
+        cerrarModal();
+        setMensajeBackEnd("");
+      }, 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
-      <Modal
-        isVisible={mostrar}
-        onClose={cerrarModal}
-        titulo={obtenerTituloAccion()}
-      >
-        <ModalDatosContenedor>
-          {accion === "cambiarDepartamento" && (
+      {opcion === "crear" ? (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear usuario?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Cedula"} descripcion={cedulaUsuario} />
+            <ModalDatos titulo={"Nombre"} descripcion={nombreUsuario} />
+            <ModalDatos titulo={"Apellido"} descripcion={apellidoUsuario} />
+            <ModalDatos titulo={"Correo"} descripcion={correoUsuario} />
+
             <ModalDatos
-              titulo="Departamento"
+              titulo={"Institución"}
+              descripcion={nombreInstitucion}
+            />
+
+            <ModalDatos
+              titulo={"Departamento"}
               descripcion={nombreDepartamento}
             />
-          )}
-          <ModalDatos titulo="Usuario" descripcion={nombreUsuario} />
-          {accion === "cambiarRol" && (
-            <ModalDatos titulo="Rol" descripcion={nombreRol} />
-          )}
-
-          {accion === "cambiarRol" && (
-            <SelectOpcion
-              idOpcion={idRol}
-              nombre={"Cambiar a"}
-              handleChange={cambiarSeleccionRol}
-              opciones={todosRoles}
-              seleccione="Seleccione"
-              setNombre={setNombreRol}
+            <ModalDatos
+              titulo={"Clave"}
+              descripcion={claveUnoUsuario}
               indice={1}
             />
-          )}
-
-          {(accion === "cambiarDepartamento" ||
-            accion === "asignarDepartamento") && (
-            <SelectOpcion
-              idOpcion={idDepartamento}
-              nombre={
-                accion === "asignarDepartamento" ? "Departamentos" : "Cambiar a"
-              }
-              handleChange={cambiarSeleccionDepartamento}
-              opciones={todosDepartamentos}
-              seleccione="Seleccione"
-              setNombre={setNombreDepartamento}
+            <ModalDatos
+              titulo={"Clave confirmar"}
+              descripcion={claveDosUsuario}
               indice={1}
             />
+          </ModalDatosContenedor>
+
+          {mensajeValidar && (
+            <div className="w-full mb-3">
+              <MostrarMsj mensaje={mensajeValidar} />
+            </div>
           )}
-        </ModalDatosContenedor>
 
-        <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+          <BotonesModal
+            aceptar={crearUsuario}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              cedulaUsuario,
+              nombreUsuario,
+              apellidoUsuario,
+              correoUsuario,
+              idDepartamento,
+              claveUnoUsuario,
+              claveDosUsuario,
+            }}
+          />
+        </Modal>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={obtenerTituloAccion()}
+        >
+          <ModalDatosContenedor>
+            {accion === "cambiarDepartamento" && (
+              <ModalDatos
+                titulo="Departamento"
+                descripcion={nombreDepartamento}
+              />
+            )}
+            <ModalDatos titulo="Usuario" descripcion={nombreUsuario} />
+            {accion === "cambiarRol" && (
+              <ModalDatos titulo="Rol" descripcion={nombreRol} />
+            )}
 
-        <BotonesModal
-          aceptar={obtenerAccion()}
-          cancelar={cerrarModal}
-          indiceUno="crear"
-          indiceDos="cancelar"
-          nombreUno="Aceptar"
-          nombreDos="Cancelar"
-          campos={{ nombreUsuario, nombreDepartamento }}
-        />
-      </Modal>
+            {accion === "cambiarRol" && (
+              <SelectOpcion
+                idOpcion={idRol}
+                nombre={"Cambiar a"}
+                handleChange={cambiarSeleccionRol}
+                opciones={todosRoles}
+                seleccione="Seleccione"
+                setNombre={setNombreRol}
+                indice={1}
+              />
+            )}
+
+            {(accion === "cambiarDepartamento" ||
+              accion === "asignarDepartamento") && (
+              <SelectOpcion
+                idOpcion={idDepartamento}
+                nombre={
+                  accion === "asignarDepartamento"
+                    ? "Departamentos"
+                    : "Cambiar a"
+                }
+                handleChange={cambiarSeleccionDepartamento}
+                opciones={todosDepartamentos}
+                seleccione="Seleccione"
+                setNombre={setNombreDepartamento}
+                indice={1}
+              />
+            )}
+          </ModalDatosContenedor>
+
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
+          <BotonesModal
+            aceptar={obtenerAccion()}
+            cancelar={cerrarModal}
+            indiceUno="crear"
+            indiceDos="cancelar"
+            nombreUno="Aceptar"
+            nombreDos="Cancelar"
+            campos={{ nombreUsuario, nombreDepartamento }}
+          />
+        </Modal>
+      )}
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Representación"}>
@@ -406,35 +626,84 @@ export default function UsuariosForm({
           </div>
         </DivUnoDentroSectionRegistroMostrar>
 
-        <DivUnoDentroSectionRegistroMostrar nombre={"Todos los usuarios"}>
-          <div className="flex flex-col w-full gap-4 ">
-            <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-lg">
-              <Input
-                type="text"
-                placeholder="🔍 Buscar..."
-                value={searchTerm}
-                className={`bg-white ps-4 placeholder:px-5`}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setFirst(0);
-                }}
-              />
-
-              <OrdenarListaUsuarios
-                ordenCampo={ordenCampo}
-                setOrdenCampo={setOrdenCampo}
-                setOrdenAscendente={setOrdenAscendente}
-                ordenAscendente={ordenAscendente}
+        <DivUnoDentroSectionRegistroMostrar
+          nombre={opcion === "crear" ? "Crear usuario" : "Todos los usuarios"}
+        >
+          {opcion === "crear" ? (
+            <div className="w-full">
+              <FormCrearUsuario
+                idDepartamento={idDepartamento}
+                setIdDepartamento={setIdDepartamento}
+                idInstitucion={idInstitucion}
+                setIdInstitucion={setIdInstitucion}
+                setNombreDepartamento={setNombreDepartamento}
+                setNombreInstitucion={setNombreInstitucion}
+                cedula={cedulaUsuario}
+                setCedula={setCedulaUsuario}
+                correo={correoUsuario}
+                setCorreo={setCorreoUsuario}
+                nombre={nombreUsuario}
+                setNombre={setNombreUsuario}
+                apellido={apellidoUsuario}
+                setApellido={setApellidoUsuario}
+                claveUno={claveUnoUsuario}
+                setClaveUno={setClaveUnoUsuario}
+                claveDos={claveDosUsuario}
+                setClaveDos={setClaveDosUsuario}
+                validarCedula={validarCedulaUsuario}
+                setValidarCedula={setValidarCedulaUsuario}
+                validarCorreo={validarCorreoUsuario}
+                setValidarCorreo={setValidarCorreoUsuario}
+                validarNombre={validarNombreUsuario}
+                setValidarNombre={setValidarNombreUsuario}
+                validarApellido={validarApellidoUsuario}
+                setValidarApellido={setValidarApellidoUsuario}
+                validarClave={validarClaveUsuario}
+                setValidarClave={setValidarClaveUsuario}
+                limpiarCampos={limpiarCampos}
+                mostrarMensaje={mostrarMensaje}
+                mostrarModal={abrirModal}
+                mensaje={mensajeValidar}
+                setMensaje={setMensajeValidar}
+                cambiarSeleccionDepartamento={cambiarSeleccionDepartamento}
+                cambiarSeleccionInstitucion={cambiarSeleccionInstitucion}
+                departamentos={todosDepartamentos}
+                instituciones={
+                  todasInstituciones?.length > 0
+                    ? todasInstituciones
+                    : institucionMiembro
+                }
               />
             </div>
+          ) : (
+            <div className="flex flex-col w-full gap-4 ">
+              <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-lg">
+                <Input
+                  type="text"
+                  placeholder="🔍 Buscar..."
+                  value={searchTerm}
+                  className={`bg-white ps-4 placeholder:px-5`}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setFirst(0);
+                  }}
+                />
 
-            {usuarioPorPagina.map((usuario) => {
-              const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
+                <OrdenarListaUsuarios
+                  ordenCampo={ordenCampo}
+                  setOrdenCampo={setOrdenCampo}
+                  setOrdenAscendente={setOrdenAscendente}
+                  ordenAscendente={ordenAscendente}
+                />
+              </div>
 
-              return (
-                <div
-                  key={usuario.id}
-                  className={`bg-[#e2e8f0] rounded-md shadow-md border 
+              {usuarioPorPagina.map((usuario) => {
+                const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
+
+                return (
+                  <div
+                    key={usuario.id}
+                    className={`bg-[#e2e8f0] rounded-md shadow-md border 
                               ${
                                 usuario.borrado
                                   ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45]  hover:text-white"
@@ -449,12 +718,12 @@ export default function UsuariosForm({
                                   : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
                               }
                               transition-all`}
-                >
-                  <button
-                    onClick={() =>
-                      setExpanded(expanded === usuario.id ? null : usuario.id)
-                    }
-                    className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
+                  >
+                    <button
+                      onClick={() =>
+                        setExpanded(expanded === usuario.id ? null : usuario.id)
+                      }
+                      className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
                     ${
                       expanded === usuario.id
                         ? "rounded-t-md mb-2 sm:mb-0 hover:text-white"
@@ -474,41 +743,42 @@ export default function UsuariosForm({
                       : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
                   }
                   cursor-pointer transition-colors duration-200`}
-                  >
-                    👤 {usuario.nombre}
-                  </button>
+                    >
+                      👤 {usuario.nombre}
+                    </button>
 
-                  {expanded === usuario.id && (
-                    <ListadoUsuarios
-                      usuario={usuario}
-                      departamentoActual={departamentoActual}
-                      abrirModal={abrirModal}
-                      setAccion={setAccion}
-                      setNombreUsuario={setNombreUsuario}
-                      setNombreDepartamento={setNombreDepartamento}
-                      setIdDepartamento={setIdDepartamento}
-                      setIdUsuario={setIdUsuario}
-                      setIdRol={setIdRol}
-                      setEstado={setEstado}
-                      setValidado={setValidado}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                    {expanded === usuario.id && (
+                      <ListadoUsuarios
+                        usuario={usuario}
+                        departamentoActual={departamentoActual}
+                        abrirModal={abrirModal}
+                        setAccion={setAccion}
+                        setNombreUsuario={setNombreUsuario}
+                        setNombreDepartamento={setNombreDepartamento}
+                        setIdDepartamento={setIdDepartamento}
+                        setIdUsuario={setIdUsuario}
+                        setIdRol={setIdRol}
+                        setEstado={setEstado}
+                        setValidado={setValidado}
+                      />
+                    )}
+                  </div>
+                );
+              })}
 
-            <div className="mt-6">
-              <Paginador
-                first={first}
-                setFirst={setFirst}
-                rows={rows}
-                setRows={setRows}
-                totalRecords={totalRecords}
-                open={open}
-                setOpen={setOpen}
-              />
+              <div className="mt-6">
+                <Paginador
+                  first={first}
+                  setFirst={setFirst}
+                  rows={rows}
+                  setRows={setRows}
+                  totalRecords={totalRecords}
+                  open={open}
+                  setOpen={setOpen}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>

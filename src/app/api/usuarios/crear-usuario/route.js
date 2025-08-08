@@ -13,6 +13,7 @@ export async function POST(request) {
       correo,
       claveUno,
       claveDos,
+      institucion,
       departamento,
     } = await request.json();
 
@@ -24,6 +25,7 @@ export async function POST(request) {
       claveUno,
       claveDos
     );
+    
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
@@ -60,6 +62,9 @@ export async function POST(request) {
           id_rol: 4,
           MiembrosDepartamentos: {
             connect: departamento.map(({ id }) => ({ id })),
+          },
+          MiembrosInstitucion: {
+            connect: institucion.map(({ id }) => ({ id })),
           },
         },
       }),

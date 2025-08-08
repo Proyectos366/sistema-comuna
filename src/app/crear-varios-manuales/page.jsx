@@ -82,6 +82,22 @@ export default function CrearManuales() {
     }
   };
 
+  const crearInstituciones = async () => {
+    try {
+      const responseInstituciones = await axios.get(
+        `/api/crear-manuales/crear-instituciones`
+      );
+
+      if (responseInstituciones?.data.status === "ok") {
+        router.push("/", { shallow: true });
+      } else {
+        alert("Error al crear instituciones");
+      }
+    } catch (error) {
+      console.log("Error, al crear instituciones: " + error);
+    }
+  };
+
   const crearComunasVillaDeCura = async () => {
     try {
       const responseComunasVillaDeCura = await axios.get(
@@ -214,6 +230,11 @@ export default function CrearManuales() {
           <BotonCreacionesManuales
             nombre={"Crear parroquias"}
             crear={crearParroquias}
+          />
+
+          <BotonCreacionesManuales
+            nombre={"Crear instituciones"}
+            crear={crearInstituciones}
           />
 
           <BotonCreacionesManuales
