@@ -19,6 +19,59 @@ model role {
   usuarios usuario[] @relation(name: "UsuarioRole")
 }
 
+model usuario {
+  id           Int      @id @default(autoincrement())
+  cedula       Int      @unique
+  nombre       String
+  nombre_dos   String?  @default("")
+  apellido     String?
+  apellido_dos String?  @default("")
+  pais         String?  @default("")
+  estado       String?  @default("")
+  municipio    String?  @default("")
+  parroquia    String?  @default("")
+  sector       String?  @default("")
+  direccion    String?  @default("")
+  f_n          DateTime @default(now())
+  cargo        String?  @default("")
+  f_ingreso    DateTime @default(now())
+  profesion    String?  @default("")
+  correo       String   @unique
+  token        String   @unique
+  clave        String
+  borrado      Boolean  @default(false)
+  validado     Boolean  @default(false)
+  id_rol       Int // Clave foránea hacia role
+  updatedAt    DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  roles                  role                    @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  imagenes               imagen[] // Relación uno a muchos con Imagen
+  CreadorDeDepartamentos departamento[]          @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[]          @relation(name: "MiembrosDepartamento")
+  CreadorInstitucion     institucion[]           @relation(name: "CreadorInstitucion")
+  MiembrosInstitucion    institucion[]           @relation(name: "MiembrosInstitucion")
+  creadorDeComunas       comuna[]                @relation(name: "CreadorComuna")
+  creadorDeCircuitos     circuito[]              @relation(name: "CreadorCircuito")
+  creadorDeConsejos      consejo[]               @relation(name: "CreadorConsejo")
+  beneficios             beneficio[]             @relation(name: "CreadorBeneficio")
+  familiares             familiar[]              @relation(name: "CreadorFamiliar")
+  voceros                vocero[]                @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  paises                 pais[]                  @relation(name: "CreadorPais")
+  estados                estado[]                @relation(name: "CreadorEstado")
+  municipios             municipio[]             @relation(name: "CreadorMunicipio")
+  parroquias             parroquia[]             @relation(name: "CreadorParroquia")
+  asignacion_geograficas asignacion_geografica[] @relation(name: "CreadorAsignacionGeografica")
+  cargos                 cargo[]                 @relation(name: "CreadorCargo")
+  modulos                modulo[]                @relation(name: "CreadorModulo")
+  formaciones            formacion[]             @relation(name: "CreadorFormacion")
+  cursos                 curso[]                 @relation(name: "CreadorCurso")
+  asistencias            asistencia[]            @relation(name: "CreadorAsistencia")
+  entidades              entidad[]               @relation(name: "CreadorEntidad")
+  proyecto               proyecto[]              @relation(name: "CreadorProyecto")
+}
+
 model imagen {
   id             Int      @id @default(autoincrement())
   path           String
@@ -67,58 +120,6 @@ model proyecto {
   voceros  vocero[]
 }
 
-model usuario {
-  id           Int      @id @default(autoincrement())
-  cedula       Int      @unique
-  nombre       String
-  nombre_dos   String?  @default("")
-  apellido     String?
-  apellido_dos String?  @default("")
-  pais         String?  @default("")
-  estado       String?  @default("")
-  municipio    String?  @default("")
-  parroquia    String?  @default("")
-  sector       String?  @default("")
-  direccion    String?  @default("")
-  path         String?  @default("")
-  f_n          DateTime @default(now())
-  cargo        String?  @default("")
-  f_ingreso    DateTime @default(now())
-  profesion    String?  @default("")
-  correo       String   @unique
-  token        String   @unique
-  clave        String
-  borrado      Boolean  @default(false)
-  validado     Boolean  @default(false)
-  id_rol       Int // Clave foránea hacia role
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
-
-  // Relaciones
-  roles                  role                    @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
-  imagenes               imagen[] // Relación uno a muchos con Imagen
-  CreadorDeDepartamentos departamento[]          @relation(name: "CreadorDepartamento")
-  MiembrosDepartamentos  departamento[]          @relation(name: "MiembrosDepartamento")
-  creadorDeComunas       comuna[]                @relation(name: "CreadorComuna")
-  creadorDeCircuitos     circuito[]              @relation(name: "CreadorCircuito")
-  creadorDeConsejos      consejo[]               @relation(name: "CreadorConsejo")
-  beneficios             beneficio[]             @relation(name: "CreadorBeneficio")
-  familiares             familiar[]              @relation(name: "CreadorFamiliar")
-  voceros                vocero[]                @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
-  paises                 pais[]                  @relation(name: "CreadorPais")
-  estados                estado[]                @relation(name: "CreadorEstado")
-  municipios             municipio[]             @relation(name: "CreadorMunicipio")
-  parroquias             parroquia[]             @relation(name: "CreadorParroquia")
-  asignacion_geograficas asignacion_geografica[] @relation(name: "CreadorAsignacionGeografica")
-  cargos                 cargo[]                 @relation(name: "CreadorCargo")
-  modulos                modulo[]                @relation(name: "CreadorModulo")
-  formaciones            formacion[]             @relation(name: "CreadorFormacion")
-  cursos                 curso[]                 @relation(name: "CreadorCurso")
-  asistencias            asistencia[]            @relation(name: "CreadorAsistencia")
-  entidades              entidad[]               @relation(name: "CreadorEntidad")
-  proyecto               proyecto[]              @relation(name: "CreadorProyecto")
-}
-
 model departamento {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
@@ -133,6 +134,27 @@ model departamento {
   miembros usuario[] @relation("MiembrosDepartamento")
 
   formaciones formacion[] @relation(name: "FormacionDepartamento")
+}
+
+model institucion {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?  @default("sin descripcion")
+  rif         String   @unique
+  pais        String
+  estado      String
+  municipio   String
+  parroquia   String
+  sector      String
+  direccion   String
+  borrado     Boolean  @default(false)
+  id_usuario  Int
+  updatedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  creador  usuario   @relation(name: "CreadorInstitucion", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosInstitucion")
 }
 
 model cargo {
@@ -332,7 +354,12 @@ model vocero {
   genero         Boolean
   edad           Int
   telefono       String
-  direccion      String   @default("sin especificar")
+  pais           String?  @default("")
+  estado         String?  @default("")
+  municipio      String?  @default("")
+  parroquia      String?  @default("")
+  sector         String?  @default("")
+  direccion      String?  @default("")
   correo         String
   token          String   @unique
   laboral        String
