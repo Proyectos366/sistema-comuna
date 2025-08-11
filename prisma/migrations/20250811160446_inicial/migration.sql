@@ -16,10 +16,6 @@ CREATE TABLE "usuario" (
     "nombre_dos" TEXT DEFAULT '',
     "apellido" TEXT,
     "apellido_dos" TEXT DEFAULT '',
-    "pais" TEXT DEFAULT '',
-    "estado" TEXT DEFAULT '',
-    "municipio" TEXT DEFAULT '',
-    "parroquia" TEXT DEFAULT '',
     "sector" TEXT DEFAULT '',
     "direccion" TEXT DEFAULT '',
     "f_n" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -122,19 +118,21 @@ CREATE TABLE "institucion" (
     "nombre" TEXT NOT NULL,
     "descripcion" TEXT DEFAULT 'sin descripcion',
     "rif" TEXT NOT NULL,
-    "pais" TEXT NOT NULL,
-    "estado" TEXT NOT NULL,
-    "municipio" TEXT NOT NULL,
-    "parroquia" TEXT NOT NULL,
     "sector" TEXT NOT NULL,
     "direccion" TEXT NOT NULL,
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_usuario" INTEGER NOT NULL,
+    "id_pais" INTEGER NOT NULL,
+    "id_estado" INTEGER NOT NULL,
     "id_municipio" INTEGER NOT NULL,
+    "id_parroquia" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "institucion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "institucion_id_municipio_fkey" FOREIGN KEY ("id_municipio") REFERENCES "municipio" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "institucion_id_pais_fkey" FOREIGN KEY ("id_pais") REFERENCES "pais" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "institucion_id_estado_fkey" FOREIGN KEY ("id_estado") REFERENCES "estado" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "institucion_id_municipio_fkey" FOREIGN KEY ("id_municipio") REFERENCES "municipio" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "institucion_id_parroquia_fkey" FOREIGN KEY ("id_parroquia") REFERENCES "parroquia" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -423,6 +421,38 @@ CREATE TABLE "eventos" (
 );
 
 -- CreateTable
+CREATE TABLE "_MiembrosPaises" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_MiembrosPaises_A_fkey" FOREIGN KEY ("A") REFERENCES "pais" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_MiembrosPaises_B_fkey" FOREIGN KEY ("B") REFERENCES "usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "_MiembrosEstados" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_MiembrosEstados_A_fkey" FOREIGN KEY ("A") REFERENCES "estado" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_MiembrosEstados_B_fkey" FOREIGN KEY ("B") REFERENCES "usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "_MiembrosMunicipios" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_MiembrosMunicipios_A_fkey" FOREIGN KEY ("A") REFERENCES "municipio" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_MiembrosMunicipios_B_fkey" FOREIGN KEY ("B") REFERENCES "usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "_MiembrosParroquias" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_MiembrosParroquias_A_fkey" FOREIGN KEY ("A") REFERENCES "parroquia" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_MiembrosParroquias_B_fkey" FOREIGN KEY ("B") REFERENCES "usuario" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_MiembrosInstitucion" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
@@ -552,6 +582,30 @@ CREATE UNIQUE INDEX "formacion_nombre_key" ON "formacion"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "modulo_nombre_key" ON "modulo"("nombre");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_MiembrosPaises_AB_unique" ON "_MiembrosPaises"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_MiembrosPaises_B_index" ON "_MiembrosPaises"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_MiembrosEstados_AB_unique" ON "_MiembrosEstados"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_MiembrosEstados_B_index" ON "_MiembrosEstados"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_MiembrosMunicipios_AB_unique" ON "_MiembrosMunicipios"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_MiembrosMunicipios_B_index" ON "_MiembrosMunicipios"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_MiembrosParroquias_AB_unique" ON "_MiembrosParroquias"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_MiembrosParroquias_B_index" ON "_MiembrosParroquias"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_MiembrosInstitucion_AB_unique" ON "_MiembrosInstitucion"("A", "B");

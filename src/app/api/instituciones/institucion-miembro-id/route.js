@@ -15,18 +15,12 @@ export async function GET() {
       );
     }
 
-    let institucionMiembro;
-
-    if (validaciones.institucion === 0) {
-      institucionMiembro = [];
-    } else {
-      institucionMiembro = await prisma.institucion.findMany({
-        where: {
-          id: validaciones.id_institucion,
-          borrado: false,
-        },
-      });
-    }
+    const institucionMiembro = await prisma.institucion.findFirst({
+      where: {
+        id: validaciones.id_institucion,
+        borrado: false,
+      },
+    });
 
     if (!institucionMiembro) {
       return generarRespuesta(
@@ -40,10 +34,7 @@ export async function GET() {
         "ok",
         "Institucion encontrada...",
         {
-          instituciones:
-            validaciones.institucion === 0
-              ? institucionMiembro
-              : validaciones.institucionMiembro,
+          instituciones: validaciones.institucion,
         },
         201
       );

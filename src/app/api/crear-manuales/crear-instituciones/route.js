@@ -8,14 +8,13 @@ export async function GET() {
         nombre: "contraloria del municipio zamora",
         descripcion: "contraloria del municipio zamora del estado aragua",
         rif: "G-20001980-8",
-        pais: "venezuela",
-        estado: "aragua",
-        municipio: "zamora",
-        parroquia: "villa de cura",
         sector: "la coromoto",
         direccion: "calle principal",
         id_usuario: 1,
+        id_pais: 1,
+        id_estado: 4,
         id_municipio: 16,
+        id_parroquia: 1,
       },
     ];
 

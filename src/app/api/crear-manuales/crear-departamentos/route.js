@@ -18,7 +18,6 @@ export async function GET() {
     ].map((nombre) => ({
       nombre,
       descripcion: "sin descripcion",
-      borrado: false,
       id_usuario: 1,
       id_institucion: 1,
     }));

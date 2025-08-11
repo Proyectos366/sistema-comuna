@@ -38,7 +38,11 @@ export default async function validarConsultarInstitucionMiembroId() {
       where: { correo: correo },
       select: {
         id: true,
-        municipio: true,
+        MiembrosMunicipios: {
+          select: {
+            id: true,
+          },
+        },
         MiembrosInstitucion: {
           select: {
             id: true,
@@ -48,20 +52,13 @@ export default async function validarConsultarInstitucionMiembroId() {
       },
     });
 
-    const municipio = await prisma.municipio.findFirst({
-      where: { nombre: datosUsuario.municipio },
-      select: {
-        id: true,
-      },
-    });
-
     if (!datosUsuario) {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
     const institucionMiembro = await prisma.institucion.findFirst({
       where: {
-        id_municipio: municipio.id,
+        id_municipio: datosUsuario.MiembrosMunicipios?.[0]?.id,
         borrado: false,
       },
     });
@@ -69,9 +66,9 @@ export default async function validarConsultarInstitucionMiembroId() {
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
-      id_institucion: datosUsuario.MiembrosInstitucion?.institucion?.id,
-      id_municipio: datosUsuario.MiembrosInstitucion?.institucion?.id_municipio,
-      institucion: descifrarToken.id_rol === 1 ? institucionMiembro : 0,
+      id_institucion: datosUsuario.MiembrosInstitucion?.[0]?.id,
+      id_municipio: datosUsuario.MiembrosMunicipios?.[0]?.id,
+      institucion: institucionMiembro,
     });
   } catch (error) {
     console.log(

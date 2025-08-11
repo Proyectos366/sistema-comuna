@@ -17,6 +17,16 @@ export async function POST(request) {
       departamento,
     } = await request.json();
 
+    console.log( cedula,
+      nombre,
+      apellido,
+      correo,
+      claveUno,
+      claveDos,
+      institucion,
+      departamento,);
+    
+
     const validaciones = await validarCrearUsuario(
       cedula,
       nombre,
@@ -48,37 +58,41 @@ export async function POST(request) {
 
     const token = AuthTokens.tokenValidarUsuario(10);
 
-    const [nuevoUsuario, usuarioConDepartamentos] = await prisma.$transaction([
-      // Se crea el nuevo usuario con departamentos conectados
-      prisma.usuario.create({
-        data: {
-          cedula: validaciones.cedula,
-          nombre: validaciones.nombre,
-          apellido: validaciones.apellido,
-          correo: validaciones.correo,
-          token: token,
-          clave: validaciones.claveEncriptada,
-          borrado: false,
-          id_rol: 4,
-          MiembrosDepartamentos: {
-            connect: departamento.map(({ id }) => ({ id })),
+    /** 
+      const [nuevoUsuario, usuarioConDepartamentos] = await prisma.$transaction([
+        // Se crea el nuevo usuario con departamentos conectados
+        prisma.usuario.create({
+          data: {
+            cedula: validaciones.cedula,
+            nombre: validaciones.nombre,
+            apellido: validaciones.apellido,
+            correo: validaciones.correo,
+            token: token,
+            clave: validaciones.claveEncriptada,
+            borrado: false,
+            id_rol: 4,
+            MiembrosDepartamentos: {
+              connect: departamento.map(({ id }) => ({ id })),
+            },
+            MiembrosInstitucion: {
+              connect: institucion.map(({ id }) => ({ id })),
+            },
           },
-          MiembrosInstitucion: {
-            connect: institucion.map(({ id }) => ({ id })),
-          },
-        },
-      }),
+        }),
 
-      // Se consulta el mismo usuario recién creado con sus departamentos
-      prisma.usuario.findFirst({
-        where: {
-          correo: validaciones.correo,
-        },
-        include: {
-          MiembrosDepartamentos: true,
-        },
-      }),
-    ]);
+        // Se consulta el mismo usuario recién creado con sus departamentos
+        prisma.usuario.findFirst({
+          where: {
+            correo: validaciones.correo,
+          },
+          include: {
+            MiembrosDepartamentos: true,
+          },
+        }),
+      ]);
+    */
+
+    const nuevoUsuario = false;
 
     if (!nuevoUsuario) {
       await registrarEventoSeguro(request, {

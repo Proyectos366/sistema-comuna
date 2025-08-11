@@ -1,12 +1,12 @@
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
 import InputNombre from "../inputs/InputNombre";
 import InputCedula from "../inputs/InputCedula";
 import InputCorreo from "../inputs/InputCorreo";
 import SelectOpcion from "../SelectOpcion";
 import InputClave from "../inputs/InputClave";
+import MostrarMsj from "../MostrarMensaje";
 
 export default function FormCrearUsuario({
   idDepartamento,
@@ -36,7 +36,6 @@ export default function FormCrearUsuario({
   validarClave,
   setValidarClave,
   limpiarCampos,
-  mostrarMensaje,
   mostrarModal,
   mensaje,
   setMensaje,
@@ -175,9 +174,11 @@ export default function FormCrearUsuario({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
+        {mensaje && (
+          <div className="w-full mb-3">
+            <MostrarMsj mensaje={mensaje} />
+          </div>
+        )}
 
         <div className="flex space-x-4">
           <BotonAceptarCancelar

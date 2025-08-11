@@ -17,37 +17,10 @@ import ListadoUsuarios from "../listados/ListadoUsuarios";
 import MostrarMsj from "../MostrarMensaje";
 import FormCrearUsuario from "../formularios/FormCrearUsuario";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  Necesitamos arreglar lkos datos del usuario porque se envian indefinidos
  
  */
-
-
-
 
 export default function UsuariosForm({
   mostrar,
@@ -58,7 +31,7 @@ export default function UsuariosForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  id_usuario,
+  usuarioActivo,
 }) {
   const [cedulaUsuario, setCedulaUsuario] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
@@ -101,7 +74,6 @@ export default function UsuariosForm({
 
   const [opcion, setOpcion] = useState("crear");
   const [mensajeBackEnd, setMensajeBackEnd] = useState("");
-  
 
   const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
   const [validarCorreoUsuario, setValidarCorreoUsuario] = useState(false);
@@ -171,29 +143,42 @@ export default function UsuariosForm({
   useEffect(() => {
     const fetchDatos = async () => {
       try {
+        const promesas = [
+          axios.get("/api/usuarios/todos-usuarios"),
+          axios.get("/api/departamentos/todos-departamentos"),
+          axios.get("/api/roles/todos-roles"),
+          axios.get("/api/instituciones/institucion-miembro-id"),
+        ];
+
+        // Solo agregar la consulta de todas las instituciones si el rol es 1
+        if (usuarioActivo.id_rol === 1) {
+          promesas.push(axios.get("/api/instituciones/todas-instituciones"));
+        }
+
         const [
           usuariosRes,
           departamentosRes,
           rolesRes,
           institucionRes,
-          institucionesRes,
-        ] = await Promise.all([
-          axios.get("/api/usuarios/todos-usuarios"),
-          axios.get("/api/departamentos/todos-departamentos"),
-          axios.get("/api/roles/todos-roles"),
-          axios.get("/api/instituciones/institucion-miembro-id"),
-          axios.get("/api/instituciones/todas-instituciones"),
-        ]);
+          institucionesRes, // solo estará definido si id_rol === 1
+        ] = await Promise.all(promesas);
 
         setTodosUsuarios(usuariosRes.data.usuarios || []);
         setTodosDepartamentos(departamentosRes.data.departamentos || []);
         setTodosRoles(rolesRes.data.roles || []);
         setInstitucionMiembro(institucionRes.data.instituciones || []);
-        setTodasInstituciones(institucionesRes.data.instituciones || []);
+
+        if (usuarioActivo.id_rol === 1 && institucionesRes) {
+          
+          
+          setTodasInstituciones(institucionesRes.data.instituciones || []);
+        }
       } catch (error) {
         console.log("Error al obtener datos:", error);
       }
     };
+
+   
 
     fetchDatos();
   }, []);
@@ -443,36 +428,37 @@ export default function UsuariosForm({
       setIsLoading(true);
 
       const payload = {
-        cedulaUsuario,
-        nombreUsuario,
-        apellidoUsuario,
-        correoUsuario,
-        claveUnoUsuario,
-        claveDosUsuario,
+        cedula: cedulaUsuario,
+        nombre: nombreUsuario,
+        apellido: apellidoUsuario,
+        correo: correoUsuario,
+        claveUno: claveUnoUsuario,
+        claveDos: claveDosUsuario,
         institucion: seleccionarInstitucion.map(({ id }) => ({ id })),
         departamento: seleccionarDepartamentos.map(({ id }) => ({ id })),
       };
 
-      const { data } = await axios.post("/api/usuarios/crear-usuario", payload);
+      const response = await axios.post("/api/usuarios/crear-usuario", payload);
 
-      setMensajeBackEnd(data.message);
+      abrirMensaje(response.data.message);
 
-      setTimeout(() => {
-        limpiarCampos(); // agrupamos limpieza de estados
-        setMensajeBackEnd("");
-        window.location.href = data.redirect;
-      }, 2000);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setCedulaUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setNombreUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setApellidoUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setCorreoUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setClaveUnoUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setClaveDosUsuario(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setSeleccionarInstitucion([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setSeleccionarDepartamentos([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     } catch (error) {
       console.log("Error, al crear el usuario: " + error);
-
-      const mensajeError =
-        error?.response?.data?.message || "Error inesperado.";
-      setMensajeBackEnd(mensajeError);
-
-      setTimeout(() => {
-        cerrarModal();
-        setMensajeBackEnd("");
-      }, 3000);
+      abrirMensaje(error?.response?.data?.message);
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -513,11 +499,7 @@ export default function UsuariosForm({
             />
           </ModalDatosContenedor>
 
-          {mensajeValidar && (
-            <div className="w-full mb-3">
-              <MostrarMsj mensaje={mensajeValidar} />
-            </div>
-          )}
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
 
           <BotonesModal
             aceptar={crearUsuario}
@@ -629,6 +611,7 @@ export default function UsuariosForm({
         <DivUnoDentroSectionRegistroMostrar
           nombre={opcion === "crear" ? "Crear usuario" : "Todos los usuarios"}
         >
+          
           {opcion === "crear" ? (
             <div className="w-full">
               <FormCrearUsuario
@@ -661,7 +644,6 @@ export default function UsuariosForm({
                 validarClave={validarClaveUsuario}
                 setValidarClave={setValidarClaveUsuario}
                 limpiarCampos={limpiarCampos}
-                mostrarMensaje={mostrarMensaje}
                 mostrarModal={abrirModal}
                 mensaje={mensajeValidar}
                 setMensaje={setMensajeValidar}
@@ -671,7 +653,7 @@ export default function UsuariosForm({
                 instituciones={
                   todasInstituciones?.length > 0
                     ? todasInstituciones
-                    : institucionMiembro
+                    : [institucionMiembro]
                 }
               />
             </div>

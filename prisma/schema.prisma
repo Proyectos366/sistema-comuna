@@ -26,10 +26,6 @@ model usuario {
   nombre_dos   String?  @default("")
   apellido     String?
   apellido_dos String?  @default("")
-  pais         String?  @default("")
-  estado       String?  @default("")
-  municipio    String?  @default("")
-  parroquia    String?  @default("")
   sector       String?  @default("")
   direccion    String?  @default("")
   f_n          DateTime @default(now())
@@ -46,22 +42,31 @@ model usuario {
   createdAt    DateTime @default(now())
 
   // Relaciones
-  roles                  role                    @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
   imagenes               imagen[] // Relación uno a muchos con Imagen
-  CreadorDeDepartamentos departamento[]          @relation(name: "CreadorDepartamento")
-  MiembrosDepartamentos  departamento[]          @relation(name: "MiembrosDepartamento")
-  CreadorInstitucion     institucion[]           @relation(name: "CreadorInstitucion")
-  MiembrosInstitucion    institucion[]           @relation(name: "MiembrosInstitucion")
-  creadorDeComunas       comuna[]                @relation(name: "CreadorComuna")
-  creadorDeCircuitos     circuito[]              @relation(name: "CreadorCircuito")
-  creadorDeConsejos      consejo[]               @relation(name: "CreadorConsejo")
-  beneficios             beneficio[]             @relation(name: "CreadorBeneficio")
-  familiares             familiar[]              @relation(name: "CreadorFamiliar")
-  voceros                vocero[]                @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
-  paises                 pais[]                  @relation(name: "CreadorPais")
-  estados                estado[]                @relation(name: "CreadorEstado")
-  municipios             municipio[]             @relation(name: "CreadorMunicipio")
-  parroquias             parroquia[]             @relation(name: "CreadorParroquia")
+  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+  CreadorInstitucion     institucion[]  @relation(name: "CreadorInstitucion")
+  MiembrosInstitucion    institucion[]  @relation(name: "MiembrosInstitucion")
+  creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
+  creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
+  creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
+  beneficios             beneficio[]    @relation(name: "CreadorBeneficio")
+  familiares             familiar[]     @relation(name: "CreadorFamiliar")
+  voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+
+  MiembrosPaises pais[] @relation(name: "MiembrosPaises")
+  CreadorPaises  pais[] @relation(name: "CreadorPaises")
+
+  MiembrosEstados estado[] @relation(name: "MiembrosEstados")
+  CreadorEstados  estado[] @relation(name: "CreadorEstados")
+
+  MiembrosMunicipios municipio[] @relation(name: "MiembrosMunicipios")
+  CreadorMunicipios  municipio[] @relation(name: "CreadorMunicipios")
+
+  MiembrosParroquias parroquia[] @relation(name: "MiembrosParroquias")
+  CreadorParroquias  parroquia[] @relation(name: "CreadorParroquias")
+
   asignacion_geograficas asignacion_geografica[] @relation(name: "CreadorAsignacionGeografica")
   cargos                 cargo[]                 @relation(name: "CreadorCargo")
   modulos                modulo[]                @relation(name: "CreadorModulo")
@@ -102,8 +107,10 @@ model pais {
   createdAt   DateTime @default(now())
 
   // Relaciones
-  usuarios usuario  @relation("CreadorPais", fields: [id_usuario], references: [id])
-  estados  estado[] @relation("PaisEstados")
+  creador       usuario       @relation(name: "CreadorPaises", fields: [id_usuario], references: [id])
+  miembros      usuario[]     @relation("MiembrosPaises")
+  estados       estado[]      @relation("PaisEstados")
+  instituciones institucion[]
 }
 
 model estado {
@@ -120,9 +127,11 @@ model estado {
   createdAt   DateTime @default(now())
 
   // Relaciones
-  usuarios   usuario     @relation("CreadorEstado", fields: [id_usuario], references: [id])
-  pais       pais        @relation("PaisEstados", fields: [id_pais], references: [id])
-  municipios municipio[] @relation("EstadoMunicipios")
+  creador       usuario       @relation(name: "CreadorEstados", fields: [id_usuario], references: [id])
+  miembros      usuario[]     @relation("MiembrosEstados")
+  pais          pais          @relation("PaisEstados", fields: [id_pais], references: [id])
+  municipios    municipio[]   @relation("EstadoMunicipios")
+  instituciones institucion[]
 }
 
 model municipio {
@@ -137,7 +146,9 @@ model municipio {
   createdAt   DateTime @default(now())
 
   // Relaciones
-  usuarios      usuario       @relation("CreadorMunicipio", fields: [id_usuario], references: [id])
+  creador  usuario   @relation(name: "CreadorMunicipios", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosMunicipios")
+
   estados       estado        @relation("EstadoMunicipios", fields: [id_estado], references: [id])
   parroquias    parroquia[]   @relation("MunicipioParroquias")
   instituciones institucion[]
@@ -155,12 +166,15 @@ model parroquia {
   createdAt    DateTime @default(now())
 
   // Relaciones
-  usuarios   usuario    @relation("CreadorParroquia", fields: [id_usuario], references: [id])
-  municipios municipio  @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
-  comunas    comuna[]   @relation("ComunaParroquia")
-  circuitos  circuito[] @relation("CircuitoParroquia")
-  consejos   consejo[]  @relation("ConsejoParroquia")
-  voceros    vocero[]   @relation("VoceroParroquia")
+  creador  usuario   @relation(name: "CreadorParroquias", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosParroquias")
+
+  municipios    municipio     @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
+  instituciones institucion[]
+  comunas       comuna[]      @relation("ComunaParroquia")
+  circuitos     circuito[]    @relation("CircuitoParroquia")
+  consejos      consejo[]     @relation("ConsejoParroquia")
+  voceros       vocero[]      @relation("VoceroParroquia")
 }
 
 model institucion {
@@ -168,22 +182,25 @@ model institucion {
   nombre       String   @unique
   descripcion  String?  @default("sin descripcion")
   rif          String   @unique
-  pais         String
-  estado       String
-  municipio    String
-  parroquia    String
   sector       String
   direccion    String
   borrado      Boolean  @default(false)
   id_usuario   Int
+  id_pais      Int
+  id_estado    Int
   id_municipio Int
+  id_parroquia Int
   updatedAt    DateTime @default(now())
   createdAt    DateTime @default(now())
 
   // Relaciones
-  creador       usuario        @relation(name: "CreadorInstitucion", fields: [id_usuario], references: [id])
-  miembros      usuario[]      @relation("MiembrosInstitucion")
+  creador  usuario   @relation(name: "CreadorInstitucion", fields: [id_usuario], references: [id])
+  miembros usuario[] @relation("MiembrosInstitucion")
+
+  paises        pais           @relation(fields: [id_pais], references: [id])
+  estados       estado         @relation(fields: [id_estado], references: [id])
   municipios    municipio      @relation(fields: [id_municipio], references: [id])
+  parroquias    parroquia      @relation(fields: [id_parroquia], references: [id])
   departamentos departamento[]
 }
 
