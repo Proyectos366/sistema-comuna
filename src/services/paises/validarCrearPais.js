@@ -5,7 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 
-export default async function validarCrearParroquia(nombre) {
+export default async function validarCrearEstado(nombre) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;

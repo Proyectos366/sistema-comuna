@@ -183,14 +183,6 @@ export default function MenuLateralUsuario({
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
-                    vistaActual={"cargos"}
-                    nombre={"Cargos"}
-                  />
-
-                  <EnlacesBarraLateral
-                    id_rol={id_rol}
-                    cambiarRuta={cambiarRuta}
-                    vista={vista}
                     vistaActual={"formaciones"}
                     nombre={"Formaciones"}
                   />
@@ -255,14 +247,6 @@ export default function MenuLateralUsuario({
                         vista={vista}
                         vistaActual={"formaciones"}
                         nombre={"Formaciones"}
-                      />
-
-                      <EnlacesBarraLateral
-                        id_rol={id_rol}
-                        cambiarRuta={cambiarRuta}
-                        vista={vista}
-                        vistaActual={"cargos"}
-                        nombre={"Cargos"}
                       />
 
                       <EnlacesBarraLateral

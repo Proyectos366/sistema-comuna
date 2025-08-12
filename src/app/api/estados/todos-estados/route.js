@@ -1,10 +1,10 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarConsultarTodasFormaciones from "@/services/formaciones/validarConsultarTodasFormaciones";
+import validarConsultarTodosEstados from "@/services/estados/validarConsultarTodosEstados";
 
 export async function GET() {
   try {
-    const validaciones = await validarConsultarTodasFormaciones();
+    const validaciones = await validarConsultarTodosEstados();
 
     if (validaciones.status === "error") {
       return generarRespuesta(
@@ -15,34 +15,35 @@ export async function GET() {
       );
     }
 
-    const todasFormaciones = await prisma.formacion.findMany({
-      where: validaciones.condicion,
-      include: { modulos: true },
+    const todosEstados = await prisma.estado.findMany({
+      where: {
+        borrado: false,
+      },
     });
 
-    if (!todasFormaciones) {
+    if (!todosEstados) {
       return generarRespuesta(
         "error",
-        "Error, al consultar formaciones...",
+        "Error, al consultar estados...",
         {},
         400
       );
     } else {
       return generarRespuesta(
         "ok",
-        "Todas las formaciones...",
+        "Todos los estados...",
         {
-          formaciones: todasFormaciones,
+          estados: todosEstados,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno consultar (formaciones): ` + error);
+    console.log(`Error interno consultar (estados): ` + error);
 
     return generarRespuesta(
       "error",
-      "Error, interno consultar (formaciones)",
+      "Error, interno consultar (estados)",
       {},
       500
     );

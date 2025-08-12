@@ -18,7 +18,7 @@ export async function GET() {
     ].map((nombre) => ({
       nombre,
       descripcion: "sin descripcion",
-      id_usuario: 1,
+      id_usuario: 2,
       id_institucion: 1,
     }));
 

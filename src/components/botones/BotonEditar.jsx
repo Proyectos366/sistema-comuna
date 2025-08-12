@@ -9,7 +9,7 @@ export default function BotonEditar({ editar, indice }) {
       onClick={() => editar()}
       type="button"
       className={`${anchoClase} flex items-center justify-center p-2 rounded-md
-                  bg-green-600 hover:bg-blue-900 transition-all duration-200
+                  bg-[#2FA807] hover:bg-[#082158] transition-all duration-200
                   focus:outline-none cursor-pointer`}
       title="Editar"
       aria-label="Editar"

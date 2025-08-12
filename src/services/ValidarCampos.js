@@ -301,7 +301,11 @@ export default class ValidarCampos {
 
       return retornarRespuestaFunciones(
         msjCorrectos.ok,
-        msjCorrectos.okClave.campoValido
+        msjCorrectos.okClave.campoValido,
+        {
+          claveUno: claveUno,
+          claveDos: claveDos,
+        }
       );
     } catch (error) {
       console.log(`${msjErrores.errorClave.internoValidando}: ` + error);
@@ -352,6 +356,50 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando genero..."
+      );
+    }
+  }
+
+  static validarCampoNumeroPasarBoolean(numero, opcion) {
+    try {
+      const numeroPasarBoolean = Number(numero);
+
+      if (!numero) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, campo ${opcion} vacio...`
+        );
+      }
+
+      if (isNaN(numeroPasarBoolean)) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, campo ${opcion} invalido...`
+        );
+      }
+
+      if (!Number.isInteger(numeroPasarBoolean)) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, campo ${opcion} debe ser entero...`
+        );
+      }
+
+      if (!(numero === 1 || numero === 2 || numero === "1" || numero === "2")) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, campo ${opcion} deber ser 1 o 2...`
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", `Campo ${opcion} valido...`, {
+        boolean: numeroPasarBoolean === 1 ? true : false,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando ${opcion}: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        `Error, interno validando ${opcion}`
       );
     }
   }
@@ -529,37 +577,45 @@ export default class ValidarCampos {
     apellido,
     correo,
     claveUno,
-    claveDos
+    claveDos,
+    id_rol,
+    autorizar
   ) {
     try {
       const validarCorreo = this.validarCampoCorreo(correo);
       const validarCedula = this.validarCampoCedula(cedula);
       const validarNombre = this.validarCampoNombre(nombre);
       const validarApellido = this.validarCampoNombre(apellido);
+      const validarClave = this.validarCampoClave(claveUno, claveDos);
+      const validarIdRol = this.validarCampoId(id_rol);
+      const validarAutorizar = this.validarCampoNumeroPasarBoolean(
+        autorizar,
+        "autorizar"
+      );
 
       if (validarCedula.status === "error") return validarCedula;
       if (validarNombre.status === "error") return validarNombre;
       if (validarApellido.status === "error") return validarApellido;
       if (validarCorreo.status === "error") return validarCorreo;
-
-      const validarClave = this.validarCampoClave(claveUno, claveDos);
       if (validarClave.status === "error") return validarClave;
+      if (validarIdRol.status === "error") return validarIdRol;
+      if (validarAutorizar.status === "error") return validarAutorizar;
 
-      return retornarRespuestaFunciones(
-        msjCorrectos.ok,
-        "Campos validados...",
-        {
-          cedula: validarCedula.cedula,
-          nombre: validarNombre.nombre,
-          apellido: validarApellido.nombre,
-          correo: validarCorreo.correo,
-        }
-      );
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        cedula: validarCedula.cedula,
+        nombre: validarNombre.nombre,
+        apellido: validarApellido.nombre,
+        correo: validarCorreo.correo,
+        claveUno: validarClave.claveUno,
+        claveDos: validarClave.claveDos,
+        id_rol: validarIdRol.id,
+        autorizar: validarAutorizar.boolean,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorMixto}: ` + error);
+      console.log(`Error interno, validar campos registro usuario: ` + error);
       return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorMixto
+        "error",
+        "Error, interno campos usuario"
       );
     }
   }
@@ -616,6 +672,27 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando campos institucion..."
+      );
+    }
+  }
+
+  static validarCamposCrearDepartamento(nombre, descripcion) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos departamento: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos departamento..."
       );
     }
   }
@@ -859,30 +936,6 @@ export default class ValidarCampos {
     } catch (error) {
       console.log(`Error interno crear cargo: ` + error);
       return retornarRespuestaFunciones("error", "Error interno crear cargo");
-    }
-  }
-
-  static validarCamposCrearDepartamento(nombre, descripcion) {
-    try {
-      const validarNombre = this.validarCampoNombre(nombre);
-
-      if (validarNombre.status === "error") return validarNombre;
-
-      /**
-        if (!descripcion) {
-          return retornarRespuestaFunciones(
-            "error",
-            "Error, campo descripción vacio..."
-          );
-        }
-      */
-      return retornarRespuestaFunciones("ok", "Campos validados...");
-    } catch (error) {
-      console.log(`Error, interno validando campos departamento: ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, interno validando campos departamento..."
-      );
     }
   }
 

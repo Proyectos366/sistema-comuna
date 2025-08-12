@@ -2,6 +2,7 @@ import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import InputNombre from "../inputs/InputNombre";
 import LabelInput from "../inputs/LabelInput";
+import SelectOpcion from "../SelectOpcion";
 
 export default function FormCrearParroquia({
   nombre,
@@ -9,25 +10,71 @@ export default function FormCrearParroquia({
   abrirModal,
   limpiarCampos,
   validarNombre,
-  setValidarNombre
+  setValidarNombre,
+  paises,
+  estados,
+  municipios,
+  idPais,
+  idEstado,
+  idMunicipio,
+  setNombrePais,
+  setNombreEstado,
+  setNombreMunicipio,
+  cambiarSeleccionPais,
+  cambiarSeleccionEstado,
+  cambiarSeleccionMunicipio,
 }) {
   return (
     <Formulario
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      className="space-y-4"
     >
-      <LabelInput nombre={"Nombre"}>
-        <InputNombre
-          type="text"
-          indice="nombre"
-          value={nombre}
-          setValue={setNombre}
-          validarNombre={validarNombre}
-          setValidarNombre={setValidarNombre}
+      <SelectOpcion
+        idOpcion={idPais}
+        nombre={"Paises"}
+        handleChange={cambiarSeleccionPais}
+        opciones={paises}
+        seleccione={"Seleccione"}
+        setNombre={setNombrePais}
+      />
+
+      {idPais && (
+        <SelectOpcion
+          idOpcion={idEstado}
+          nombre={"Estados"}
+          handleChange={cambiarSeleccionEstado}
+          opciones={estados}
+          seleccione={"Seleccione"}
+          setNombre={setNombreEstado}
+          indice={1}
         />
-      </LabelInput>
+      )}
+
+      {idEstado && (
+        <SelectOpcion
+          idOpcion={idMunicipio}
+          nombre={"Municipios"}
+          handleChange={cambiarSeleccionMunicipio}
+          opciones={municipios}
+          seleccione={"Seleccione"}
+          setNombre={setNombreMunicipio}
+          indice={1}
+        />
+      )}
+
+      {idMunicipio && (
+        <LabelInput nombre={"Nombre"}>
+          <InputNombre
+            type="text"
+            indice="nombre"
+            value={nombre}
+            setValue={setNombre}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
+          />
+        </LabelInput>
+      )}
 
       <div className="flex space-x-3">
         <BotonAceptarCancelar

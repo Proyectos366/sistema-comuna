@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearFormacion from "../formularios/FormCrearFormacion";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormEditarFormacion from "../formularios/FormEditarFormacion";
 import ModalEditar from "../modales/ModalEditar";
+import ListadoFormaciones from "../listados/ListadoFormaciones";
 
 export default function FormacionesForm({
   mostrar,
@@ -24,7 +24,7 @@ export default function FormacionesForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  id_usuario,
+  usuarioActivo,
 }) {
   const [nombreFormacion, setNombreFormacion] = useState("");
   const [descripcionFormacion, setDescripcionFormacion] = useState("");
@@ -240,13 +240,13 @@ export default function FormacionesForm({
 
         <DivDosDentroSectionRegistroMostrar>
           <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
+            <ListadoFormaciones
               isLoading={isLoading}
               listado={todasFormaciones}
               nombreListado="Formaciones"
               mensajeVacio="No hay formaciones disponibles..."
               editando={editandoFormacion}
-              id_usuario={id_usuario}
+              usuarioActivo={usuarioActivo}
             />
           </DivDosDentroSectionRegistroMostrar>
         </DivDosDentroSectionRegistroMostrar>

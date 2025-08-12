@@ -29,7 +29,12 @@ export default async function validarConsultarTodosDepartamentos() {
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
-      select: { id: true },
+      select: {
+        id: true,
+        MiembrosInstitucion: {
+          select: { id: true },
+        },
+      },
     });
 
     if (!datosUsuario) {
@@ -39,6 +44,7 @@ export default async function validarConsultarTodosDepartamentos() {
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
+      id_institucion: datosUsuario.MiembrosInstitucion?.[0]?.id,
     });
   } catch (error) {
     console.log(

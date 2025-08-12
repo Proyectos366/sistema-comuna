@@ -22,32 +22,99 @@ export default function ParroquiasForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  id_usuario,
+  usuarioActivo,
 }) {
   const [nombreParroquia, setNombreParroquia] = useState("");
   const [descripcionParroquia, setDescripcionParroquia] = useState("");
-  const [todasParroquias, setTodasParroquias] = useState(null);
+
+  const [todosPaises, setTodosPaises] = useState([]);
+  const [todosEstados, setTodosEstados] = useState([]);
+  const [todosMunicipios, setTodosMunicipios] = useState([]);
+  const [todasParroquias, setTodasParroquias] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
 
   const [validarNombre, setValidarNombre] = useState(false);
 
+  const [idPais, setIdPais] = useState("");
+  const [idEstado, setIdEstado] = useState("");
+  const [idMunicipio, setIdMunicipio] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
+
+  const [nombrePais, setNombrePais] = useState("");
+  const [nombreEstado, setNombreEstado] = useState("");
+  const [nombreMunicipio, setNombreMunicipio] = useState("");
+
   const [accion, setAccion] = useState("");
 
   useEffect(() => {
-    const fetchDatosParroquia = async () => {
+    const fetchDatosPaises = async () => {
       try {
-        const response = await axios.get("/api/parroquias/todas-parroquias");
-        setTodasParroquias(response.data.parroquias || []);
+        const response = await axios.get("/api/paises/todos-paises");
+        setTodosPaises(response.data.paises || []);
       } catch (error) {
-        console.log("Error al obtener las parroquias:", error);
+        console.log("Error al obtener los paises:", error);
       } finally {
         setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
       }
     };
 
-    fetchDatosParroquia();
+    fetchDatosPaises();
   }, []);
+
+  /** 
+  useEffect(() => {
+      const fetchDatosParroquia = async () => {
+        try {
+          const response = await axios.get("/api/parroquias/todas-parroquias");
+          setTodasParroquias(response.data.parroquias || []);
+        } catch (error) {
+          console.log("Error al obtener las parroquias:", error);
+        } finally {
+          setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
+        }
+      };
+
+      fetchDatosParroquia();
+    }, []);
+  */
+
+  useEffect(() => {
+    if (!idPais) {
+      setTodosEstados([]);
+      return;
+    }
+
+    const paisSeleccionado = todosPaises.find((p) => p.id === parseInt(idPais));
+    setTodosEstados(paisSeleccionado?.estados || []);
+    setIdEstado(""); // Reiniciar selección
+    setTodosMunicipios([]);
+    setIdMunicipio("");
+  }, [idPais]);
+
+  useEffect(() => {
+    if (!idEstado) {
+      setTodosMunicipios([]);
+      return;
+    }
+
+    const estadoSeleccionado = todosEstados.find(
+      (p) => p.id === parseInt(idEstado)
+    );
+    setTodosMunicipios(estadoSeleccionado?.municipios || []);
+    setIdMunicipio(""); // Reiniciar selección
+  }, [idEstado]);
+
+  useEffect(() => {
+    if (!idMunicipio) {
+      setTodasParroquias([]);
+      return;
+    }
+
+    const municipioSeleccionado = todosMunicipios.find(
+      (p) => p.id === parseInt(idMunicipio)
+    );
+    setTodasParroquias(municipioSeleccionado?.parroquias || []);
+  }, [idMunicipio]);
 
   const crearParroquia = async () => {
     if (nombreParroquia.trim()) {
@@ -89,6 +156,18 @@ export default function ParroquiasForm({
     }
   };
 
+  const cambiarSeleccionPais = (e) => {
+    setIdPais(e.target.value);
+  };
+
+  const cambiarSeleccionEstado = (e) => {
+    setIdEstado(e.target.value);
+  };
+
+  const cambiarSeleccionMunicipio = (e) => {
+    setIdMunicipio(e.target.value);
+  };
+
   return (
     <>
       <Modal
@@ -123,6 +202,19 @@ export default function ParroquiasForm({
             limpiarCampos={limpiarCampos}
             validarNombre={validarNombre}
             setValidarNombre={setValidarNombre}
+            paises={todosPaises}
+            estados={todosEstados}
+            municipios={todosMunicipios}
+            idPais={idPais}
+            idEstado={idEstado}
+            idMunicipio={idMunicipio}
+            setNombrePais={setNombrePais}
+            setNombreEstado={setNombreEstado}
+            nombreMunicipio={nombreMunicipio}
+            setNombreMunicipio={setNombreMunicipio}
+            cambiarSeleccionPais={cambiarSeleccionPais}
+            cambiarSeleccionEstado={cambiarSeleccionEstado}
+            cambiarSeleccionMunicipio={cambiarSeleccionMunicipio}
           />
         </DivUnoDentroSectionRegistroMostrar>
 
@@ -133,7 +225,7 @@ export default function ParroquiasForm({
             nombreListado="Parroquias"
             mensajeVacio="No hay parroquias disponibles..."
             editando={editandoParroquia}
-            id_usuario={id_usuario}
+            usuarioActivo={usuarioActivo}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

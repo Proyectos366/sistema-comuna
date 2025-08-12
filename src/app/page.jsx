@@ -115,7 +115,7 @@ export default function Home() {
               />
             </LabelInput>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <LinkPaginas
                 href="/registro-usuario"
                 nombre={"Registro usuario"}
@@ -124,7 +124,7 @@ export default function Home() {
                 href="/recuperar-clave-correo"
                 nombre={"Olvido su clave?"}
               />
-            </div>
+            </div> */}
 
             {mensaje && (
               <div className="w-full mb-3">

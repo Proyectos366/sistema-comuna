@@ -13,19 +13,11 @@ export async function POST(request) {
       correo,
       claveUno,
       claveDos,
+      id_rol,
+      autorizar,
       institucion,
       departamento,
     } = await request.json();
-
-    console.log( cedula,
-      nombre,
-      apellido,
-      correo,
-      claveUno,
-      claveDos,
-      institucion,
-      departamento,);
-    
 
     const validaciones = await validarCrearUsuario(
       cedula,
@@ -33,9 +25,11 @@ export async function POST(request) {
       apellido,
       correo,
       claveUno,
-      claveDos
+      claveDos,
+      id_rol,
+      autorizar,
+      institucion
     );
-    
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
@@ -58,41 +52,52 @@ export async function POST(request) {
 
     const token = AuthTokens.tokenValidarUsuario(10);
 
-    /** 
-      const [nuevoUsuario, usuarioConDepartamentos] = await prisma.$transaction([
-        // Se crea el nuevo usuario con departamentos conectados
-        prisma.usuario.create({
-          data: {
-            cedula: validaciones.cedula,
-            nombre: validaciones.nombre,
-            apellido: validaciones.apellido,
-            correo: validaciones.correo,
-            token: token,
-            clave: validaciones.claveEncriptada,
-            borrado: false,
-            id_rol: 4,
-            MiembrosDepartamentos: {
-              connect: departamento.map(({ id }) => ({ id })),
-            },
-            MiembrosInstitucion: {
-              connect: institucion.map(({ id }) => ({ id })),
-            },
+    const [nuevoUsuario, usuarioConDepartamentos] = await prisma.$transaction([
+      // Se crea el nuevo usuario con departamentos conectados
+      prisma.usuario.create({
+        data: {
+          cedula: validaciones.cedula,
+          nombre: validaciones.nombre,
+          apellido: validaciones.apellido,
+          correo: validaciones.correo,
+          token: token,
+          clave: validaciones.claveEncriptada,
+          id_rol: validaciones.id_rol,
+          validado: validaciones.autorizar,
+          MiembrosPaises: {
+            connect: { id: validaciones.institucion.id_pais },
           },
-        }),
+          MiembrosEstados: {
+            connect: { id: validaciones.institucion.id_estado },
+          },
+          MiembrosMunicipios: {
+            connect: { id: validaciones.institucion.id_municipio },
+          },
+          MiembrosParroquias: {
+            connect: { id: validaciones.institucion.id_parroquia },
+          },
+          MiembrosInstitucion: {
+            connect: institucion.map(({ id }) => ({ id })),
+          },
+          MiembrosDepartamentos: {
+            connect: departamento.map(({ id }) => ({ id })),
+          },
+        },
+      }),
 
-        // Se consulta el mismo usuario recién creado con sus departamentos
-        prisma.usuario.findFirst({
-          where: {
-            correo: validaciones.correo,
-          },
-          include: {
-            MiembrosDepartamentos: true,
-          },
-        }),
-      ]);
-    */
+      // Se consulta el mismo usuario recién creado con sus departamentos
+      prisma.usuario.findFirst({
+        where: {
+          correo: validaciones.correo,
+        },
+        include: {
+          MiembrosInstitucion: true,
+          MiembrosDepartamentos: true,
+        },
+      }),
+    ]);
 
-    const nuevoUsuario = false;
+    //const nuevoUsuario = false;
 
     if (!nuevoUsuario) {
       await registrarEventoSeguro(request, {

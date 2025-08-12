@@ -33,6 +33,7 @@ export async function POST(request) {
         nombre: validaciones.nombre,
         descripcion: validaciones.descripcion,
         id_usuario: validaciones.id_usuario,
+        id_institucion: validaciones.id_institucion,
       },
     });
 

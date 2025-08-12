@@ -7,7 +7,7 @@ export default function ListadoGenaral({
   nombreListado,
   mensajeVacio,
   editando,
-  id_usuario,
+  usuarioActivo,
 }) {
   return (
     <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-2">
@@ -26,25 +26,14 @@ export default function ListadoGenaral({
                  hover:bg-gray-300 hover:border hover:border-gray-300 
                  hover:shadow-md hover:scale-101 flex gap-4 sm:gap-1 items-center justify-between uppercase py-1 px-4"
             >
-              <div className="flex gap-2">
-                {!lista.cedula ? null : (
-                  <span className="rounded-md p-3 uppercase">
-                    {lista.cedula}
-                  </span>
-                )}
+              <div className="flex gap-2 py-1">
                 <span className="rounded-md uppercase">{lista.nombre}</span>
-
-                {!lista.apellido ? null : (
-                  <span className="rounded-md p-3 uppercase">
-                    {lista.apellido}
-                  </span>
-                )}
               </div>
 
               {typeof editando === "function" &&
-                (lista.id_usuario === id_usuario ||
-                  id_usuario === 1 ||
-                  id_usuario === 2) && (
+                (usuarioActivo.MiembrosDepartamentos?.[0]?.id ===
+                  lista.id_departamento ||
+                  usuarioActivo.id_rol === 1) && (
                   <div>
                     <BotonEditar editar={() => editando(lista)} />
                   </div>

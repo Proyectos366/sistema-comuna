@@ -37,12 +37,15 @@ export async function POST(request) {
         nombre: validaciones.nombre,
         descripcion: validaciones.descripcion,
         id_usuario: validaciones.id_usuario,
+        id_institucion: validaciones.id_institucion,
         id_departamento: validaciones.id_departamento,
         modulos: {
           connect: validaciones.todosModulos.map(({ id }) => ({ id })),
         },
       },
     });
+
+    //const nuevaFormacion = false
 
     if (!nuevaFormacion) {
       await registrarEventoSeguro(request, {
@@ -52,7 +55,7 @@ export async function POST(request) {
         id_usuario: validaciones.id_usuario ?? 0,
         descripcion: "No se pudo crear la formación",
         datosAntes: null,
-        datosDespues: nuevoCargo,
+        datosDespues: nuevaFormacion,
       });
 
       return generarRespuesta(

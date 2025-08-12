@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearDepartamento from "../formularios/FormCrearDepartamento";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormEditarDepartamento from "../formularios/FormEditarDepartamento";
 import ModalEditar from "../modales/ModalEditar";
+import ListadoDepartamentos from "../listados/ListadoDepartamentos";
 
 export default function DepartamentosForm({
   mostrar,
@@ -24,7 +24,7 @@ export default function DepartamentosForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  id_usuario,
+  usuarioActivo,
 }) {
   const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [descripcionDepartamento, setDescripcionDepartamento] = useState("");
@@ -72,7 +72,8 @@ export default function DepartamentosForm({
         setTodosDepartamentos([
           ...todosDepartamentos,
           response.data.departamento,
-        ]); // Suponiendo que la API devuelve el nombre guardado
+        ]);
+
         abrirMensaje(response.data.message);
 
         ejecutarAccionesConRetraso([
@@ -212,13 +213,13 @@ export default function DepartamentosForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoDepartamentos
             isLoading={isLoading}
             listado={todosDepartamentos}
             nombreListado="Departamentos"
             mensajeVacio="No hay departamentos disponibles..."
             editando={editandoDepartamento}
-            id_usuario={id_usuario}
+            usuarioActivo={usuarioActivo}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

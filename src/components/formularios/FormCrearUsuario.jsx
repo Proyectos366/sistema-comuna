@@ -7,12 +7,15 @@ import InputCorreo from "../inputs/InputCorreo";
 import SelectOpcion from "../SelectOpcion";
 import InputClave from "../inputs/InputClave";
 import MostrarMsj from "../MostrarMensaje";
+import InputCheckBox from "../inputs/InputCheckBox";
 
 export default function FormCrearUsuario({
   idDepartamento,
   setIdDepartamento,
   idInstitucion,
   setIdInstitucion,
+  idRol,
+  setIdRol,
   cedula,
   setCedula,
   correo,
@@ -41,10 +44,17 @@ export default function FormCrearUsuario({
   setMensaje,
   cambiarSeleccionDepartamento,
   cambiarSeleccionInstitucion,
+  cambiarSeleccionRol,
   departamentos,
   instituciones,
+  roles,
   setNombreDepartamento,
   setNombreInstitucion,
+  setNombreRol,
+  autorizar,
+  setAutorizar,
+  toggleAutorizar,
+  usuarioActivo,
 }) {
   const leyendoClave1 = (e) => {
     const claveUnoUno = e.target.value;
@@ -137,13 +147,24 @@ export default function FormCrearUsuario({
         </LabelInput>
 
         <SelectOpcion
-          idOpcion={idInstitucion}
-          nombre={"Instituciones"}
-          handleChange={cambiarSeleccionInstitucion}
-          opciones={instituciones}
+          idOpcion={idRol}
+          nombre={"Roles"}
+          handleChange={cambiarSeleccionRol}
+          opciones={roles}
           seleccione={"Seleccione"}
-          setNombre={setNombreInstitucion}
+          setNombre={setNombreRol}
         />
+
+        {usuarioActivo.id_rol === 1 && (
+          <SelectOpcion
+            idOpcion={idInstitucion}
+            nombre={"Instituciones"}
+            handleChange={cambiarSeleccionInstitucion}
+            opciones={instituciones}
+            seleccione={"Seleccione"}
+            setNombre={setNombreInstitucion}
+          />
+        )}
 
         <SelectOpcion
           idOpcion={idDepartamento}
@@ -174,6 +195,25 @@ export default function FormCrearUsuario({
           />
         </LabelInput>
 
+        <div className="flex flex-col w-full">
+          <span className="text-gray-700 font-medium">Autorizar</span>
+          <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
+            {[
+              { id: 1, nombre: "Si" },
+              { id: 2, nombre: "No" },
+            ].map((opcion) => (
+              <InputCheckBox
+                altura={5}
+                key={opcion.id}
+                id={opcion.id}
+                nombre={opcion.nombre}
+                isChecked={autorizar === opcion.id} // Solo una opción puede estar seleccionada
+                onToggle={() => toggleAutorizar(opcion.id)} // Cambia el estado con la opción elegida
+              />
+            ))}
+          </div>
+        </div>
+
         {mensaje && (
           <div className="w-full mb-3">
             <MostrarMsj mensaje={mensaje} />
@@ -190,9 +230,12 @@ export default function FormCrearUsuario({
               correo,
               nombre,
               apellido,
-              idDepartamento,
               claveUno,
               claveDos,
+              idRol,
+              idInstitucion,
+              idDepartamento,
+              autorizar,
             }}
           />
 
@@ -204,9 +247,12 @@ export default function FormCrearUsuario({
                 setCorreo,
                 setNombre,
                 setApellido,
-                setIdDepartamento,
                 setClaveUno,
                 setClaveDos,
+                setIdRol,
+                setIdInstitucion,
+                setIdDepartamento,
+                setAutorizar,
               });
             }}
             nombre={"Limpiar"}
@@ -215,9 +261,12 @@ export default function FormCrearUsuario({
               correo,
               nombre,
               apellido,
-              idDepartamento,
               claveUno,
               claveDos,
+              idRol,
+              idInstitucion,
+              idDepartamento,
+              autorizar,
             }}
           />
         </div>

@@ -17,6 +17,7 @@ export async function GET() {
 
     const todasParroquias = await prisma.parroquia.findMany({
       where: {
+        id_municipio: validaciones.id_municipio,
         borrado: false,
       },
     });

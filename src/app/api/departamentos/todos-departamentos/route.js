@@ -17,6 +17,7 @@ export async function GET() {
 
     const todosDepartamentos = await prisma.departamento.findMany({
       where: {
+        id_institucion: validaciones.id_institucion,
         borrado: false,
       },
     });

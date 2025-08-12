@@ -38,14 +38,19 @@ export default async function validarCrearFormacion(
 
     const correo = descifrarToken.correo;
 
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo },
       include: {
-        MiembrosDepartamentos: true,
+        MiembrosInstitucion: {
+          select: { id: true },
+        },
+        MiembrosDepartamentos: {
+          select: { id: true },
+        },
       },
     });
 
-    if (!idUsuario) {
+    if (!datosUsuario) {
       return retornarRespuestaFunciones(
         "error",
         "Error, usuario no encontrado..."
@@ -63,7 +68,7 @@ export default async function validarCrearFormacion(
         "error",
         "Error, formacion ya existe...",
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
@@ -82,19 +87,22 @@ export default async function validarCrearFormacion(
         "error",
         "Error, no hay cantidad modulos...",
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: idUsuario.id,
+      id_usuario: datosUsuario.id,
       nombre: validandoCampos.nombre,
       cantidadModulos: validandoCampos.cantidadModulos,
       todosModulos: todoscantidadModulos,
       descripcion: validandoCampos.descripcion,
-      id_departamento: idUsuario?.MiembrosDepartamentos?.[0]?.id
-        ? idUsuario?.MiembrosDepartamentos?.[0]?.id
+      id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id
+        ? datosUsuario?.MiembrosInstitucion?.[0]?.id
+        : null,
+      id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id
+        ? datosUsuario?.MiembrosDepartamentos?.[0]?.id
         : null,
     });
   } catch (error) {

@@ -202,6 +202,7 @@ model institucion {
   municipios    municipio      @relation(fields: [id_municipio], references: [id])
   parroquias    parroquia      @relation(fields: [id_parroquia], references: [id])
   departamentos departamento[]
+  formaciones   formacion[]    @relation(name: "FormacionInstitucion")
 }
 
 model departamento {
@@ -442,12 +443,14 @@ model formacion {
   descripcion     String?  @default("sin descripcion")
   id_usuario      Int
   id_departamento Int?
+  id_institucion  Int?
   borrado         Boolean  @default(false)
   culminada       Boolean  @default(false)
   updatedAt       DateTime @default(now()) @updatedAt
   createdAt       DateTime @default(now())
 
   usuarios      usuario       @relation(name: "CreadorFormacion", fields: [id_usuario], references: [id])
+  instituciones institucion?  @relation(name: "FormacionInstitucion", fields: [id_institucion], references: [id])
   departamentos departamento? @relation(name: "FormacionDepartamento", fields: [id_departamento], references: [id])
   modulos       modulo[]
   cursos        curso[]

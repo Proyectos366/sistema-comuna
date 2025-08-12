@@ -4,7 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 
-export default async function validarConsultarTodasParroquias() {
+export default async function validarConsultarTodosEstados() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -18,17 +18,19 @@ export default async function validarConsultarTodasParroquias() {
       );
     }
 
+    if (descifrarToken.id_rol !== 1) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, usuario no tiene permiso..."
+      );
+    }
+
     const correo = descifrarToken.correo;
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: {
         id: true,
-        MiembrosMunicipios: {
-          select: {
-            id: true,
-          },
-        },
       },
     });
 
@@ -36,18 +38,15 @@ export default async function validarConsultarTodasParroquias() {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    const municipio_id = datosUsuario.MiembrosMunicipios?.[0]?.id;
-
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
-      id_municipio: municipio_id,
     });
   } catch (error) {
-    console.log(`Error, interno validar consultar todas parroquias: ` + error);
+    console.log(`Error, interno validar consultar todos estados: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar consultar todas parroquias"
+      "Error, interno validar consultar todos estados"
     );
   }
 }

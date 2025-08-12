@@ -24,6 +24,10 @@ export default async function validarConsultarTodasFormaciones() {
       where: { correo: correo },
       select: {
         id: true,
+        id_rol: true,
+        MiembrosInstitucion: {
+          select: { id: true, nombre: true },
+        },
         MiembrosDepartamentos: {
           select: { id: true, nombre: true },
         },
@@ -34,9 +38,39 @@ export default async function validarConsultarTodasFormaciones() {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
+    let whereCondicion;
+    const institucion_id = datosUsuario?.MiembrosInstitucion?.[0]?.id;
+    const departamento_id = datosUsuario?.MiembrosDepartamentos?.[0]?.id;
+
+    if (datosUsuario.id_rol === 1) {
+      // Usuario privilegiado: ver todas las formaciones no borradas ni culminadas
+      whereCondicion = {
+        borrado: false,
+        culminada: false,
+      };
+    } else if (datosUsuario.id_rol === 2) {
+      // Admin o usuario privilegiado: ver todas las formaciones no borradas ni culminadas
+      whereCondicion = {
+        borrado: false,
+        culminada: false,
+        id_institucion: institucion_id,
+      };
+    } else {
+      whereCondicion = {
+        borrado: false,
+        culminada: false,
+        OR: [
+          { id_institucion: institucion_id }, // Formaciones creadas por el usuario
+          { id_departamento: departamento_id }, // Formaciones del departamento del usuario
+        ],
+      };
+    }
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
+      condicion: whereCondicion,
+      id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
       id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
     });
   } catch (error) {
@@ -47,3 +81,28 @@ export default async function validarConsultarTodasFormaciones() {
     );
   }
 }
+
+/**
+  // Esto es para futuro mostrar las formaciones por institucion
+  const listaInstituciones = datosUsuario?.MiembrosInstitucion?.map(inst => inst.id) || [];
+
+  whereCondicion = {
+    borrado: false,
+    culminada: false,
+    id_institucion: {
+      in: listaInstituciones,
+    },
+  };
+
+  const agrupadasPorInstitucion = {};
+
+  formaciones.forEach(formacion => {
+    const idInst = formacion.id_institucion;
+    
+    if (!agrupadasPorInstitucion[idInst]) {
+      agrupadasPorInstitucion[idInst] = [];
+    }
+
+    agrupadasPorInstitucion[idInst].push(formacion);
+  });
+*/

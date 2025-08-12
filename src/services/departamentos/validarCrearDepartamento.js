@@ -19,44 +19,42 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
       );
     }
 
-    const validarNombre = ValidarCampos.validarCamposCrearDepartamento(
+    const validarCampos = ValidarCampos.validarCamposCrearDepartamento(
       nombre,
       descripcion
     );
 
-    if (validarNombre.status === "error") {
+    if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
+        validarCampos.status,
+        validarCampos.message
       );
     }
 
-    const nombreMinuscula = nombre.toLowerCase();
-    const descripcionMinuscula = descripcion
-      ? descripcion.toLowerCase()
-      : "sin descripción";
-
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: descifrarToken.correo },
-      select: { id: true },
+      select: {
+        id: true,
+        MiembrosDepartamentos: {
+          select: {
+            id: true,
+            id_institucion: true,
+          },
+        },
+      },
     });
 
-    if (!idUsuario) {
+    if (!datosUsuario) {
       return retornarRespuestaFunciones("error", "Error, usuario no existe...");
     }
 
-    const usuario_id = Number(idUsuario.id);
-
-    if (typeof usuario_id !== "number") {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, id_usuario no es un numero"
-      );
-    }
+    const institucion_id =
+      datosUsuario.MiembrosDepartamentos?.[0]?.id_institucion;
 
     const nombreRepetido = await prisma.departamento.findFirst({
       where: {
-        nombre: nombreMinuscula,
+        nombre: validarCampos.nombre,
+        id_institucion: institucion_id,
       },
     });
 
@@ -65,15 +63,16 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
         "error",
         "Error, departamento ya existe...",
         {
-          id_usuario: usuario_id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: usuario_id,
-      nombre: nombreMinuscula,
-      descripcion: descripcionMinuscula,
+      id_usuario: datosUsuario.id,
+      nombre: validarCampos.nombre,
+      descripcion: validarCampos.descripcion,
+      id_institucion: institucion_id,
     });
   } catch (error) {
     console.log(`Error, interno al crear departamento: ` + error);

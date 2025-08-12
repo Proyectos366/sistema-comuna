@@ -254,7 +254,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -268,7 +268,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -282,7 +282,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -296,7 +296,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -310,7 +310,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -324,7 +324,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -338,7 +338,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -352,7 +352,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -366,7 +366,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -382,7 +382,7 @@ export default function VistaUniversalUsuarios({ children }) {
                         abrirMensaje={abrirMensaje}
                         limpiarCampos={limpiarCampos}
                         ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                        id_usuario={usuarioActivo?.id}
+                        usuarioActivo={usuarioActivo}
                       />
                     )}
 
@@ -396,7 +396,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
 
@@ -410,7 +410,7 @@ export default function VistaUniversalUsuarios({ children }) {
                       abrirMensaje={abrirMensaje}
                       limpiarCampos={limpiarCampos}
                       ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      id_usuario={usuarioActivo?.id}
+                      usuarioActivo={usuarioActivo}
                     />
                   )}
                 </>

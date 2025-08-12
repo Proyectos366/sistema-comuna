@@ -45,6 +45,12 @@ export async function GET(request) {
         borrado: true,
         validado: true,
         createdAt: true,
+        MiembrosInstitucion: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
         MiembrosDepartamentos: {
           select: {
             id: true,
