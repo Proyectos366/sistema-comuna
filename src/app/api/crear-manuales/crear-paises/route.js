@@ -7,7 +7,7 @@ export async function GET() {
       {
         nombre: "venezuela",
         capital: "caracas",
-        serial: "ven-01-2025",
+        serial: "ven",
         id_usuario: 1,
       },
     ];

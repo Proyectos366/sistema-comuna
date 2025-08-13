@@ -20,6 +20,7 @@ import ParticipantesForm from "../opciones/ParticipantesForm";
 import UsuariosForm from "../opciones/UsuariosForm";
 import OacDepartamento from "../departamentos/Oac";
 import DepartamentosForm from "../opciones/DepartamentosForm";
+import PaisesForm from "../opciones/PaisForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -86,6 +87,9 @@ export default function VistaUniversalUsuarios({ children }) {
 
     const permisos = {
       1: [
+        "paises",
+        "estados",
+        "municipios",
         "parroquias",
         "comunas",
         "consejos-comunales",
@@ -232,6 +236,20 @@ export default function VistaUniversalUsuarios({ children }) {
                 <>
                   {vista === "usuarios" && (
                     <UsuariosForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      usuarioActivo={usuarioActivo}
+                    />
+                  )}
+
+                  {vista === "paises" && (
+                    <PaisesForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

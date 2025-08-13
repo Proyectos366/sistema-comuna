@@ -7,6 +7,9 @@ import SelectOpcion from "../SelectOpcion";
 export default function FormCrearParroquia({
   nombre,
   setNombre,
+  descripcion,
+  setDescripcion,
+  serial, setSerial,
   abrirModal,
   limpiarCampos,
   validarNombre,
@@ -37,6 +40,7 @@ export default function FormCrearParroquia({
         opciones={paises}
         seleccione={"Seleccione"}
         setNombre={setNombrePais}
+        indice={1}
       />
 
       {idPais && (
@@ -64,16 +68,26 @@ export default function FormCrearParroquia({
       )}
 
       {idMunicipio && (
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+        <>
+          <LabelInput nombre={"Nombre"}>
+            <InputNombre
+              type="text"
+              indice="nombre"
+              value={nombre}
+              setValue={setNombre}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+            />
+          </LabelInput>
+
+          <LabelInput nombre={"Descripción"}>
+            <InputNombre
+              type="text"
+              value={descripcion}
+              setValue={setDescripcion}
+            />
+          </LabelInput>
+        </>
       )}
 
       <div className="flex space-x-3">
@@ -83,17 +97,18 @@ export default function FormCrearParroquia({
           nombre={"Crear"}
           campos={{
             nombre,
+            descripcion
           }}
         />
 
         <BotonAceptarCancelar
           indice={"limpiar"}
           aceptar={() => {
-            limpiarCampos({ setNombre });
+            limpiarCampos({ setNombre, setDescripcion });
           }}
           nombre={"Limpiar"}
           campos={{
-            nombre,
+            nombre, descripcion
           }}
         />
       </div>

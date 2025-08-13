@@ -26,6 +26,7 @@ export default function ParroquiasForm({
 }) {
   const [nombreParroquia, setNombreParroquia] = useState("");
   const [descripcionParroquia, setDescripcionParroquia] = useState("");
+  const [serialParroquia, setSerialParroquia] = useState("");
 
   const [todosPaises, setTodosPaises] = useState([]);
   const [todosEstados, setTodosEstados] = useState([]);
@@ -60,23 +61,6 @@ export default function ParroquiasForm({
 
     fetchDatosPaises();
   }, []);
-
-  /** 
-  useEffect(() => {
-      const fetchDatosParroquia = async () => {
-        try {
-          const response = await axios.get("/api/parroquias/todas-parroquias");
-          setTodasParroquias(response.data.parroquias || []);
-        } catch (error) {
-          console.log("Error al obtener las parroquias:", error);
-        } finally {
-          setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
-        }
-      };
-
-      fetchDatosParroquia();
-    }, []);
-  */
 
   useEffect(() => {
     if (!idPais) {
@@ -116,11 +100,19 @@ export default function ParroquiasForm({
     setTodasParroquias(municipioSeleccionado?.parroquias || []);
   }, [idMunicipio]);
 
+
+
+
+
+
   const crearParroquia = async () => {
     if (nombreParroquia.trim()) {
       try {
         const response = await axios.post("/api/parroquias/crear-parroquia", {
           nombre: nombreParroquia,
+          descripcion: descripcionParroquia,
+          serial: serialParroquia,
+          id_municipio: idMunicipio
         });
 
         setTodasParroquias((prev) =>
@@ -131,7 +123,10 @@ export default function ParroquiasForm({
 
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 5 segundos
+          { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setSerialParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
         console.log("Error, al crear parroquia: " + error);
@@ -142,6 +137,16 @@ export default function ParroquiasForm({
       }
     }
   };
+
+
+
+
+
+
+
+
+
+
 
   const editandoParroquia = async (datos) => {
     try {
@@ -198,6 +203,10 @@ export default function ParroquiasForm({
           <FormCrearParroquia
             nombre={nombreParroquia}
             setNombre={setNombreParroquia}
+            descripcion={descripcionParroquia}
+            setDescripcion={setDescripcionParroquia}
+            serial={serialParroquia}
+            setSerial={setSerialParroquia}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
             validarNombre={validarNombre}

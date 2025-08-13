@@ -29,7 +29,6 @@ export default async function validarCrearParroquia(nombre) {
     }
 
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
@@ -42,7 +41,7 @@ export default async function validarCrearParroquia(nombre) {
 
     const nombreRepetido = await prisma.parroquia.findFirst({
       where: {
-        nombre: nombre,
+        nombre: validarNombre.nombre,
       },
     });
 
@@ -58,7 +57,7 @@ export default async function validarCrearParroquia(nombre) {
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      nombre: nombreMinuscula,
+      nombre: validarNombre.nombre,
     });
   } catch (error) {
     console.log(`Error, interno al crear parroquia: ` + error);

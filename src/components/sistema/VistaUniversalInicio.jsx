@@ -54,8 +54,6 @@ export default function VistaUniversalInicio() {
   const pathname = usePathname();
 
   const userType = usuarioActivo?.id_rol;
-  // const idDepartamento = departamento?.id;
-  // const nombreDepartamento = departamento?.nombre;
 
   useEffect(() => {
     if (screenSize?.width > 640) {
@@ -86,6 +84,9 @@ export default function VistaUniversalInicio() {
         router.push("/dashboard/master", { shallow: true }); // Redirige a la principal
       }
     } else if (
+      subRuta === "paises" ||
+      subRuta === "estados" ||
+      subRuta === "municipios" ||
       subRuta === "parroquias" ||
       subRuta === "comunas" ||
       subRuta === "circuitos-comunales" ||
@@ -123,6 +124,9 @@ export default function VistaUniversalInicio() {
     // Define los permisos para cada tipo de usuario
     const permisos = {
       1: [
+        "paises",
+        "estados",
+        "municipios",
         "parroquias",
         "comunas",
         "consejos-comunales",
@@ -236,22 +240,6 @@ export default function VistaUniversalInicio() {
     // Actualizar la vista
     setVista(nuevaVista);
   };
-
-  // const clickFueraCierraMenu = (event) => {
-  //   if (
-  //     refMenuPerfil.current &&
-  //     !refMenuPerfil.current.contains(event.target)
-  //   ) {
-  //     setMenuOpcionesUsuario(false);
-  //   }
-
-  //   if (
-  //     refMenuNotificaciones.current &&
-  //     !refMenuNotificaciones.current.contains(event.target)
-  //   ) {
-  //     setMenuNotificaciones(false);
-  //   }
-  // };
 
   const abrirDashboar = () => {
     setAbrirPanel(!abrirPanel);

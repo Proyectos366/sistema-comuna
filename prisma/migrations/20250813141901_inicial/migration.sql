@@ -346,11 +346,13 @@ CREATE TABLE "formacion" (
     "descripcion" TEXT DEFAULT 'sin descripcion',
     "id_usuario" INTEGER NOT NULL,
     "id_departamento" INTEGER,
+    "id_institucion" INTEGER,
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "culminada" BOOLEAN NOT NULL DEFAULT false,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "formacion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "formacion_id_institucion_fkey" FOREIGN KEY ("id_institucion") REFERENCES "institucion" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "formacion_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 

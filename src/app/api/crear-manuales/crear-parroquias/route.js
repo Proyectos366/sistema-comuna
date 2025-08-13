@@ -5,32 +5,32 @@ export async function GET() {
   try {
     const parroquias = [
       {
-        nombre: "villa de cura",
-        serial: "ven-01-2025-est-04-mun-01-par-01",
+        nombre: "augusto mijares",
+        serial: "ven-01-01-01",
         id_municipio: 16,
         id_usuario: 1,
       },
       {
         nombre: "magdaleno",
-        serial: "ven-01-2025-est-04-mun-01-par-02",
-        id_municipio: 16,
-        id_usuario: 1,
-      },
-      {
-        nombre: "valle de tucutunemo",
-        serial: "ven-01-2025-est-04-mun-01-par-03",
+        serial: "ven-01-01-02",
         id_municipio: 16,
         id_usuario: 1,
       },
       {
         nombre: "san francisco",
-        serial: "ven-01-2025-est-04-mun-01-par-04",
+        serial: "ven-01-01-03",
         id_municipio: 16,
         id_usuario: 1,
       },
       {
-        nombre: "augusto mijares",
-        serial: "ven-01-2025-est-04-mun-01-par-05",
+        nombre: "valle de tucutunemo",
+        serial: "ven-01-01-04",
+        id_municipio: 16,
+        id_usuario: 1,
+      },
+      {
+        nombre: "villa de cura",
+        serial: "ven-01-01-05",
         id_municipio: 16,
         id_usuario: 1,
       },
