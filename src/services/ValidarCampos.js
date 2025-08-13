@@ -101,6 +101,29 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCampoCodigoPostal(codigoPostal) {
+    try {
+      if (!codigoPostal) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo codigo postal vacio..."
+        );
+      }
+
+      const textoLetrasMinusculas = codigoPostal.toLowerCase();
+
+      return retornarRespuestaFunciones("ok", "Campo valido...", {
+        codigoPostal: textoLetrasMinusculas,
+      });
+    } catch (error) {
+      console.log(`Error, interno validar campo codigo postal: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validar campo codigo postal..."
+      );
+    }
+  }
+
   static validarCampoNombreApellidoDos(nombre, opcion) {
     try {
       if (nombre && !nombreRegex.test(nombre)) {
@@ -620,6 +643,72 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCamposCrearPais(nombre, capital, descripcion, serial) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarCapital = this.validarCampoNombre(capital);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarSerial = this.validarCampoTexto(serial);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarCapital.status === "error") return validarCapital;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarSerial.status === "error") return validarSerial;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        capital: validarCapital.nombre,
+        descripcion: validarDescripcion.texto,
+        serial: validarSerial.texto,
+      });
+    } catch (error) {
+      console.log(`Error interno crear pais: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno crear pais");
+    }
+  }
+
+  static validarCamposCrearEstado(
+    nombre,
+    capital,
+    codigoPostal,
+    descripcion,
+    id_pais
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarCapital = this.validarCampoNombre(capital);
+      const validarCodigoPostal = this.validarCampoCodigoPostal(codigoPostal);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarCapital.status === "error") return validarCapital;
+      if (validarCodigoPostal.status === "error") return validarCodigoPostal;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        capital: validarCapital.nombre,
+        codigoPostal: validarCodigoPostal.codigoPostal,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+      });
+    } catch (error) {
+      console.log(`Error interno crear estado: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno crear estado");
+    }
+  }
+
+
+
+
+
+
+
+
+
+  
   static validarCamposCrearInstitucion(
     nombre,
     descripcion,
@@ -936,6 +1025,33 @@ export default class ValidarCampos {
     } catch (error) {
       console.log(`Error interno crear cargo: ` + error);
       return retornarRespuestaFunciones("error", "Error interno crear cargo");
+    }
+  }
+
+  static validarCamposEditarPais(nombre, capital, descripcion, id_pais) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarCapital = this.validarCampoNombre(capital);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarCapital.status === "error") return validarCapital;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        capital: validarCapital.nombre,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos pais editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos pais editar..."
+      );
     }
   }
 

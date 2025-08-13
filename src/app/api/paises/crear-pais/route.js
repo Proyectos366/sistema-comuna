@@ -1,21 +1,26 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearParroquia from "@/services/parroquias/validarCrearParroquia";
 import registrarEventoSeguro from "@/libs/trigget";
+import validarCrearPais from "@/services/paises/validarCrearPais";
 
 export async function POST(request) {
   try {
-    const { nombre } = await request.json();
+    const { nombre, capital, descripcion, serial } = await request.json();
 
-    const validaciones = await validarCrearParroquia(nombre);
+    const validaciones = await validarCrearPais(
+      nombre,
+      capital,
+      descripcion,
+      serial
+    );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "INTENTO_FALLIDO_PARROQUIA",
+        tabla: "pais",
+        accion: "INTENTO_FALLIDO_PAIS",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario ?? 0,
-        descripcion: "Validacion fallida al intentar crear parroquia",
+        descripcion: "Validacion fallida al intentar crear pais",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -28,64 +33,61 @@ export async function POST(request) {
       );
     }
 
-    const nuevaParroquia = await prisma.parroquia.create({
+    const nuevoPais = await prisma.pais.create({
       data: {
         nombre: validaciones.nombre,
+        capital: validaciones.capital,
+        descripcion: validaciones.descripcion,
+        serial: validaciones.serial,
         id_usuario: validaciones.id_usuario,
-        borrado: false,
       },
     });
 
-    if (!nuevaParroquia) {
+    if (!nuevoPais) {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "ERROR_CREAR_PARROQUIA",
+        tabla: "pais",
+        accion: "ERROR_CREAR_PAIS",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo crear la parroquia",
+        descripcion: "No se pudo crear el pais",
         datosAntes: null,
-        datosDespues: nuevaParroquia,
+        datosDespues: nuevoPais,
       });
 
-      return generarRespuesta(
-        "error",
-        "Error, no se creo la parroquia",
-        {},
-        400
-      );
+      return generarRespuesta("error", "Error, no se creo el pais", {}, 400);
     } else {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "CREAR_PARROQUIA",
-        id_objeto: nuevaParroquia.id,
+        tabla: "pais",
+        accion: "CREAR_PAIS",
+        id_objeto: nuevoPais.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: "Parroquia creada con exito",
+        descripcion: "Pais creado con exito",
         datosAntes: null,
-        datosDespues: nuevaParroquia,
+        datosDespues: nuevoPais,
       });
 
       return generarRespuesta(
         "ok",
-        "Parroquia creada...",
+        "Pais creado...",
         {
-          parroquia: nuevaParroquia,
+          paises: nuevoPais,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (parroquias): ` + error);
+    console.log(`Error interno (pais): ` + error);
 
     await registrarEventoSeguro(request, {
-      tabla: "parroquia",
+      tabla: "pais",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al crear parroquia",
+      descripcion: "Error inesperado al crear pais",
       datosAntes: null,
       datosDespues: error.message,
     });
 
-    return generarRespuesta("error", "Error, interno (parroquias)", {}, 500);
+    return generarRespuesta("error", "Error, interno (pais)", {}, 500);
   }
 }

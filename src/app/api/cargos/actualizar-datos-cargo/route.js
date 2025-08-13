@@ -72,7 +72,7 @@ export async function POST(request) {
         accion: "UPDATE_CARGO",
         id_objeto: cargoActualizado[0]?.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: `Cargo actualizado con exito id: ${validaciones.id_formacion}`,
+        descripcion: `Cargo actualizado con exito id: ${validaciones.id_cargo}`,
         datosAntes: {
           nombre: nombre,
           descripcion: descripcion,

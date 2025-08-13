@@ -1,21 +1,28 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearParroquia from "@/services/parroquias/validarCrearParroquia";
 import registrarEventoSeguro from "@/libs/trigget";
+import validarCrearEstado from "@/services/estados/validarCrearEstado";
 
 export async function POST(request) {
   try {
-    const { nombre } = await request.json();
+    const { nombre, capital, codigoPostal, descripcion, id_pais } =
+      await request.json();
 
-    const validaciones = await validarCrearParroquia(nombre);
+    const validaciones = await validarCrearEstado(
+      nombre,
+      capital,
+      codigoPostal,
+      descripcion,
+      id_pais
+    );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "INTENTO_FALLIDO_PARROQUIA",
+        tabla: "estado",
+        accion: "INTENTO_FALLIDO_ESTADO",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario ?? 0,
-        descripcion: "Validacion fallida al intentar crear parroquia",
+        descripcion: "Validacion fallida al intentar crear el estado",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -28,64 +35,68 @@ export async function POST(request) {
       );
     }
 
-    const nuevaParroquia = await prisma.parroquia.create({
+    const nuevoEstado = await prisma.estado.create({
       data: {
         nombre: validaciones.nombre,
+        capital: validaciones.capital,
+        cod_postal: validaciones.codigoPostal,
+        descripcion: validaciones.descripcion,
+        serial: validaciones.serial,
         id_usuario: validaciones.id_usuario,
-        borrado: false,
+        id_pais: validaciones.id_pais,
       },
     });
 
-    if (!nuevaParroquia) {
+    const todosPaises = await prisma.pais.findMany({
+      where: { borrado: false },
+    });
+
+    if (!nuevoEstado) {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "ERROR_CREAR_PARROQUIA",
+        tabla: "estado",
+        accion: "ERROR_CREAR_ESTADO",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo crear la parroquia",
+        descripcion: "No se pudo crear el estado",
         datosAntes: null,
-        datosDespues: nuevaParroquia,
+        datosDespues: nuevoEstado,
       });
 
-      return generarRespuesta(
-        "error",
-        "Error, no se creo la parroquia",
-        {},
-        400
-      );
+      return generarRespuesta("error", "Error, no se creo el estado", {}, 400);
     } else {
       await registrarEventoSeguro(request, {
-        tabla: "parroquia",
-        accion: "CREAR_PARROQUIA",
-        id_objeto: nuevaParroquia.id,
+        tabla: "estado",
+        accion: "CREAR_ESTADO",
+        id_objeto: nuevoEstado.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: "Parroquia creada con exito",
+        descripcion: "Estado creado con exito",
         datosAntes: null,
-        datosDespues: nuevaParroquia,
+        datosDespues: nuevoEstado,
       });
 
       return generarRespuesta(
         "ok",
-        "Parroquia creada...",
+        "Estado creado...",
         {
-          parroquia: nuevaParroquia,
+          estados: nuevoEstado,
+          paises: todosPaises,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (parroquias): ` + error);
+    console.log(`Error interno (estados): ` + error);
 
     await registrarEventoSeguro(request, {
-      tabla: "parroquia",
+      tabla: "estado",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al crear parroquia",
+      descripcion: "Error inesperado al crear estado",
       datosAntes: null,
       datosDespues: error.message,
     });
 
-    return generarRespuesta("error", "Error, interno (parroquias)", {}, 500);
+    return generarRespuesta("error", "Error, interno (estados)", {}, 500);
   }
 }

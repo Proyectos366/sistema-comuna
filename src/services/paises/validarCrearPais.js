@@ -5,7 +5,12 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 
-export default async function validarCrearEstado(nombre) {
+export default async function validarCrearPais(
+  nombre,
+  capital,
+  descripcion,
+  serial
+) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -19,52 +24,58 @@ export default async function validarCrearEstado(nombre) {
       );
     }
 
-    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
-
-    if (validarNombre.status === "error") {
-      return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
-      );
-    }
-
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: { id: true },
     });
 
-    /** Si en algun momento este sistema crece y se va a compartir por estado se debe
-      cambiar la consulta para comprobar si existe un nombre de parroquia en el mismo
-      municipio */
-
-    const nombreRepetido = await prisma.parroquia.findFirst({
-      where: {
-        nombre: nombre,
-      },
-    });
-
-    if (nombreRepetido) {
+    if (descifrarToken.id_rol !== 1) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, parroquia ya existe...",
+        "Error, usuario no tiene permisos...",
         {
-          id_usuario: datosUsuario.id,
+          correo: datosUsuario.id,
         }
       );
     }
 
+    const validarCampos = ValidarCampos.validarCamposCrearPais(
+      nombre,
+      capital,
+      descripcion,
+      serial
+    );
+
+    if (validarCampos.status === "error") {
+      return retornarRespuestaFunciones(
+        validarCampos.status,
+        validarCampos.message
+      );
+    }
+
+    const nombreRepetido = await prisma.pais.findFirst({
+      where: {
+        nombre: validarCampos.nombre,
+      },
+    });
+
+    if (nombreRepetido) {
+      return retornarRespuestaFunciones("error", "Error, pais ya existe...", {
+        id_usuario: datosUsuario.id,
+      });
+    }
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      nombre: nombreMinuscula,
+      nombre: validarCampos.nombre,
+      capital: validarCampos.capital,
+      descripcion: validarCampos.descripcion,
+      serial: validarCampos.serial,
     });
   } catch (error) {
-    console.log(`Error, interno al crear parroquia: ` + error);
-    return retornarRespuestaFunciones(
-      "error",
-      "Error, interno al crear parroquia"
-    );
+    console.log(`Error, interno al crear pais: ` + error);
+    return retornarRespuestaFunciones("error", "Error, interno al crear pais");
   }
 }

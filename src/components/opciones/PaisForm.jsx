@@ -9,11 +9,11 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormCrearPais from "../formularios/FormCrearPais";
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarPais from "../formularios/FormEditarPais";
+import ListadoPaises from "../listados/ListadoPaises";
 
 export default function PaisesForm({
   mostrar,
@@ -58,6 +58,7 @@ export default function PaisesForm({
   useEffect(() => {
     if (accion === "editar" && !mostrar) {
       setAccion("");
+      setIdPais("");
       setNombrePais("");
       setCapitalPais("");
       setDescripcionPais("");
@@ -128,6 +129,7 @@ export default function PaisesForm({
           nombre: nombrePais.trim(),
           capital: capitalPais,
           descripcion: descripcionPais,
+          id_pais: idPais,
         };
 
         const response = await axios.post(
@@ -150,6 +152,7 @@ export default function PaisesForm({
           { accion: () => setNombrePais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCapitalPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
@@ -161,6 +164,7 @@ export default function PaisesForm({
           { accion: () => setNombrePais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCapitalPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       }
     } else {
@@ -247,7 +251,7 @@ export default function PaisesForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoPaises
             isLoading={isLoading}
             listado={todosPaises}
             nombreListado="Paises"

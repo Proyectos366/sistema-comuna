@@ -7,12 +7,15 @@ import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";
 import InputNombre from "../inputs/InputNombre";
+import SelectOpcion from "../SelectOpcion";
 
-export default function FormEditarPais({
+export default function FormEditarEstado({
   nombre,
   setNombre,
   capital,
   setCapital,
+  codigoPostal,
+  setCodigoPostal,
   descripcion,
   setDescripcion,
   validarNombre,
@@ -23,6 +26,9 @@ export default function FormEditarPais({
   mostrarMensaje,
   editar,
   mensaje,
+  cambiarSeleccionPais,
+  paises,
+  setNombrePais,
 }) {
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
@@ -59,6 +65,14 @@ export default function FormEditarPais({
             setValue={setCapital}
             validarNombre={validarCapital}
             setValidarNombre={setValidarCapital}
+          />
+        </LabelInput>
+
+        <LabelInput nombre={"Código postal"}>
+          <Input
+            type={"text"}
+            value={codigoPostal}
+            onChange={(e) => setCodigoPostal(e.target.value)}
           />
         </LabelInput>
 

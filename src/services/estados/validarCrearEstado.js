@@ -5,7 +5,13 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 
-export default async function validarCrearEstado(nombre) {
+export default async function validarCrearEstado(
+  nombre,
+  capital,
+  codigoPostal,
+  descripcion,
+  id_pais
+) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(nombreToken)?.value;
@@ -19,52 +25,65 @@ export default async function validarCrearEstado(nombre) {
       );
     }
 
-    const validarNombre = ValidarCampos.validarCampoNombre(nombre);
+    const validarCampos = ValidarCampos.validarCamposCrearEstado(
+      nombre,
+      capital,
+      codigoPostal,
+      descripcion,
+      id_pais
+    );
 
-    if (validarNombre.status === "error") {
+    if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message
+        validarCampos.status,
+        validarCampos.message
       );
     }
 
     const correo = descifrarToken.correo;
-    const nombreMinuscula = nombre.toLowerCase();
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: { id: true },
     });
 
-    /** Si en algun momento este sistema crece y se va a compartir por estado se debe
-      cambiar la consulta para comprobar si existe un nombre de parroquia en el mismo
-      municipio */
+    const datosPais = await prisma.pais.findFirst({
+      where: { id: validarCampos.id_pais },
+      select: { serial: true, estados: true },
+    });
 
-    const nombreRepetido = await prisma.parroquia.findFirst({
+    const nombreRepetido = await prisma.estado.findFirst({
       where: {
-        nombre: nombre,
+        nombre: validarCampos.nombre,
+        id_pais: validarCampos.id_pais,
       },
     });
 
     if (nombreRepetido) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, parroquia ya existe...",
-        {
-          id_usuario: datosUsuario.id,
-        }
-      );
+      return retornarRespuestaFunciones("error", "Error, estado ya existe...", {
+        id_usuario: datosUsuario.id,
+      });
     }
+
+    const cantidadEstados = datosPais.estados.length + 1;
+    const numeroFormateado =
+      cantidadEstados < 10 ? `0${cantidadEstados}` : `${cantidadEstados}`;
+    const serialEstado = `${datosPais.serial}-${numeroFormateado}`;
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
-      nombre: nombreMinuscula,
+      nombre: validarCampos.nombre,
+      capital: validarCampos.capital,
+      codigoPostal: validarCampos.codigoPostal,
+      descripcion: validarCampos.descripcion,
+      serial: serialEstado,
+      id_pais: validarCampos.id_pais,
     });
   } catch (error) {
-    console.log(`Error, interno al crear parroquia: ` + error);
+    console.log(`Error, interno al crear estado: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear parroquia"
+      "Error, interno al crear estado"
     );
   }
 }
