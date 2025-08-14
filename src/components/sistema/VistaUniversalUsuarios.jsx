@@ -23,6 +23,7 @@ import DepartamentosForm from "../opciones/DepartamentosForm";
 import PaisesForm from "../opciones/PaisForm";
 import EstadosForm from "../opciones/EstadoForm";
 import MunicipiosForm from "../opciones/MunicipioForm";
+import InstitucionesForm from "../opciones/InstitucionesForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -93,6 +94,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "estados",
         "municipios",
         "parroquias",
+        "instituciones",
         "comunas",
         "consejos-comunales",
         "usuarios",
@@ -292,8 +294,8 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-                  {vista === "departamentos" && (
-                    <DepartamentosForm
+                  {vista === "parroquias" && (
+                    <ParroquiasForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}
@@ -306,8 +308,22 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-                  {vista === "parroquias" && (
-                    <ParroquiasForm
+                  {vista === "instituciones" && (
+                    <InstitucionesForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      usuarioActivo={usuarioActivo}
+                    />
+                  )}
+
+                  {vista === "departamentos" && (
+                    <DepartamentosForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

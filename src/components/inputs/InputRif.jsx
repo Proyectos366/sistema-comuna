@@ -23,15 +23,19 @@ export default function InputRif({
   titulo,
 }) {
   // Elimina guiones y letras para validar
-  const limpiarRif = (valor) =>
-    valor.replace(/[^0-9]/g, "").slice(0, 9); // 8 dígitos + verificador
+  const limpiarRif = (valor) => {
+    const letra = valor.charAt(0).toUpperCase();
+    const numeros = valor.replace(/\D/g, "").slice(0, 9);
+    return `${letra}${numeros}`;
+  };
 
   // Formatea el RIF con guiones y letra inicial
   const formatearRif = (valor) => {
+    const letra = valor.charAt(0).toUpperCase(); // Conserva la letra inicial
     const soloNumeros = valor.replace(/\D/g, "");
     const cuerpo = soloNumeros.slice(0, 8);
     const verificador = soloNumeros.slice(8, 9);
-    return `J-${cuerpo}-${verificador}`; // Puedes ajustar la letra según el tipo
+    return `${letra}-${cuerpo}-${verificador}`;
   };
 
   const leyendoInput = (e) => {
@@ -66,7 +70,7 @@ export default function InputRif({
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder ? placeholder : "inserte RIF"}
+        placeholder={placeholder ? placeholder : "X-01234567-0"}
         autoComplete={autoComplete}
         readOnly={readOnly}
         ref={ref}

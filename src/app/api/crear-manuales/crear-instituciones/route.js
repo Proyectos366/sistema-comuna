@@ -14,7 +14,6 @@ export async function GET() {
         id_pais: 1,
         id_estado: 4,
         id_municipio: 16,
-        id_parroquia: 1,
       },
     ];
 

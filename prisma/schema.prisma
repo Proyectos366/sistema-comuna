@@ -170,7 +170,6 @@ model parroquia {
   miembros usuario[] @relation("MiembrosParroquias")
 
   municipios    municipio     @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
-  instituciones institucion[]
   comunas       comuna[]      @relation("ComunaParroquia")
   circuitos     circuito[]    @relation("CircuitoParroquia")
   consejos      consejo[]     @relation("ConsejoParroquia")
@@ -189,7 +188,6 @@ model institucion {
   id_pais      Int
   id_estado    Int
   id_municipio Int
-  id_parroquia Int
   updatedAt    DateTime @default(now())
   createdAt    DateTime @default(now())
 
@@ -200,7 +198,6 @@ model institucion {
   paises        pais           @relation(fields: [id_pais], references: [id])
   estados       estado         @relation(fields: [id_estado], references: [id])
   municipios    municipio      @relation(fields: [id_municipio], references: [id])
-  parroquias    parroquia      @relation(fields: [id_parroquia], references: [id])
   departamentos departamento[]
   formaciones   formacion[]    @relation(name: "FormacionInstitucion")
 }

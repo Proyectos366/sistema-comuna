@@ -9,12 +9,10 @@ export async function POST(request) {
       nombre,
       descripcion,
       rif,
-      pais,
-      estado,
-      municipio,
-      parroquia,
       sector,
       direccion,
+      id_pais,
+      id_estado,
       id_municipio,
     } = await request.json();
 
@@ -22,12 +20,10 @@ export async function POST(request) {
       nombre,
       descripcion,
       rif,
-      pais,
-      estado,
-      municipio,
-      parroquia,
       sector,
       direccion,
+      id_pais,
+      id_estado,
       id_municipio
     );
 
@@ -36,8 +32,8 @@ export async function POST(request) {
         tabla: "institucion",
         accion: "INTENTO_FALLIDO_INSTITUCION",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Validacion fallida al intentar crear una institucion",
+        id_usuario: validaciones.id_usuario ?? 0,
+        descripcion: "Validacion fallida al intentar crear institucion",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -55,14 +51,30 @@ export async function POST(request) {
         nombre: validaciones.nombre,
         descripcion: validaciones.descripcion,
         rif: validaciones.rif,
-        pais: validaciones.pais,
-        estado: validaciones.estado,
-        municipio: validaciones.municipio,
-        parroquia: validaciones.parroquia,
         sector: validaciones.sector,
         direccion: validaciones.direccion,
-        id_usuario: validaciones.id_usuario,
+        id_pais: validaciones.id_pais,
+        id_estado: validaciones.id_estado,
         id_municipio: validaciones.id_municipio,
+        id_usuario: validaciones.id_usuario,
+      },
+    });
+
+    const todosPaises = await prisma.pais.findMany({
+      where: {
+        borrado: false,
+      },
+      include: {
+        estados: {
+          include: {
+            municipios: {
+              include: {
+                parroquias: true,
+                instituciones: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -79,7 +91,7 @@ export async function POST(request) {
 
       return generarRespuesta(
         "error",
-        "Error, no se creo la institucion...",
+        "Error, no se creo la institucion",
         {},
         400
       );
@@ -96,9 +108,10 @@ export async function POST(request) {
 
       return generarRespuesta(
         "ok",
-        "Institucion creada...",
+        "Institución creada...",
         {
-          institucion: nuevaInstitucion,
+          instituciones: nuevaInstitucion,
+          paises: todosPaises,
         },
         201
       );
@@ -111,7 +124,7 @@ export async function POST(request) {
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al crear la institucion",
+      descripcion: "Error inesperado al crear institucion",
       datosAntes: null,
       datosDespues: error.message,
     });

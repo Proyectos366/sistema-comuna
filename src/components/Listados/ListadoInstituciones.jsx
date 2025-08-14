@@ -1,7 +1,7 @@
 import BotonEditar from "../botones/BotonEditar";
 import Titulos from "../Titulos";
 
-export default function ListadoDepartamentos({
+export default function ListadoInstituciones({
   isLoading,
   listado,
   nombreListado,
@@ -34,10 +34,7 @@ export default function ListadoDepartamentos({
                 </div>
 
                 {typeof editando === "function" &&
-                  (usuarioActivo.MiembrosInstitucion?.[0]?.id ===
-                    lista.id_institucion ||
-                    usuarioActivo.id_rol === 1 ||
-                    usuarioActivo.id_rol === 2) && (
+                  usuarioActivo.id_rol === 1 && (
                     <div>
                       <BotonEditar editar={() => editando(lista)} />
                     </div>

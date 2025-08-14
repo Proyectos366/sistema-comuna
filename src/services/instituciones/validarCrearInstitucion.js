@@ -9,12 +9,10 @@ export default async function validarCrearInstitucion(
   nombre,
   descripcion,
   rif,
-  pais,
-  estado,
-  municipio,
-  parroquia,
   sector,
   direccion,
+  id_pais,
+  id_estado,
   id_municipio
 ) {
   try {
@@ -30,16 +28,16 @@ export default async function validarCrearInstitucion(
       );
     }
 
+    const correo = descifrarToken.correo;
+
     const validarCampos = ValidarCampos.validarCamposCrearInstitucion(
       nombre,
       descripcion,
       rif,
-      pais,
-      estado,
-      municipio,
-      parroquia,
       sector,
       direccion,
+      id_pais,
+      id_estado,
       id_municipio
     );
 
@@ -50,15 +48,6 @@ export default async function validarCrearInstitucion(
       );
     }
 
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: descifrarToken.correo },
-      select: { id: true },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario no existe...");
-    }
-
     if (descifrarToken.id_rol !== 1) {
       return retornarRespuestaFunciones(
         "error",
@@ -66,16 +55,24 @@ export default async function validarCrearInstitucion(
       );
     }
 
+    const datosUsuario = await prisma.usuario.findFirst({
+      where: { correo: correo },
+      select: { id: true },
+    });
+
     const nombreRepetido = await prisma.institucion.findFirst({
       where: {
-        rif: validarCampos.rif,
+        nombre: validarCampos.nombre,
+        id_pais: validarCampos.id_pais,
+        id_estado: validarCampos.id_estado,
+        id_municipio: validarCampos.id_municipio,
       },
     });
 
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, institucion ya existe...",
+        "Error, institución ya existe...",
         {
           id_usuario: datosUsuario.id,
         }
@@ -86,20 +83,18 @@ export default async function validarCrearInstitucion(
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       rif: validarCampos.rif,
-      pais: validarCampos.pais,
-      estado: validarCampos.estado,
-      municipio: validarCampos.municipio,
-      parroquia: validarCampos.parroquia,
       sector: validarCampos.sector,
       direccion: validarCampos.direccion,
-      id_municipio: validarCampos.id_municipio,
       id_usuario: datosUsuario.id,
+      id_pais: validarCampos.id_pais,
+      id_estado: validarCampos.id_estado,
+      id_municipio: validarCampos.id_municipio,
     });
   } catch (error) {
-    console.log(`Error, interno al crear institucion: ` + error);
+    console.log(`Error, interno al crear institución: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear institucion"
+      "Error, interno al crear institución"
     );
   }
 }

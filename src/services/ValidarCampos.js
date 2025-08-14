@@ -767,48 +767,41 @@ export default class ValidarCampos {
     nombre,
     descripcion,
     rif,
-    pais,
-    estado,
-    municipio,
-    parroquia,
     sector,
     direccion,
-    id_municipio
+    id_pais,
+    id_estado,
+    id_municipio,
   ) {
     try {
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarRif = this.validarCampoRif(rif);
-      const validarPais = this.validarCampoTexto(pais);
-      const validarEstado = this.validarCampoTexto(estado);
-      const validarMunicipio = this.validarCampoTexto(municipio);
-      const validarParroquia = this.validarCampoTexto(parroquia);
       const validarSector = this.validarCampoTexto(sector);
       const validarDireccion = this.validarCampoTexto(direccion);
-      const validarIdParroquia = this.validarCampoId(id_municipio);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+      const validarIdMunicipio = this.validarCampoId(id_municipio);
 
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarRif.status === "error") return validarRif;
-      if (validarPais.status === "error") return validarPais;
-      if (validarEstado.status === "error") return validarEstado;
-      if (validarMunicipio.status === "error") return validarMunicipio;
-      if (validarParroquia.status === "error") return validarParroquia;
       if (validarSector.status === "error") return validarSector;
       if (validarDireccion.status === "error") return validarDireccion;
-      if (validarIdParroquia.status === "error") return validarIdParroquia;
+
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+      if (validarIdMunicipio.status === "error") return validarIdMunicipio;
 
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
         rif: validarRif.rif,
-        pais: validarPais.texto,
-        estado: validarEstado.texto,
-        municipio: validarMunicipio.texto,
-        parroquia: validarParroquia.texto,
         sector: validarSector.texto,
         direccion: validarDireccion.texto,
-        id_municipio: validarIdParroquia.id,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+        id_municipio: validarIdMunicipio.id,
       });
     } catch (error) {
       console.log(`Error, interno validando campos institucion: ` + error);
@@ -822,10 +815,7 @@ export default class ValidarCampos {
 
 
 
-
-
-
-
+  
 
   static validarCamposCrearDepartamento(nombre, descripcion) {
     try {
@@ -1198,7 +1188,8 @@ export default class ValidarCampos {
     descripcion,
     id_pais,
     id_estado,
-    id_municipio, id_parroquia
+    id_municipio,
+    id_parroquia
   ) {
     try {
       const validarNombre = this.validarCampoNombre(nombre);

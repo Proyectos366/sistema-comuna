@@ -88,6 +88,7 @@ export default function VistaUniversalInicio() {
       subRuta === "estados" ||
       subRuta === "municipios" ||
       subRuta === "parroquias" ||
+      subRuta === "instituciones" ||
       subRuta === "comunas" ||
       subRuta === "circuitos-comunales" ||
       subRuta === "usuarios" ||
@@ -128,6 +129,7 @@ export default function VistaUniversalInicio() {
         "estados",
         "municipios",
         "parroquias",
+        "instituciones",
         "comunas",
         "consejos-comunales",
         "usuarios",

@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearParroquia from "../formularios/FormCrearParroquia";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarParroquia from "../formularios/FormEditarParroquia";
+import ListadoPaises from "../listados/ListadoPaises";
 
 export default function ParroquiasForm({
   mostrar,
@@ -256,6 +256,7 @@ export default function ParroquiasForm({
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
           <BotonesModal
             aceptar={crearParroquia}
             cancelar={cerrarModal}
@@ -302,7 +303,7 @@ export default function ParroquiasForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoPaises
             isLoading={isLoading}
             listado={todasParroquias}
             nombreListado="Parroquias"

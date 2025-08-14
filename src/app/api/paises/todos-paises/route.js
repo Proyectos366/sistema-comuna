@@ -25,6 +25,7 @@ export async function GET() {
             municipios: {
               include: {
                 parroquias: true,
+                instituciones: true,
               },
             },
           },
