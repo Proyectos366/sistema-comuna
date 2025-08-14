@@ -5,9 +5,16 @@ import registrarEventoSeguro from "@/libs/trigget";
 
 export async function POST(request) {
   try {
-    const { nombre } = await request.json();
+    const { nombre, descripcion, id_pais, id_estado, id_municipio } =
+      await request.json();
 
-    const validaciones = await validarCrearParroquia(nombre);
+    const validaciones = await validarCrearParroquia(
+      nombre,
+      descripcion,
+      id_pais,
+      id_estado,
+      id_municipio
+    );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
@@ -31,8 +38,27 @@ export async function POST(request) {
     const nuevaParroquia = await prisma.parroquia.create({
       data: {
         nombre: validaciones.nombre,
+        descripcion: validaciones.descripcion,
+        serial: validaciones.serial,
+        id_municipio: validaciones.id_municipio,
         id_usuario: validaciones.id_usuario,
+      },
+    });
+
+    const todosPaises = await prisma.pais.findMany({
+      where: {
         borrado: false,
+      },
+      include: {
+        estados: {
+          include: {
+            municipios: {
+              include: {
+                parroquias: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -68,7 +94,8 @@ export async function POST(request) {
         "ok",
         "Parroquia creada...",
         {
-          parroquia: nuevaParroquia,
+          parroquias: nuevaParroquia,
+          paises: todosPaises,
         },
         201
       );

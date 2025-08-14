@@ -9,13 +9,13 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import FormCrearParroquia from "../formularios/FormCrearParroquia";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import ModalEditar from "../modales/ModalEditar";
-import FormEditarParroquia from "../formularios/FormEditarParroquia";
+import ListadoPaises from "../listados/ListadoPaises";
+import FormEditarMunicipio from "../formularios/FormEditarMunicipio";
+import FormCrearMunicipio from "../formularios/FormCrearMunicipio";
 
-export default function ParroquiasForm({
+export default function MunicipiosForm({
   mostrar,
   abrirModal,
   cerrarModal,
@@ -26,27 +26,23 @@ export default function ParroquiasForm({
   ejecutarAccionesConRetraso,
   usuarioActivo,
 }) {
-  const [nombreParroquia, setNombreParroquia] = useState("");
-  const [descripcionParroquia, setDescripcionParroquia] = useState("");
+  const [nombreMunicipio, setNombreMunicipio] = useState("");
+  const [descripcionMunicipio, setDescripcionMunicipio] = useState("");
 
   const [todosPaises, setTodosPaises] = useState([]);
   const [todosEstados, setTodosEstados] = useState([]);
   const [todosMunicipios, setTodosMunicipios] = useState([]);
-  const [todasParroquias, setTodasParroquias] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
-
-  const [validarNombreParroquia, setValidarNombreParroquia] = useState(false);
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
   const [idMunicipio, setIdMunicipio] = useState("");
-  const [idParroquia, setIdParroquia] = useState("");
+  const [accion, setAccion] = useState("");
+
+  const [validarNombreMunicipio, setValidarNombreMunicipio] = useState("");
 
   const [nombrePais, setNombrePais] = useState("");
   const [nombreEstado, setNombreEstado] = useState("");
-  const [nombreMunicipio, setNombreMunicipio] = useState("");
-
-  const [accion, setAccion] = useState("");
 
   useEffect(() => {
     const fetchDatosPaises = async () => {
@@ -72,8 +68,6 @@ export default function ParroquiasForm({
     const paisSeleccionado = todosPaises.find((p) => p.id === parseInt(idPais));
     setTodosEstados(paisSeleccionado?.estados || []);
     setIdEstado(""); // Reiniciar selección
-    setTodosMunicipios([]);
-    setIdMunicipio("");
   }, [idPais]);
 
   useEffect(() => {
@@ -90,54 +84,21 @@ export default function ParroquiasForm({
   }, [idEstado]);
 
   useEffect(() => {
+    if (accion === "editar" && !mostrar) {
+      setAccion("");
+      setIdMunicipio("");
+      setNombreMunicipio("");
+      setDescripcionMunicipio("");
+    }
+  }, [accion, mostrar]);
+
+  useEffect(() => {
     if (!idMunicipio) {
-      setTodasParroquias([]);
+      setNombreMunicipio("");
+      setDescripcionMunicipio("");
       return;
     }
-
-    const municipioSeleccionado = todosMunicipios.find(
-      (p) => p.id === parseInt(idMunicipio)
-    );
-    setTodasParroquias(municipioSeleccionado?.parroquias || []);
   }, [idMunicipio]);
-
-  const crearParroquia = async () => {
-    if (nombreParroquia.trim()) {
-      try {
-        const response = await axios.post("/api/parroquias/crear-parroquia", {
-          nombre: nombreParroquia,
-          descripcion: descripcionParroquia,
-          id_pais: idPais,
-          id_estado: idEstado,
-          id_municipio: idMunicipio,
-        });
-
-        setTodosPaises((prev) =>
-          prev ? [...prev, response.data.paises] : [response.data.paises]
-        );
-
-        setTodasParroquias((prev) =>
-          prev
-            ? [...prev, response.data.parroquias]
-            : [response.data.parroquias]
-        );
-
-        abrirMensaje(response.data.message);
-
-        ejecutarAccionesConRetraso([
-          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setDescripcionParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-        ]);
-      } catch (error) {
-        console.log("Error, al crear parroquia: " + error);
-        abrirMensaje(error?.response?.data?.message);
-        ejecutarAccionesConRetraso([
-          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-        ]);
-      }
-    }
-  };
 
   const cambiarSeleccionPais = (e) => {
     setIdPais(e.target.value);
@@ -147,47 +108,83 @@ export default function ParroquiasForm({
     setIdEstado(e.target.value);
   };
 
-  const cambiarSeleccionMunicipio = (e) => {
-    setIdMunicipio(e.target.value);
-  };
+  const crearMunicipio = async () => {
+    if (nombreMunicipio.trim()) {
+      try {
+        const response = await axios.post("/api/municipios/crear-municipio", {
+          nombre: nombreMunicipio,
+          descripcion: descripcionMunicipio,
+          id_pais: idPais,
+          id_estado: idEstado,
+        });
 
-  const editandoParroquia = async (datos) => {
-    try {
-      setAccion("editar");
-      setIdParroquia(datos.id);
-      setNombreParroquia(datos.nombre);
-      setDescripcionParroquia(datos.descripcion);
+        setTodosPaises((prev) =>
+          prev ? [...prev, response.data.paises] : [response.data.paises]
+        );
 
-      abrirModal();
-    } catch (error) {
-      console.log("Error, editando parroquia: " + error);
+        setTodosEstados((prev) =>
+          prev ? [...prev, response.data.estados] : [response.data.estados]
+        );
+
+        setTodosMunicipios((prev) =>
+          prev
+            ? [...prev, response.data.municipios]
+            : [response.data.municipios]
+        );
+
+        abrirMensaje(response.data.message);
+
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos.0
+        ]);
+      } catch (error) {
+        console.log("Error, al crear municipio: " + error);
+        abrirMensaje(error?.response?.data?.message);
+        ejecutarAccionesConRetraso([
+          { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        ]);
+      }
     }
   };
 
-  const editarParroquia = async () => {
-    if (nombreParroquia.trim()) {
+  const editandoMunicipio = async (datos) => {
+    try {
+      setAccion("editar");
+      setIdMunicipio(datos.id);
+      setNombreMunicipio(datos.nombre);
+      setDescripcionMunicipio(datos.descripcion);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, editando municipio: " + error);
+    }
+  };
+
+  const editarMunicipio = async () => {
+    if (nombreMunicipio.trim()) {
       try {
         const data = {
-          nombre: nombreParroquia.trim(),
-          descripcion: descripcionParroquia,
+          nombre: nombreMunicipio.trim(),
+          descripcion: descripcionMunicipio,
           id_pais: idPais,
           id_estado: idEstado,
           id_municipio: idMunicipio,
-          id_parroquia: idParroquia,
         };
 
         const response = await axios.post(
-          "/api/parroquias/actualizar-datos-parroquia",
+          "/api/municipios/actualizar-datos-municipio",
           data
         );
 
         setTodosPaises(response.data.paises);
 
-        setTodasParroquias((prevParroquias) =>
-          prevParroquias.map((parroquias) =>
-            parroquias.id === response.data.parroquias.id
-              ? response.data.parroquias
-              : parroquias
+        setTodosMunicipios((prevMunicipios) =>
+          prevMunicipios.map((municipios) =>
+            municipios.id === response.data.municipios.id
+              ? response.data.municipios
+              : municipios
           )
         );
 
@@ -195,17 +192,17 @@ export default function ParroquiasForm({
 
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setDescripcionParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
-        console.log("Error, al actualizar datos de la parroquia: " + error);
+        console.log("Error, al actualizar datos del municipio: " + error);
         abrirMensaje(error?.response?.data?.message);
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setNombreParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setDescripcionParroquia(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setNombreMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+          { accion: () => setDescripcionMunicipio(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       }
@@ -220,19 +217,19 @@ export default function ParroquiasForm({
         <ModalEditar
           isVisible={mostrar}
           onClose={cerrarModal}
-          titulo={"¿Actualizar esta parroquia?"}
+          titulo={"¿Actualizar este municipio?"}
         >
           <div className="w-full">
-            <FormEditarParroquia
-              nombre={nombreParroquia}
-              setNombre={setNombreParroquia}
-              descripcion={descripcionParroquia}
-              setDescripcion={setDescripcionParroquia}
-              validarNombre={validarNombreParroquia}
-              setValidarNombre={setValidarNombreParroquia}
+            <FormEditarMunicipio
+              nombre={nombreMunicipio}
+              setNombre={setNombreMunicipio}
+              descripcion={descripcionMunicipio}
+              setDescripcion={setDescripcionMunicipio}
+              validarNombre={validarNombreMunicipio}
+              setValidarNombre={setValidarNombreMunicipio}
               limpiarCampos={limpiarCampos}
               mostrarMensaje={mostrarMensaje}
-              editar={editarParroquia}
+              editar={editarMunicipio}
               mensaje={mensaje}
             />
           </div>
@@ -241,73 +238,67 @@ export default function ParroquiasForm({
         <Modal
           isVisible={mostrar}
           onClose={cerrarModal}
-          titulo={"¿Crear esta parroquia?"}
+          titulo={"¿Crear este municipio?"}
         >
           <ModalDatosContenedor>
-            <ModalDatos titulo={"Nombre"} descripcion={nombreParroquia} />
+            <ModalDatos titulo={"Nombre"} descripcion={nombreEstado} />
             <ModalDatos
               titulo={"Descripción"}
-              descripcion={descripcionParroquia}
+              descripcion={descripcionMunicipio}
             />
 
             <ModalDatos titulo={"Pais"} descripcion={nombrePais} />
             <ModalDatos titulo={"Estado"} descripcion={nombreEstado} />
-            <ModalDatos titulo={"Municipio"} descripcion={nombreMunicipio} />
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
           <BotonesModal
-            aceptar={crearParroquia}
+            aceptar={crearMunicipio}
             cancelar={cerrarModal}
             indiceUno={"crear"}
             indiceDos={"cancelar"}
             nombreUno={"Aceptar"}
             nombreDos={"Cancelar"}
             campos={{
-              nombreParroquia,
-              descripcionParroquia,
+              nombreEstado,
+              descripcionMunicipio,
               idPais,
               idEstado,
-              idMunicipio,
             }}
           />
         </Modal>
       )}
 
       <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar nombre={"Crear parroquia"}>
-          <FormCrearParroquia
-            nombre={nombreParroquia}
-            setNombre={setNombreParroquia}
-            descripcion={descripcionParroquia}
-            setDescripcion={setDescripcionParroquia}
-            abrirModal={abrirModal}
-            limpiarCampos={limpiarCampos}
-            validarNombre={validarNombreParroquia}
-            setValidarNombre={setValidarNombreParroquia}
-            paises={todosPaises}
-            estados={todosEstados}
-            municipios={todosMunicipios}
+        <DivUnoDentroSectionRegistroMostrar nombre={"Crear municipio"}>
+          <FormCrearMunicipio
             idPais={idPais}
             idEstado={idEstado}
-            idMunicipio={idMunicipio}
-            setNombrePais={setNombrePais}
-            setNombreEstado={setNombreEstado}
-            nombreMunicipio={nombreMunicipio}
-            setNombreMunicipio={setNombreMunicipio}
+            nombre={nombreMunicipio}
+            setNombre={setNombreMunicipio}
+            descripcion={descripcionMunicipio}
+            setDescripcion={setDescripcionMunicipio}
+            validarNombre={validarNombreMunicipio}
+            setValidarNombre={setValidarNombreMunicipio}
+            abrirModal={abrirModal}
+            limpiarCampos={limpiarCampos}
+            paises={todosPaises}
+            estados={todosEstados}
             cambiarSeleccionPais={cambiarSeleccionPais}
             cambiarSeleccionEstado={cambiarSeleccionEstado}
-            cambiarSeleccionMunicipio={cambiarSeleccionMunicipio}
+            setNombrePais={setNombrePais}
+            setNombreEstado={setNombreEstado}
           />
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoPaises
             isLoading={isLoading}
-            listado={todasParroquias}
-            nombreListado="Parroquias"
-            mensajeVacio="No hay parroquias disponibles..."
-            editando={editandoParroquia}
+            listado={todosMunicipios}
+            nombreListado="Municipios"
+            mensajeVacio="No hay municipios disponibles..."
+            editando={editandoMunicipio}
             usuarioActivo={usuarioActivo}
           />
         </DivDosDentroSectionRegistroMostrar>

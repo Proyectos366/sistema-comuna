@@ -15,14 +15,6 @@ export async function GET() {
       );
     }
 
-    /** 
-      const todosPaises = await prisma.pais.findMany({
-        where: {
-          borrado: false,
-        },
-      });
-    */
-
     const todosPaises = await prisma.pais.findMany({
       where: {
         borrado: false,

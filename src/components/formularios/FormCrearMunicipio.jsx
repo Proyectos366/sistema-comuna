@@ -4,27 +4,23 @@ import InputNombre from "../inputs/InputNombre";
 import LabelInput from "../inputs/LabelInput";
 import SelectOpcion from "../SelectOpcion";
 
-export default function FormCrearParroquia({
+export default function FormCrearMunicipio({
+  idPais,
+  idEstado,
   nombre,
   setNombre,
   descripcion,
   setDescripcion,
-  abrirModal,
-  limpiarCampos,
   validarNombre,
   setValidarNombre,
+  abrirModal,
+  limpiarCampos,
   paises,
   estados,
-  municipios,
-  idPais,
-  idEstado,
-  idMunicipio,
-  setNombrePais,
-  setNombreEstado,
-  setNombreMunicipio,
   cambiarSeleccionPais,
   cambiarSeleccionEstado,
-  cambiarSeleccionMunicipio,
+  setNombrePais,
+  setNombreEstado,
 }) {
   return (
     <Formulario
@@ -55,18 +51,6 @@ export default function FormCrearParroquia({
       )}
 
       {idEstado && (
-        <SelectOpcion
-          idOpcion={idMunicipio}
-          nombre={"Municipios"}
-          handleChange={cambiarSeleccionMunicipio}
-          opciones={municipios}
-          seleccione={"Seleccione"}
-          setNombre={setNombreMunicipio}
-          indice={1}
-        />
-      )}
-
-      {idMunicipio && (
         <>
           <LabelInput nombre={"Nombre"}>
             <InputNombre
@@ -97,13 +81,18 @@ export default function FormCrearParroquia({
           campos={{
             nombre,
             descripcion,
+            idPais,
+            idEstado,
           }}
         />
 
         <BotonAceptarCancelar
           indice={"limpiar"}
           aceptar={() => {
-            limpiarCampos({ setNombre, setDescripcion });
+            limpiarCampos({
+              setNombre,
+              setDescripcion,
+            });
           }}
           nombre={"Limpiar"}
           campos={{

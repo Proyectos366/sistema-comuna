@@ -1,29 +1,28 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import registrarEventoSeguro from "@/libs/trigget";
-import validarEditarEstado from "@/services/estados/validarEditarPais";
+import validarEditarMunicipio from "@/services/municipios/validarEditarMunicipio";
 
 export async function POST(request) {
   try {
-    const { nombre, capital, codigoPostal, descripcion, id_pais, id_estado } =
+    const { nombre, descripcion, id_pais, id_estado, id_municipio } =
       await request.json();
 
-    const validaciones = await validarEditarEstado(
+    const validaciones = await validarEditarMunicipio(
       nombre,
-      capital,
-      codigoPostal,
       descripcion,
       id_pais,
-      id_estado
+      id_estado,
+      id_municipio
     );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "INTENTO_FALLIDO_ESTADO",
+        tabla: "municipio",
+        accion: "INTENTO_FALLIDO_MUNICIPIO",
         id_objeto: 0,
         id_usuario: validaciones?.id_usuario,
-        descripcion: "Validacion fallida al intentar editar el estado",
+        descripcion: "Validacion fallida al intentar editar el municipio",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -36,20 +35,18 @@ export async function POST(request) {
       );
     }
 
-    const [actualizado, estadoActualizado] = await prisma.$transaction([
-      prisma.estado.update({
-        where: { id: validaciones.id_estado },
+    const [actualizado, municipioActualizado] = await prisma.$transaction([
+      prisma.municipio.update({
+        where: { id: validaciones.id_municipio },
         data: {
           nombre: validaciones.nombre,
-          capital: validaciones.capital,
-          cod_postal: validaciones.codigoPostal,
           descripcion: validaciones.descripcion,
         },
       }),
 
-      prisma.estado.findFirst({
+      prisma.municipio.findFirst({
         where: {
-          id: validaciones.id_estado,
+          id: validaciones.id_municipio,
           borrado: false,
         },
       }),
@@ -72,64 +69,63 @@ export async function POST(request) {
       },
     });
 
-    if (!estadoActualizado) {
+    if (!municipioActualizado) {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "ERROR_UPDATE_ESTADO",
-        id_objeto: validaciones.id_estado,
+        tabla: "municipio",
+        accion: "ERROR_UPDATE_MUNICIPIO",
+        id_objeto: validaciones.id_municipio,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo actualizar el estado",
-        datosAntes: { nombre, capital, descripcion, id_pais, id_estado },
+        descripcion: "No se pudo actualizar el municipio",
+        datosAntes: { nombre, descripcion, id_pais, id_estado, id_municipio },
         datosDespues: actualizado,
       });
 
       return generarRespuesta(
         "error",
-        "Error, al consultar el estado actualizado",
+        "Error, no se actualizado el municipio",
         {},
         400
       );
     } else {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "UPDATE_ESTADO",
-        id_objeto: estadoActualizado[0]?.id,
+        tabla: "municipio",
+        accion: "UPDATE_MUNICIPIO",
+        id_objeto: municipioActualizado?.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: `Estado actualizado con exito id: ${validaciones.id_estado}`,
+        descripcion: `Municipio actualizado con exito id: ${validaciones.id_municipio}`,
         datosAntes: {
           nombre: validaciones.nombre,
-          capital: validaciones.capital,
-          codigoPostal: validaciones.codigoPostal,
           descripcion: validaciones.descripcion,
           id_pais: validaciones.id_pais,
           id_estado: validaciones.id_estado,
+          id_municipio: validaciones.id_municipio,
         },
-        datosDespues: estadoActualizado,
+        datosDespues: municipioActualizado,
       });
 
       return generarRespuesta(
         "ok",
-        "Estado actualizado...",
-        { estados: estadoActualizado, paises: todosPaises },
+        "Municipio actualizado...",
+        { municipios: municipioActualizado, paises: todosPaises },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (actualizar estado): ` + error);
+    console.log(`Error interno (actualizar municipio): ` + error);
 
     await registrarEventoSeguro(request, {
-      tabla: "estado",
+      tabla: "municipio",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al actualizar el estado",
+      descripcion: "Error inesperado al actualizar el municipio",
       datosAntes: null,
       datosDespues: error.message,
     });
 
     return generarRespuesta(
       "error",
-      "Error, interno (actualizar estado)",
+      "Error, interno (actualizar municipio)",
       {},
       500
     );

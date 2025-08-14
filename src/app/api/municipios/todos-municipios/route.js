@@ -1,10 +1,10 @@
 import prisma from "@/libs/prisma";
+import validarConsultarTodosMunicipios from "@/services/municipios/validarConsultarTodosMunicipios";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarConsultarTodasParroquias from "@/services/parroquias/validarConsultarTodasParroquias";
 
 export async function GET() {
   try {
-    const validaciones = await validarConsultarTodasParroquias();
+    const validaciones = await validarConsultarTodosMunicipios();
 
     if (validaciones.status === "error") {
       return generarRespuesta(
@@ -15,36 +15,35 @@ export async function GET() {
       );
     }
 
-    const todasParroquias = await prisma.parroquia.findMany({
+    const todosMunicipios = await prisma.municipio.findMany({
       where: {
-        id_municipio: validaciones.id_municipio,
         borrado: false,
       },
     });
 
-    if (!todasParroquias) {
+    if (!todosMunicipios) {
       return generarRespuesta(
         "error",
-        "Error, al consultar parroquias...",
+        "Error, al consultar municipios...",
         {},
         400
       );
     } else {
       return generarRespuesta(
         "ok",
-        "Todas las parroquias...",
+        "Todos los municipios...",
         {
-          parroquias: todasParroquias,
+          municipios: todosMunicipios,
         },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno consultar (parroquias): ` + error);
+    console.log(`Error interno consultar (municipios): ` + error);
 
     return generarRespuesta(
       "error",
-      "Error, interno consultar (parroquias)",
+      "Error, interno consultar (municipios)",
       {},
       500
     );

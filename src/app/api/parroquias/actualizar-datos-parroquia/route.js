@@ -1,29 +1,35 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import registrarEventoSeguro from "@/libs/trigget";
-import validarEditarEstado from "@/services/estados/validarEditarPais";
+import validarEditarParroquia from "@/services/parroquias/validarEditarParroquia";
 
 export async function POST(request) {
   try {
-    const { nombre, capital, codigoPostal, descripcion, id_pais, id_estado } =
-      await request.json();
-
-    const validaciones = await validarEditarEstado(
+    const {
       nombre,
-      capital,
-      codigoPostal,
       descripcion,
       id_pais,
-      id_estado
+      id_estado,
+      id_municipio,
+      id_parroquia,
+    } = await request.json();
+
+    const validaciones = await validarEditarParroquia(
+      nombre,
+      descripcion,
+      id_pais,
+      id_estado,
+      id_municipio,
+      id_parroquia
     );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "INTENTO_FALLIDO_ESTADO",
+        tabla: "parroquia",
+        accion: "INTENTO_FALLIDO_PARROQUIA",
         id_objeto: 0,
         id_usuario: validaciones?.id_usuario,
-        descripcion: "Validacion fallida al intentar editar el estado",
+        descripcion: "Validacion fallida al intentar editar la parroquia",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -36,20 +42,18 @@ export async function POST(request) {
       );
     }
 
-    const [actualizado, estadoActualizado] = await prisma.$transaction([
-      prisma.estado.update({
-        where: { id: validaciones.id_estado },
+    const [actualizado, parroquiaActualizada] = await prisma.$transaction([
+      prisma.parroquia.update({
+        where: { id: validaciones.id_parroquia },
         data: {
           nombre: validaciones.nombre,
-          capital: validaciones.capital,
-          cod_postal: validaciones.codigoPostal,
           descripcion: validaciones.descripcion,
         },
       }),
 
-      prisma.estado.findFirst({
+      prisma.parroquia.findFirst({
         where: {
-          id: validaciones.id_estado,
+          id: validaciones.id_parroquia,
           borrado: false,
         },
       }),
@@ -72,64 +76,71 @@ export async function POST(request) {
       },
     });
 
-    if (!estadoActualizado) {
+    if (!parroquiaActualizada) {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "ERROR_UPDATE_ESTADO",
-        id_objeto: validaciones.id_estado,
+        tabla: "parroquia",
+        accion: "ERROR_UPDATE_PARROQUIA",
+        id_objeto: validaciones.id_parroquia,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo actualizar el estado",
-        datosAntes: { nombre, capital, descripcion, id_pais, id_estado },
+        descripcion: "No se pudo actualizar la parroquia",
+        datosAntes: {
+          nombre,
+          descripcion,
+          id_pais,
+          id_estado,
+          id_municipio,
+          id_parroquia,
+        },
         datosDespues: actualizado,
       });
 
       return generarRespuesta(
         "error",
-        "Error, al consultar el estado actualizado",
+        "Error, no se actualizado la parroquia",
         {},
         400
       );
     } else {
       await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "UPDATE_ESTADO",
-        id_objeto: estadoActualizado[0]?.id,
+        tabla: "parroquia",
+        accion: "UPDATE_PARROQUIA",
+        id_objeto: parroquiaActualizada?.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: `Estado actualizado con exito id: ${validaciones.id_estado}`,
+        descripcion: `Parroquia actualizada con exito id: ${validaciones.id_parroquia}`,
         datosAntes: {
           nombre: validaciones.nombre,
-          capital: validaciones.capital,
-          codigoPostal: validaciones.codigoPostal,
           descripcion: validaciones.descripcion,
           id_pais: validaciones.id_pais,
           id_estado: validaciones.id_estado,
+          id_municipio: validaciones.id_municipio,
+          id_parroquia: validaciones.id_parroquia,
         },
-        datosDespues: estadoActualizado,
+        datosDespues: parroquiaActualizada,
       });
 
       return generarRespuesta(
         "ok",
-        "Estado actualizado...",
-        { estados: estadoActualizado, paises: todosPaises },
+        "Parroquia actualizada...",
+        { parroquias: parroquiaActualizada, paises: todosPaises },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (actualizar estado): ` + error);
+    console.log(`Error interno (actualizar parroquia): ` + error);
 
     await registrarEventoSeguro(request, {
-      tabla: "estado",
+      tabla: "parroquia",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al actualizar el estado",
+      descripcion: "Error inesperado al actualizar la parroquia",
       datosAntes: null,
       datosDespues: error.message,
     });
 
     return generarRespuesta(
       "error",
-      "Error, interno (actualizar estado)",
+      "Error, interno (actualizar parroquia)",
       {},
       500
     );

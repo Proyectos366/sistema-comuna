@@ -19,7 +19,10 @@ export default function FormCrearEstado({
   validarCapital,
   setValidarCapital,
   abrirModal,
-  limpiarCampos, paises, cambiarSeleccionPais, setNombrePais
+  limpiarCampos,
+  paises,
+  cambiarSeleccionPais,
+  setNombrePais,
 }) {
   return (
     <Formulario
@@ -27,17 +30,15 @@ export default function FormCrearEstado({
         e.preventDefault();
       }}
     >
-
       <SelectOpcion
-              idOpcion={idPais}
-              nombre={"Paises"}
-              handleChange={cambiarSeleccionPais}
-              opciones={paises}
-              seleccione={"Seleccione"}
-              setNombre={setNombrePais}
-              indice={1}
-            />
-
+        idOpcion={idPais}
+        nombre={"Paises"}
+        handleChange={cambiarSeleccionPais}
+        opciones={paises}
+        seleccione={"Seleccione"}
+        setNombre={setNombrePais}
+        indice={1}
+      />
 
       <LabelInput nombre={"Nombre"}>
         <InputNombre

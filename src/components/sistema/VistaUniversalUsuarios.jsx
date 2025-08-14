@@ -22,6 +22,7 @@ import OacDepartamento from "../departamentos/Oac";
 import DepartamentosForm from "../opciones/DepartamentosForm";
 import PaisesForm from "../opciones/PaisForm";
 import EstadosForm from "../opciones/EstadoForm";
+import MunicipiosForm from "../opciones/MunicipioForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -265,6 +266,20 @@ export default function VistaUniversalUsuarios({ children }) {
 
                   {vista === "estados" && (
                     <EstadosForm
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      usuarioActivo={usuarioActivo}
+                    />
+                  )}
+
+                  {vista === "municipios" && (
+                    <MunicipiosForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

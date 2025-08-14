@@ -164,22 +164,14 @@ export default function EstadosForm({
           data
         );
 
-        /**
-          setTodosEstados((prevEstados) =>
-            prevEstados.map((estados) =>
-              estados.id === response.data.estados.id
-                ? response.data.estados
-                : estados
-            )
-          );
-        */
+        setTodosPaises(response.data.paises);
 
-        setTodosPaises((prev) =>
-          prev ? [...prev, response.data.paises] : [response.data.paises]
-        );
-
-        setTodosEstados((prev) =>
-          prev ? [...prev, response.data.estados] : [response.data.estados]
+        setTodosEstados((prevEstados) =>
+          prevEstados.map((estados) =>
+            estados.id === response.data.estados.id
+              ? response.data.estados
+              : estados
+          )
         );
 
         abrirMensaje(response.data.message);
@@ -190,12 +182,10 @@ export default function EstadosForm({
           { accion: () => setCapitalEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCodigoPostalEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setIdEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       } catch (error) {
-        console.log("Error, al actualizar datos del pais: " + error);
+        console.log("Error, al actualizar datos del estado: " + error);
         abrirMensaje(error?.response?.data?.message);
         ejecutarAccionesConRetraso([
           { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
@@ -203,8 +193,6 @@ export default function EstadosForm({
           { accion: () => setCapitalEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setCodigoPostalEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-          { accion: () => setIdEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
           { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
         ]);
       }
@@ -240,9 +228,6 @@ export default function EstadosForm({
               mostrarMensaje={mostrarMensaje}
               editar={editarEstado}
               mensaje={mensaje}
-              cambiarSeleccionPais={cambiarSeleccionPais}
-              paises={todosPaises}
-              setNombrePais={setNombrePais}
             />
           </div>
         </ModalEditar>
@@ -264,6 +249,7 @@ export default function EstadosForm({
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
           <BotonesModal
             aceptar={crearEstado}
             cancelar={cerrarModal}

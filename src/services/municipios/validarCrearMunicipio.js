@@ -5,12 +5,11 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 
-export default async function validarCrearParroquia(
+export default async function validarCrearMunicipio(
   nombre,
   descripcion,
   id_pais,
-  id_estado,
-  id_municipio
+  id_estado
 ) {
   try {
     const cookieStore = await cookies();
@@ -25,12 +24,11 @@ export default async function validarCrearParroquia(
       );
     }
 
-    const validarCampos = ValidarCampos.validarCamposCrearParroquia(
+    const validarCampos = ValidarCampos.validarCamposCrearMunicipio(
       nombre,
       descripcion,
       id_pais,
-      id_estado,
-      id_municipio
+      id_estado
     );
 
     if (validarCampos.status === "error") {
@@ -47,49 +45,48 @@ export default async function validarCrearParroquia(
       select: { id: true },
     });
 
-    const datosMunicipio = await prisma.municipio.findFirst({
-      where: { id: validarCampos.id_municipio },
-      select: { serial: true, parroquias: true },
+    const datosEstado = await prisma.estado.findFirst({
+      where: { id: validarCampos.id_estado },
+      select: { serial: true, municipios: true },
     });
 
-    const nombreRepetido = await prisma.parroquia.findFirst({
+    const nombreRepetido = await prisma.municipio.findFirst({
       where: {
         nombre: validarCampos.nombre,
-        id_municipio: validarCampos.id_municipio,
+        id_estado: validarCampos.id_estado,
       },
     });
 
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, parroquia ya existe...",
+        "Error, municipio ya existe...",
         {
           id_usuario: datosUsuario.id,
         }
       );
     }
 
-    const cantidadParroquias = datosMunicipio.parroquias.length + 1;
+    const cantidadMunicipios = datosEstado.municipios.length + 1;
     const numeroFormateado =
-      cantidadParroquias < 10
-        ? `0${cantidadParroquias}`
-        : `${cantidadParroquias}`;
-    const serialParroquia = `${datosMunicipio.serial}-${numeroFormateado}`;
+      cantidadMunicipios < 10
+        ? `0${cantidadMunicipios}`
+        : `${cantidadMunicipios}`;
+    const serialMunicipio = `${datosEstado.serial}-${numeroFormateado}`;
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
-      serial: serialParroquia,
+      serial: serialMunicipio,
       id_pais: validarCampos.id_pais,
       id_estado: validarCampos.id_estado,
-      id_municipio: validarCampos.id_municipio,
     });
   } catch (error) {
-    console.log(`Error, interno al crear parroquia: ` + error);
+    console.log(`Error, interno al crear municipio: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear parroquia"
+      "Error, interno al crear municipio"
     );
   }
 }

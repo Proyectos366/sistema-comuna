@@ -700,15 +700,69 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCamposCrearMunicipio(nombre, descripcion, id_pais, id_estado) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
 
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
 
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos municipio crear: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos municipio crear..."
+      );
+    }
+  }
 
+  static validarCamposCrearParroquia(
+    nombre,
+    descripcion,
+    id_pais,
+    id_estado,
+    id_municipio
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+      const validarIdMunicipio = this.validarCampoId(id_municipio);
 
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+      if (validarIdMunicipio.status === "error") return validarIdMunicipio;
 
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+        id_municipio: validarIdMunicipio.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos parroquia crear: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos parroquia crear..."
+      );
+    }
+  }
 
-
-
-  
   static validarCamposCrearInstitucion(
     nombre,
     descripcion,
@@ -764,6 +818,14 @@ export default class ValidarCampos {
       );
     }
   }
+
+
+
+
+
+
+
+
 
   static validarCamposCrearDepartamento(nombre, descripcion) {
     try {
@@ -1051,6 +1113,121 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando campos pais editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarEstado(
+    nombre,
+    capital,
+    codigoPostal,
+    descripcion,
+    id_pais,
+    id_estado
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarCapital = this.validarCampoNombre(capital);
+      const validarCodigoPostal = this.validarCampoCodigoPostal(codigoPostal);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarCapital.status === "error") return validarCapital;
+      if (validarCodigoPostal.status === "error") return validarCodigoPostal;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        capital: validarCapital.nombre,
+        codigoPostal: validarCodigoPostal.codigo,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos estado editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos estado editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarMunicipio(
+    nombre,
+    descripcion,
+    id_pais,
+    id_estado,
+    id_municipio
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+      const validarIdMunicipio = this.validarCampoId(id_municipio);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+      if (validarIdMunicipio.status === "error") return validarIdMunicipio;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+        id_municipio: validarIdMunicipio.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos municipio editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos municipio editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarParroquia(
+    nombre,
+    descripcion,
+    id_pais,
+    id_estado,
+    id_municipio, id_parroquia
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+      const validarIdMunicipio = this.validarCampoId(id_municipio);
+      const validarIdParroquia = this.validarCampoId(id_parroquia);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+      if (validarIdMunicipio.status === "error") return validarIdMunicipio;
+      if (validarIdParroquia.status === "error") return validarIdParroquia;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+        id_municipio: validarIdMunicipio.id,
+        id_parroquia: validarIdParroquia.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos parroquia editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos parroquia editar..."
       );
     }
   }

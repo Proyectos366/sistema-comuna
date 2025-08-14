@@ -7,21 +7,14 @@ import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";
 import InputNombre from "../inputs/InputNombre";
-import SelectOpcion from "../SelectOpcion";
 
-export default function FormEditarEstado({
+export default function FormEditarMunicipio({
   nombre,
   setNombre,
-  capital,
-  setCapital,
-  codigoPostal,
-  setCodigoPostal,
   descripcion,
   setDescripcion,
   validarNombre,
   setValidarNombre,
-  validarCapital,
-  setValidarCapital,
   limpiarCampos,
   mostrarMensaje,
   editar,
@@ -37,8 +30,7 @@ export default function FormEditarEstado({
     };
 
     validarYActualizar(nombre, setValidarNombre);
-    validarYActualizar(capital, setValidarCapital);
-  }, [nombre, capital]);
+  }, [nombre]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
@@ -51,25 +43,6 @@ export default function FormEditarEstado({
             setValue={setNombre}
             validarNombre={validarNombre}
             setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
-
-        <LabelInput nombre={"Capital"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={capital}
-            setValue={setCapital}
-            validarNombre={validarCapital}
-            setValidarNombre={setValidarCapital}
-          />
-        </LabelInput>
-
-        <LabelInput nombre={"Código postal"}>
-          <Input
-            type={"text"}
-            value={codigoPostal}
-            onChange={(e) => setCodigoPostal(e.target.value)}
           />
         </LabelInput>
 
@@ -92,7 +65,6 @@ export default function FormEditarEstado({
             nombre={"Guardar cambios"}
             campos={{
               nombre,
-              capital,
               descripcion,
             }}
           />
@@ -102,14 +74,12 @@ export default function FormEditarEstado({
             aceptar={() => {
               limpiarCampos({
                 setNombre,
-                setCapital,
                 setDescripcion,
               });
             }}
             nombre={"Limpiar"}
             campos={{
               nombre,
-              capital,
               descripcion,
             }}
           />
