@@ -169,16 +169,16 @@ model parroquia {
   creador  usuario   @relation(name: "CreadorParroquias", fields: [id_usuario], references: [id])
   miembros usuario[] @relation("MiembrosParroquias")
 
-  municipios    municipio     @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
-  comunas       comuna[]      @relation("ComunaParroquia")
-  circuitos     circuito[]    @relation("CircuitoParroquia")
-  consejos      consejo[]     @relation("ConsejoParroquia")
-  voceros       vocero[]      @relation("VoceroParroquia")
+  municipios municipio  @relation("MunicipioParroquias", fields: [id_municipio], references: [id])
+  comunas    comuna[]   @relation("ComunaParroquia")
+  circuitos  circuito[] @relation("CircuitoParroquia")
+  consejos   consejo[]  @relation("ConsejoParroquia")
+  voceros    vocero[]   @relation("VoceroParroquia")
 }
 
 model institucion {
   id           Int      @id @default(autoincrement())
-  nombre       String   @unique
+  nombre       String
   descripcion  String?  @default("sin descripcion")
   rif          String   @unique
   sector       String
@@ -204,7 +204,7 @@ model institucion {
 
 model departamento {
   id             Int      @id @default(autoincrement())
-  nombre         String   @unique
+  nombre         String
   descripcion    String?  @default("sin descripcion")
   borrado        Boolean  @default(false)
   id_usuario     Int

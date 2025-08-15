@@ -184,6 +184,7 @@ export default function DepartamentosForm({
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
           <BotonesModal
             aceptar={crearDepartamento}
             cancelar={cerrarModal}

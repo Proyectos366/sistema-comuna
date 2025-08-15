@@ -536,13 +536,7 @@ CREATE UNIQUE INDEX "municipio_serial_key" ON "municipio"("serial");
 CREATE UNIQUE INDEX "parroquia_serial_key" ON "parroquia"("serial");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "institucion_nombre_key" ON "institucion"("nombre");
-
--- CreateIndex
 CREATE UNIQUE INDEX "institucion_rif_key" ON "institucion"("rif");
-
--- CreateIndex
-CREATE UNIQUE INDEX "departamento_nombre_key" ON "departamento"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");

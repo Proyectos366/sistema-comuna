@@ -354,7 +354,7 @@ export default function VistaUniversalInicio() {
           <div
             className={`fixed inset-y-0 left-0 transform ${
               abrirPanel ? "translate-x-0" : "-translate-x-full"
-            } transition-transform duration-1000 ease-in-out w-48 z-30`}
+            } transition-transform duration-1000 ease-in-out w-56 z-30`}
           >
             <MenuLateralUsuario
               vista={vista}
@@ -367,7 +367,7 @@ export default function VistaUniversalInicio() {
 
           <div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] gap-4 ${
-              abrirPanel ? "ml-48 px-2 " : "ml-0"
+              abrirPanel ? "ml-56 px-2 " : "ml-0"
             } transition-all duration-1000 ease-in-out`}
           >
             <header>

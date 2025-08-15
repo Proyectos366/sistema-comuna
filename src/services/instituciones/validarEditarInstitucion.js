@@ -5,10 +5,16 @@ import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 
-export default async function validarEditarDepartamento(
+export default async function validarEditarInstitucion(
   nombre,
   descripcion,
-  id_departamento
+  rif,
+  sector,
+  direccion,
+  id_pais,
+  id_estado,
+  id_municipio,
+  id_institucion
 ) {
   try {
     const cookieStore = await cookies();
@@ -25,7 +31,7 @@ export default async function validarEditarDepartamento(
 
     const correoUsuarioActivo = descifrarToken.correo;
 
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correoUsuarioActivo },
       select: {
         id: true,
@@ -33,10 +39,16 @@ export default async function validarEditarDepartamento(
     });
 
     // Validar campos
-    const validandoCampos = ValidarCampos.validarCamposEditarDepartamento(
+    const validandoCampos = ValidarCampos.validarCamposEditarInstitucion(
       nombre,
       descripcion,
-      id_departamento
+      rif,
+      sector,
+      direccion,
+      id_pais,
+      id_estado,
+      id_municipio,
+      id_institucion
     );
 
     if (validandoCampos.status === "error") {
@@ -44,16 +56,16 @@ export default async function validarEditarDepartamento(
         validandoCampos.status,
         validandoCampos.message,
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
 
-    const existente = await prisma.departamento.findUnique({
+    const existente = await prisma.institucion.findFirst({
       where: {
         nombre: validandoCampos.nombre,
         id: {
-          not: validandoCampos.id_departamento, // excluye el departamento que estás editando
+          not: validandoCampos.id_institucion, // excluye la institucion que estás editando
         },
       },
     });
@@ -61,8 +73,8 @@ export default async function validarEditarDepartamento(
     if (existente) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, el departamento ya existe",
-        { id_usuario: idUsuario.id },
+        "Error, la institucion ya existe",
+        { id_usuario: datosUsuario.id },
         400
       );
     }
@@ -70,14 +82,20 @@ export default async function validarEditarDepartamento(
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       nombre: validandoCampos.nombre,
       descripcion: validandoCampos.descripcion,
-      id_usuario: idUsuario.id,
-      id_departamento: validandoCampos.id_departamento,
+      rif: validandoCampos.rif,
+      sector: validandoCampos.sector,
+      direccion: validandoCampos.direccion,
+      id_usuario: datosUsuario.id,
+      id_pais: validandoCampos.id_pais,
+      id_estado: validandoCampos.id_estado,
+      id_municipio: validandoCampos.id_municipio,
+      id_institucion: validandoCampos.id_institucion,
     });
   } catch (error) {
-    console.log(`Error, interno al editar departamento: ` + error);
+    console.log(`Error, interno al editar institucion: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar departamento..."
+      "Error, interno al editar institucion..."
     );
   }
 }

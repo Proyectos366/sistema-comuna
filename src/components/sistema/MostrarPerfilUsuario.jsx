@@ -40,8 +40,6 @@ export default function MostrarPerfilUsuario({
       try {
         const response = await axios.get("/api/usuarios/usuario-perfil");
 
-        console.log(response.data);
-
         setPerfilUsuario(response.data.usuarioPerfil || []);
       } catch (error) {
         console.log("Error, al obtener los datos del usuario: " + error);
@@ -126,8 +124,6 @@ export default function MostrarPerfilUsuario({
     }
   };
 
-  console.log(perfilUsuario);
-
   return (
     <>
       <ModalEditar
@@ -168,7 +164,7 @@ export default function MostrarPerfilUsuario({
 
       <SectionRegistroMostrar>
         <DivUnoDentroSectionRegistroMostrar nombre={"Perfil de usuario"}>
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
+          <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
             <div className="flex items-center justify-center">
               <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
                 <img
@@ -193,53 +189,55 @@ export default function MostrarPerfilUsuario({
               </div>
             </div>
 
-            <ul className="flex flex-col gap-2 text-gray-700 w-full">
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Nombre"}
-                valor={perfilUsuario?.nombre}
-              />
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-col gap-2 text-gray-700 w-full">
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Nombre"}
+                  valor={perfilUsuario?.nombre}
+                />
 
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Apellido"}
-                valor={perfilUsuario?.apellido}
-              />
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Apellido"}
+                  valor={perfilUsuario?.apellido}
+                />
 
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Correo"}
-                valor={perfilUsuario?.correo}
-              />
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Correo"}
+                  valor={perfilUsuario?.correo}
+                />
 
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Rol"}
-                valor={perfilUsuario?.roles?.nombre}
-              />
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Rol"}
+                  valor={perfilUsuario?.roles?.nombre}
+                />
 
-              <ListaDetallesVocero
-                indice={5}
-                nombre={"Acceso"}
-                valor={perfilUsuario?.validado}
-              />
+                <ListaDetallesVocero
+                  indice={5}
+                  nombre={"Acceso"}
+                  valor={perfilUsuario?.validado}
+                />
 
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Creado"}
-                valor={formatearFecha(perfilUsuario?.createdAt)}
-              />
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Creado"}
+                  valor={formatearFecha(perfilUsuario?.createdAt)}
+                />
 
-              <ListaDetallesVocero
-                indice={1}
-                nombre={"Departamento"}
-                valor={
-                  perfilUsuario?.MiembrosDepartamentos?.[0]?.nombre
-                    ? perfilUsuario.MiembrosDepartamentos?.[0]?.nombre
-                    : "sin asignar"
-                }
-              />
-            </ul>
+                <ListaDetallesVocero
+                  indice={1}
+                  nombre={"Departamento"}
+                  valor={
+                    perfilUsuario?.MiembrosDepartamentos?.[0]?.nombre
+                      ? perfilUsuario.MiembrosDepartamentos?.[0]?.nombre
+                      : "sin asignar"
+                  }
+                />
+              </ul>
+            </div>
           </div>
         </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

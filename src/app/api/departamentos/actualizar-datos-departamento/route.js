@@ -72,7 +72,7 @@ export async function POST(request) {
         accion: "UPDATE_DEPARTAMENTO",
         id_objeto: departamentoActualizado[0]?.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: `Departamento actualizado con exito id: ${validaciones.id_comuna}`,
+        descripcion: `Departamento actualizado con exito id: ${validaciones.id_departamento}`,
         datosAntes: {
           nombre: nombre,
           descripcion: descripcion,

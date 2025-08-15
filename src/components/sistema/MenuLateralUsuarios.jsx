@@ -10,7 +10,7 @@ export default function MenuLateralUsuario({
   return (
     <>
       <section
-        className={` w-48 h-full p-2 fixed inset-y-0 left-0 transform ${
+        className={`w-56 h-full py-2 px-4 fixed inset-y-0 left-0 transform ${
           abrirPanel
             ? "translate-x-0 opacity-100"
             : "-translate-x-full opacity-0"
@@ -95,7 +95,7 @@ export default function MenuLateralUsuario({
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"oac"}
-                    nombre={"OAC"}
+                    nombre={"Oac"}
                   />
 
                   <EnlacesBarraLateral

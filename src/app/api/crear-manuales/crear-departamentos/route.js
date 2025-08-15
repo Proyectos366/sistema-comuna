@@ -23,7 +23,7 @@ export async function GET() {
     }));
 
     for (const departamento of departamentos) {
-      const existente = await prisma.departamento.findUnique({
+      const existente = await prisma.departamento.findFirst({
         where: { nombre: departamento.nombre },
       });
 

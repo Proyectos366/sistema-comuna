@@ -1,25 +1,41 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import registrarEventoSeguro from "@/libs/trigget";
-import validarEditarDepartamento from "@/services/departamentos/validarEditarDepartamento";
+import validarEditarInstitucion from "@/services/instituciones/validarEditarInstitucion";
 
 export async function POST(request) {
   try {
-    const { nombre, descripcion, id_departamento } = await request.json();
-
-    const validaciones = await validarEditarDepartamento(
+    const {
       nombre,
       descripcion,
-      id_departamento
+      rif,
+      sector,
+      direccion,
+      id_pais,
+      id_estado,
+      id_municipio,
+      id_institucion,
+    } = await request.json();
+
+    const validaciones = await validarEditarInstitucion(
+      nombre,
+      descripcion,
+      rif,
+      sector,
+      direccion,
+      id_pais,
+      id_estado,
+      id_municipio,
+      id_institucion
     );
 
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
-        tabla: "departamento",
-        accion: "INTENTO_FALLIDO",
+        tabla: "institucion",
+        accion: "INTENTO_FALLIDO_INSTITUCION",
         id_objeto: 0,
         id_usuario: validaciones?.id_usuario ? validaciones.id_usuario : 0,
-        descripcion: "Validacion fallida al intentar editar el departamento",
+        descripcion: "Validacion fallida al intentar editar la institución",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -32,78 +48,109 @@ export async function POST(request) {
       );
     }
 
-    const [actualizado, departamentoActualizado] = await prisma.$transaction([
-      prisma.departamento.update({
-        where: { id: validaciones.id_departamento },
+    const [actualizada, institucionActualizada] = await prisma.$transaction([
+      prisma.institucion.update({
+        where: { id: validaciones.id_institucion },
         data: {
           nombre: validaciones.nombre,
           descripcion: validaciones.descripcion,
+          rif: validaciones.rif,
+          sector: validaciones.sector,
+          direccion: validaciones.direccion,
         },
       }),
 
-      prisma.departamento.findMany({
+      prisma.institucion.findMany({
         where: {
-          id: validaciones.id_departamento,
+          id: validaciones.id_institucion,
           borrado: false,
         },
       }),
     ]);
 
-    if (!departamentoActualizado) {
+    const todosPaises = await prisma.pais.findMany({
+      where: {
+        borrado: false,
+      },
+      include: {
+        estados: {
+          include: {
+            municipios: {
+              include: {
+                parroquias: true,
+                instituciones: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!institucionActualizada) {
       await registrarEventoSeguro(request, {
-        tabla: "departamento",
-        accion: "ERROR_UPDATE_DEPARTAMENTO",
-        id_objeto: validaciones.id_departamento,
+        tabla: "institucion",
+        accion: "ERROR_UPDATE_INSTITUCION",
+        id_objeto: validaciones.id_institucion,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo actualizar el departamento",
-        datosAntes: { nombre, descripcion, id_departamento },
-        datosDespues: actualizado,
+        descripcion: "No se pudo actualizar la institución",
+        datosAntes: {
+          nombre,
+          descripcion,
+          rif,
+          sector,
+          direccion,
+          id_institucion,
+        },
+        datosDespues: actualizada,
       });
 
       return generarRespuesta(
         "error",
-        "Error, al consultar el departamento actualizado",
+        "Error, al actualizar institucion",
         {},
         400
       );
     } else {
       await registrarEventoSeguro(request, {
-        tabla: "departamento",
-        accion: "UPDATE_DEPARTAMENTO",
-        id_objeto: departamentoActualizado[0]?.id,
+        tabla: "institucion",
+        accion: "UPDATE_INSTITUCION",
+        id_objeto: institucionActualizada?.id,
         id_usuario: validaciones.id_usuario,
-        descripcion: `Departamento actualizado con exito id: ${validaciones.id_comuna}`,
+        descripcion: `Institucion actualizada con exito id: ${validaciones.id_institucion}`,
         datosAntes: {
           nombre: nombre,
           descripcion: descripcion,
-          id_departamento: id_departamento,
+          rif: rif,
+          sector: sector,
+          direccion: direccion,
+          id_institucion: id_institucion,
         },
-        datosDespues: departamentoActualizado,
+        datosDespues: institucionActualizada,
       });
 
       return generarRespuesta(
         "ok",
-        "Departamento actualizado...",
-        { departamento: departamentoActualizado[0] },
+        "Institución actualizada...",
+        { instituciones: institucionActualizada[0], paises: todosPaises },
         201
       );
     }
   } catch (error) {
-    console.log(`Error interno (actualizar departamento): ` + error);
+    console.log(`Error interno (actualizar institucion): ` + error);
 
     await registrarEventoSeguro(request, {
-      tabla: "departamento",
+      tabla: "institucion",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al actualizar el departamento",
+      descripcion: "Error inesperado al actualizar la institucion",
       datosAntes: null,
       datosDespues: error.message,
     });
 
     return generarRespuesta(
       "error",
-      "Error, interno (actualizar departamento)",
+      "Error, interno (actualizar institucion)",
       {},
       500
     );

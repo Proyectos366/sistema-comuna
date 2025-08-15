@@ -771,7 +771,7 @@ export default class ValidarCampos {
     direccion,
     id_pais,
     id_estado,
-    id_municipio,
+    id_municipio
   ) {
     try {
       const validarNombre = this.validarCampoNombre(nombre);
@@ -811,11 +811,6 @@ export default class ValidarCampos {
       );
     }
   }
-
-
-
-
-  
 
   static validarCamposCrearDepartamento(nombre, descripcion) {
     try {
@@ -1219,6 +1214,60 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando campos parroquia editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarInstitucion(
+    nombre,
+    descripcion,
+    rif,
+    sector,
+    direccion,
+    id_pais,
+    id_estado,
+    id_municipio,
+    id_institucion
+  ) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarRif = this.validarCampoRif(rif);
+      const validarSector = this.validarCampoTexto(sector);
+      const validarDireccion = this.validarCampoTexto(direccion);
+      const validarIdPais = this.validarCampoId(id_pais);
+      const validarIdEstado = this.validarCampoId(id_estado);
+      const validarIdMunicipio = this.validarCampoId(id_municipio);
+      const validarIdInstitucion = this.validarCampoId(id_institucion);
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarRif.status === "error") return validarRif;
+      if (validarSector.status === "error") return validarSector;
+      if (validarDireccion.status === "error") return validarDireccion;
+      if (validarIdPais.status === "error") return validarIdPais;
+      if (validarIdEstado.status === "error") return validarIdEstado;
+      if (validarIdMunicipio.status === "error") return validarIdMunicipio;
+      if (validarIdInstitucion.status === "error") return validarIdInstitucion;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        rif: validarRif.rif,
+        sector: validarSector.texto,
+        direccion: validarDireccion.texto,
+        id_pais: validarIdPais.id,
+        id_estado: validarIdEstado.id,
+        id_municipio: validarIdMunicipio.id,
+        id_institucion: validarIdInstitucion.id,
+      });
+    } catch (error) {
+      console.log(
+        `Error, interno validando campos institucion editar: ` + error
+      );
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos institucion editar..."
       );
     }
   }

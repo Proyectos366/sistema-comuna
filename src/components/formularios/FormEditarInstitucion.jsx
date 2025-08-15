@@ -38,8 +38,17 @@ export default function FormEditarInstitucion({
       }
     };
 
+    const validarRif = (valor, setValidar) => {
+      if (valor) {
+        const limpio = String(valor).trim();
+        const esValido = /^[VEJPGCL]-\d{8}-\d$/.test(limpio);
+        if (typeof setValidar === "function") setValidar(esValido);
+      }
+    };
+
     validarYActualizar(nombre, setValidarNombre);
-  }, [nombre]);
+    validarRif(rif, setValidarRif);
+  }, [nombre, rif]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">

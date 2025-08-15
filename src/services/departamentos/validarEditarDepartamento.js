@@ -49,7 +49,7 @@ export default async function validarEditarDepartamento(
       );
     }
 
-    const existente = await prisma.departamento.findUnique({
+    const existente = await prisma.departamento.findFirst({
       where: {
         nombre: validandoCampos.nombre,
         id: {
