@@ -54,6 +54,7 @@ model usuario {
   beneficios             beneficio[]    @relation(name: "CreadorBeneficio")
   familiares             familiar[]     @relation(name: "CreadorFamiliar")
   voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  novedades              novedad[]      @relation(name: "CreadorNovedad")
 
   MiembrosPaises pais[] @relation(name: "MiembrosPaises")
   CreadorPaises  pais[] @relation(name: "CreadorPaises")
@@ -218,6 +219,7 @@ model departamento {
   institucion institucion @relation(fields: [id_institucion], references: [id])
 
   formaciones formacion[] @relation(name: "FormacionDepartamento")
+  novedades   novedad[]
 }
 
 model cargo {
@@ -519,4 +521,19 @@ model eventos {
   datosDespues Json? // Datos nuevos (INSERT o UPDATE)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model novedad {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  descripcion     String
+  recibido        Boolean
+  borrado         Boolean  @default(false)
+  id_usuario      Int
+  id_departamento Int
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  usuarios      usuario      @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
+  departamentos departamento @relation(fields: [id_departamento], references: [id])
 }

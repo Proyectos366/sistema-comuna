@@ -421,6 +421,21 @@ CREATE TABLE "eventos" (
 );
 
 -- CreateTable
+CREATE TABLE "novedad" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT NOT NULL,
+    "recibido" BOOLEAN NOT NULL,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_usuario" INTEGER NOT NULL,
+    "id_departamento" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "novedad_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "novedad_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_MiembrosPaises" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
