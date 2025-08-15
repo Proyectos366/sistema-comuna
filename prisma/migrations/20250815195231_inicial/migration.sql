@@ -428,11 +428,13 @@ CREATE TABLE "novedad" (
     "recibido" BOOLEAN NOT NULL,
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_usuario" INTEGER NOT NULL,
+    "id_institucion" INTEGER NOT NULL,
     "id_departamento" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "novedad_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "novedad_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "novedad_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "novedad_id_institucion_fkey" FOREIGN KEY ("id_institucion") REFERENCES "institucion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

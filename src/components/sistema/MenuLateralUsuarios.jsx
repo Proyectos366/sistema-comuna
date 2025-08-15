@@ -343,6 +343,14 @@ export default function MenuLateralUsuario({
                   )}
                 </>
               )}
+
+              <EnlacesBarraLateral
+                id_rol={id_rol}
+                cambiarRuta={cambiarRuta}
+                vista={vista}
+                vistaActual={"novedades"}
+                nombre={"Novedades"}
+              />
             </div>
           </div>
           <div>

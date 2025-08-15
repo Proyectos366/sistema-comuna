@@ -24,6 +24,7 @@ import PaisesForm from "../opciones/PaisForm";
 import EstadosForm from "../opciones/EstadoForm";
 import MunicipiosForm from "../opciones/MunicipioForm";
 import InstitucionesForm from "../opciones/InstitucionesForm";
+import NovedadesForm from "../opciones/NovedadesForm";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -108,6 +109,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "perfil",
         "cambiar-clave",
         "oac",
+        "novedades",
       ],
       2: [
         "parroquias",
@@ -123,6 +125,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "novedades",
       ],
       3: [
         "comunas",
@@ -134,6 +137,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "novedades",
       ],
       4: [
         "comunas",
@@ -144,6 +148,7 @@ export default function VistaUniversalUsuarios({ children }) {
         "perfil",
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",
+        "novedades",
       ],
     };
 
@@ -466,6 +471,20 @@ export default function VistaUniversalUsuarios({ children }) {
 
                   {vista === "cambiar-clave" && (
                     <MostrarCambiarClaveUsuario
+                      mostrar={mostrarModal}
+                      abrirModal={abrirModal}
+                      cerrarModal={cerrarModal}
+                      mensaje={mensaje}
+                      mostrarMensaje={mostrarMensaje}
+                      abrirMensaje={abrirMensaje}
+                      limpiarCampos={limpiarCampos}
+                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                      usuarioActivo={usuarioActivo}
+                    />
+                  )}
+
+                  {vista === "novedades" && (
+                    <NovedadesForm
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

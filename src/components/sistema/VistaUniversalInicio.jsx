@@ -101,7 +101,8 @@ export default function VistaUniversalInicio() {
       subRuta === "modulos" ||
       subRuta === "participantes" ||
       subRuta === "departamentos" ||
-      subRuta === "oac"
+      subRuta === "oac" ||
+      subRuta === "novedades"
     ) {
       setVista(subRuta);
     } else {
@@ -143,6 +144,7 @@ export default function VistaUniversalInicio() {
         "perfil",
         "cambiar-clave",
         "oac",
+        "novedades",
       ],
       2: [
         "parroquias",
@@ -158,6 +160,7 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "novedades",
       ],
       3: [
         "comunas",
@@ -169,6 +172,7 @@ export default function VistaUniversalInicio() {
         "voceros",
         "perfil",
         "cambiar-clave",
+        "novedades",
       ],
       4: [
         "comunas",
@@ -179,6 +183,7 @@ export default function VistaUniversalInicio() {
         "perfil",
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",
+        "novedades",
       ],
     };
 
