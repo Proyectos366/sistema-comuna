@@ -425,16 +425,27 @@ CREATE TABLE "novedad" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
     "descripcion" TEXT NOT NULL,
-    "recibido" BOOLEAN NOT NULL,
     "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "tipo" TEXT NOT NULL,
     "id_usuario" INTEGER NOT NULL,
     "id_institucion" INTEGER NOT NULL,
-    "id_departamento" INTEGER NOT NULL,
+    "id_depa_origen" INTEGER,
     "updatedAt" DATETIME NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "novedad_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "novedad_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "novedad_id_institucion_fkey" FOREIGN KEY ("id_institucion") REFERENCES "institucion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "novedad_id_institucion_fkey" FOREIGN KEY ("id_institucion") REFERENCES "institucion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "novedad_id_depa_origen_fkey" FOREIGN KEY ("id_depa_origen") REFERENCES "departamento" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "recepcionDepartamento" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_novedad" INTEGER NOT NULL,
+    "id_departamento" INTEGER NOT NULL,
+    "recibido" BOOLEAN NOT NULL DEFAULT false,
+    "fechaRecibido" DATETIME,
+    CONSTRAINT "recepcionDepartamento_id_novedad_fkey" FOREIGN KEY ("id_novedad") REFERENCES "novedad" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "recepcionDepartamento_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

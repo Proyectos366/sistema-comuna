@@ -219,8 +219,9 @@ model departamento {
   miembros    usuario[]   @relation("MiembrosDepartamento")
   institucion institucion @relation(fields: [id_institucion], references: [id])
 
-  formaciones formacion[] @relation(name: "FormacionDepartamento")
-  novedades   novedad[]
+  formaciones            formacion[]             @relation(name: "FormacionDepartamento")
+  recepcionDepartamentos recepcionDepartamento[]
+  novedad                novedad[]
 }
 
 model cargo {
@@ -525,18 +526,30 @@ model eventos {
 }
 
 model novedad {
-  id              Int      @id @default(autoincrement())
-  nombre          String
-  descripcion     String
-  recibido        Boolean
-  borrado         Boolean  @default(false)
-  id_usuario      Int
-  id_institucion  Int
-  id_departamento Int
-  updatedAt       DateTime @updatedAt
-  createdAt       DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  descripcion    String
+  borrado        Boolean  @default(false)
+  tipo           String // "institucional" o "departamental"
+  id_usuario     Int
+  id_institucion Int
+  id_depa_origen Int?
+  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now())
 
-  usuarios      usuario      @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
+  usuarios      usuario                 @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
+  instituciones institucion             @relation(fields: [id_institucion], references: [id])
+  departamentos departamento?           @relation(fields: [id_depa_origen], references: [id])
+  recepciones   recepcionDepartamento[]
+}
+
+model recepcionDepartamento {
+  id              Int       @id @default(autoincrement())
+  id_novedad      Int
+  id_departamento Int
+  recibido        Boolean   @default(false)
+  fechaRecibido   DateTime?
+
+  novedades     novedad      @relation(fields: [id_novedad], references: [id])
   departamentos departamento @relation(fields: [id_departamento], references: [id])
-  instituciones institucion  @relation(fields: [id_institucion], references: [id])
 }

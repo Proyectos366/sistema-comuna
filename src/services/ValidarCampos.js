@@ -270,25 +270,38 @@ export default class ValidarCampos {
     }
   }
 
-  static validarCampoId(id) {
+  static validarCampoId(id, detalles) {
     try {
       if (!id) {
-        return retornarRespuestaFunciones("error", "Campo id vacio...");
+        return retornarRespuestaFunciones(
+          "error",
+          `Campo id ${detalles} vacio...`
+        );
       }
 
       const idNumero = Number(id);
 
       if (isNaN(idNumero) || idNumero <= 0) {
         // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
-        return retornarRespuestaFunciones("error", "Error, id inválido...");
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, id ${detalles} inválido...`
+        );
       }
 
-      return retornarRespuestaFunciones("ok", "Campo id valido...", {
-        id: idNumero,
-      });
+      return retornarRespuestaFunciones(
+        "ok",
+        `Campo id ${detalles} valido...`,
+        {
+          id: idNumero,
+        }
+      );
     } catch (error) {
-      console.log(`Error, interno al (validar id): ` + error);
-      return retornarRespuestaFunciones("error", "Error, interno (validar id)");
+      console.log(`Error, interno al (validar id ${detalles}): ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        `Error, interno al (validar id ${detalles})`
+      );
     }
   }
 
@@ -590,6 +603,37 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error interno validando campo RIF"
+      );
+    }
+  }
+
+  static validarCampoRango(rango, detalles) {
+    try {
+      if (!rango) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Campo ${detalles} vacio...`
+        );
+      }
+
+      const numero = Number(rango);
+
+      if (isNaN(numero) || numero <= 0) {
+        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, ${detalles} inválido...`
+        );
+      }
+
+      return retornarRespuestaFunciones("ok", `Campo ${detalles} valido...`, {
+        rango: numero,
+      });
+    } catch (error) {
+      console.log(`Error, interno al (validar ${detalles}): ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        `Error, interno al (validar ${detalles})`
       );
     }
   }
@@ -1075,6 +1119,43 @@ export default class ValidarCampos {
     }
   }
 
+  static validarCamposCrearNovedad(
+    nombre,
+    descripcion,
+    id_institucion,
+    id_departamento,
+    rango
+  ) {
+    try {
+      let validarId;
+
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarRango = this.validarCampoRango(rango);
+
+      if (validarRango.rango === 1) {
+        validarId = this.validarCampoId(id_institucion, "institucion");
+      } else {
+        validarId = this.validarCampoId(id_departamento, "departamento");
+      }
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarId.status === "error") return validarId;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        rango: validarRango.rango,
+        id_institucion: validarRango.rango === 1 ? validarId.id : null,
+        id_departamento: validarRango.rango === 1 ? null : validarId.id,
+      });
+    } catch (error) {
+      console.log(`Error interno crear novedad: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno crear novedad");
+    }
+  }
+
   static validarCamposEditarPais(nombre, capital, descripcion, id_pais) {
     try {
       const validarNombre = this.validarCampoNombre(nombre);
@@ -1499,6 +1580,30 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error, interno validando campos formacion editar..."
+      );
+    }
+  }
+
+  static validarCamposEditarNovedad(nombre, descripcion, id_novedad) {
+    try {
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdNovedad = this.validarCampoId(id_novedad, "novedad");
+
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdNovedad.status === "error") return validarIdNovedad;
+
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        id_novedad: validarIdNovedad.id,
+      });
+    } catch (error) {
+      console.log(`Error, interno validando campos novedad editar: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno validando campos novedad editar..."
       );
     }
   }

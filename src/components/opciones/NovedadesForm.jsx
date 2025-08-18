@@ -9,11 +9,11 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarNovedad from "../formularios/FormEditarNovedad";
 import FormCrearNovedad from "../formularios/FormCrearNovedad";
+import ListadoNovedades from "../listados/ListadoNovedades";
 
 export default function NovedadesForm({
   mostrar,
@@ -108,6 +108,13 @@ export default function NovedadesForm({
       setIdNovedad("");
       setIdDepartamento("");
     }
+
+    if (accion === "eliminar" && !mostrar) {
+      setAccion("");
+      setNombreNovedad("");
+      setDescripcionNovedad("");
+      setIdNovedad("");
+    }
   }, [accion, mostrar]);
 
   const crearNovedad = async () => {
@@ -116,8 +123,11 @@ export default function NovedadesForm({
         const response = await axios.post("/api/novedades/crear-novedad", {
           nombre: nombreNovedad,
           descripcion: descripcionNovedad,
+          id_institucion: idInstitucion,
           id_departamento: idDepartamento,
+          rango: usuarioActivo.id_rol === 1 ? 1 : 2,
         });
+
         setTodasNovedades([...todasNovedades, response.data.novedades]); // Suponiendo que la API devuelve el nombre guardado
         abrirMensaje(response.data.message);
 
@@ -148,6 +158,21 @@ export default function NovedadesForm({
       abrirModal();
     } catch (error) {
       console.log("Error, editando novedad: " + error);
+    }
+  };
+
+  const eliminandoNovedad = async (datos) => {
+    try {
+      console.log(datos);
+
+      setAccion("eliminar");
+      setIdNovedad(datos.id);
+      setNombreNovedad(datos.nombre);
+      setDescripcionNovedad(datos.descripcion);
+
+      abrirModal();
+    } catch (error) {
+      console.log("Error, eliminando novedad: " + error);
     }
   };
 
@@ -201,6 +226,28 @@ export default function NovedadesForm({
     }
   };
 
+  const eliminarNovedad = async () => {
+    try {
+      const response = await axios.patch("/api/novedades/eliminar-id-novedad", {
+        id_novedad: idNovedad,
+      });
+
+      setTodasNovedades([...todasNovedades, response.data.novedades]); // Suponiendo que la API devuelve el nombre guardado
+
+      abrirMensaje(response.data.message);
+
+      ejecutarAccionesConRetraso([
+        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setNombreNovedad(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setDescripcionNovedad(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setIdNovedad(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+      ]);
+    } catch (error) {
+      console.log("Error, eliminando novedad: " + error);
+    }
+  };
+
   const cambiarSeleccionDepartamento = (e) => {
     setIdDepartamento(e.target.value);
   };
@@ -211,7 +258,7 @@ export default function NovedadesForm({
 
   return (
     <>
-      {accion === "editar" ? (
+      {/* {accion === "editar" ? (
         <ModalEditar
           isVisible={mostrar}
           onClose={cerrarModal}
@@ -219,14 +266,10 @@ export default function NovedadesForm({
         >
           <div className="w-full">
             <FormEditarNovedad
-              idDepartamento={idDepartamento}
-              setIdDepartamento={setIdDepartamento}
               nombre={nombreNovedad}
               setNombre={setNombreNovedad}
               descripcion={descripcionNovedad}
               setDescripcion={setDescripcionNovedad}
-              departamentos={todosDepartamentos}
-              cambiarSeleccionDepartamento={cambiarSeleccionDepartamento}
               limpiarCampos={limpiarCampos}
               mostrarMensaje={mostrarMensaje}
               editar={editarNovedad}
@@ -246,10 +289,105 @@ export default function NovedadesForm({
               titulo={"Descripción"}
               descripcion={descripcionNovedad}
             />
-            <ModalDatos
-              titulo={"Departamento"}
-              descripcion={nombreDepartamento}
+            {usuarioActivo.id_rol === 1 ? (
+              <ModalDatos
+                titulo={"Institución"}
+                descripcion={nombreInstitucion}
+              />
+            ) : (
+              <ModalDatos
+                titulo={"Departamento"}
+                descripcion={nombreDepartamento}
+              />
+            )}
+          </ModalDatosContenedor>
+
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
+          <BotonesModal
+            aceptar={crearNovedad}
+            cancelar={cerrarModal}
+            indiceUno={"crear"}
+            indiceDos={"cancelar"}
+            nombreUno={"Aceptar"}
+            nombreDos={"Cancelar"}
+            campos={{
+              nombreNovedad,
+              descripcionNovedad,
+              idDepartamento,
+            }}
+          />
+        </Modal>
+      )} */}
+
+      {accion === "editar" ? (
+        <ModalEditar
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Actualizar esta novedad?"}
+        >
+          <div className="w-full">
+            <FormEditarNovedad
+              nombre={nombreNovedad}
+              setNombre={setNombreNovedad}
+              descripcion={descripcionNovedad}
+              setDescripcion={setDescripcionNovedad}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarNovedad}
+              mensaje={mensaje}
             />
+          </div>
+        </ModalEditar>
+      ) : accion === "eliminar" ? (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Eliminar esta novedad?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Nombre"} descripcion={nombreNovedad} />
+            <ModalDatos
+              titulo={"Descripción"}
+              descripcion={descripcionNovedad}
+            />
+          </ModalDatosContenedor>
+
+          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
+          <BotonesModal
+            aceptar={eliminarNovedad}
+            cancelar={cerrarModal}
+            indiceUno={"eliminar"}
+            indiceDos={"cancelarEliminar"}
+            nombreUno={"Eliminar"}
+            nombreDos={"Cancelar"}
+            campos={{ idNovedad }}
+          />
+        </Modal>
+      ) : (
+        <Modal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={"¿Crear esta novedad?"}
+        >
+          <ModalDatosContenedor>
+            <ModalDatos titulo={"Nombre"} descripcion={nombreNovedad} />
+            <ModalDatos
+              titulo={"Descripción"}
+              descripcion={descripcionNovedad}
+            />
+            {usuarioActivo.id_rol === 1 ? (
+              <ModalDatos
+                titulo={"Institución"}
+                descripcion={nombreInstitucion}
+              />
+            ) : (
+              <ModalDatos
+                titulo={"Departamento"}
+                descripcion={nombreDepartamento}
+              />
+            )}
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -297,12 +435,13 @@ export default function NovedadesForm({
 
         <DivDosDentroSectionRegistroMostrar>
           <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
+            <ListadoNovedades
               isLoading={isLoading}
               listado={todasNovedades}
               nombreListado="Novedades"
               mensajeVacio="No hay novedades disponibles..."
               editando={editandoNovedad}
+              eliminando={eliminandoNovedad}
               usuarioActivo={usuarioActivo}
             />
           </DivDosDentroSectionRegistroMostrar>

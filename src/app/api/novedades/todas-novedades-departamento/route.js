@@ -15,14 +15,69 @@ export async function GET() {
       );
     }
 
-    const todasNovedadeDepartamento = await prisma.novedad.findMany({
+    /** 
+      const novedades = await prisma.novedad.findMany({
+        where: {
+          recepciones: {
+            some: {
+              id_departamento: validaciones.id_departamento,
+            },
+          },
+          borrado: false,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          recepciones: {
+            where: {
+              id_departamento: validaciones.id_departamento,
+            },
+          },
+          usuarios: true,
+          departamentos: true,
+        },
+      });
+    */
+
+
+      
+      const novedades = await prisma.novedad.findMany({
+  where: {
+    borrado: false,
+    OR: [
+      {
+        // Novedades creadas por el departamento
+        id_depa_origen: validaciones.id_departamento,
+      },
+      {
+        // Novedades recibidas por el departamento
+        recepciones: {
+          some: {
+            id_departamento: validaciones.id_departamento,
+          },
+        },
+      },
+    ],
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+  include: {
+    recepciones: {
       where: {
-        borrado: false,
         id_departamento: validaciones.id_departamento,
       },
-    });
+    },
+    usuarios: true,
+    departamentos: true,
+  },
+});
 
-    if (!todasNovedadeDepartamento) {
+console.log(novedades);
+
+
+    if (!novedades) {
       return generarRespuesta(
         "error",
         "Error, al consultar novedades...",
@@ -34,7 +89,7 @@ export async function GET() {
         "ok",
         "Todas las novedades...",
         {
-          novedades: todasNovedadeDepartamento,
+          novedades: novedades,
         },
         201
       );

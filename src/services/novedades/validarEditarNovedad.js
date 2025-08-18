@@ -5,10 +5,10 @@ import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 
-export default async function validarEditarCargo(
+export default async function validarEditarNovedad(
   nombre,
   descripcion,
-  id_cargo
+  id_novedad
 ) {
   try {
     const cookieStore = await cookies();
@@ -25,7 +25,7 @@ export default async function validarEditarCargo(
 
     const correoUsuarioActivo = descifrarToken.correo;
 
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correoUsuarioActivo },
       select: {
         id: true,
@@ -33,10 +33,10 @@ export default async function validarEditarCargo(
     });
 
     // Validar campos
-    const validandoCampos = ValidarCampos.validarCamposEditarCargo(
+    const validandoCampos = ValidarCampos.validarCamposEditarNovedad(
       nombre,
       descripcion,
-      id_cargo
+      id_novedad
     );
 
     if (validandoCampos.status === "error") {
@@ -44,16 +44,16 @@ export default async function validarEditarCargo(
         validandoCampos.status,
         validandoCampos.message,
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
 
-    const existente = await prisma.cargo.findFirst({
+    const existente = await prisma.novedad.findFirst({
       where: {
         nombre: validandoCampos.nombre,
         id: {
-          not: validandoCampos.id_cargo, // excluye el cargo que estás editando
+          not: validandoCampos.id_novedad, // excluye la novedad que estás editando
         },
       },
     });
@@ -61,8 +61,8 @@ export default async function validarEditarCargo(
     if (existente) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, el cargo ya existe",
-        { id_usuario: idUsuario.id },
+        "Error, la novedad ya existe",
+        { id_usuario: datosUsuario.id },
         400
       );
     }
@@ -70,14 +70,14 @@ export default async function validarEditarCargo(
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       nombre: validandoCampos.nombre,
       descripcion: validandoCampos.descripcion,
-      id_usuario: idUsuario.id,
-      id_cargo: validandoCampos.id_cargo,
+      id_usuario: datosUsuario.id,
+      id_novedad: validandoCampos.id_novedad,
     });
   } catch (error) {
-    console.log(`Error, interno al editar cargo: ` + error);
+    console.log(`Error, interno al editar novedad: ` + error);
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar cargo..."
+      "Error, interno al editar novedad..."
     );
   }
 }

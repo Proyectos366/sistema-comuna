@@ -27,6 +27,12 @@ export default function BotonAceptarCancelar({
         return algunCampoLleno
           ? "cursor-pointer bg-yellow-500 hover:bg-yellow-600"
           : "cursor-not-allowed bg-gray-400"; // Amarillo/gris según estado
+      case "eliminar":
+        return algunCampoLleno
+          ? "cursor-pointer bg-[#E61C45]"
+          : "cursor-not-allowed bg-gray-400"; // Amarillo/gris según estado
+      case "cancelarEliminar":
+        return "cursor-pointer bg-[#2FA807]"; // Activo, rojo
       default:
         return "cursor-not-allowed bg-gray-400"; // Estado por defecto
     }
