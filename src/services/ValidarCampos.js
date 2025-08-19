@@ -1124,7 +1124,8 @@ export default class ValidarCampos {
     descripcion,
     id_institucion,
     id_departamento,
-    rango
+    rango,
+    prioridad
   ) {
     try {
       let validarId;
@@ -1132,6 +1133,7 @@ export default class ValidarCampos {
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarRango = this.validarCampoRango(rango);
+      const validarPrioridad = this.validarCampoRango(prioridad, "prioridad");
 
       if (validarRango.rango === 1) {
         validarId = this.validarCampoId(id_institucion, "institucion");
@@ -1142,11 +1144,13 @@ export default class ValidarCampos {
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarId.status === "error") return validarId;
+      if (validarPrioridad.status === "error") return validarPrioridad;
 
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
         rango: validarRango.rango,
+        prioridad: validarPrioridad.rango,
         id_institucion: validarRango.rango === 1 ? validarId.id : null,
         id_departamento: validarRango.rango === 1 ? null : validarId.id,
       });

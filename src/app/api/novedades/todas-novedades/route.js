@@ -15,110 +15,96 @@ export async function GET(request) {
       );
     }
 
-    /**
+    /** 
       const todasNovedades = await prisma.novedad.findMany({
         where: {
           borrado: false,
         },
-      });
-    */
-
-    const todasNovedades = await prisma.novedad.findMany({
-      where: {
-        borrado: false,
-      },
-      include: {
-        recepciones: {
-          select: {
-            id: true,
-            id_novedad: true,
-            recibido: true,
-            fechaRecibido: true,
-          },
-        },
-      },
-    });
-
-    /** 
-    const [recepciones, institucionales] = await Promise.all([
-      prisma.recepcionDepartamento.findMany({
-        where: {
-          novedades: {
-            borrado: false,
-          },
-        },
         include: {
-          novedades: {
+          recepciones: {
             select: {
               id: true,
-              nombre: true,
-              descripcion: true,
-              id_usuario: true,
-              id_institucion: true,
-              createdAt: true,
+              id_novedad: true,
+              recibido: true,
+              fechaRecibido: true,
             },
           },
         },
-      }),
+      });
+    */
 
-      prisma.novedad.findMany({
-        where: {
-          borrado: false,
-          recepcionDepartamento: {
-            none: {}, // No tienen ninguna recepción asignada
+
+      const novedades = await prisma.novedadDepartamento.findMany({
+  include: {
+    novedades: {
+      include: {
+        usuarios: true,
+        institucion: true,
+        departamento: true,
+        destinatarios: {
+          include: {
+            departamento: true,
           },
         },
-        select: {
-          id: true,
-          nombre: true,
-          descripcion: true,
-          id_usuario: true,
-          id_institucion: true,
-          createdAt: true,
-        },
-      }),
-    ]);
+      },
+    },
+    departamento: true,
+  },
+});
 
-    
-    const todasNovedades = [
-      ...recepciones.map((r) => ({
-        id: r.novedades.id,
-        nombre: r.novedades.nombre,
-        descripcion: r.novedades.descripcion,
-        recibido: r.recibido,
-        fechaRecibido: r.fechaRecibido,
-        id_departamento: r.id_departamento,
-        id_usuario: r.novedades.id_usuario,
-        id_institucion: r.novedades.id_institucion,
-        createdAt: r.novedades.createdAt,
-      })),
-      ...institucionales.map((n) => ({
-        id: n.id,
-        nombre: n.nombre,
-        descripcion: n.descripcion,
-        recibido: null,
-        fechaRecibido: null,
-        id_departamento: null,
-        id_usuario: n.id_usuario,
-        id_institucion: n.id_institucion,
-        createdAt: n.createdAt,
-      })),
-    ];
-*/
+const resultado = novedades.map((novedadDepto) => {
+  const novedad = novedadDepto.novedades;
 
-    if (!todasNovedades) {
+  const esCreador = novedad.id_usuario === validaciones?.id_usuario;
+
+  console.log(esCreador);
+  
+
+  return {
+    id: novedad.id,
+    nombre: novedad.nombre,
+    descripcion: novedad.descripcion,
+    prioridad: novedad.prioridad,
+    fechaCreacion: novedad.createdAt,
+    fechaRecepcion: novedadDepto.fechaRecepcion,
+    estatus: novedadDepto.estatus, // ya no usamos destinatario
+    vista: esCreador ? "creador" : "destinatario",
+
+    creador: {
+      id: novedad.usuarios.id,
+      nombre: novedad.usuarios.nombre,
+    },
+
+    institucion: novedad.institucion
+      ? {
+          id: novedad.institucion.id,
+          nombre: novedad.institucion.nombre,
+        }
+      : null,
+
+    departamentoReceptor: {
+      id: novedadDepto.departamento.id,
+      nombre: novedadDepto.departamento.nombre,
+      descripcion: novedadDepto.departamento.descripcion,
+    },
+  };
+});
+
+      //const todasNovedades = false;
+
+    if (!resultado) {
       return generarRespuesta(
         "error",
         "Error, al consultar novedades...",
-        {},
-        400
+        {novedades: []},
+        201
       );
     } else {
       return generarRespuesta(
         "ok",
         "Todas las novedades...",
         {
-          novedades: todasNovedades,
+          novedades: resultado,
         },
         201
       );

@@ -8,8 +8,12 @@ export default function FormCrearNovedad({
   usuarioActivo,
   idInstitucion,
   idDepartamento,
+  idPrioridad,
+
   setIdInstitucion,
   setIdDepartamento,
+  setIdPrioridad,
+
   nombre,
   setNombre,
   descripcion,
@@ -20,8 +24,12 @@ export default function FormCrearNovedad({
   departamentos,
   setNombreDepartamento,
   setNombreInstitucion,
+  setNombrePrioridad,
+
   cambiarSeleccionDepartamento,
   cambiarSeleccionInstitucion,
+  cambiarSeleccionPrioridad,
+
   abrirModal,
   limpiarCampos,
 }) {
@@ -59,6 +67,21 @@ export default function FormCrearNovedad({
           indice={1}
         />
       )}
+
+      <SelectOpcion
+        idOpcion={idPrioridad}
+        nombre={"Prioridad"}
+        handleChange={cambiarSeleccionPrioridad}
+        opciones={[
+          { id: 1, nombre: "alta" },
+          { id: 2, nombre: "media" },
+          { id: 3, nombre: "baja" },
+        ]}
+        seleccione={"Seleccione"}
+        setNombre={setNombrePrioridad}
+        indice={1}
+      />
+
       <LabelInput nombre={"Nombre"}>
         <InputNombre
           type="text"

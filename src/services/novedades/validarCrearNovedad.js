@@ -10,7 +10,8 @@ export default async function validarCrearNovedad(
   descripcion,
   id_institucion,
   id_departamento,
-  rango
+  rango,
+  prioridad
 ) {
   try {
     const cookieStore = await cookies();
@@ -30,7 +31,8 @@ export default async function validarCrearNovedad(
       descripcion,
       id_institucion,
       id_departamento,
-      rango
+      rango,
+      prioridad
     );
 
     if (validarCampos.status === "error") {
@@ -57,12 +59,28 @@ export default async function validarCrearNovedad(
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
+    const departamentos = await prisma.departamento.findMany({
+      where: {
+        id_institucion: validarCampos.id_institucion,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const mapaPrioridad = {
+      1: "alta",
+      2: "media",
+      3: "baja",
+    };
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       rango: validarCampos.rango,
-      tipo: descifrarToken.id_rol === 1 ? "institucional" : "departamental",
+      prioridad: mapaPrioridad[validarCampos.prioridad],
+      departamentos: departamentos ? departamentos : [],
       id_institucion:
         validarCampos.rango === 1
           ? validarCampos.id_institucion

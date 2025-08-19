@@ -204,6 +204,26 @@ model institucion {
   novedad       novedad[]
 }
 
+// model departamento {
+//   id             Int      @id @default(autoincrement())
+//   nombre         String
+//   descripcion    String?  @default("sin descripcion")
+//   borrado        Boolean  @default(false)
+//   id_usuario     Int
+//   id_institucion Int
+//   updatedAt      DateTime @default(now())
+//   createdAt      DateTime @default(now())
+
+//   // Relaciones
+//   creador     usuario     @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+//   miembros    usuario[]   @relation("MiembrosDepartamento")
+//   institucion institucion @relation(fields: [id_institucion], references: [id])
+
+//   formaciones            formacion[]             @relation(name: "FormacionDepartamento")
+//   novedadDepartamentos novedadDepartamento[]
+//   novedad                novedad[]
+// }
+
 model departamento {
   id             Int      @id @default(autoincrement())
   nombre         String
@@ -215,13 +235,14 @@ model departamento {
   createdAt      DateTime @default(now())
 
   // Relaciones
-  creador     usuario     @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
-  miembros    usuario[]   @relation("MiembrosDepartamento")
-  institucion institucion @relation(fields: [id_institucion], references: [id])
-
-  formaciones            formacion[]             @relation(name: "FormacionDepartamento")
-  recepcionDepartamentos recepcionDepartamento[]
-  novedad                novedad[]
+  creador                 usuario               @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
+  miembros                usuario[]             @relation("MiembrosDepartamento")
+  institucion             institucion           @relation(fields: [id_institucion], references: [id])
+  formaciones             formacion[]           @relation(name: "FormacionDepartamento")
+  novedadDepartamentos    novedadDepartamento[]
+  novedades               novedad[] // Novedades creadas por este departamento (si aplica)
+  notificacionesEnviadas  notificacion[]        @relation("Emisor")
+  notificacionesRecibidas notificacion[]        @relation("Receptor")
 }
 
 model cargo {
@@ -525,31 +546,85 @@ model eventos {
   updatedAt    DateTime @updatedAt
 }
 
-model novedad {
-  id             Int      @id @default(autoincrement())
-  nombre         String
-  descripcion    String
-  borrado        Boolean  @default(false)
-  tipo           String // "institucional" o "departamental"
-  id_usuario     Int
-  id_institucion Int
-  id_depa_origen Int?
-  updatedAt      DateTime @updatedAt
-  createdAt      DateTime @default(now())
 
-  usuarios      usuario                 @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
-  instituciones institucion             @relation(fields: [id_institucion], references: [id])
-  departamentos departamento?           @relation(fields: [id_depa_origen], references: [id])
-  recepciones   recepcionDepartamento[]
+
+
+
+
+
+model novedad {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  descripcion     String
+  fechaCreacion   DateTime @default(now())
+  prioridad       String @default("baja")
+  id_usuario      Int
+  id_institucion  Int?
+  id_departamento Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  usuarios      usuario               @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
+  destinatarios novedadDepartamento[]
+  institucion   institucion?          @relation(fields: [id_institucion], references: [id])
+  departamento  departamento?         @relation(fields: [id_departamento], references: [id])
 }
 
-model recepcionDepartamento {
+model novedadDepartamento {
   id              Int       @id @default(autoincrement())
+  estatus         String    @default("pendiente")
+  fechaRecepcion  DateTime?
   id_novedad      Int
   id_departamento Int
-  recibido        Boolean   @default(false)
-  fechaRecibido   DateTime?
 
-  novedades     novedad      @relation(fields: [id_novedad], references: [id])
-  departamentos departamento @relation(fields: [id_departamento], references: [id])
+  novedades    novedad      @relation(fields: [id_novedad], references: [id])
+  departamento departamento @relation(fields: [id_departamento], references: [id])
 }
+
+model notificacion {
+  id          Int      @id @default(autoincrement())
+  mensaje     String
+  fechaEnvio  DateTime @default(now())
+  id_emisor   Int?
+  id_receptor Int
+  estatus     String   @default("enviada")
+
+  emisor   departamento? @relation("Emisor", fields: [id_emisor], references: [id])
+  receptor departamento @relation("Receptor", fields: [id_receptor], references: [id])
+}
+
+
+
+
+
+
+
+
+// model novedad {
+//   id             Int      @id @default(autoincrement())
+//   nombre         String
+//   descripcion    String
+//   borrado        Boolean  @default(false)
+//   tipo           String // "institucional" o "departamental"
+//   id_usuario     Int
+//   id_institucion Int
+//   id_depa_origen Int?
+//   updatedAt      DateTime @updatedAt
+//   createdAt      DateTime @default(now())
+
+//   usuarios      usuario                 @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
+//   instituciones institucion             @relation(fields: [id_institucion], references: [id])
+//   departamentos departamento?           @relation(fields: [id_depa_origen], references: [id])
+//   recepciones   recepcionDepartamento[]
+// }
+
+// model recepcionDepartamento {
+//   id              Int       @id @default(autoincrement())
+//   id_novedad      Int
+//   id_departamento Int
+//   recibido        Boolean   @default(false)
+//   fechaRecibido   DateTime?
+
+//   novedades     novedad      @relation(fields: [id_novedad], references: [id])
+//   departamentos departamento @relation(fields: [id_departamento], references: [id])
+// }

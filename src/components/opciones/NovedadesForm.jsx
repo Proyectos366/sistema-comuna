@@ -14,6 +14,7 @@ import ModalEditar from "../modales/ModalEditar";
 import FormEditarNovedad from "../formularios/FormEditarNovedad";
 import FormCrearNovedad from "../formularios/FormCrearNovedad";
 import ListadoNovedades from "../listados/ListadoNovedades";
+import { formatearFecha } from "@/utils/Fechas";
 
 export default function NovedadesForm({
   mostrar,
@@ -38,10 +39,14 @@ export default function NovedadesForm({
   const [idNovedad, setIdNovedad] = useState("");
   const [idDepartamento, setIdDepartamento] = useState("");
   const [idInstitucion, setIdInstitucion] = useState("");
+  const [idPrioridad, setIdPrioridad] = useState("");
 
   const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [nombreInstitucion, setNombreInstitucion] = useState("");
+  const [nombrePrioridad, setNombrePrioridad] = useState("");
   const [accion, setAccion] = useState("");
+
+  const [abiertos, setAbiertos] = useState({});
 
   /** 
     useEffect(() => {
@@ -123,6 +128,7 @@ export default function NovedadesForm({
         const response = await axios.post("/api/novedades/crear-novedad", {
           nombre: nombreNovedad,
           descripcion: descripcionNovedad,
+          prioridad: idPrioridad,
           id_institucion: idInstitucion,
           id_departamento: idDepartamento,
           rango: usuarioActivo.id_rol === 1 ? 1 : 2,
@@ -256,6 +262,24 @@ export default function NovedadesForm({
     setIdInstitucion(e.target.value);
   };
 
+  const cambiarSeleccionPrioridad = (e) => {
+    const valor = e.target.value;
+
+    setIdPrioridad(valor);
+  };
+
+  const aceptarNovedad = async (datos) => {
+    try {
+      console.log(datos);
+
+      //abrirModal();
+    } catch (error) {
+      console.log("Error, aceptando la novedad: " + error);
+    }
+  };
+
+  console.log(todasNovedades);
+
   return (
     <>
       {/* {accion === "editar" ? (
@@ -372,11 +396,6 @@ export default function NovedadesForm({
           titulo={"¿Crear esta novedad?"}
         >
           <ModalDatosContenedor>
-            <ModalDatos titulo={"Nombre"} descripcion={nombreNovedad} />
-            <ModalDatos
-              titulo={"Descripción"}
-              descripcion={descripcionNovedad}
-            />
             {usuarioActivo.id_rol === 1 ? (
               <ModalDatos
                 titulo={"Institución"}
@@ -388,6 +407,13 @@ export default function NovedadesForm({
                 descripcion={nombreDepartamento}
               />
             )}
+
+            <ModalDatos titulo={"Nombre"} descripcion={nombreNovedad} />
+            <ModalDatos
+              titulo={"Descripción"}
+              descripcion={descripcionNovedad}
+            />
+            <ModalDatos titulo={"Prioridad"} descripcion={nombrePrioridad} />
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
@@ -414,8 +440,10 @@ export default function NovedadesForm({
             usuarioActivo={usuarioActivo}
             idInstitucion={idInstitucion}
             idDepartamento={idDepartamento}
+            idPrioridad={idPrioridad}
             setIdInstitucion={setIdInstitucion}
             setIdDepartamento={setIdDepartamento}
+            setIdPrioridad={setIdPrioridad}
             nombre={nombreNovedad}
             setNombre={setNombreNovedad}
             descripcion={descripcionNovedad}
@@ -426,26 +454,29 @@ export default function NovedadesForm({
             departamentos={todosDepartamentos}
             setNombreInstitucion={setNombreInstitucion}
             setNombreDepartamento={setNombreDepartamento}
+            setNombrePrioridad={setNombrePrioridad}
             cambiarSeleccionInstitucion={cambiarSeleccionInstitucion}
             cambiarSeleccionDepartamento={cambiarSeleccionDepartamento}
+            cambiarSeleccionPrioridad={cambiarSeleccionPrioridad}
             abrirModal={abrirModal}
             limpiarCampos={limpiarCampos}
           />
         </DivUnoDentroSectionRegistroMostrar>
 
-        <DivDosDentroSectionRegistroMostrar>
-          <DivDosDentroSectionRegistroMostrar>
-            <ListadoNovedades
-              isLoading={isLoading}
-              listado={todasNovedades}
-              nombreListado="Novedades"
-              mensajeVacio="No hay novedades disponibles..."
-              editando={editandoNovedad}
-              eliminando={eliminandoNovedad}
-              usuarioActivo={usuarioActivo}
-            />
-          </DivDosDentroSectionRegistroMostrar>
-        </DivDosDentroSectionRegistroMostrar>
+        <DivUnoDentroSectionRegistroMostrar nombre={"Novedades"}>
+          <ListadoNovedades
+            isLoading={isLoading}
+            listado={todasNovedades}
+            nombreListado="Novedades"
+            mensajeVacio="No hay novedades disponibles..."
+            editando={editandoNovedad}
+            eliminando={eliminandoNovedad}
+            usuarioActivo={usuarioActivo}
+            aceptarNovedad={aceptarNovedad}
+            abiertos={abiertos}
+            setAbiertos={setAbiertos}
+          />
+        </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>
     </>
   );

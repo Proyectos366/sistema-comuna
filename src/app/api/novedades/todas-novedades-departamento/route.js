@@ -15,67 +15,65 @@ export async function GET() {
       );
     }
 
-    /** 
-      const novedades = await prisma.novedad.findMany({
-        where: {
-          recepciones: {
-            some: {
-              id_departamento: validaciones.id_departamento,
-            },
-          },
-          borrado: false,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          recepciones: {
-            where: {
-              id_departamento: validaciones.id_departamento,
-            },
-          },
-          usuarios: true,
-          departamentos: true,
-        },
-      });
-    */
-
-
-      
-      const novedades = await prisma.novedad.findMany({
-  where: {
-    borrado: false,
-    OR: [
-      {
-        // Novedades creadas por el departamento
-        id_depa_origen: validaciones.id_departamento,
-      },
-      {
-        // Novedades recibidas por el departamento
-        recepciones: {
-          some: {
-            id_departamento: validaciones.id_departamento,
-          },
-        },
-      },
-    ],
-  },
-  orderBy: {
-    createdAt: "desc",
-  },
-  include: {
-    recepciones: {
+    const novedades = await prisma.novedadDepartamento.findMany({
       where: {
         id_departamento: validaciones.id_departamento,
       },
-    },
-    usuarios: true,
-    departamentos: true,
-  },
-});
+      include: {
+        novedades: {
+          include: {
+            usuarios: true,
+            institucion: true,
+            departamento: true,
+            destinatarios: {
+              include: {
+                departamento: true,
+              },
+            },
+          },
+        },
+        departamento: true,
+      },
+    });
 
-console.log(novedades);
+    const resultado = novedades.map((novedadDepto) => {
+      const novedad = novedadDepto.novedades;
 
+      const esCreador = novedad.id_usuario === validaciones.id_usuario;
+
+      const destinatario = novedad.destinatarios.find(
+        (d) => d.departamento.id === validaciones.id_departamento
+      );
+
+      return {
+        id: novedad.id,
+        nombre: novedad.nombre,
+        descripcion: novedad.descripcion,
+        prioridad: novedad.prioridad,
+        fechaCreacion: novedad.createdAt,
+        fechaRecepcion: novedadDepto.fechaRecepcion,
+        estatus: destinatario?.estatus || novedadDepto.estatus,
+        vista: esCreador ? "creador" : "destinatario",
+
+        creador: {
+          id: novedad.usuarios.id,
+          nombre: novedad.usuarios.nombre,
+        },
+
+        institucion: novedad.institucion
+          ? {
+              id: novedad.institucion.id,
+              nombre: novedad.institucion.nombre,
+            }
+          : null,
+
+        departamentoReceptor: {
+          id: novedadDepto.departamento.id,
+          nombre: novedadDepto.departamento.nombre,
+          descripcion: novedadDepto.departamento.descripcion,
+        },
+      };
+    });
 
     if (!novedades) {
       return generarRespuesta(
@@ -89,7 +87,7 @@ console.log(novedades);
         "ok",
         "Todas las novedades...",
         {
-          novedades: novedades,
+          novedades: resultado,
         },
         201
       );
