@@ -1,3 +1,4 @@
+import { startOfWeek, endOfWeek } from "date-fns";
 import prisma from "@/libs/prisma";
 import validarConsultarTodasNovedadesDepartamento from "@/services/novedades/validarConsultarTodasNovedadesDepartamento";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
@@ -15,9 +16,78 @@ export async function GET() {
       );
     }
 
+    const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 1 }); // Lunes
+    const finSemana = endOfWeek(new Date(), { weekStartsOn: 1 }); // Domingo
+
+    /** 
+      const novedades = await prisma.novedadDepartamento.findMany({
+        where: {
+          id_departamento: validaciones.id_departamento,
+        },
+        include: {
+          novedades: {
+            include: {
+              usuarios: true,
+              institucion: true,
+              departamento: true,
+              destinatarios: {
+                include: {
+                  departamento: true,
+                },
+                orderBy: {
+                  fechaRecepcion: "desc",
+                },
+              },
+            },
+          },
+          departamento: true,
+        },
+      });
+    */
+
+    /**
+      const novedades = await prisma.novedadDepartamento.findMany({
+        where: {
+          id_departamento: validaciones.id_departamento,
+          estatus: "pendiente",
+          fechaRecepcion: {
+            gte: inicioSemana,
+            lte: finSemana,
+          },
+        },
+        include: {
+          novedades: {
+            include: {
+              usuarios: true,
+              institucion: true,
+              departamento: true,
+              destinatarios: {
+                include: {
+                  departamento: true,
+                },
+              },
+            },
+          },
+          departamento: true,
+        },
+      });
+    */
+
     const novedades = await prisma.novedadDepartamento.findMany({
       where: {
         id_departamento: validaciones.id_departamento,
+        estatus: "pendiente",
+        OR: [
+          {
+            fechaRecepcion: null,
+          },
+          {
+            fechaRecepcion: {
+              gte: inicioSemana,
+              lte: finSemana,
+            },
+          },
+        ],
       },
       include: {
         novedades: {
@@ -29,6 +99,9 @@ export async function GET() {
               include: {
                 departamento: true,
               },
+              orderBy: {
+                fechaRecepcion: "desc",
+              },
             },
           },
         },
@@ -37,6 +110,7 @@ export async function GET() {
     });
 
     const resultado = novedades.map((novedadDepto) => {
+      if (!novedadDepto.novedades) return null;
       const novedad = novedadDepto.novedades;
 
       const esCreador = novedad.id_usuario === validaciones.id_usuario;
@@ -73,7 +147,7 @@ export async function GET() {
           descripcion: novedadDepto.departamento.descripcion,
         },
       };
-    });
+    }).filter(Boolean);
 
     if (!novedades) {
       return generarRespuesta(

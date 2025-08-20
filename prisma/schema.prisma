@@ -204,26 +204,6 @@ model institucion {
   novedad       novedad[]
 }
 
-// model departamento {
-//   id             Int      @id @default(autoincrement())
-//   nombre         String
-//   descripcion    String?  @default("sin descripcion")
-//   borrado        Boolean  @default(false)
-//   id_usuario     Int
-//   id_institucion Int
-//   updatedAt      DateTime @default(now())
-//   createdAt      DateTime @default(now())
-
-//   // Relaciones
-//   creador     usuario     @relation(name: "CreadorDepartamento", fields: [id_usuario], references: [id])
-//   miembros    usuario[]   @relation("MiembrosDepartamento")
-//   institucion institucion @relation(fields: [id_institucion], references: [id])
-
-//   formaciones            formacion[]             @relation(name: "FormacionDepartamento")
-//   novedadDepartamentos novedadDepartamento[]
-//   novedad                novedad[]
-// }
-
 model departamento {
   id             Int      @id @default(autoincrement())
   nombre         String
@@ -546,18 +526,12 @@ model eventos {
   updatedAt    DateTime @updatedAt
 }
 
-
-
-
-
-
-
 model novedad {
   id              Int      @id @default(autoincrement())
   nombre          String
   descripcion     String
   fechaCreacion   DateTime @default(now())
-  prioridad       String @default("baja")
+  prioridad       String   @default("baja")
   id_usuario      Int
   id_institucion  Int?
   id_departamento Int?
@@ -590,41 +564,5 @@ model notificacion {
   estatus     String   @default("enviada")
 
   emisor   departamento? @relation("Emisor", fields: [id_emisor], references: [id])
-  receptor departamento @relation("Receptor", fields: [id_receptor], references: [id])
+  receptor departamento  @relation("Receptor", fields: [id_receptor], references: [id])
 }
-
-
-
-
-
-
-
-
-// model novedad {
-//   id             Int      @id @default(autoincrement())
-//   nombre         String
-//   descripcion    String
-//   borrado        Boolean  @default(false)
-//   tipo           String // "institucional" o "departamental"
-//   id_usuario     Int
-//   id_institucion Int
-//   id_depa_origen Int?
-//   updatedAt      DateTime @updatedAt
-//   createdAt      DateTime @default(now())
-
-//   usuarios      usuario                 @relation(name: "CreadorNovedad", fields: [id_usuario], references: [id])
-//   instituciones institucion             @relation(fields: [id_institucion], references: [id])
-//   departamentos departamento?           @relation(fields: [id_depa_origen], references: [id])
-//   recepciones   recepcionDepartamento[]
-// }
-
-// model recepcionDepartamento {
-//   id              Int       @id @default(autoincrement())
-//   id_novedad      Int
-//   id_departamento Int
-//   recibido        Boolean   @default(false)
-//   fechaRecibido   DateTime?
-
-//   novedades     novedad      @relation(fields: [id_novedad], references: [id])
-//   departamentos departamento @relation(fields: [id_departamento], references: [id])
-// }

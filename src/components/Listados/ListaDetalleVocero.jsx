@@ -11,18 +11,18 @@ export default function ListaDetallesVocero({
     <>
       {indice === 1 && (
         <div className="flex flex-row gap-2">
-          <span className="font-semibold text-md">{nombre}:</span>
-          <span className="text-md uppercase">{valor}</span>
+          <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
+          <span className="text-sm sm:text-md uppercase">{valor}</span>
         </div>
       )}
 
       {indice === 2 && (
         <div className="flex flex-row gap-2">
-          <span className="font-semibold text-md">{nombre}:</span>
+          <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
           <span
             className={`${
               valor ? "text-[#2FA807]" : "text-[#E61C45]"
-            } uppercase`}
+            } uppercase text-sm sm:text-md`}
           >
             {valor ? "Sí" : "No"}
           </span>
@@ -32,25 +32,25 @@ export default function ListaDetallesVocero({
       {indice === 3 && (
         <div className="w-full flex flex-col">
           <div>
-            <span className="font-semibold text-md">Formador: </span>
+            <span className="font-semibold text-sm sm:text-md">Formador: </span>
             <span
               className={`${
                 formador ? "uppercase font-medium" : "text-[#E61C45]"
-              }`}
+              } text-sm sm:text-md`}
             >
               {formador ? formador : "Sin asignar"}
             </span>
           </div>
 
           <div className="flex flex-row gap-2">
-            <span className="font-semibold text-md">
+            <span className="font-semibold text-sm sm:text-md">
               {formatoTituloPersonalizado(nombre)}:
             </span>
             <div>
               <span
                 className={`${
                   valor ? "text-[#2FA807]" : "text-[#E61C45]"
-                } uppercase`}
+                } uppercase text-sm sm:text-md`}
               >
                 {valor ? "Asistio" : "No asistio"}
               </span>
@@ -62,11 +62,11 @@ export default function ListaDetallesVocero({
 
       {indice === 4 && (
         <div className="flex flex-row gap-2">
-          <span className="font-semibold text-md">{nombre}:</span>
+          <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
           <span
             className={`${
               valor ? "text-[#E61C45]" : "text-[#2FA807]"
-            } uppercase`}
+            } uppercase text-sm sm:text-md`}
           >
             {valor ? "inactivo" : "activo"}
           </span>
@@ -75,13 +75,26 @@ export default function ListaDetallesVocero({
 
       {indice === 5 && (
         <div className="flex flex-row gap-2">
-          <span className="font-semibold text-md">{nombre}:</span>
+          <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
           <span
             className={`${
               !valor ? "text-[#E61C45]" : "text-[#2FA807]"
-            } uppercase`}
+            } uppercase text-sm sm:text-md`}
           >
             {!valor ? "Sin acceso" : "Autorizado"}
+          </span>
+        </div>
+      )}
+
+      {indice === 6 && (
+        <div className="flex flex-row gap-2">
+          <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
+          <span
+            className={`${
+              valor === "pendiente" ? "text-[#E61C45]" : "text-[#2FA807]"
+            } uppercase text-sm sm:text-md`}
+          >
+            {valor === "pendiente" ? "Pendiente" : "Recibida"}
           </span>
         </div>
       )}

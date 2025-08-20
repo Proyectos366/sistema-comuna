@@ -125,16 +125,29 @@ export default function NovedadesForm({
   const crearNovedad = async () => {
     if (nombreNovedad.trim()) {
       try {
-        const response = await axios.post("/api/novedades/crear-novedad", {
-          nombre: nombreNovedad,
-          descripcion: descripcionNovedad,
-          prioridad: idPrioridad,
-          id_institucion: idInstitucion,
-          id_departamento: idDepartamento,
-          rango: usuarioActivo.id_rol === 1 ? 1 : 2,
-        });
+        const response = await axios.post(
+          `/api/novedades/${
+            usuarioActivo.id_rol === 1 ? "crear-novedad-todos" : "crear-novedad"
+          }`,
+          {
+            nombre: nombreNovedad,
+            descripcion: descripcionNovedad,
+            prioridad: idPrioridad,
+            id_institucion: idInstitucion,
+            id_departamento: idDepartamento,
+            rango: usuarioActivo.id_rol === 1 ? 1 : 2,
+          }
+        );
 
-        setTodasNovedades([...todasNovedades, response.data.novedades]); // Suponiendo que la API devuelve el nombre guardado
+        console.log(response.data.novedades);
+
+        /**
+          setTodasNovedades([...todasNovedades, response.data.novedades]);
+
+        */
+
+        setTodasNovedades((prev) => [...prev, ...response.data.novedades]);
+
         abrirMensaje(response.data.message);
 
         ejecutarAccionesConRetraso([
@@ -155,6 +168,8 @@ export default function NovedadesForm({
 
   const editandoNovedad = async (datos) => {
     try {
+      console.log(datos);
+
       setAccion("editar");
       setIdNovedad(datos.id);
       setIdDepartamento(datos.id_departamento);
@@ -277,8 +292,6 @@ export default function NovedadesForm({
       console.log("Error, aceptando la novedad: " + error);
     }
   };
-
-  console.log(todasNovedades);
 
   return (
     <>
@@ -475,6 +488,7 @@ export default function NovedadesForm({
             aceptarNovedad={aceptarNovedad}
             abiertos={abiertos}
             setAbiertos={setAbiertos}
+            idNovedad={idNovedad}
           />
         </DivUnoDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

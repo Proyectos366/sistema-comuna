@@ -2,6 +2,9 @@ import { formatearFecha } from "@/utils/Fechas";
 import BotonEditar from "../botones/BotonEditar";
 import BotonEliminar from "../botones/BotonEliminar";
 import Titulos from "../Titulos";
+import ListaDetallesVocero from "./ListaDetalleVocero";
+import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import ListadoNovedadDepartamento from "./ListadoNovedadDepartamento";
 
 export default function ListadoNovedades({
   isLoading,
@@ -14,6 +17,7 @@ export default function ListadoNovedades({
   aceptarNovedad,
   abiertos,
   setAbiertos,
+  idNovedad,
 }) {
   const toggleDetalle = (index) => {
     setAbiertos((prev) => ({
@@ -22,150 +26,91 @@ export default function ListadoNovedades({
     }));
   };
 
+  const agrupadasPorNombre = listado.reduce((acc, novedad) => {
+    if (!acc[novedad.nombre]) {
+      acc[novedad.nombre] = [];
+    }
+    acc[novedad.nombre].push(novedad);
+    return acc;
+  }, {});
+
   return (
-    // <section className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl">
-    //   {listado?.map((novedad, index) => {
-    //     console.log(novedad);
+    <section className="flex flex-col gap-2 bg-[#f4f6f9] w-full">
+      {usuarioActivo.id_rol !== 1
+        ? listado?.map((novedad, index) => (
+            <ListadoNovedadDepartamento
+              key={index}
+              novedad={novedad}
+              index={index}
+              abiertos={abiertos}
+              toggleDetalle={toggleDetalle}
+              aceptarNovedad={aceptarNovedad}
+              idNovedad={idNovedad}
+            />
+          ))
+        : Object.entries(agrupadasPorNombre).map(([nombre, grupo], index) => {
+            return (
+              <div
+                key={index}
+                className="border rounded-md bg-[#eef1f5] hover:text-[white]  hover:border-gray-400 hover:bg-gray-400"
+              >
+                <div
+                  onClick={() => toggleDetalle(index)}
+                  className={`w-full flex justify-between items-center sm:text-left font-semibold tracking-wide px-2 sm:px-6 py-1 cursor-pointer transition-colors duration-200
+                            ${
+                              abiertos === index
+                                ? "rounded-t-md mb-2 sm:mb-0"
+                                : "rounded-md hover:rounded-b-none"
+                            }`}
+                >
+                  <span className="uppercase">
+                    {nombre} (
+                    {grupo?.[0].length && grupo?.[0].length > 0
+                      ? grupo?.[0].length
+                      : grupo?.length}{" "}
+                    departamentos)
+                  </span>
+                  <BotonEditar editar={() => editando(grupo?.[0])} />
+                </div>
 
-    //     return (
-    //       <div key={index} className="border p-4 rounded-md mb-4">
-    //         <h3>Asunto: {novedad.nombre}</h3>
-    //         <p>Descripcion: {novedad.descripcion}</p>
-    //         <p>Prioridad: {novedad.prioridad}</p>
-    //         <p>Estatus: {novedad.estatus}</p>
-    //         <p>Creada: {formatearFecha(novedad.fechaCreacion)}</p>
-
-    //         {novedad.vista === "creador" ? (
-    //           <span className="font-semibold">
-    //             Estado:{" "}
-    //             {novedad.estatus === "pendiente"
-    //               ? "⏳ Pendiente"
-    //               : "✅ Recibida"}
-    //           </span>
-    //         ) : (
-    //           <>
-    //             {novedad.estatus === "pendiente" ? (
-    //               <button
-    //                 onClick={() => aceptarNovedad(novedad.id)}
-    //                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded"
-    //               >
-    //                 Aceptar
-    //               </button>
-    //             ) : (
-    //               <span className="text-green-700 font-semibold">
-    //                 ✅ Ya aceptada
-    //               </span>
-    //             )}
-    //           </>
-    //         )}
-    //       </div>
-    //     );
-    //   })}
-    // </section>
-
-    <section className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl">
-      {listado?.map((novedad, index) => (
-        <div
-        onClick={() => toggleDetalle(index)}
-          key={index}
-          className={`border bg-gray-100 ${
-            novedad.estatus === "pendiente"
-              ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45] hover:text-white"
-              : "border-[#2FA807] hover:bg-[#15EA0E] text-[#2FA807] hover:text-white"
-          }  px-6 py-2 rounded-md mb-4  cursor-pointer`}
-        >
-          <span
-            className={` font-semibold text-lg`}
-            
-          >
-            Asunto: {novedad.nombre}
-          </span>
-
-          {abiertos[index] && (
-            <div className="mt-2">
-              <p>Descripción: {novedad.descripcion}</p>
-              <p>Prioridad: {novedad.prioridad}</p>
-              <p>Estatus: {novedad.estatus}</p>
-              <p>Creada: {formatearFecha(novedad.fechaCreacion)}</p>
-
-              {novedad.vista === "creador" ? (
-                <span className="font-semibold">
-                  Estado:{" "}
-                  {novedad.estatus === "pendiente"
-                    ? "⏳ Pendiente"
-                    : "✅ Recibida"}
-                </span>
-              ) : (
-                <>
-                  {novedad.estatus === "pendiente" ? (
-                    <button
-                      onClick={() => aceptarNovedad(novedad.id)}
-                      className="mt-2 px-4 py-2 bg-green-600 text-white rounded"
-                    >
-                      Aceptar
-                    </button>
-                  ) : (
-                    <span className="text-green-700 font-semibold">
-                      ✅ Ya aceptada
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
+                {abiertos[index] && (
+                  <div className="flex flex-col gap-1 bg-white text-gray-800 text-base sm:text-sm px-6 py-2 rounded-b-md shadow-lg">
+                    {grupo?.map((novedad, subIndex) => {
+                      return (
+                        <div key={subIndex} className="border-b py-2">
+                          <ListaDetallesVocero
+                            indice={1}
+                            nombre="Departamento"
+                            valor={novedad.departamentoReceptor.nombre}
+                          />
+                          <ListaDetallesVocero
+                            indice={1}
+                            nombre="Descripción"
+                            valor={novedad.descripcion}
+                          />
+                          <ListaDetallesVocero
+                            indice={1}
+                            nombre="Prioridad"
+                            valor={novedad.prioridad}
+                          />
+                          <ListaDetallesVocero
+                            indice={1}
+                            nombre="Creada"
+                            valor={formatearFecha(novedad.fechaCreacion)}
+                          />
+                          <ListaDetallesVocero
+                            indice={6}
+                            nombre="Estatus"
+                            valor={novedad.estatus}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
     </section>
   );
 }
-
-/**
- return (
-    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-2">
-      <Titulos indice={2} titulo={nombreListado} />
-
-      {isLoading ? (
-        <p className="text-center text-gray-600 animate-pulse">Cargando...</p>
-      ) : listado?.length === 0 ? (
-        <p className="text-center text-gray-600 uppercase">{mensajeVacio}</p>
-      ) : (
-        <div className=" flex flex-col gap-2">
-          {listado?.map((lista, index) => (
-            <div
-              key={index}
-              className="bg-gray-200 rounded-md transition-all duration-700 ease-in-out 
-                 hover:bg-gray-300 hover:border hover:border-gray-300 
-                 hover:shadow-md hover:scale-101 flex gap-4 sm:gap-1 items-center justify-between uppercase py-1 px-4"
-            >
-              <div className="flex gap-2 py-1">
-                <span className="rounded-md uppercase">{lista.nombre}</span>
-              </div>
-
-              <div className="flex gap-2">
-                {typeof editando === "function" &&
-                  ((!lista.recibido &&
-                    usuarioActivo.MiembrosDepartamentos?.[0]?.id ===
-                      lista.id_departamento) ||
-                    usuarioActivo.id_rol === 1) && (
-                    <div>
-                      <BotonEditar editar={() => editando(lista)} />
-                    </div>
-                  )}
-
-                {typeof eliminando === "function" &&
-                  ((!lista.recibido &&
-                    usuarioActivo.MiembrosDepartamentos?.[0]?.id ===
-                      lista.id_departamento) ||
-                    usuarioActivo.id_rol === 1) && (
-                    <div>
-                      <BotonEliminar eliminar={() => eliminando(lista)} />
-                    </div>
-                  )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
- */

@@ -15,88 +15,65 @@ export async function GET(request) {
       );
     }
 
-    /** 
-      const todasNovedades = await prisma.novedad.findMany({
-        where: {
-          borrado: false,
-        },
-        include: {
-          recepciones: {
-            select: {
-              id: true,
-              id_novedad: true,
-              recibido: true,
-              fechaRecibido: true,
+    const novedades = await prisma.novedadDepartamento.findMany({
+      include: {
+        novedades: {
+          include: {
+            usuarios: true,
+            institucion: true,
+            departamento: true,
+            destinatarios: {
+              include: {
+                departamento: true,
+              },
             },
           },
         },
-      });
-    */
-
-
-      const novedades = await prisma.novedadDepartamento.findMany({
-  include: {
-    novedades: {
-      include: {
-        usuarios: true,
-        institucion: true,
         departamento: true,
-        destinatarios: {
-          include: {
-            departamento: true,
-          },
-        },
       },
-    },
-    departamento: true,
-  },
-});
+    });
 
-const resultado = novedades.map((novedadDepto) => {
-  const novedad = novedadDepto.novedades;
+    const resultado = novedades.map((novedadDepto) => {
+      const novedad = novedadDepto.novedades;
 
-  const esCreador = novedad.id_usuario === validaciones?.id_usuario;
+      const esCreador = novedad.id_usuario === validaciones?.id_usuario;
 
-  console.log(esCreador);
-  
+      return {
+        id: novedad.id,
+        nombre: novedad.nombre,
+        descripcion: novedad.descripcion,
+        prioridad: novedad.prioridad,
+        fechaCreacion: novedad.createdAt,
+        fechaRecepcion: novedadDepto.fechaRecepcion,
+        estatus: novedadDepto.estatus, // ya no usamos destinatario
+        vista: esCreador ? "creador" : "destinatario",
 
-  return {
-    id: novedad.id,
-    nombre: novedad.nombre,
-    descripcion: novedad.descripcion,
-    prioridad: novedad.prioridad,
-    fechaCreacion: novedad.createdAt,
-    fechaRecepcion: novedadDepto.fechaRecepcion,
-    estatus: novedadDepto.estatus, // ya no usamos destinatario
-    vista: esCreador ? "creador" : "destinatario",
+        creador: {
+          id: novedad.usuarios.id,
+          nombre: novedad.usuarios.nombre,
+        },
 
-    creador: {
-      id: novedad.usuarios.id,
-      nombre: novedad.usuarios.nombre,
-    },
+        institucion: novedad.institucion
+          ? {
+              id: novedad.institucion.id,
+              nombre: novedad.institucion.nombre,
+            }
+          : null,
 
-    institucion: novedad.institucion
-      ? {
-          id: novedad.institucion.id,
-          nombre: novedad.institucion.nombre,
-        }
-      : null,
+        departamentoReceptor: {
+          id: novedadDepto.departamento.id,
+          nombre: novedadDepto.departamento.nombre,
+          descripcion: novedadDepto.departamento.descripcion,
+        },
+      };
+    });
 
-    departamentoReceptor: {
-      id: novedadDepto.departamento.id,
-      nombre: novedadDepto.departamento.nombre,
-      descripcion: novedadDepto.departamento.descripcion,
-    },
-  };
-});
-
-      //const todasNovedades = false;
 
     if (!resultado) {
       return generarRespuesta(
         "error",
         "Error, al consultar novedades...",
-        {novedades: []},
+        { novedades: [] },
         201
       );
     } else {

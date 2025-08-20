@@ -52,6 +52,11 @@ export default async function validarCrearNovedad(
         MiembrosInstitucion: {
           select: { id: true },
         },
+        MiembrosDepartamentos: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -59,14 +64,18 @@ export default async function validarCrearNovedad(
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    const departamentos = await prisma.departamento.findMany({
-      where: {
-        id_institucion: validarCampos.id_institucion,
-      },
-      select: {
-        id: true,
-      },
-    });
+    let departamentos;
+
+    if (descifrarToken.id_rol === 1) {
+      departamentos = await prisma.departamento.findMany({
+        where: {
+          id_institucion: validarCampos.id_institucion,
+        },
+        select: {
+          id: true,
+        },
+      });
+    }
 
     const mapaPrioridad = {
       1: "alta",
@@ -87,6 +96,10 @@ export default async function validarCrearNovedad(
           : datosUsuario.MiembrosInstitucion?.[0]?.id,
       id_departamento:
         validarCampos.rango === 1 ? null : validarCampos.id_departamento,
+      id_depa_origen:
+        validarCampos.rango === 1
+          ? null
+          : datosUsuario.MiembrosDepartamentos?.[0]?.id,
     });
   } catch (error) {
     console.log(`Error, interno al crear novedad: ` + error);
