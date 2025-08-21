@@ -454,6 +454,7 @@ export default function UsuariosForm({
         { accion: () => setSeleccionarInstitucion([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
         { accion: () => setSeleccionarDepartamentos([]), tiempo: 3000 }, // Se ejecutará en 3 segundos
         { accion: () => setAutorizar(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => toggleUsuarioCrearMostrar(), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
       console.log("Error, al crear el usuario: " + error);
