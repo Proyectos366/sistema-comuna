@@ -15,7 +15,7 @@ export default async function validarCrearUsuario(
   claveDos,
   id_rol,
   autorizar,
-  institucione
+  instituciones
 ) {
   try {
     const cookieStore = await cookies();
@@ -56,7 +56,6 @@ export default async function validarCrearUsuario(
       autorizar
     );
 
-   
     if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
         validandoCampos.status,
@@ -74,9 +73,6 @@ export default async function validarCrearUsuario(
       },
     });
 
-    console.log(usuarioExistente);
-    
-
     if (usuarioExistente) {
       return retornarRespuestaFunciones("error", "Error, usuario ya existe");
     }
@@ -84,7 +80,18 @@ export default async function validarCrearUsuario(
     let datosInstitucion;
 
     if (descifrarToken.id_rol === 1) {
-      datosInstitucion = [];
+      datosInstitucion = await prisma.institucion.findFirst({
+        where: {
+          id: instituciones?.[0].id,
+        },
+        select: {
+          id: true,
+          id_pais: true,
+          id_estado: true,
+          id_municipio: true,
+          id_parroquia: true,
+        },
+      });
     } else {
       datosInstitucion = await prisma.institucion.findFirst({
         where: {
@@ -120,7 +127,7 @@ export default async function validarCrearUsuario(
       id_rol: validandoCampos.id_rol,
       autorizar: validandoCampos.autorizar,
       institucion: datosInstitucion,
-      creador: {id: datosUsuario.id}
+      id_creador: datosUsuario.id,
     });
   } catch (error) {
     console.error(`Error interno, validar crear usuario: ` + error);

@@ -56,19 +56,13 @@ export default async function validarConsultarInstitucionMiembroId() {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    const institucionMiembro = await prisma.institucion.findFirst({
-      where: {
-        id_municipio: datosUsuario.MiembrosMunicipios?.[0]?.id,
-        borrado: false,
-      },
-    });
+    
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
       id_institucion: datosUsuario.MiembrosInstitucion?.[0]?.id,
       id_municipio: datosUsuario.MiembrosMunicipios?.[0]?.id,
-      institucion: institucionMiembro,
     });
   } catch (error) {
     console.log(

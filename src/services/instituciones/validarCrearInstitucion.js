@@ -13,7 +13,8 @@ export default async function validarCrearInstitucion(
   direccion,
   id_pais,
   id_estado,
-  id_municipio
+  id_municipio,
+  id_parroquia
 ) {
   try {
     const cookieStore = await cookies();
@@ -38,7 +39,8 @@ export default async function validarCrearInstitucion(
       direccion,
       id_pais,
       id_estado,
-      id_municipio
+      id_municipio,
+      id_parroquia
     );
 
     if (validarCampos.status === "error") {
@@ -66,6 +68,7 @@ export default async function validarCrearInstitucion(
         id_pais: validarCampos.id_pais,
         id_estado: validarCampos.id_estado,
         id_municipio: validarCampos.id_municipio,
+        id_parroquia: validarCampos.id_parroquia,
       },
     });
 
@@ -89,6 +92,7 @@ export default async function validarCrearInstitucion(
       id_pais: validarCampos.id_pais,
       id_estado: validarCampos.id_estado,
       id_municipio: validarCampos.id_municipio,
+      id_parroquia: validarCampos.id_parroquia,
     });
   } catch (error) {
     console.log(`Error, interno al crear institución: ` + error);

@@ -31,9 +31,6 @@ export async function POST(request) {
       institucion
     );
 
-    console.log(validaciones);
-    
-
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -66,6 +63,7 @@ export async function POST(request) {
           token: token,
           clave: validaciones.claveEncriptada,
           id_rol: validaciones.id_rol,
+          id_usuario: validaciones.id_creador,
           validado: validaciones.autorizar,
           MiembrosPaises: {
             connect: { id: validaciones.institucion.id_pais },
@@ -85,20 +83,44 @@ export async function POST(request) {
           MiembrosDepartamentos: {
             connect: departamento.map(({ id }) => ({ id })),
           },
-          creador: {
-            connect: validaciones.creador.map(({ id }) => ({ id })),
-          },
         },
       }),
 
       // Se consulta el mismo usuario recién creado con sus departamentos
+      // prisma.usuario.findFirst({
+      //   where: {
+      //     correo: validaciones.correo,
+      //   },
+      //   include: {
+      //     MiembrosInstitucion: true,
+      //     MiembrosDepartamentos: true,
+      //   },
+      // }),
+
       prisma.usuario.findFirst({
         where: {
           correo: validaciones.correo,
         },
-        include: {
-          MiembrosInstitucion: true,
-          MiembrosDepartamentos: true,
+        select: {
+          id: true,
+          cedula: true,
+          correo: true,
+          nombre: true,
+          apellido: true,
+          borrado: true,
+          validado: true,
+          createdAt: true,
+          id_rol: true,
+          roles: {
+            select: { id: true, nombre: true },
+          },
+          MiembrosDepartamentos: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+            },
+          },
         },
       }),
     ]);
@@ -134,7 +156,7 @@ export async function POST(request) {
       return generarRespuesta(
         "ok",
         "Usuario creado con exito",
-        { redirect: "/" },
+        { usuarios: usuarioConDepartamentos },
         201
       );
     }

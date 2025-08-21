@@ -127,12 +127,14 @@ CREATE TABLE "institucion" (
     "id_pais" INTEGER NOT NULL,
     "id_estado" INTEGER NOT NULL,
     "id_municipio" INTEGER NOT NULL,
+    "id_parroquia" INTEGER NOT NULL,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "institucion_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "institucion_id_pais_fkey" FOREIGN KEY ("id_pais") REFERENCES "pais" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "institucion_id_estado_fkey" FOREIGN KEY ("id_estado") REFERENCES "estado" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "institucion_id_municipio_fkey" FOREIGN KEY ("id_municipio") REFERENCES "municipio" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "institucion_id_municipio_fkey" FOREIGN KEY ("id_municipio") REFERENCES "municipio" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "institucion_id_parroquia_fkey" FOREIGN KEY ("id_parroquia") REFERENCES "parroquia" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

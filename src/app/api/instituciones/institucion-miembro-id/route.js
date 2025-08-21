@@ -17,8 +17,29 @@ export async function GET() {
 
     const institucionMiembro = await prisma.institucion.findFirst({
       where: {
-        id: validaciones.id_institucion,
+        id_municipio: validaciones.id_municipio,
         borrado: false,
+      },
+      include: {
+        miembros: {
+          select: {
+            id: true,
+            cedula: true,
+            correo: true,
+            nombre: true,
+            apellido: true,
+            borrado: true,
+            validado: true,
+            createdAt: true,
+            id_rol: true,
+            roles: {
+              select: { nombre: true },
+            },
+            MiembrosDepartamentos: {
+              select: { id: true, nombre: true, descripcion: true },
+            },
+          },
+        },
       },
     });
 
@@ -34,7 +55,7 @@ export async function GET() {
         "ok",
         "Institucion encontrada...",
         {
-          instituciones: validaciones.institucion,
+          instituciones: institucionMiembro,
         },
         201
       );

@@ -26,8 +26,22 @@ export async function GET() {
       orderBy: {
         nombre: "asc",
       },
-      include: {
-        MiembrosDepartamentos: true,
+      select: {
+        id: true,
+        cedula: true,
+        correo: true,
+        nombre: true,
+        apellido: true,
+        borrado: true,
+        validado: true,
+        createdAt: true,
+        id_rol: true,
+        roles: {
+          select: { id: true, nombre: true },
+        },
+        MiembrosDepartamentos: {
+          select: { id: true, nombre: true, descripcion: true },
+        },
       },
     });
 

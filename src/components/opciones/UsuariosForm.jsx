@@ -434,6 +434,9 @@ export default function UsuariosForm({
       };
 
       const response = await axios.post("/api/usuarios/crear-usuario", payload);
+      const nuevoUsuario = response.data.usuarios; // Asegúrate de que esta sea la estructura correcta
+
+      setTodosUsuarios((prevUsuarios) => [...prevUsuarios, nuevoUsuario]);
 
       abrirMensaje(response.data.message);
 
@@ -477,10 +480,12 @@ export default function UsuariosForm({
             <ModalDatos titulo={"Apellido"} descripcion={apellidoUsuario} />
             <ModalDatos titulo={"Correo"} descripcion={correoUsuario} />
 
-            <ModalDatos
-              titulo={"Institución"}
-              descripcion={nombreInstitucion}
-            />
+            {usuarioActivo.id_rol === 1 && (
+              <ModalDatos
+                titulo={"Institución"}
+                descripcion={nombreInstitucion}
+              />
+            )}
 
             <ModalDatos
               titulo={"Departamento"}
@@ -667,10 +672,10 @@ export default function UsuariosForm({
               />
             </div>
           ) : (
-            <div className="flex flex-col w-full gap-4 ">
+            <div className="flex flex-col w-full gap-2">
               {todosUsuarios?.length !== 0 && (
                 <>
-                  <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 sm:p-4 rounded-md shadow-lg">
+                  <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 mb-4 sm:p-4 rounded-md shadow-lg">
                     <Input
                       type="text"
                       placeholder="🔍 Buscar..."
@@ -762,7 +767,7 @@ export default function UsuariosForm({
                     );
                   })}
 
-                  <div className="mt-6">
+                  <div className="mt-4">
                     <Paginador
                       first={first}
                       setFirst={setFirst}

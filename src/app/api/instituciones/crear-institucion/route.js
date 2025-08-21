@@ -14,6 +14,7 @@ export async function POST(request) {
       id_pais,
       id_estado,
       id_municipio,
+      id_parroquia,
     } = await request.json();
 
     const validaciones = await validarCrearInstitucion(
@@ -24,7 +25,8 @@ export async function POST(request) {
       direccion,
       id_pais,
       id_estado,
-      id_municipio
+      id_municipio,
+      id_parroquia
     );
 
     if (validaciones.status === "error") {
@@ -57,6 +59,7 @@ export async function POST(request) {
         id_estado: validaciones.id_estado,
         id_municipio: validaciones.id_municipio,
         id_usuario: validaciones.id_usuario,
+        id_parroquia: validaciones.id_parroquia,
       },
     });
 
