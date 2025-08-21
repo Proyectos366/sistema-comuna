@@ -14,14 +14,8 @@ import Input from "../inputs/Input";
 import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
 import Paginador from "../templates/PlantillaPaginacion";
 import ListadoUsuarios from "../listados/ListadoUsuarios";
-import MostrarMsj from "../MostrarMensaje";
 import FormCrearUsuario from "../formularios/FormCrearUsuario";
 import DivTresDentroSectionRegistroMostrar from "../DivTresDentroSectionRegistroMostrar";
-
-/**
- Necesitamos arreglar lkos datos del usuario porque se envian indefinidos
- 
- */
 
 export default function UsuariosForm({
   mostrar,
@@ -193,16 +187,6 @@ export default function UsuariosForm({
     setCrearMostrar((prev) => !prev);
     setOpcion((prev) => (prev === "" ? "crear" : ""));
   };
-
-  /**
-    const cambiarSeleccionInstitucion = (e) => {
-      setIdInstitucion(e.target.value);
-    };
-  
-    const cambiarSeleccionDepartamento = (e) => {
-      setIdDepartamento(e.target.value);
-    };
-  */
 
   const toggleAutorizar = (id) => {
     setAutorizar(autorizar === id ? "" : id); // Cambia el estado, permitiendo deselección

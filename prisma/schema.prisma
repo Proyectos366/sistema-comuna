@@ -38,11 +38,14 @@ model usuario {
   borrado      Boolean  @default(false)
   validado     Boolean  @default(false)
   id_rol       Int // Clave foránea hacia role
+  id_usuario   Int?
   updatedAt    DateTime @default(now())
   createdAt    DateTime @default(now())
 
   // Relaciones
   roles                  role           @relation(name: "UsuarioRole", fields: [id_rol], references: [id])
+  creador                usuario?       @relation(name: "CreadorUsuarios", fields: [id_usuario], references: [id])
+  usuarios_creados       usuario[]      @relation(name: "CreadorUsuarios")
   imagenes               imagen[] // Relación uno a muchos con Imagen
   CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
   MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")

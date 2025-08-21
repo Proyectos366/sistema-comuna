@@ -1,3 +1,5 @@
+"use client";
+
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
@@ -8,6 +10,7 @@ import SelectOpcion from "../SelectOpcion";
 import InputClave from "../inputs/InputClave";
 import MostrarMsj from "../MostrarMensaje";
 import InputCheckBox from "../inputs/InputCheckBox";
+import { useEffect, useState } from "react";
 
 export default function FormCrearUsuario({
   idDepartamento,
@@ -56,6 +59,13 @@ export default function FormCrearUsuario({
   toggleAutorizar,
   usuarioActivo,
 }) {
+  const [idInstiDepa, setIdInstiDepa] = useState("");
+
+  useEffect(() => {
+    const nuevoId = usuarioActivo.id_rol === 1 ? idInstitucion : idDepartamento;
+    setIdInstiDepa(nuevoId);
+  }, [idInstitucion, idDepartamento, usuarioActivo.id_rol]);
+
   const leyendoClave1 = (e) => {
     const claveUnoUno = e.target.value;
     setClaveUno(claveUnoUno);
@@ -215,7 +225,7 @@ export default function FormCrearUsuario({
         </div>
 
         {mensaje && (
-          <div className="w-full mb-3">
+          <div className="w-full">
             <MostrarMsj mensaje={mensaje} />
           </div>
         )}
@@ -233,8 +243,7 @@ export default function FormCrearUsuario({
               claveUno,
               claveDos,
               idRol,
-              idInstitucion,
-              idDepartamento,
+              idInstiDepa,
               autorizar,
             }}
           />

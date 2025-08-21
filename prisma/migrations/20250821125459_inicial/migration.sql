@@ -28,9 +28,11 @@ CREATE TABLE "usuario" (
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "validado" BOOLEAN NOT NULL DEFAULT false,
     "id_rol" INTEGER NOT NULL,
+    "id_usuario" INTEGER,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "usuario_id_rol_fkey" FOREIGN KEY ("id_rol") REFERENCES "role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "usuario_id_rol_fkey" FOREIGN KEY ("id_rol") REFERENCES "role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "usuario_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

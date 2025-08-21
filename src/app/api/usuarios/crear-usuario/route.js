@@ -31,6 +31,9 @@ export async function POST(request) {
       institucion
     );
 
+    console.log(validaciones);
+    
+
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -81,6 +84,9 @@ export async function POST(request) {
           },
           MiembrosDepartamentos: {
             connect: departamento.map(({ id }) => ({ id })),
+          },
+          creador: {
+            connect: validaciones.creador.map(({ id }) => ({ id })),
           },
         },
       }),

@@ -30,6 +30,21 @@ export default async function validarCrearUsuario(
       );
     }
 
+    const correoDescifrado = descifrarToken.correo;
+
+    const datosUsuario = await prisma.usuario.findFirst({
+      where: { correo: correoDescifrado },
+      select: {
+        id: true,
+        MiembrosInstitucion: {
+          select: { id: true, nombre: true },
+        },
+        MiembrosDepartamentos: {
+          select: { id: true, nombre: true },
+        },
+      },
+    });
+
     const validandoCampos = ValidarCampos.validarCamposRegistro(
       cedula,
       nombre,
@@ -41,6 +56,7 @@ export default async function validarCrearUsuario(
       autorizar
     );
 
+   
     if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
         validandoCampos.status,
@@ -58,6 +74,9 @@ export default async function validarCrearUsuario(
       },
     });
 
+    console.log(usuarioExistente);
+    
+
     if (usuarioExistente) {
       return retornarRespuestaFunciones("error", "Error, usuario ya existe");
     }
@@ -69,7 +88,7 @@ export default async function validarCrearUsuario(
     } else {
       datosInstitucion = await prisma.institucion.findFirst({
         where: {
-          id: institucione?.[0]?.id,
+          id: datosUsuario?.MiembrosInstitucion?.[0].id,
         },
         select: {
           id: true,
@@ -92,6 +111,7 @@ export default async function validarCrearUsuario(
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas", {
+      id_usuario: datosUsuario.id,
       cedula: validandoCampos.cedula,
       nombre: validandoCampos.nombre,
       apellido: validandoCampos.apellido,
@@ -100,6 +120,7 @@ export default async function validarCrearUsuario(
       id_rol: validandoCampos.id_rol,
       autorizar: validandoCampos.autorizar,
       institucion: datosInstitucion,
+      creador: {id: datosUsuario.id}
     });
   } catch (error) {
     console.error(`Error interno, validar crear usuario: ` + error);
