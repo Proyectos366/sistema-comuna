@@ -94,7 +94,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
 
     const rutaUsuario = path.join(
       process.cwd(),
-      "public",
+      "storage",
       "uploads", // <— aquí agregamos "uploads" como raíz
       "img-perfil",
       nombreCarpetaUsuario

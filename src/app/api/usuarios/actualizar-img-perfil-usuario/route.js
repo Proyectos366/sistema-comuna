@@ -1,8 +1,6 @@
 import prisma from "@/libs/prisma";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 import registrarEventoSeguro from "@/libs/trigget";
-
-import { NextResponse } from "next/server";
 import validarCrearCambiarImgPerfil from "@/services/usuarios/validarCrearCambiarImgPerfil";
 
 export async function POST(request) {

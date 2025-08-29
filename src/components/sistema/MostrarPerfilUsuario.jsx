@@ -167,10 +167,23 @@ export default function MostrarPerfilUsuario({
           <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
             <div className="flex items-center justify-center">
               <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                {/* <img
+                  src={
+                    perfilUsuario?.imagenes?.[0]?.path
+                      ? `/api/usuarios/mostrar-img-perfil${perfilUsuario.imagenes[0].path}`
+                      : "/img/perfil.png"
+                  }
+                  alt="Foto de perfil"
+                  className="rounded-full w-full h-full object-cover group-hover:scale-105 transform transition-transform duration-300 ease-in-out"
+                /> */}
+
                 <img
                   src={
                     perfilUsuario?.imagenes?.[0]?.path
-                      ? perfilUsuario.imagenes[0].path
+                      ? `/api/usuarios/mostrar-img-perfil?path=${perfilUsuario.imagenes[0].path.replace(
+                          /^\/+/,
+                          ""
+                        )}`
                       : "/img/perfil.png"
                   }
                   alt="Foto de perfil"
