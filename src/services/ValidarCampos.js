@@ -904,19 +904,16 @@ export default class ValidarCampos {
     }
   }
 
-  static validarCamposCrearComuna(nombre, usuarioId, parroquiaId) {
+  static validarCamposCrearComuna(nombre, parroquiaId) {
     try {
       const validarNombre = this.validarCampoTexto(nombre);
-      const validarUsuarioId = this.validarCampoId(usuarioId);
       const validarParroquiaId = this.validarCampoId(parroquiaId);
 
       if (validarNombre.status === "error") return validarNombre;
-      if (validarUsuarioId.status === "error") return validarUsuarioId;
       if (validarParroquiaId.status === "error") return validarParroquiaId;
 
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
-        id_usuario: validarUsuarioId.id,
         id_parroquia: validarParroquiaId.id,
       });
     } catch (error) {

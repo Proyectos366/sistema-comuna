@@ -1,8 +1,7 @@
 import BotonEditar from "../botones/BotonEditar";
 import Titulos from "../Titulos";
 
-/** Necesitamos arreglar esto de manera que podamos mostrar el boton de editar la comuna */
-export default function ListadoGenaral({
+export default function ListadoComunas({
   isLoading,
   listado,
   nombreListado,
@@ -32,8 +31,8 @@ export default function ListadoGenaral({
               </div>
 
               {typeof editando === "function" &&
-                (usuarioActivo.MiembrosDepartamentos?.[0]?.id ===
-                  lista.id_departamento ||
+                ((usuarioActivo.MiembrosDepartamentos?.[0]?.nombre === "oac" &&
+                  usuarioActivo.id_rol === 3) ||
                   usuarioActivo.id_rol === 1) && (
                   <div>
                     <BotonEditar editar={() => editando(lista)} />

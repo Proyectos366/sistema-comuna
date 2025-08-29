@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearComuna from "../formularios/FormCrearComuna";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormEditarComuna from "../formularios/FormEditarComuna";
 import ModalEditar from "../modales/ModalEditar";
+import ListadoComunas from "../Listados/ListadoComunas";
 
 export default function ComunasForm({
   mostrar,
@@ -24,7 +24,7 @@ export default function ComunasForm({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  id_usuario,
+  usuarioActivo,
 }) {
   const [nombreComuna, setNombreComuna] = useState("");
   const [rifComuna, setRifComuna] = useState("");
@@ -104,7 +104,7 @@ export default function ComunasForm({
         id_parroquia: idParroquia,
       });
 
-      setTodasComunas((prevComunas) => [...prevComunas, response.data.comuna]);
+      setTodasComunas((prevComunas) => [...prevComunas, response.data.comunas]);
 
       abrirMensaje(response.data.message);
 
@@ -245,13 +245,13 @@ export default function ComunasForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoComunas
             isLoading={isLoading}
             listado={todasComunas}
             nombreListado={"Comunas"}
             mensajeVacio={"No hay comunas disponibles..."}
             editando={editando}
-            id_usuario={id_usuario}
+            usuarioActivo={usuarioActivo}
           />
         </DivDosDentroSectionRegistroMostrar>
       </SectionRegistroMostrar>

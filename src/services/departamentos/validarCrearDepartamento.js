@@ -35,6 +35,9 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
       where: { correo: descifrarToken.correo },
       select: {
         id: true,
+        MiembrosInstitucion: {
+          select: { id: true },
+        },
         MiembrosDepartamentos: {
           select: {
             id: true,
@@ -48,8 +51,7 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
       return retornarRespuestaFunciones("error", "Error, usuario no existe...");
     }
 
-    const institucion_id =
-      datosUsuario.MiembrosDepartamentos?.[0]?.id_institucion;
+    const institucion_id = datosUsuario.MiembrosInstitucion?.[0]?.id;
 
     const nombreRepetido = await prisma.departamento.findFirst({
       where: {

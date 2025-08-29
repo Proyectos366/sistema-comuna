@@ -69,7 +69,9 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   // Funciones para controlar el modal
-  const abrirModal = () => setMostrarModal(true);
+  const abrirModal = () => {
+    setMostrarModal(true)
+  };
   const cerrarModal = () => setMostrarModal(false);
 
   const abrirMensaje = (nuevoMensaje, tiempo) => {

@@ -84,7 +84,7 @@ export async function POST(request) {
       return generarRespuesta(
         "ok",
         "Comuna actualizada...",
-        { comuna: comunaActualizada[0] },
+        { comunas: comunaActualizada },
         201
       );
     }

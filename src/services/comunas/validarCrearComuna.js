@@ -32,20 +32,22 @@ export default async function validarCrearComuna(
 
     const correo = descifrarToken.correo;
 
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
-      select: { id: true },
+      select: {
+        id: true,
+        MiembrosInstitucion: {
+          select: { id_municipio: true },
+        },
+      },
     });
 
-    if (!idUsuario) {
+    if (!datosUsuario) {
       return retornarRespuestaFunciones("error", "Error, usuario no existe...");
     }
 
-    const usuarioId = idUsuario.id;
-
     const validandoCampos = ValidarCampos.validarCamposCrearComuna(
       nombre,
-      usuarioId,
       id_parroquia
     );
 
@@ -76,7 +78,7 @@ export default async function validarCrearComuna(
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: validandoCampos.id_usuario,
+      id_usuario: datosUsuario.id,
       id_parroquia: validandoCampos.id_parroquia,
       nombre: validandoCampos.nombre,
       direccion: direccionMinuscula,

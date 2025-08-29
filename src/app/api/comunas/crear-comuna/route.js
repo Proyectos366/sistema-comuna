@@ -86,7 +86,7 @@ export async function POST(request) {
         "ok",
         "Comuna creada...",
         {
-          comuna: nuevaComuna,
+          comunas: nuevaComuna,
         },
         201
       );

@@ -14,6 +14,7 @@ export default function ListadoUsuarios({
   setIdRol,
   setEstado,
   setValidado,
+  setNombreRol,
 }) {
   return (
     <div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
@@ -101,6 +102,7 @@ export default function ListadoUsuarios({
             setAccion("cambiarRol");
             setNombreUsuario(usuario.nombre);
             setIdRol("");
+            setNombreRol(usuario.roles.nombre);
             setIdUsuario(usuario.id);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158] text-white shadow-md hover:scale-105 transition cursor-pointer"

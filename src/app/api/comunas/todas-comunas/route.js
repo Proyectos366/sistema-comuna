@@ -15,11 +15,24 @@ export async function GET() {
       );
     }
 
-    const todasComunas = await prisma.comuna.findMany({
-      where: {
-        borrado: false,
-      },
-    });
+    let todasComunas;
+
+    if (validaciones.id_rol === 1) {
+      todasComunas = await prisma.comuna.findMany({
+        where: {
+          borrado: false,
+        },
+      });
+    } else {
+      todasComunas = await prisma.comuna.findMany({
+        where: {
+          id_parroquia: {
+            in: validaciones.id_parroquias,
+          },
+          borrado: false, // opcional, si quieres excluir comunas marcadas como borradas
+        },
+      });
+    }
 
     if (!todasComunas) {
       return generarRespuesta(

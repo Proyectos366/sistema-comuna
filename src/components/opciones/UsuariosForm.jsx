@@ -13,7 +13,7 @@ import SelectOpcion from "../SelectOpcion";
 import Input from "../inputs/Input";
 import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
 import Paginador from "../templates/PlantillaPaginacion";
-import ListadoUsuarios from "../listados/ListadoUsuarios";
+import ListadoUsuarios from "../Listados/ListadoUsuarios";
 import FormCrearUsuario from "../formularios/FormCrearUsuario";
 import DivTresDentroSectionRegistroMostrar from "../DivTresDentroSectionRegistroMostrar";
 
@@ -58,7 +58,6 @@ export default function UsuariosForm({
   const [estado, setEstado] = useState(null);
   const [validado, setValidado] = useState(null);
 
-  const [abierto, setAbierto] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -68,7 +67,6 @@ export default function UsuariosForm({
   const [ordenAscendente, setOrdenAscendente] = useState(true);
 
   const [opcion, setOpcion] = useState("");
-  const [mensajeBackEnd, setMensajeBackEnd] = useState("");
 
   const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
   const [validarCorreoUsuario, setValidarCorreoUsuario] = useState(false);
@@ -537,7 +535,9 @@ export default function UsuariosForm({
                 descripcion={nombreDepartamento}
               />
             )}
+
             <ModalDatos titulo="Usuario" descripcion={nombreUsuario} />
+
             {accion === "cambiarRol" && (
               <ModalDatos titulo="Rol" descripcion={nombreRol} />
             )}
@@ -762,6 +762,7 @@ export default function UsuariosForm({
                             setIdRol={setIdRol}
                             setEstado={setEstado}
                             setValidado={setValidado}
+                            setNombreRol={setNombreRol}
                           />
                         )}
                       </div>
