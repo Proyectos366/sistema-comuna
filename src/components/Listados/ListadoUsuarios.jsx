@@ -1,6 +1,6 @@
 import { formatearFecha } from "@/utils/Fechas";
-import ListaDetallesVocero from "./ListaDetalleVocero";
 import { formatearCedula } from "@/utils/formatearCedula";
+import ListaDetallesVocero from "./ListaDetalleVocero";
 
 export default function ListadoUsuarios({
   usuario,

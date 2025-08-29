@@ -7,6 +7,7 @@ import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";
 import InputModulo from "../inputs/InputModulo";
+import InputDescripcion from "../inputs/InputDescripcion";
 
 export default function FormEditarFormacion({
   nombre,
@@ -58,10 +59,12 @@ export default function FormEditarFormacion({
         </LabelInput>
 
         <LabelInput nombre={"Descripción"}>
-          <Input
-            type={"text"}
+          <InputDescripcion
             value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            setValue={setDescripcion}
+            rows={6}
+            max={500}
+            autoComplete="off"
           />
         </LabelInput>
 

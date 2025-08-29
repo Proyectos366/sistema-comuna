@@ -3,8 +3,6 @@ import prisma from "@/libs/prisma";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
 import AuthTokens from "@/libs/AuthTokens";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import msjErrores from "../msj_validaciones/login/msjErrores.json";
-import msjCorrectos from "../msj_validaciones/login/msjCorrectos.json";
 
 export default async function validarInicioSesion(correo, clave) {
   try {
@@ -20,8 +18,30 @@ export default async function validarInicioSesion(correo, clave) {
     const correoMinuscula = correo.toLowerCase();
 
     const datosInicioSesion = await prisma.usuario.findFirst({
-      where: {
-        correo: correoMinuscula,
+      where: { correo: correoMinuscula },
+      select: {
+        id: true,
+        nombre: true,
+        apellido: true,
+        cedula: true,
+        correo: true,
+        clave: true,
+        id_rol: true,
+        borrado: true,
+        validado: true,
+        createdAt: true,
+        MiembrosInstitucion: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
+        MiembrosDepartamentos: {
+          select: {
+            id: true,
+            nombre: true,
+          },
+        },
       },
     });
 
@@ -66,22 +86,18 @@ export default async function validarInicioSesion(correo, clave) {
       );
     }
 
-    return retornarRespuestaFunciones(
-      msjCorrectos.ok,
-      msjCorrectos.validacionCorrecta,
-      {
-        token: crearTokenInicioSesion.token,
-        cookie: crearTokenInicioSesion.cookieOption,
-        redirect: redirect,
-        id_usuario: datosInicioSesion.id,
-        datosUsuario: datosInicioSesion,
-      }
-    );
+    return retornarRespuestaFunciones("ok", "Iniciando sesion", {
+      token: crearTokenInicioSesion.token,
+      cookie: crearTokenInicioSesion.cookieOption,
+      redirect: redirect,
+      id_usuario: datosInicioSesion.id,
+      datosUsuario: datosInicioSesion,
+    });
   } catch (error) {
-    console.error(`${msjErrores.errorLogin.internoValidando}: ` + error);
+    console.error(`Error interno validar inicio sesion: ` + error);
     return retornarRespuestaFunciones(
-      msjErrores.error,
-      msjErrores.errorLogin.internoValidando
+      "error",
+      "Error interno validar inicio sesion"
     );
   }
 }

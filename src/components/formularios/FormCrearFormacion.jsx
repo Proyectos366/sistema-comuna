@@ -3,6 +3,7 @@ import Formulario from "../Formulario";
 import InputNombre from "../inputs/InputNombre";
 import InputModulo from "../inputs/InputModulo";
 import LabelInput from "../inputs/LabelInput";
+import InputDescripcion from "../inputs/InputDescripcion";
 
 export default function FormCrearFormacion({
   nombre,
@@ -47,10 +48,12 @@ export default function FormCrearFormacion({
       </LabelInput>
 
       <LabelInput nombre={"Descripción"}>
-        <InputNombre
-          type="text"
+        <InputDescripcion
           value={descripcion}
           setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
         />
       </LabelInput>
 

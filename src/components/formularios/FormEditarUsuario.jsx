@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import LabelInput from "../inputs/LabelInput";
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
@@ -36,6 +36,7 @@ export default function FormEditarUsuario({
             setValidarNombre={setValidarNombre}
           />
         </LabelInput>
+
         <LabelInput nombre={"Apellido"}>
           <InputNombre
             type={"text"}

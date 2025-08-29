@@ -1,6 +1,7 @@
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import Input from "../inputs/Input";
+import InputDescripcion from "../inputs/InputDescripcion";
 import InputNombre from "../inputs/InputNombre";
 import InputRif from "../inputs/InputRif";
 import LabelInput from "../inputs/LabelInput";
@@ -90,10 +91,12 @@ export default function FormCrearInstitucion({
           </LabelInput>
 
           <LabelInput nombre={"Descripción"}>
-            <InputNombre
-              type="text"
+            <InputDescripcion
               value={descripcion}
               setValue={setDescripcion}
+              rows={6}
+              max={500}
+              autoComplete="off"
             />
           </LabelInput>
 

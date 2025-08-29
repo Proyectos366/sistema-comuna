@@ -6,7 +6,6 @@ import Modal from "../Modal";
 import ModalDatos from "../ModalDatos";
 import SectionRegistroMostrar from "../SectionRegistroMostrar";
 import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
-import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import ModalDatosContenedor from "../ModalDatosContenedor";
@@ -14,7 +13,6 @@ import ModalEditar from "../modales/ModalEditar";
 import FormEditarNovedad from "../formularios/FormEditarNovedad";
 import FormCrearNovedad from "../formularios/FormCrearNovedad";
 import ListadoNovedades from "../listados/ListadoNovedades";
-import { formatearFecha } from "@/utils/Fechas";
 
 export default function NovedadesForm({
   mostrar,
@@ -47,28 +45,6 @@ export default function NovedadesForm({
   const [accion, setAccion] = useState("");
 
   const [abiertos, setAbiertos] = useState({});
-
-  /** 
-    useEffect(() => {
-      const fetchDatosNovedad = async () => {
-        try {
-          const [departamentosRes, novedadesRes] = await Promise.all([
-            axios.get("/api/departamentos/todos-departamentos"),
-            axios.get("/api/novedades/todas-novedades"),
-          ]);
-
-          setTodosDepartamentos(departamentosRes.data.departamentos || []);
-          setTodasNovedades(novedadesRes.data.novedades || []);
-        } catch (error) {
-          console.log("Error, al obtener las novedades: " + error);
-        } finally {
-          setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
-        }
-      };
-
-      fetchDatosNovedad();
-    }, []);
-  */
 
   useEffect(() => {
     const fetchDatosNovedad = async () => {
@@ -139,13 +115,6 @@ export default function NovedadesForm({
           }
         );
 
-        console.log(response.data.novedades);
-
-        /**
-          setTodasNovedades([...todasNovedades, response.data.novedades]);
-
-        */
-
         setTodasNovedades((prev) => [...prev, ...response.data.novedades]);
 
         abrirMensaje(response.data.message);
@@ -168,8 +137,6 @@ export default function NovedadesForm({
 
   const editandoNovedad = async (datos) => {
     try {
-      console.log(datos);
-
       setAccion("editar");
       setIdNovedad(datos.id);
       setIdDepartamento(datos.id_departamento);

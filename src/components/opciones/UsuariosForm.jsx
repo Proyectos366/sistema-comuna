@@ -13,9 +13,9 @@ import SelectOpcion from "../SelectOpcion";
 import Input from "../inputs/Input";
 import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
 import Paginador from "../templates/PlantillaPaginacion";
-import ListadoUsuarios from "../Listados/ListadoUsuarios";
 import FormCrearUsuario from "../formularios/FormCrearUsuario";
 import DivTresDentroSectionRegistroMostrar from "../DivTresDentroSectionRegistroMostrar";
+import ListadoUsuarios from "../listados/ListadoUsuarios";
 
 export default function UsuariosForm({
   mostrar,

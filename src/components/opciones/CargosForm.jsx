@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCargo from "../formularios/FormCrearCargo";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarCargo from "../formularios/FormEditarCargo";
+import ListadoGeneral from "../listados/ListadoGeneral";
 
 export default function CargosForm({
   mostrar,
@@ -207,7 +207,7 @@ export default function CargosForm({
 
         <DivDosDentroSectionRegistroMostrar>
           <DivDosDentroSectionRegistroMostrar>
-            <ListadoGenaral
+            <ListadoGeneral
               isLoading={isLoading}
               listado={todosCargos}
               nombreListado="Cargos"

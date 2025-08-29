@@ -55,6 +55,8 @@ export default function DepartamentosForm({
   useEffect(() => {
     if (accion === "editar" && !mostrar) {
       setAccion("");
+      setNombreDepartamento("");
+      setDescripcionDepartamento("");
       setIdDepartamento("");
     }
   }, [accion, mostrar]);

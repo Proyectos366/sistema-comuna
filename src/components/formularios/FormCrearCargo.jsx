@@ -1,5 +1,6 @@
 import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
+import InputDescripcion from "../inputs/InputDescripcion";
 import InputNombre from "../inputs/InputNombre";
 import LabelInput from "../inputs/LabelInput";
 
@@ -32,10 +33,12 @@ export default function FormCrearCargo({
       </LabelInput>
 
       <LabelInput nombre={"Descripción"}>
-        <InputNombre
-          type="text"
+        <InputDescripcion
           value={descripcion}
           setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
         />
       </LabelInput>
 

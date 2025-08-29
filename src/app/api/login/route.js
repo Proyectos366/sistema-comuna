@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
-import msjErrores from "../../../msj_validaciones/login/msjErrores.json";
-import msjCorrectos from "../../../msj_validaciones/login/msjCorrectos.json";
 import nombreToken from "@/utils/nombreToken";
 
 import validarInicioSesion from "@/services/validarInicioSesion";
@@ -31,7 +29,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
 
@@ -46,8 +44,8 @@ export async function POST(request) {
     });
 
     const response = NextResponse.json({
-      status: msjCorrectos.ok,
-      message: msjCorrectos.okLogin.iniciandoSesion,
+      status: "ok",
+      message: "Inicio de sesion correcto",
       token: validaciones.token,
       redirect: validaciones.redirect,
     });
@@ -59,7 +57,7 @@ export async function POST(request) {
     );
     return response;
   } catch (error) {
-    console.error(`${msjErrores.errorLogin.internoValidando}: ` + error);
+    console.error(`Error interno al iniciar sesion: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -72,10 +70,10 @@ export async function POST(request) {
     });
 
     return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorLogin.internoValidando,
+      "error",
+      "Error interno al iniciar sesion",
       {},
-      msjErrores.codigo.codigo500
+      500
     );
   }
 }
@@ -102,7 +100,7 @@ export async function GET(request) {
         descifrarToken.status,
         descifrarToken.message,
         {},
-        msjErrores.codigo.codigo400
+        400
       );
     }
 
@@ -135,22 +133,15 @@ export async function GET(request) {
         id_usuario: usuarioLogout.id,
         descripcion: "Cierre de sesion correctamente",
         datosAntes: null,
-        datosDespues: {
-          usuarioLogout,
-        },
+        datosDespues: usuarioLogout,
       });
 
       cookieStore.delete(nombreToken);
 
-      return generarRespuesta(
-        msjCorrectos.ok,
-        msjCorrectos.okLogin.cerrandoSesion,
-        {},
-        msjCorrectos.codigo.codigo201
-      );
+      return generarRespuesta("ok", "Cerrando sesion", {}, 201);
     }
   } catch (error) {
-    console.error("Error, cerrando sesión:", error);
+    console.error("Error interno cerrando sesión:", error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -162,11 +153,6 @@ export async function GET(request) {
       datosDespues: error.message,
     });
 
-    return generarRespuesta(
-      msjErrores.error,
-      msjErrores.errorLogin.internoValidando,
-      {},
-      msjErrores.codigo.codigo500
-    );
+    return generarRespuesta("error", "Error interno cerrando sesión", {}, 500);
   }
 }

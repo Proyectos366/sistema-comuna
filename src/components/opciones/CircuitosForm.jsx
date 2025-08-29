@@ -10,8 +10,8 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearCircuito from "../formularios/FormCrearCircuito";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
+import ListadoGeneral from "../listados/ListadoGeneral";
 
 export default function CircuitosForm({
   mostrar,
@@ -163,7 +163,7 @@ export default function CircuitosForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoGeneral
             isLoading={isLoading}
             listado={todosCircuitos}
             nombreListado={"Circuitos"}

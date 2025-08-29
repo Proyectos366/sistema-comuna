@@ -10,10 +10,10 @@ import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import FormCrearConsejo from "../formularios/FormCrearConsejo";
-import ListadoGenaral from "../listados/ListadoGeneral";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormEditarConsejo from "../formularios/FormEditarConsejo";
 import ModalEditar from "../modales/ModalEditar";
+import ListadoGeneral from "../listados/ListadoGeneral";
 
 export default function ConsejoForm({
   mostrar,
@@ -334,7 +334,7 @@ export default function ConsejoForm({
         </DivUnoDentroSectionRegistroMostrar>
 
         <DivDosDentroSectionRegistroMostrar>
-          <ListadoGenaral
+          <ListadoGeneral
             isLoading={isLoading}
             listado={todosConsejos}
             nombreListado={"Consejos comunales"}

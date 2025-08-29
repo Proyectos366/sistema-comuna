@@ -3,6 +3,7 @@ import BotonAceptarCancelar from "../BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";
+import InputDescripcion from "../inputs/InputDescripcion";
 
 export default function FormEditarNovedad({
   nombre,
@@ -26,10 +27,12 @@ export default function FormEditarNovedad({
         </LabelInput>
 
         <LabelInput nombre={"Descripción"}>
-          <Input
-            type={"text"}
+          <InputDescripcion
             value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            setValue={setDescripcion}
+            rows={6}
+            max={500}
+            autoComplete="off"
           />
         </LabelInput>
 

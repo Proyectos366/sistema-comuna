@@ -2,7 +2,7 @@ import BotonEditar from "../botones/BotonEditar";
 import Titulos from "../Titulos";
 
 /** Necesitamos arreglar esto de manera que podamos mostrar el boton de editar la comuna */
-export default function ListadoGenaral({
+export default function ListadoGeneral({
   isLoading,
   listado,
   nombreListado,

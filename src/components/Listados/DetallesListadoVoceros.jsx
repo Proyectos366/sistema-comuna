@@ -1,11 +1,11 @@
 "use client";
 import { formatearFecha } from "@/utils/Fechas";
-import ListaDetallesVocero from "./ListaDetalleVocero";
 import BotonEditar from "../botones/BotonEditar";
 import { formatearCedula } from "@/utils/formatearCedula";
 import { formatearTelefono } from "@/utils/formatearTelefono";
 
 import { useEffect, useRef } from "react";
+import ListaDetallesVocero from "./ListaDetalleVocero";
 
 export default function DetallesListadoVoceros({
   abierto,

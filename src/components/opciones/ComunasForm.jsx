@@ -13,7 +13,7 @@ import FormCrearComuna from "../formularios/FormCrearComuna";
 import ModalDatosContenedor from "../ModalDatosContenedor";
 import FormEditarComuna from "../formularios/FormEditarComuna";
 import ModalEditar from "../modales/ModalEditar";
-import ListadoComunas from "../Listados/ListadoComunas";
+import ListadoComunas from "../listados/ListadoComunas";
 
 export default function ComunasForm({
   mostrar,
