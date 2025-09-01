@@ -90,13 +90,13 @@ export default function MenuLateralUsuario({
                     nombre={"Instituciones"}
                   />
 
-                  <EnlacesBarraLateral
+                  {/* <EnlacesBarraLateral
                     id_rol={id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"oac"}
                     nombre={"Oac"}
-                  />
+                  /> */}
 
                   <EnlacesBarraLateral
                     id_rol={id_rol}
@@ -233,13 +233,13 @@ export default function MenuLateralUsuario({
                 <>
                   {nombreDepartamento === "oac" && (
                     <>
-                      <EnlacesBarraLateral
+                      {/* <EnlacesBarraLateral
                         id_rol={id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"oac"}
                         nombre={"OAC"}
-                      />
+                      /> */}
 
                       <EnlacesBarraLateral
                         id_rol={id_rol}
@@ -289,13 +289,14 @@ export default function MenuLateralUsuario({
                 <>
                   {nombreDepartamento === "oac" && (
                     <>
-                      <EnlacesBarraLateral
+                      {/* <EnlacesBarraLateral
                         id_rol={id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"oac"}
                         nombre={"OAC"}
-                      />
+                      /> */}
+
                       <EnlacesBarraLateral
                         id_rol={id_rol}
                         cambiarRuta={cambiarRuta}

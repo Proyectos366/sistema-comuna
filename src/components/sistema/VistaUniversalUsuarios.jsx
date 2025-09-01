@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/app/context/AuthContext";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
@@ -18,7 +18,6 @@ import VoceroForm from "../opciones/VoceroForm";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
 import UsuariosForm from "../opciones/UsuariosForm";
-import OacDepartamento from "../departamentos/Oac";
 import DepartamentosForm from "../opciones/DepartamentosForm";
 import PaisesForm from "../opciones/PaisForm";
 import EstadosForm from "../opciones/EstadoForm";
@@ -439,7 +438,7 @@ export default function VistaUniversalUsuarios({ children }) {
                     />
                   )}
 
-                  {vista === "oac" &&
+                  {/* {vista === "oac" &&
                     (departamento?.nombre === "oac" ||
                       usuarioActivo?.id_rol === 1) && (
                       <OacDepartamento
@@ -453,7 +452,7 @@ export default function VistaUniversalUsuarios({ children }) {
                         ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                         usuarioActivo={usuarioActivo}
                       />
-                    )}
+                    )} */}
 
                   {vista === "perfil" && (
                     <MostrarPerfilUsuario

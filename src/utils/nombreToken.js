@@ -1,4 +1,3 @@
-
 // utils/constantes.js
-const nombreToken = 'sistema_archivos';
+const nombreToken = "sistema_comunas";
 export default nombreToken;
