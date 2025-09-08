@@ -33,6 +33,15 @@ export default async function validarCrearConsejoComunal(
       );
     }
 
+    if (!["comuna", "circuito"].includes(comunaCircuito)) {
+      return generarRespuesta(
+        "error",
+        `Tipo de ${
+          comunaCircuito === "comuna" ? "comuna inválida" : "circuito inválido"
+        }`
+      );
+    }
+
     const correo = descifrarToken.correo;
 
     const idUsuario = await prisma.usuario.findFirst({

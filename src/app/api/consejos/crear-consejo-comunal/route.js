@@ -1,15 +1,29 @@
-import prisma from "@/libs/prisma";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearConsejoComunal from "@/services/consejos-comunales/validarCrearConsejoComunal";
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+@fileoverview Controlador de API para la creación de un nuevo consejo comunal.
+Este archivo maneja la lógica para crear un nuevo consejo comunal en la base de datosa través
+de una solicitud POST. Utiliza Prisma para la interacción con la base de datos, un servicio de
+validaciónpara asegurar la validez de los datos, y un sistema de registro de eventos para la auditoría.
+@module
+*/
+// Importaciones de módulos y librerías
+import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
+import validarCrearConsejoComunal from "@/services/consejos-comunales/validarCrearConsejoComunal"; // Servicio para validar los datos del nuevo consejo comunal.
+import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
+/**
+Maneja las solicitudes HTTP POST para crear un nuevo consejo comunal.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles del consejo comunal a crear.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
+*/
 
 export async function POST(request) {
   try {
+    // 1. Extrae datos de la solicitud JSON
     const { nombre, id_parroquia, id_comuna, id_circuito, comunaCircuito } =
       await request.json();
 
+    // Inicializa propiedades adicionales que no se utilizan.
     const { direccion, norte, sur, este, oeste, punto, rif, codigo } = "";
 
+    // 2. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarCrearConsejoComunal(
       nombre,
       direccion,
@@ -26,6 +40,7 @@ export async function POST(request) {
       comunaCircuito
     );
 
+    // 3. Condición de validación fallida
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "consejo",
@@ -45,27 +60,7 @@ export async function POST(request) {
       );
     }
 
-    if (!["comuna", "circuito"].includes(comunaCircuito)) {
-      await registrarEventoSeguro(request, {
-        tabla: "consejo",
-        accion: "ERROR_CONSEJO",
-        id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Error de comuna o circuito comunal",
-        datosAntes: null,
-        datosDespues: comunaCircuito,
-      });
-
-      return generarRespuesta(
-        "error",
-        `Tipo de ${
-          comunaCircuito === "comuna" ? "comuna inválida" : "circuito inválido"
-        }`,
-        {},
-        400
-      );
-    }
-
+    // 4. Crea un nuevo consejo comunal en la base de datos
     const nuevoConsejoComunal = await prisma.consejo.create({
       data: {
         nombre: validaciones.nombre,
@@ -85,6 +80,7 @@ export async function POST(request) {
       },
     });
 
+    // 5. Condición de error si no se crea el consejo comunal
     if (!nuevoConsejoComunal) {
       await registrarEventoSeguro(request, {
         tabla: "consejo",
@@ -103,6 +99,7 @@ export async function POST(request) {
         400
       );
     } else {
+      // 6. Condición de éxito: el consejo comunal fue creado correctamente
       await registrarEventoSeguro(request, {
         tabla: "consejo",
         accion: "CREAR_CONSEJO",
@@ -123,6 +120,7 @@ export async function POST(request) {
       );
     }
   } catch (error) {
+    // 7. Manejo de errores inesperados
     console.log(`Error interno (consejo comunal): ` + error);
 
     await registrarEventoSeguro(request, {
@@ -135,6 +133,7 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error, interno (consejo comunal)",
