@@ -1,4 +1,5 @@
 import prisma from "@/libs/prisma";
+import { startOfWeek, endOfWeek } from "date-fns";
 import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
@@ -83,6 +84,35 @@ export default async function validarCrearNovedad(
       3: "baja",
     };
 
+    const nuevaNovedad = await prisma.novedad.create({
+      data: {
+        nombre: validarCampos.nombre,
+        descripcion: validarCampos.descripcion,
+        prioridad: validarCampos.prioridad,
+        id_usuario: validarCampos.id_usuario,
+        id_institucion: validarCampos.id_institucion,
+      },
+    });
+
+    // Crear relaciones con departamentos
+    const noveDepa = await prisma.novedadDepartamento.createMany({
+      data: {
+        id_novedad: nuevaNovedad.id,
+        id_departamento: validarCampos.id_departamento,
+      },
+    });
+
+    const nuevaNotificacion = await prisma.notificacion.create({
+      data: {
+        mensaje: validarCampos.nombre,
+        id_emisor: validarCampos.id_depa_origen,
+        id_receptor: validarCampos.id_departamento,
+      },
+    });
+
+    const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const finSemana = endOfWeek(new Date(), { weekStartsOn: 1 });
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       nombre: validarCampos.nombre,
@@ -90,6 +120,9 @@ export default async function validarCrearNovedad(
       rango: validarCampos.rango,
       prioridad: mapaPrioridad[validarCampos.prioridad],
       departamentos: departamentos ? departamentos : [],
+      inicioSemana: inicioSemana,
+      finSemana: finSemana,
+      id_novedad: nuevaNovedad.id,
       id_institucion:
         validarCampos.rango === 1
           ? validarCampos.id_institucion

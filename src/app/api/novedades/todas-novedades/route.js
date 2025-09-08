@@ -1,11 +1,29 @@
-import prisma from "@/libs/prisma";
-import validarConsultarTodasNovedades from "@/services/novedades/validarConsultarTodasNovedades";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
+/**
+@fileoverview Controlador de API para la consulta de todas las novedades. Este archivo gestiona
+la lógica de recuperación de las novedades almacenadas en la base de datos, validando la solicitud
+previamente con un servicio especializado y retornando los datos transformados de manera estandarizada.
+@module
+*/
 
-export async function GET(request) {
+// Importaciones de módulos y librerías
+import prisma from "@/libs/prisma"; // Cliente de Prisma para interactuar con la base de datos.
+import validarConsultarTodasNovedades from "@/services/novedades/validarConsultarTodasNovedades"; // Servicio para validar la consulta de todas las novedades.
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para construir respuestas uniformes hacia el frontend.
+
+/**
+Maneja las solicitudes HTTP GET para consultar todas las novedades disponibles.
+@async
+@function GET
+@param {Request} request - Objeto de la solicitud entrante (no requiere parámetros específicos).
+@returns {Promise<object>} - Una respuesta HTTP en formato JSON con la lista de novedades o un error.
+*/
+
+export async function GET() {
   try {
+    // 1. Validación inicial de la consulta
     const validaciones = await validarConsultarTodasNovedades();
 
+    // 2. Manejo de validación fallida
     if (validaciones.status === "error") {
       return generarRespuesta(
         validaciones.status,
@@ -15,6 +33,7 @@ export async function GET(request) {
       );
     }
 
+    // 3. Consulta de novedades en la base de datos
     const novedades = await prisma.novedadDepartamento.findMany({
       include: {
         novedades: {
@@ -33,6 +52,7 @@ export async function GET(request) {
       },
     });
 
+    // 4. Transformación de datos obtenidos
     const resultado = novedades.map((novedadDepto) => {
       const novedad = novedadDepto.novedades;
 
@@ -68,7 +88,7 @@ export async function GET(request) {
       };
     });
 
-
+    // 5. Validación de resultados vacíos
     if (!resultado) {
       return generarRespuesta(
         "error",
@@ -76,19 +96,22 @@ export async function GET(request) {
         { novedades: [] },
         201
       );
-    } else {
-      return generarRespuesta(
-        "ok",
-        "Todas las novedades...",
-        {
-          novedades: resultado,
-        },
-        201
-      );
     }
+
+    // 6. Respuesta exitosa con todas las novedades consultadas
+    return generarRespuesta(
+      "ok",
+      "Todas las novedades...",
+      {
+        novedades: resultado,
+      },
+      201
+    );
   } catch (error) {
+    // 7. Manejo de errores inesperados
     console.log(`Error interno consultar (novedades): ` + error);
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error, interno consultar (novedades)",

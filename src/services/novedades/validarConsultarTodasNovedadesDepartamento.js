@@ -1,4 +1,5 @@
 import prisma from "@/libs/prisma";
+import { startOfWeek, endOfWeek } from "date-fns";
 import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
@@ -37,11 +38,16 @@ export default async function validarConsultarTodasNovedadesDepartamento() {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
+    const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 1 }); // Lunes
+    const finSemana = endOfWeek(new Date(), { weekStartsOn: 1 }); // Domingo
+
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       id_departamento: datosUsuario.MiembrosDepartamentos?.[0]?.id,
       id_institucion: datosUsuario.MiembrosInstitucion?.[0]?.id ?? null,
       correo: correo,
+      inicioSemana: inicioSemana,
+      finSemana: finSemana,
     });
   } catch (error) {
     console.log(
