@@ -20,7 +20,7 @@ import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar e
  * @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
  */
 
-export async function GET() {
+export async function GET(request) {
   try {
     // 1. Valida la información de la solicitud utilizando el servicio correspondiente
     const validaciones = await validarConsultarVocerosMunicipio();
