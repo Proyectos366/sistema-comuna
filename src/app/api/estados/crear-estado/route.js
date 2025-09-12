@@ -61,7 +61,7 @@ export async function POST(request) {
       },
     });
 
-    // 5. Consulta todos los países en la base de datos
+    // 5. Consulta todos los países, estados, municipios y parroquias
     const todosPaises = await prisma.pais.findMany({
       where: {
         borrado: false,
@@ -92,28 +92,28 @@ export async function POST(request) {
       });
 
       return generarRespuesta("error", "Error, no se creo el estado", {}, 400);
-    } else {
-      // 7. Condición de éxito: el estado fue creado correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "estado",
-        accion: "CREAR_ESTADO",
-        id_objeto: nuevoEstado.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Estado creado con exito",
-        datosAntes: null,
-        datosDespues: nuevoEstado,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Estado creado...",
-        {
-          estados: nuevoEstado,
-          paises: todosPaises,
-        },
-        201
-      );
     }
+
+    // 7. Condición de éxito: el estado fue creado correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "estado",
+      accion: "CREAR_ESTADO",
+      id_objeto: nuevoEstado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Estado creado con exito",
+      datosAntes: null,
+      datosDespues: nuevoEstado,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Estado creado...",
+      {
+        estados: nuevoEstado,
+        paises: todosPaises,
+      },
+      201
+    );
   } catch (error) {
     // 8. Manejo de errores inesperados
     console.log(`Error interno (estados): ` + error);

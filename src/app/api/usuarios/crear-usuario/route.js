@@ -1,11 +1,30 @@
-import prisma from "@/libs/prisma";
-import validarCrearUsuario from "@/services/usuarios/validarCrearUsuario";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import AuthTokens from "@/libs/AuthTokens";
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+ @fileoverview Controlador de API para crear un nuevo usuario en el sistema. Este endpoint valida
+ los datos recibidos, genera un token de activación, registra al usuario en la base de datos, lo
+ asocia con instituciones y departamentos, registra eventos de auditoría y retorna el perfil del
+ usuario creado. Utiliza Prisma como ORM y servicios personalizados para validación y respuesta
+ estandarizada. @module api/usuarios/crearUsuario
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import validarCrearUsuario from "@/services/usuarios/validarCrearUsuario"; // Servicio para validar los datos del nuevo usuario
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+
+/**
+ * Maneja las solicitudes HTTP POST para crear un nuevo usuario.
+ * Valida los datos recibidos, genera un token de activación,
+ * registra al usuario en la base de datos y retorna su perfil.
+ *
+ * @async
+ * @function POST
+ * @param {Request} request - Solicitud HTTP con los datos del nuevo usuario.
+ * @returns {Promise<Response>} Respuesta HTTP con el usuario creado o mensaje de error.
+ */
 
 export async function POST(request) {
   try {
+    // 1. Extrae los datos del cuerpo de la solicitud
     const {
       cedula,
       nombre,
@@ -19,6 +38,7 @@ export async function POST(request) {
       departamento,
     } = await request.json();
 
+    // 2. Ejecuta la validación de los datos recibidos
     const validaciones = await validarCrearUsuario(
       cedula,
       nombre,
@@ -31,6 +51,7 @@ export async function POST(request) {
       institucion
     );
 
+    // 3. Si la validación falla, registra el intento fallido y retorna error 400
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -50,17 +71,15 @@ export async function POST(request) {
       );
     }
 
-    const token = AuthTokens.tokenValidarUsuario(10);
-
+    // 4. Ejecuta transacción: crea el usuario y consulta su perfil con departamentos
     const [nuevoUsuario, usuarioConDepartamentos] = await prisma.$transaction([
-      // Se crea el nuevo usuario con departamentos conectados
       prisma.usuario.create({
         data: {
           cedula: validaciones.cedula,
           nombre: validaciones.nombre,
           apellido: validaciones.apellido,
           correo: validaciones.correo,
-          token: token,
+          token: validaciones.token,
           clave: validaciones.claveEncriptada,
           id_rol: validaciones.id_rol,
           id_usuario: validaciones.id_creador,
@@ -85,17 +104,6 @@ export async function POST(request) {
           },
         },
       }),
-
-      // Se consulta el mismo usuario recién creado con sus departamentos
-      // prisma.usuario.findFirst({
-      //   where: {
-      //     correo: validaciones.correo,
-      //   },
-      //   include: {
-      //     MiembrosInstitucion: true,
-      //     MiembrosDepartamentos: true,
-      //   },
-      // }),
 
       prisma.usuario.findFirst({
         where: {
@@ -125,8 +133,7 @@ export async function POST(request) {
       }),
     ]);
 
-    //const nuevoUsuario = false;
-
+    // 5. Si no se crea el usuario, registra el error y retorna error 400
     if (!nuevoUsuario) {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -139,28 +146,30 @@ export async function POST(request) {
       });
 
       return generarRespuesta("error", "Error, no se creo el usuario", {}, 400);
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "CREAR_USUARIO",
-        id_objeto: usuarioConDepartamentos?.MiembrosDepartamentos?.[0]?.id ?? 0,
-        id_usuario: nuevoUsuario.id,
-        descripcion: `Usuario creado y se agrego al departamento ${
-          usuarioConDepartamentos?.MiembrosDepartamentos?.[0]?.nombre ??
-          "sin departamento"
-        }`,
-        datosAntes: null,
-        datosDespues: nuevoUsuario,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Usuario creado con exito",
-        { usuarios: usuarioConDepartamentos },
-        201
-      );
     }
+
+    // 6. Registro exitoso del evento y retorno del usuario creado
+    await registrarEventoSeguro(request, {
+      tabla: "usuario",
+      accion: "CREAR_USUARIO",
+      id_objeto: usuarioConDepartamentos?.MiembrosDepartamentos?.[0]?.id ?? 0,
+      id_usuario: nuevoUsuario.id,
+      descripcion: `Usuario creado y se agrego al departamento ${
+        usuarioConDepartamentos?.MiembrosDepartamentos?.[0]?.nombre ??
+        "sin departamento"
+      }`,
+      datosAntes: null,
+      datosDespues: nuevoUsuario,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Usuario creado con exito",
+      { usuarios: usuarioConDepartamentos },
+      201
+    );
   } catch (error) {
+    // 7. Manejo de errores inesperados
     console.log(`Error interno, crear usuario: ` + error);
 
     await registrarEventoSeguro(request, {
@@ -173,6 +182,7 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta("error", "Error interno, crear usuario", {}, 500);
   }
 }

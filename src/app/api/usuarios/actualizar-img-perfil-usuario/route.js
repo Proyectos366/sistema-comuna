@@ -1,11 +1,33 @@
-import prisma from "@/libs/prisma";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import registrarEventoSeguro from "@/libs/trigget";
-import validarCrearCambiarImgPerfil from "@/services/usuarios/validarCrearCambiarImgPerfil";
+/**
+ @fileoverview Controlador de API para crear o actualizar la imagen de perfil de un usuario. Este
+ endpoint valida los datos recibidos, registra eventos según el resultado, realiza la transacción
+ para guardar la imagen y retorna el perfil actualizado del usuario. Utiliza Prisma como ORM,
+ servicios personalizados para validación y auditoría, y una utilidad para respuestas HTTP
+ estandarizadas. @module api/usuarios/crearCambiarImgPerfil
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+import validarCrearCambiarImgPerfil from "@/services/usuarios/validarCrearCambiarImgPerfil"; // Servicio para validar datos de imagen de perfil
+
+/**
+ * Maneja las solicitudes HTTP POST para crear o actualizar la imagen de perfil de un usuario.
+ * Valida los datos recibidos, registra eventos de auditoría, guarda la imagen en la base de datos
+ * y retorna el perfil actualizado del usuario.
+ *
+ * @async
+ * @function POST
+ * @param {Request} request - Solicitud HTTP con los datos de la imagen.
+ * @returns {Promise<Response>} Respuesta HTTP con el perfil actualizado o mensaje de error.
+ */
 
 export async function POST(request) {
   try {
+    // 1. Ejecuta la validación de los datos recibidos
     const validaciones = await validarCrearCambiarImgPerfil(request);
+
+    // 2. Si la validación falla, registra el intento fallido y retorna error 400
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -26,6 +48,7 @@ export async function POST(request) {
       );
     }
 
+    // 3. Ejecuta transacción: guarda imagen y consulta perfil actualizado
     const [cambiarImgPerfil, usuarioActualizado] = await prisma.$transaction([
       prisma.imagen.create({
         data: {
@@ -77,6 +100,7 @@ export async function POST(request) {
       }),
     ]);
 
+    // 4. Si no se obtiene el usuario actualizado, registra el error y retorna error 400
     if (!usuarioActualizado) {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -94,26 +118,28 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "UPDATE_IMAGEN_PERFIL",
-        id_objeto: usuarioActualizado.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `La imagen del perfil se actualizo con exito...`,
-        datosAntes: validaciones.usuarioAntes,
-        datosDespues: usuarioActualizado,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Se actualizo la imagen de perfil...",
-        { usuarioPerfil: usuarioActualizado },
-        200
-      );
     }
+
+    // 5. Registro exitoso del evento y retorno del perfil actualizado
+    await registrarEventoSeguro(request, {
+      tabla: "usuario",
+      accion: "UPDATE_IMAGEN_PERFIL",
+      id_objeto: usuarioActualizado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `La imagen del perfil se actualizo con exito...`,
+      datosAntes: validaciones.usuarioAntes,
+      datosDespues: usuarioActualizado,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Se actualizo la imagen de perfil...",
+      { usuarioPerfil: usuarioActualizado },
+      200
+    );
   } catch (error) {
-    console.error("Error interno al actualizar imagen de perfil:", error);
+    // 6. Manejo de errores inesperados
+    console.error("Error interno al actualizar imagen de perfil: ", +error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -125,6 +151,7 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error, interno al actualizar imagen de perfil...",

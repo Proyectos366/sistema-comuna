@@ -59,17 +59,17 @@ export async function GET() {
         {},
         400
       );
-    } else {
-      // 5. Condición de éxito: se encontraron comunas
-      return generarRespuesta(
-        "ok",
-        "Todas las comunas...",
-        {
-          comunas: todasComunas,
-        },
-        201
-      );
     }
+
+    // 5. Condición de éxito: se encontraron comunas
+    return generarRespuesta(
+      "ok",
+      "Todas las comunas...",
+      {
+        comunas: todasComunas,
+      },
+      201
+    );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(`Error interno consultar (comunas): ` + error);

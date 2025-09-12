@@ -1,30 +1,29 @@
 /**
- @fileoverview Controlador de API para consultar voceros asociados a un consejo comunal específico.
- Este endpoint valida el ID del consejo comunal recibido en la solicitud, realiza la consulta en la
- base de datos y retorna la lista de voceros correspondientes. También registra eventos de auditoría
+ @fileoverview Controlador de API para consultar voceros asociados a un municipio específico. Este
+ endpoint valida el contexto de la solicitud, obtiene las parroquias vinculadas al municipio y
+ consulta todos los voceros pertenecientes a dichas parroquias. También registra eventos de auditoría
  para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y servicios
- personalizados para validación. @module api/voceros/consultarPorIdConsejoComunal
+ personalizados. @module api/voceros/consultarPorMunicipi
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
-import validarConsultarVoceroIdConsejoComunal from "@/services/voceros/validarConsultarVoceroIdConsejoComunal"; // Servicio para validar el ID del consejo comunal
+import validarConsultarVocerosMunicipio from "@/services/voceros/validarConsultarVocerosMunicipio"; // Servicio para validar el municipio y obtener sus parroquias
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP GET para consultar voceros por ID de consejo comunal.
+ * Maneja las solicitudes HTTP GET para consultar voceros por municipio.
  * Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
  *
  * @async
  * @function GET
- * @param {Request} request - Solicitud HTTP con el ID del consejo comunal.
  * @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
  */
 
-export async function GET(request) {
+export async function GET() {
   try {
     // 1. Valida la información de la solicitud utilizando el servicio correspondiente
-    const validaciones = await validarConsultarVoceroIdConsejoComunal(request);
+    const validaciones = await validarConsultarVocerosMunicipio();
 
     // 2. Condición de validación fallida
     if (validaciones.status === "error") {
@@ -34,22 +33,25 @@ export async function GET(request) {
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
         descripcion:
-          "Validacion fallida al intentar consultar vocero por id_consejo",
+          "Validacion fallida al intentar consultar vocero por id_municipio",
         datosAntes: null,
         datosDespues: validaciones,
       });
 
-      return retornarRespuestaFunciones(
+      return generarRespuesta(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
+        {},
+        400
       );
     }
 
-    // 3. Consulta los voceros por id_consejo
-    const vocerosPorConsejoComunal = await prisma.vocero.findMany({
+    // 3. Consulta todos los voceros asociados a las parroquias del municipio
+    const todosVocerosMunicipio = await prisma.vocero.findMany({
       where: {
-        id_consejo: validaciones.id_consejo,
-        borrado: false,
+        id_parroquia: {
+          in: validaciones.id_parroquias,
+        },
       },
       select: {
         id: true,
@@ -72,20 +74,29 @@ export async function GET(request) {
         parroquias: {
           select: { nombre: true },
         },
-        consejos: { select: { nombre: true } },
+        consejos: {
+          select: { nombre: true, id: true },
+        },
         cursos: {
           where: { borrado: false },
           select: {
             verificado: true,
             certificado: true,
-            formaciones: { select: { nombre: true } },
+            formaciones: {
+              select: { nombre: true },
+            },
             asistencias: {
               select: {
                 id: true,
                 presente: true,
                 formador: true,
                 fecha_registro: true,
-                modulos: { select: { id: true, nombre: true } },
+                modulos: {
+                  select: {
+                    id: true,
+                    nombre: true,
+                  },
+                },
               },
             },
           },
@@ -97,53 +108,48 @@ export async function GET(request) {
     });
 
     // 4. Si no se encuentran voceros, registra el evento y retorna respuesta vacía
-    if (!vocerosPorConsejoComunal) {
+    if (!todosVocerosMunicipio) {
       await registrarEventoSeguro(request, {
         tabla: "vocero",
         accion: "ERROR_CONSULTAR_VOCERO",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo consultar el vocero por el id_consejo",
+        descripcion: "No se pudo consultar el vocero por municipio",
         datosAntes: validaciones,
-        datosDespues: vocerosPorConsejoComunal,
+        datosDespues: todosVocerosMunicipio,
       });
 
-      return generarRespuesta(
-        "ok",
-        "No hay voceros en este consejo comunal.",
-        { voceros: [] },
-        200
-      );
+      return generarRespuesta("error", "Error, no hay voceros...", {}, 400);
     }
 
     // 5. Registra el evento exitoso de consulta
     await registrarEventoSeguro(request, {
       tabla: "vocero",
       accion: "CONSULTAR_VOCERO",
-      id_objeto: vocerosPorConsejoComunal.id,
+      id_objeto: null,
       id_usuario: validaciones.id_usuario,
-      descripcion: `Vocero consultado por id_consejo con exito`,
+      descripcion: `Voceros todos por municipio con exito`,
       datosAntes: validaciones,
-      datosDespues: vocerosPorConsejoComunal,
+      datosDespues: todosVocerosMunicipio,
     });
 
     // 6. Retorna la respuesta exitosa con los voceros encontrados
     return generarRespuesta(
       "ok",
-      "Voceros encontrados.",
-      { voceros: vocerosPorConsejoComunal },
+      "Voceros encontrados...",
+      { voceros: todosVocerosMunicipio },
       200
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno al consultar voceros id_consejo: ` + error);
+    console.log(`Error interno, al consultar voceros municipio: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "vocero",
       accion: "ERROR_INTERNO",
       id_objeto: 0,
       id_usuario: 0,
-      descripcion: "Error inesperado al consultar el vocero por el id_consejo",
+      descripcion: "Error inesperado al consultar los voceros de un municipio",
       datosAntes: null,
       datosDespues: error.message,
     });
@@ -151,7 +157,7 @@ export async function GET(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error interno al consultar voceros id_consejo",
+      "Error interno al consultar voceros municipio...",
       {},
       500
     );

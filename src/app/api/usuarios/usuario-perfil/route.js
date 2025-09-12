@@ -1,17 +1,32 @@
-import prisma from "@/libs/prisma";
-import AuthTokens from "@/libs/AuthTokens";
-import { cookies } from "next/headers";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import nombreToken from "@/utils/nombreToken";
+/**
+ @fileoverview Controlador de API para consultar el perfil del usuario autenticado. Este endpoint
+ valida el contexto del usuario, consulta su perfil completo en la base de datos incluyendo su rol,
+ departamento e imagen más reciente, y retorna una respuesta estructurada. Utiliza Prisma como ORM y
+ servicios personalizados para validación y respuesta estandarizada.
+  @module api/usuarios/consultarUsuarioPerfil
+*/
 
-export async function GET(request) {
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import validarUsuarioPerfil from "@/services/usuarios/ValidarUsuarioPerfil"; // Servicio para validar el contexto del usuario
+
+/**
+ * Maneja las solicitudes HTTP GET para obtener el perfil del usuario autenticado.
+ * Valida el contexto, consulta el perfil completo del usuario en la base de datos
+ * y retorna una respuesta estructurada con sus datos.
+ *
+ * @async
+ * @function GET
+ * @returns {Promise<Response>} Respuesta HTTP con los datos del perfil del usuario o mensaje de error.
+ */
+
+export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Ejecuta la validación previa antes de consultar
+    const validaciones = await validarUsuarioPerfil();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    // 2. Si la validación falla, retorna error 400
+    if (validaciones.status === "error") {
       return generarRespuesta(
         descifrarToken.status,
         descifrarToken.message,
@@ -20,10 +35,9 @@ export async function GET(request) {
       );
     }
 
-    const correo = descifrarToken.correo;
-
+    // 3. Consulta el perfil del usuario usando el correo validado
     const datosUsuarioPerfil = await prisma.usuario.findFirst({
-      where: { correo: correo },
+      where: { correo: validaciones.correo },
       select: {
         id: true,
         nombre: true,
@@ -59,21 +73,25 @@ export async function GET(request) {
       },
     });
 
+    // 4. Si no se encuentra el usuario, retorna error 400
     if (!datosUsuarioPerfil) {
       return generarRespuesta("error", "Error, usuario no existe...", {}, 400);
-    } else {
-      return generarRespuesta(
-        "ok",
-        "Exito, usuario encontrado",
-        {
-          usuarioPerfil: datosUsuarioPerfil,
-        },
-        200
-      );
     }
+
+    // 5. Retorna los datos del perfil del usuario en una respuesta exitosa
+    return generarRespuesta(
+      "ok",
+      "Exito, usuario encontrado",
+      {
+        usuarioPerfil: datosUsuarioPerfil,
+      },
+      200
+    );
   } catch (error) {
+    // 6. Manejo de errores inesperados
     console.log("Error interno, usuario perfil" + error);
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error interno, usuario perfil...",

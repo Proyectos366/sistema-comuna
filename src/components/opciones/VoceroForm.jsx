@@ -251,7 +251,7 @@ export default function VoceroForm({
     const fetchTodosVoceros = async () => {
       setIsLoading(true);
       try {
-        let response = await axios.get(`/api/voceros/todos-voceros`);
+        let response = await axios.get(`/api/voceros/todos-voceros-municipio`);
 
         setTodosVoceros(response?.data?.voceros);
       } catch (error) {

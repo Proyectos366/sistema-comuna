@@ -1,10 +1,28 @@
-import prisma from "@/libs/prisma";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarEditarVocero from "@/services/voceros/validarEditarVocero";
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+ @fileoverview Controlador de API para editar un vocero existente en el sistema. Este endpoint recibe
+ los datos actualizados del vocero, valida la información, realiza la actualización en la base de
+ datos y registra eventos de auditoría. Utiliza Prisma como ORM, servicios personalizados para
+ validación y registro seguro de eventos. @module api/voceros/editarVocero
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import validarEditarVocero from "@/services/voceros/validarEditarVocero"; // Servicio para validar los datos del vocero
+import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+
+/**
+ * Maneja las solicitudes HTTP POST para editar un vocero.
+ * Valida los datos recibidos, actualiza el vocero en la base de datos y retorna una respuesta estructurada.
+ *
+ * @async
+ * @function POST
+ * @param {Request} request - Solicitud HTTP con los datos del vocero a editar.
+ * @returns {Promise<Response>} Respuesta HTTP con el vocero actualizado o un mensaje de error.
+ */
 
 export async function POST(request) {
   try {
+    // 1. Extrae los datos del cuerpo de la solicitud
     const {
       nombre,
       nombre_dos,
@@ -25,6 +43,7 @@ export async function POST(request) {
       id_circuito,
     } = await request.json();
 
+    // 2. Valida los datos recibidos
     const validaciones = await validarEditarVocero(
       nombre,
       nombre_dos,
@@ -43,6 +62,7 @@ export async function POST(request) {
       id_circuito
     );
 
+    // 3. Si la validación falla, registra el intento y retorna error
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "vocero",
@@ -62,6 +82,7 @@ export async function POST(request) {
       );
     }
 
+    // 4. Ejecuta la actualización y consulta del vocero en una transacción
     const [actualizado, voceroActualizado] = await prisma.$transaction([
       prisma.vocero.update({
         where: { cedula: validaciones.cedula },
@@ -128,6 +149,7 @@ export async function POST(request) {
       }),
     ]);
 
+    // 5. Verifica si se obtuvo el vocero actualizado
     if (!voceroActualizado) {
       await registrarEventoSeguro(request, {
         tabla: "vocero",
@@ -145,25 +167,28 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "vocero",
-        accion: "UPDATE_VOCERO",
-        id_objeto: voceroActualizado.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Vocero actualizado con exito`,
-        datosAntes: validaciones,
-        datosDespues: voceroActualizado,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Vocero actualizado...",
-        { vocero: voceroActualizado },
-        201
-      );
     }
+
+    // 6. Registra el evento exitoso de actualización
+    await registrarEventoSeguro(request, {
+      tabla: "vocero",
+      accion: "UPDATE_VOCERO",
+      id_objeto: voceroActualizado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Vocero actualizado con exito`,
+      datosAntes: validaciones,
+      datosDespues: voceroActualizado,
+    });
+
+    // 7. Retorna la respuesta exitosa con el vocero actualizado
+    return generarRespuesta(
+      "ok",
+      "Vocero actualizado...",
+      { vocero: voceroActualizado },
+      201
+    );
   } catch (error) {
+    // 8. Manejo de errores inesperados
     console.log(`Error interno (actualizar vocero): ` + error);
 
     await registrarEventoSeguro(request, {
@@ -176,6 +201,7 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error, interno (actualizar vocero)",

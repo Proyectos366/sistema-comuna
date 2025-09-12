@@ -63,12 +63,15 @@ export default async function validarCrearUsuario(
       );
     }
 
+    const tokenAuth = AuthTokens.tokenValidarUsuario(10);
+
     // Verificar si el usuario ya existe
     const usuarioExistente = await prisma.usuario.findFirst({
       where: {
         OR: [
           { correo: validandoCampos.correo },
           { cedula: validandoCampos.cedula },
+          { token: tokenAuth },
         ],
       },
     });
@@ -128,6 +131,7 @@ export default async function validarCrearUsuario(
       autorizar: validandoCampos.autorizar,
       institucion: datosInstitucion,
       id_creador: datosUsuario.id,
+      token: tokenAuth,
     });
   } catch (error) {
     console.error(`Error interno, validar crear usuario: ` + error);

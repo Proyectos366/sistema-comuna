@@ -1,27 +1,24 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
+import validarConsultarTodosVoceros from "@/services/voceros/validarConsultarVoceros";
 import { generarRespuesta } from "@/utils/respuestasAlFront";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Valida la información de la solicitud utilizando el servicio correspondiente
+    const validaciones = await validarConsultarTodosVoceros();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
-      return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+    // 2. Condición de validación fallida
+    if (validaciones.status === "error") {
+      return generarRespuesta(
+        validaciones.status,
+        validaciones.message,
+        {},
+        400
       );
     }
 
+    // 3. Consulta todos los voceros
     const todosVoceros = await prisma.vocero.findMany({
-      where: {
-        borrado: false,
-      },
       select: {
         id: true,
         nombre: true,
@@ -76,10 +73,12 @@ export async function GET() {
       },
     });
 
+    // 4. Si no se encuentran voceros retorna respuesta vacía
     if (!todosVoceros) {
       return generarRespuesta("error", "Error, no hay voceros...", {}, 400);
     }
 
+    // 5. Retorna la respuesta exitosa con los voceros encontrados
     return generarRespuesta(
       "ok",
       "Voceros encontrados...",
@@ -87,8 +86,10 @@ export async function GET() {
       200
     );
   } catch (error) {
-    console.log(`Error interno, al consultar todos los voceros: ${error}`);
+    // 7. Manejo de errores inesperados
+    console.log(`Error interno, al consultar todos los voceros: ` + error);
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error interno al consultar todos los voceros...",
@@ -97,16 +98,3 @@ export async function GET() {
     );
   }
 }
-
-/**
- const cursos = todosVoceros.cursos.map(curso => {
-  const modulosIncompletos = curso.modulos.filter(modulo => {
-    return modulo.asistencias.length === 0;
-  });
-
-  return {
-    curso: curso.nombre,
-    modulosPendientes: modulosIncompletos.map(m => m.nombre),
-  };
-});
- */

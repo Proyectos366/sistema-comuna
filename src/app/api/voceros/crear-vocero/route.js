@@ -1,10 +1,28 @@
-import prisma from "@/libs/prisma";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarCrearVocero from "@/services/voceros/validarCrearVocero";
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+ @fileoverview Controlador de API para crear un nuevo vocero en el sistema. Este endpoint recibe los
+ datos del vocero, valida la información, registra el vocero en la base de datos y crea los cursos y
+ asistencias correspondientes. También registra eventos de auditoría para cada acción. Utiliza Prisma
+ como ORM y servicios personalizados para validación y trazabilidad. @module api/voceros/crearVocero
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import validarCrearVocero from "@/services/voceros/validarCrearVocero"; // Servicio para validar los datos del vocero
+import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+
+/**
+ * Maneja las solicitudes HTTP POST para crear un nuevo vocero.
+ * Valida los datos recibidos, crea el vocero, cursos y asistencias, y retorna una respuesta estructurada.
+ *
+ * @async
+ * @function POST
+ * @param {Request} request - Solicitud HTTP con los datos del vocero a registrar.
+ * @returns {Promise<Response>} Respuesta HTTP con el vocero creado o un mensaje de error.
+ */
 
 export async function POST(request) {
   try {
+    // 1. Extrae los datos del cuerpo de la solicitud
     const {
       nombre,
       nombre_dos,
@@ -25,6 +43,7 @@ export async function POST(request) {
       id_circuito,
     } = await request.json();
 
+    // 2. Valida los datos recibidos
     const validaciones = await validarCrearVocero(
       nombre,
       nombre_dos,
@@ -43,6 +62,7 @@ export async function POST(request) {
       id_circuito
     );
 
+    // 3. Si la validación falla, registra el intento y retorna error
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "vocero",
@@ -62,6 +82,7 @@ export async function POST(request) {
       );
     }
 
+    // 4. Crea el vocero dentro de una transacción atomica
     const vocero = await prisma.$transaction(async (tx) => {
       return await tx.vocero.create({
         data: {
@@ -91,6 +112,7 @@ export async function POST(request) {
       });
     });
 
+    // 5. Crea cursos y asistencias si hay formaciones asociadas
     if (Array.isArray(formaciones) && formaciones.length > 0) {
       for (const { id: id_formacion } of formaciones) {
         const curso = await prisma.curso.create({
@@ -157,6 +179,7 @@ export async function POST(request) {
       }
     }
 
+    // 6. Consulta el vocero recién creado para retornar sus datos completos
     const nuevoVoceroCreado = await prisma.vocero.findFirst({
       where: { cedula: validaciones.cedula, borrado: false },
       select: {
@@ -198,6 +221,7 @@ export async function POST(request) {
       },
     });
 
+    // 7. Verifica si se obtuvo el vocero creado correctamente
     if (!nuevoVoceroCreado) {
       await registrarEventoSeguro(request, {
         tabla: "vocero",
@@ -215,27 +239,30 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "vocero",
-        accion: "CREAR_VOCERO",
-        id_objeto: nuevoVoceroCreado.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Vocero creado con exito`,
-        datosAntes: null,
-        datosDespues: nuevoVoceroCreado,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Vocero creado...",
-        {
-          vocero: nuevoVoceroCreado,
-        },
-        201
-      );
     }
+
+    // 8. Registra el evento exitoso de creación
+    await registrarEventoSeguro(request, {
+      tabla: "vocero",
+      accion: "CREAR_VOCERO",
+      id_objeto: nuevoVoceroCreado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Vocero creado con exito`,
+      datosAntes: null,
+      datosDespues: nuevoVoceroCreado,
+    });
+
+    // 9. Retorna la respuesta exitosa con el vocero creado
+    return generarRespuesta(
+      "ok",
+      "Vocero creado...",
+      {
+        vocero: nuevoVoceroCreado,
+      },
+      201
+    );
   } catch (error) {
+    // 10. Manejo de errores inesperados
     console.log(`Error interno (crear vocero): ` + error);
 
     await registrarEventoSeguro(request, {
@@ -248,122 +275,7 @@ export async function POST(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta("error", "Error, interno (crear vocero)", {}, 500);
   }
 }
-
-/** 
-      const nuevoVoceroCreado = await prisma.$transaction(async (tx) => {
-        const vocero = await tx.vocero.create({
-          data: {
-            nombre: validaciones.nombre,
-            nombre_dos: validaciones.nombreDos,
-            apellido: validaciones.apellido,
-            apellido_dos: validaciones.apellidoDos,
-            cedula: validaciones.cedula,
-            genero: validaciones.genero,
-            edad: validaciones.edad,
-            telefono: validaciones.telefono,
-            direccion: validaciones.direccion,
-            correo: validaciones.correo,
-            token: validaciones.token,
-            laboral: validaciones.laboral,
-            f_n: validaciones.fechaNacimiento,
-            borrado: false,
-            id_usuario: validaciones.id_usuario,
-            id_comuna: validaciones.id_comuna,
-            id_consejo: validaciones.id_consejo,
-            id_circuito: validaciones.id_circuito,
-            id_parroquia: validaciones.id_parroquia,
-            cargos: {
-              connect: cargos.map(({ id }) => ({ id })),
-            },
-          },
-        });
-
-        if (Array.isArray(formaciones) && formaciones.length > 0) {
-          for (const { id: id_formacion } of formaciones) {
-            // Crear el curso asociado al vocero
-            const curso = await tx.curso.create({
-              data: {
-                id_vocero: vocero.id,
-                id_formacion: id_formacion,
-                id_usuario: validaciones.id_usuario,
-                verificado: false,
-                certificado: false,
-              },
-            });
-
-            // Obtener los módulos de la formación actual (filtrando por `id_formacion`)
-            const formacionConModulos = await tx.formacion.findUnique({
-              where: { id: id_formacion },
-              include: {
-                modulos: true, // Esto traerá solo los módulos de esta formación
-              },
-            });
-
-            // Extraer los módulos correctamente
-            const modulos = formacionConModulos?.modulos || [];
-
-            // Crear las asistencias solo para los módulos de esta formación
-            for (const modulo of modulos) {
-              await tx.asistencia.create({
-                data: {
-                  id_vocero: vocero.id,
-                  id_modulo: modulo.id,
-                  id_curso: curso.id,
-                  id_usuario: validaciones.id_usuario,
-                  presente: false, // Inicialmente no aprobado
-                  fecha_registro: new Date(),
-                },
-              });
-            }
-          }
-        }
-
-        return vocero;
-      });
-
-      if (!nuevoVoceroCreado) {
-        return generarRespuesta("error", "Error, al crear vocero...", {}, 400);
-      }
-
-      const nuevoVocero = await prisma.vocero.findFirst({
-        where: { cedula: validaciones.cedula },
-        select: {
-          nombre: true,
-          nombre_dos: true,
-          apellido: true,
-          apellido_dos: true,
-          cedula: true,
-          telefono: true,
-          correo: true,
-          edad: true,
-          genero: true,
-          laboral: true,
-          comunas: { select: { nombre: true, id: true, id_parroquia: true } },
-          circuitos: { select: { nombre: true, id: true } },
-          parroquias: { select: { nombre: true } },
-          consejos: { select: { nombre: true } },
-          cursos: {
-            where: { borrado: false },
-            select: {
-              verificado: true,
-              certificado: true,
-              formaciones: { select: { nombre: true } },
-              asistencias: {
-                select: {
-                  id: true,
-                  presente: true,
-                  fecha_registro: true,
-                  modulos: { select: { id: true, nombre: true } },
-                },
-              },
-            },
-          },
-          cargos: {
-            select: { nombre: true, id: true },
-          },
-        },
-      });
-    */

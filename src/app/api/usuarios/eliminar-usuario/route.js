@@ -1,14 +1,36 @@
-import prisma from "@/libs/prisma";
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-import validarEliminarUsuario from "@/services/usuarios/validarEliminarUsuario";
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+ @fileoverview Controlador de API para eliminar (o marcar como eliminado) a un usuario del
+ sistema. Este endpoint valida los datos recibidos, actualiza el estado de eliminación en la base
+ de datos, registra eventos de auditoría y retorna el perfil actualizado del usuario. Utiliza
+ Prisma como ORM y servicios personalizados para validación y respuesta estandarizada.
+ @module api/usuarios/eliminarUsuario
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
+import validarEliminarUsuario from "@/services/usuarios/validarEliminarUsuario"; // Servicio para validar la eliminación de usuario
+import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+
+/**
+ * Maneja las solicitudes HTTP PATCH para eliminar (lógicamente) a un usuario.
+ * Valida los datos recibidos, actualiza el campo `borrado` en la base de datos
+ * y retorna una respuesta estructurada con el perfil actualizado del usuario.
+ *
+ * @async
+ * @function PATCH
+ * @param {Request} request - Solicitud HTTP con el estado de eliminación y el ID del usuario.
+ * @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
+ */
 
 export async function PATCH(request) {
   try {
+    // 1. Extrae los datos del cuerpo de la solicitud
     const { estado, idUsuario } = await request.json();
 
+    // 2. Ejecuta la validación de los datos recibidos
     const validaciones = await validarEliminarUsuario(estado, idUsuario);
 
+    // 3. Si la validación falla, registra el intento fallido y retorna error 400
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -28,16 +50,15 @@ export async function PATCH(request) {
       );
     }
 
+    // 4. Ejecuta transacción: actualiza el estado de eliminación y consulta el usuario actualizado
     const [eliminandoUsuario, usuarioActualizado] = await prisma.$transaction([
-      // Primero se actualiza el usuario con solo el nuevo departamento
       prisma.usuario.update({
         where: { id: validaciones.id_usuario_estado },
         data: {
-          borrado: validaciones.borrado, // Asegúrate que este sea el nuevo rol
+          borrado: validaciones.borrado,
         },
       }),
 
-      // Luego se consulta al usuario ya actualizado
       prisma.usuario.findFirst({
         where: {
           id: validaciones.id_usuario_estado,
@@ -47,7 +68,7 @@ export async function PATCH(request) {
       }),
     ]);
 
-    // Validación de los resultados después de la transacción
+    // 5. Si no se obtiene el usuario o la actualización falla, registra el error y retorna
     if (!eliminandoUsuario || !usuarioActualizado) {
       await registrarEventoSeguro(request, {
         tabla: "usuario",
@@ -68,30 +89,32 @@ export async function PATCH(request) {
         {},
         400
       );
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "DELETE_USUARIO",
-        id_objeto: usuarioActualizado.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Usuario eliminado con exito",
-        datosAntes: null,
-        datosDespues: {
-          eliminandoUsuario,
-          usuarioActualizado,
-        },
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Usuario eliminado correctamente...",
-        {
-          usuario: usuarioActualizado,
-        },
-        200
-      );
     }
+
+    // 6. Registro exitoso del evento y retorno del usuario actualizado
+    await registrarEventoSeguro(request, {
+      tabla: "usuario",
+      accion: "DELETE_USUARIO",
+      id_objeto: usuarioActualizado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Usuario eliminado con exito",
+      datosAntes: null,
+      datosDespues: {
+        eliminandoUsuario,
+        usuarioActualizado,
+      },
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Usuario eliminado correctamente...",
+      {
+        usuario: usuarioActualizado,
+      },
+      200
+    );
   } catch (error) {
+    // 7. Manejo de errores inesperados
     console.log(`Error interno (eliminar usuario): ` + error);
 
     await registrarEventoSeguro(request, {
@@ -104,6 +127,7 @@ export async function PATCH(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
       "Error, interno (eliminar usuario)",
