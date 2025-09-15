@@ -1,8 +1,15 @@
+/**
+ @fileoverview Componente principal de la página de inicio (login). Este módulo gestiona el formulario
+ de autenticación del usuario, incluyendo validaciones, envío de credenciales y manejo de mensajes.
+ Utiliza componentes reutilizables para inputs, botones y estructura visual. @module views/Home
+*/
+
 "use client";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import LinkPaginas from "@/components/Link";
+import { useState, useEffect } from "react"; // 1. Hooks para estado y ciclo de vida
+import axios from "axios"; // 2. Cliente HTTP para llamadas a la API
+
+// 3. Componentes visuales reutilizables
 import MostrarMsj from "@/components/MostrarMensaje";
 import Titulos from "@/components/Titulos";
 import Formulario from "@/components/Formulario";
@@ -11,17 +18,24 @@ import InputClave from "@/components/inputs/InputClave";
 import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
 import ImgRegistroLogin from "@/components/ImgRegistroLogin";
-import ImgDosRegistroLogin from "@/components/ImgDosRegistroLogin";
 
+/**
+ Componente de inicio de sesión. Renderiza el formulario de login y gestiona la lógica de autenticación.
+ @function Home
+ @returns {JSX.Element} Interfaz de login.
+*/
 export default function Home() {
+  // 4. Estados del formulario
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
   const [mensaje, setMensaje] = useState("");
-
   const [validarCorreo, setValidarCorreo] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
+  /**
+   Efecto para detectar la tecla "Enter" y disparar el login. Se activa solo si hay correo y clave
+   presentes.
+  */
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Enter") {
@@ -40,6 +54,11 @@ export default function Home() {
     };
   }, [correo, clave]); // Dependencias
 
+  /**
+   Envía las credenciales a la API para iniciar sesión. Maneja redirección, errores y estado de carga.
+   @async
+   @function iniciarSesion
+  */
   const iniciarSesion = async () => {
     if (isLoading) return; // Evita múltiples envíos rápidos
 
@@ -66,16 +85,25 @@ export default function Home() {
     }
   };
 
+  /**
+   Limpia los campos del formulario. @function limpiarCampos
+  */
   const limpiarCampos = () => {
     setCorreo("");
     setClave("");
   };
 
+  /**
+   Actualiza el estado de la clave mientras se escribe.
+   @function leyendoClave
+   @param {React.ChangeEvent<HTMLInputElement>} e - Evento de cambio del input.
+  */
   const leyendoClave = (e) => {
     const claveUno = e.target.value;
     setClave(claveUno);
   };
 
+  // 5. Renderiza la interfaz de login con formulario y botones
   return (
     <div className="container mx-auto min-h-dvh rounded-md  flex items-center justify-center gap-4 px-2">
       <section className="flex flex-col items-center justify-center gap-4 min-h-[200px] sm:max-w-[400px] md:max-w-[600px] w-full bg-white border border-gray-300 rounded-md shadow-lg p-4">
@@ -84,7 +112,7 @@ export default function Home() {
         <div className="flex flex-col w-full">
           <Titulos
             indice={1}
-            titulo={"Entrar al Sistema"}
+            titulo={"Entrar al sistema"}
             className="text-center text-xl !hidden sm:!block font-semibold text-gray-700 mb-2"
           />
 

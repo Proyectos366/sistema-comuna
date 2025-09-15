@@ -189,6 +189,7 @@ export async function PATCH(request) {
       datosDespues: error.message,
     });
 
+    // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta("error", "Error, interno (asitencia)", {}, 500);
   }
 }
