@@ -1,7 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const cedulaRegex = /^[1-9][0-9]{6,7}$/; // acepta de 7 a 8 dígitos, sin puntos ni prefijo
+import { cedulaRegex } from "@/utils/constantes";
 
 export default function InputCedula({
   type,

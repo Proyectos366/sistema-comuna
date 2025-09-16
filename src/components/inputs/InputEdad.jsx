@@ -1,7 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const edadRegex = /^(1[89]|[2-9][0-9])$/;
+import { edadRegex } from "@/utils/constantes";
 
 export default function InputEdad({
   type,

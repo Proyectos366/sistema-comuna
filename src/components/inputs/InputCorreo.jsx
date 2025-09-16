@@ -1,8 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const emailRegex =
-  /^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+import { emailRegex } from "@/utils/constantes";
 
 export default function InputCorreo({
   type,

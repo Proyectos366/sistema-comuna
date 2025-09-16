@@ -1,7 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const moduloRegex = /^[1-9]$/;
+import { moduloRegex } from "@/utils/constantes";
 
 export default function InputModulo({
   type,

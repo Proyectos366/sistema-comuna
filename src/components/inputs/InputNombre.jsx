@@ -1,7 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const textRegex = /^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/;
+import { textRegex } from "@/utils/constantes";
 
 export default function InputNombre({
   type,

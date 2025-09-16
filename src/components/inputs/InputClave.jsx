@@ -3,9 +3,7 @@
 import { useState } from "react";
 import Input from "./Input";
 import ModalPequena from "../modales/ModalPeque";
-
-const claveRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,16}$/;
+import { claveRegex } from "@/utils/constantes";
 
 export default function InputClave({
   name,

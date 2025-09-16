@@ -1,108 +1,153 @@
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import msjErrores from "../msj_validaciones/campos_formulario/msjErrores.json";
-import msjCorrectos from "../msj_validaciones/campos_formulario/msjCorrectos.json";
-import { quitarCaracteres } from "@/utils/quitarCaracteres";
-import { phoneRegex } from "@/utils/constantes";
+/**
+ @fileoverview Clase de validaciones para campos comunes en formularios. Este módulo centraliza
+ la lógica de validación para entradas como correos, teléfonos, claves, etc. Utiliza expresiones
+ regulares definidas en constantes y funciones utilitarias para sanitizar datos.
+ @module services/ValidarCampos
+*/
 
-const emailRegex =
-  /^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const claveRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,16}$/;
-const cedulaRegex = /^[1-9]\d{5,7}$/;
-const nombreRegex = /^[a-zA-ZñÑ\s]+$/;
-const rifRegex = /^[VEJPGCL]-\d{8}-\d$/;
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para estructurar respuestas internas
+import { quitarCaracteres } from "@/utils/quitarCaracteres"; // Función para limpiar caracteres no deseados
+import {
+  phoneRegex,
+  emailRegex,
+  claveRegex,
+  cedulaRegex,
+  textRegex,
+  rifRegex,
+  fechaFormatoIsoRegex,
+} from "@/utils/constantes"; // Expresiones regulares para validaciones específicas
+
+/**
+ Clase que agrupa métodos estáticos para validar campos individuales. Cada método retorna una
+ respuesta estructurada con estado, mensaje y datos procesados.
+*/
 
 export default class ValidarCampos {
+  /**
+   Valida el campo de correo electrónico. Verifica que no esté vacío y que cumpla con el formato
+   estándar. Convierte el correo a minúsculas para normalizarlo.
+   @function validarCampoCorreo
+   @param {string} correo - Correo electrónico ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y correo normalizado si es válido.
+  */
   static validarCampoCorreo(correo) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!correo) {
-        return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCorreo.campoVacio
-        );
+        return retornarRespuestaFunciones("error", "Campo correo vacio...");
       }
 
+      // 2. Valida el formato del correo usando expresión regular
       if (!emailRegex.test(correo)) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCorreo.formatoInvalido
+          "error",
+          "Error, formato de correo invalido..."
         );
       }
 
+      // 3. Normaliza el correo a minúsculas
       const correoLetrasMinusculas = correo.toLowerCase();
 
-      return retornarRespuestaFunciones(
-        msjCorrectos.ok,
-        msjCorrectos.okCorreo.campoValido,
-        {
-          correo: correoLetrasMinusculas,
-        }
-      );
+      // 4. Retorna respuesta exitosa con el correo validado
+      return retornarRespuestaFunciones("ok", "Campo correo correcto...", {
+        correo: correoLetrasMinusculas,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorCorreo.internoValidando}: ` + error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorCorreo.internoValidando
-      );
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno campo correo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo correo");
     }
   }
 
+  /**
+   Valida el campo de nombre. Verifica que no esté vacío y que cumpla con el formato de texto
+   permitido (letras y espacios). Convierte el nombre a minúsculas para normalizarlo.
+   @function validarCampoNombre
+   @param {string} nombre - Nombre ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y nombre normalizado si es válido.
+  */
   static validarCampoNombre(nombre) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!nombre) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.campoVacio
+          "error",
+          "Error, campo nombre vacio..."
         );
       }
 
-      if (!nombreRegex.test(nombre)) {
+      // 2. Valida el formato del nombre usando expresión regular
+      if (!textRegex.test(nombre)) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorNombre.formatoInvalido
+          "error",
+          "Error, formato de nombre invalido..."
         );
       }
 
+      // 3. Normaliza el nombre a minúsculas
       const nombreLetrasMinusculas = nombre.toLowerCase();
 
-      return retornarRespuestaFunciones(
-        msjCorrectos.ok,
-        msjCorrectos.okNombre.campoValido,
-        {
-          nombre: nombreLetrasMinusculas,
-        }
-      );
+      // 4. Retorna respuesta exitosa con el nombre validado
+      return retornarRespuestaFunciones("ok", "Campo nombre correcto", {
+        nombre: nombreLetrasMinusculas,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorNombre.internoValidando}: ` + error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorNombre.internoValidando
-      );
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno campo nombre: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo nombre");
     }
   }
 
+  /**
+   Valida un campo de texto genérico. Verifica que no esté vacío y lo normaliza a minúsculas.
+   No aplica reglas de formato específicas.
+   @function validarCampoTexto
+   @param {string} texto - Texto ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y texto normalizado si es válido.
+  */
   static validarCampoTexto(texto) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!texto) {
-        return retornarRespuestaFunciones("error", "Error, campo vacio...");
+        return retornarRespuestaFunciones(
+          "error",
+          "Error campo texto vacio..."
+        );
       }
 
+      // 2. Normaliza el texto a minúsculas
       const textoLetrasMinusculas = texto.toLowerCase();
 
+      // 3. Retorna respuesta exitosa con el texto validado
       return retornarRespuestaFunciones("ok", "Campo valido...", {
         texto: textoLetrasMinusculas,
       });
     } catch (error) {
-      console.log(`Error, interno validar campo texto: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error, interno campo texto: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validar campo texto..."
+        "Error, interno campo texto..."
       );
     }
   }
 
+  /**
+   Valida el campo de código postal. Verifica que no esté vacío y lo normaliza a minúsculas. No
+   aplica reglas de formato específicas, se asume validación externa si es necesario.
+   @function validarCampoCodigoPostal
+   @param {string} codigoPostal - Código postal ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y código postal normalizado si es válido.
+  */
   static validarCampoCodigoPostal(codigoPostal) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!codigoPostal) {
         return retornarRespuestaFunciones(
           "error",
@@ -110,23 +155,38 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Normaliza el código postal a minúsculas
       const textoLetrasMinusculas = codigoPostal.toLowerCase();
 
+      // 3. Retorna respuesta exitosa con el código postal validado
       return retornarRespuestaFunciones("ok", "Campo valido...", {
         codigoPostal: textoLetrasMinusculas,
       });
     } catch (error) {
-      console.log(`Error, interno validar campo codigo postal: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campo codigo postal: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validar campo codigo postal..."
+        "Error interno campo codigo postal..."
       );
     }
   }
 
+  /**
+   Valida el segundo nombre o segundo apellido. Si el campo está presente, verifica que contenga
+   solo letras usando una expresión regular. Normaliza el texto a minúsculas y lo retorna con la
+   clave correspondiente.
+   @function validarCampoNombreApellidoDos
+   @param {string} nombre - Segundo nombre o segundo apellido.
+   @param {string} opcion - Indica si se está validando "nombre" o "apellido".
+   @returns {Object} Objeto con estado, mensaje y campo normalizado.
+  */
   static validarCampoNombreApellidoDos(nombre, opcion) {
     try {
-      if (nombre && !nombreRegex.test(nombre)) {
+      // 1. Si el campo está presente, valida que solo contenga letras
+      if (nombre && !textRegex.test(nombre)) {
         return retornarRespuestaFunciones(
           "error",
           `Error, segundo ${
@@ -135,11 +195,13 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Normaliza el texto y lo asigna al campo correspondiente
       const campo =
         opcion === "apellido"
           ? { apellido_dos: nombre ? nombre.toLowerCase() : "" }
           : { nombre_dos: nombre ? nombre.toLowerCase() : "" };
 
+      // 3. Retorna respuesta exitosa con el campo validado
       return retornarRespuestaFunciones(
         "ok",
         `Campo segundo ${
@@ -148,11 +210,14 @@ export default class ValidarCampos {
         campo
       );
     } catch (error) {
+      // 4. Manejo de errores inesperados
       console.log(
         `Error interno validando segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
         }: ` + error
       );
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         `Error interno validando segundo ${
@@ -162,22 +227,32 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida el campo de cédula venezolana. Limpia caracteres no numéricos, verifica que sea un número
+   válido y que cumpla con el formato.
+   @function validarCampoCedula
+   @param {string|number} cedula - Cédula ingresada por el usuario.
+   @returns {Object} Objeto con estado, mensaje y cédula validada.
+  */
   static validarCampoCedula(cedula) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!cedula) {
         return retornarRespuestaFunciones("error", "Campo cedula vacio...");
       }
 
+      // 2. Elimina caracteres no numéricos
       const cedulaLimpia = quitarCaracteres(cedula);
 
+      // 3. Convierte a número
       const cedulaNumero = Number(cedulaLimpia);
 
+      // 4. Verifica si es un número válido
       if (isNaN(cedulaNumero)) {
-        // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
         return retornarRespuestaFunciones("error", "Error, cedula inválida...");
       }
 
-      // Opcional: Rango de cedula (ej. no más de 120 años)
+      // 5. Verifica longitud válida (7 u 8 dígitos)
       if (cedulaNumero.length < 7 || cedulaNumero.length > 8) {
         return retornarRespuestaFunciones(
           "error",
@@ -185,72 +260,96 @@ export default class ValidarCampos {
         );
       }
 
+      // 6. Verifica formato con expresión regular
       if (!cedulaRegex.test(cedulaNumero)) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorCedula.formatoInvalido
+          "error",
+          "Formato de cédula invalido..."
         );
       }
 
-      return retornarRespuestaFunciones(
-        msjCorrectos.ok,
-        msjCorrectos.okCedula.campoValido,
-        { cedula: cedulaNumero }
-      );
+      // 7. Retorna respuesta exitosa con la cédula validada
+      return retornarRespuestaFunciones("ok", "Campo cedula correcto...", {
+        cedula: cedulaNumero,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorCedula.internoValidando}: ` + error);
-      return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorCedula.internoValidando
-      );
+      // 8. Manejo de errores inesperados
+      console.log(`Error interno, campo cedula: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno, campo cedula");
     }
   }
 
+  /**
+   Valida el campo de número telefónico venezolano. Limpia caracteres no numéricos y verifica que
+   cumpla con el formato de 11 dígitos.
+   @function validarCampoTelefono
+   @param {string|number} telefono - Número telefónico ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y teléfono validado.
+  */
   static validarCampoTelefono(telefono) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!telefono) {
         return retornarRespuestaFunciones("error", "Campo teléfono vacio...");
       }
 
+      // 2. Elimina caracteres no numéricos
       const telefonoLimpio = quitarCaracteres(telefono);
 
+      // 3. Verifica formato con expresión regular
       if (!phoneRegex.test(telefonoLimpio)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato invalido..."
+          "Error, formato teléfono invalido..."
         );
       }
 
+      // 4. Retorna respuesta exitosa con el teléfono validado
       return retornarRespuestaFunciones("ok", "Campo teléfono valido...", {
         telefono: telefonoLimpio,
       });
     } catch (error) {
-      console.log(`Error, interno al validar telefono: ` + error);
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno, campo teléfono: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno (validar telefono)"
+        "Error interno, campo teléfono"
       );
     }
   }
 
+  /**
+   Valida el campo de edad. Verifica que no esté vacío, que sea un número válido, y que esté dentro
+   del rango permitido (18–99).
+   @function validarCampoEdad
+   @param {string|number} edad - Edad ingresada por el usuario.
+   @returns {Object} Objeto con estado, mensaje y edad validada.
+  */
   static validarCampoEdad(edad) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!edad) {
         return retornarRespuestaFunciones("error", "Campo edad vacio...");
       }
 
+      // 2. Convierte el valor a número
       const edadNumero = Number(edad);
 
+      // 3. Verifica si es un número válido y positivo
       if (isNaN(edadNumero) || edadNumero <= 0) {
-        // Si es NaN, o si es 0 o negativo (que no suelen ser edades válidas)
         return retornarRespuestaFunciones("error", "Error, edad inválida...");
       }
 
-      // Opcional: Rango de edad (ej. no más de 120 años)
+      // 4. Verifica si la edad es excesivamente alta
       if (edadNumero > 99) {
         return retornarRespuestaFunciones("error", "Error, edad muy alta....");
       }
 
+      // 5. Verifica si es menor de edad
       if (edadNumero < 18) {
         return retornarRespuestaFunciones(
           "error",
@@ -258,20 +357,30 @@ export default class ValidarCampos {
         );
       }
 
+      // 6. Retorna respuesta exitosa con la edad validada
       return retornarRespuestaFunciones("ok", "Campo edad valido...", {
         edad: edadNumero,
       });
     } catch (error) {
-      console.log(`Error, interno al (validar edad): ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, interno (validar edad)"
-      );
+      // 7. Manejo de errores inesperados
+      console.log(`Error interno, campo edad: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno, campo edad");
     }
   }
 
+  /**
+   Valida un campo de ID numérico. Verifica que no esté vacío, que sea un número válido y mayor a cero.
+   El mensaje se personaliza según el tipo de ID indicado en `detalles`.
+   @function validarCampoId
+   @param {string|number} id - ID ingresado por el usuario.
+   @param {string} detalles - Descripción del campo (ej. "usuario", "institución").
+   @returns {Object} Objeto con estado, mensaje y ID validado.
+  */
   static validarCampoId(id, detalles) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!id) {
         return retornarRespuestaFunciones(
           "error",
@@ -279,16 +388,18 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Convierte el valor a número
       const idNumero = Number(id);
 
+      // 3. Verifica si es un número válido y positivo
       if (isNaN(idNumero) || idNumero <= 0) {
-        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
         return retornarRespuestaFunciones(
           "error",
           `Error, id ${detalles} inválido...`
         );
       }
 
+      // 4. Retorna respuesta exitosa con el ID validado
       return retornarRespuestaFunciones(
         "ok",
         `Campo id ${detalles} valido...`,
@@ -297,7 +408,10 @@ export default class ValidarCampos {
         }
       );
     } catch (error) {
+      // 5. Manejo de errores inesperados
       console.log(`Error, interno al (validar id ${detalles}): ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         `Error, interno al (validar id ${detalles})`
@@ -305,71 +419,75 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos de contraseña y confirmación. Verifica que ambos estén presentes, que coincidan,
+   y que cumplan con el formato seguro.
+   @function validarCampoClave
+   @param {string} claveUno - Contraseña principal ingresada por el usuario.
+   @param {string} claveDos - Confirmación de la contraseña.
+   @returns {Object} Objeto con estado, mensaje y claves validadas.
+  */
   static validarCampoClave(claveUno, claveDos) {
     try {
+      // 1. Verifica si la contraseña principal está vacía
       if (!claveUno) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorClave.campoVacio
+          "error",
+          "Error campo clave vacio..."
         );
       }
 
+      // 2. Verifica si el campo de confirmación está vacío
       if (!claveDos) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorClave.campoVacioConfirmar
+          "error",
+          "Error campo confirmar clave vacio..."
         );
       }
 
+      // 3. Verifica si ambas contraseñas coinciden
       if (claveUno !== claveDos) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorClave.clavesNoCoinciden
+          "error",
+          "Error, claves no coinciden..."
         );
       }
 
+      // 4. Verifica si la contraseña cumple con el formato seguro
       if (!claveRegex.test(claveUno)) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorClave.formatoInvalido
+          "error",
+          "Error, formato de clave invalido..."
         );
       }
 
-      return retornarRespuestaFunciones(
-        msjCorrectos.ok,
-        msjCorrectos.okClave.campoValido,
-        {
-          claveUno: claveUno,
-          claveDos: claveDos,
-        }
-      );
+      // 5. Retorna respuesta exitosa con las claves validadas
+      return retornarRespuestaFunciones("ok", "Campos de clave validados...", {
+        claveUno: claveUno,
+        claveDos: claveDos,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorClave.internoValidando}: ` + error);
+      // 6. Manejo de errores inesperados
+      console.log(`Error interno, campos claves: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorCorreo.internoValidando
+        "error",
+        "Error interno, campos claves"
       );
     }
   }
 
+  /**
+   Valida el campo de género. Acepta valores 1 o 2 (numéricos o string) que representan masculino o
+   femenino. Convierte el valor a booleano: 1 → true (masculino), 2 → false (femenino).
+   @function validarCampoGenero
+   @param {string|number} genero - Valor del género ingresado (1 o 2).
+   @returns {Object} Objeto con estado, mensaje y género convertido a booleano.
+  */
   static validarCampoGenero(genero) {
     try {
-      const generoNumero = Number(genero);
-
-      if (isNaN(generoNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo genero invalido..."
-        );
-      }
-
-      if (!Number.isInteger(generoNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo genero invalido..."
-        );
-      }
-
+      // 1. Verifica si el campo está vacío
       if (!genero) {
         return retornarRespuestaFunciones(
           "error",
@@ -377,6 +495,26 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Convierte el valor a número
+      const generoNumero = Number(genero);
+
+      // 3. Verifica si es un número válido
+      if (isNaN(generoNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo genero invalido..."
+        );
+      }
+
+      // 4. Verifica si es un número entero
+      if (!Number.isInteger(generoNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, campo genero invalido..."
+        );
+      }
+
+      // 5. Verifica si el valor es 1 o 2
       if (!(genero === 1 || genero === 2 || genero === "1" || genero === "2")) {
         return retornarRespuestaFunciones(
           "error",
@@ -384,22 +522,33 @@ export default class ValidarCampos {
         );
       }
 
+      // 6. Retorna respuesta exitosa con el género convertido a booleano
       return retornarRespuestaFunciones("ok", "Campo genero validado...", {
         genero: generoNumero === 1 ? true : false,
       });
     } catch (error) {
-      console.log(`Error, interno validando genero: ` + error);
+      // 7. Manejo de errores inesperados
+      console.log(`Error interno campo genero: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando genero..."
+        "Error interno campo genero..."
       );
     }
   }
 
+  /**
+   Valida un campo numérico que debe convertirse a booleano. Acepta valores 1 o 2 (numéricos o string)
+   y los convierte: 1 → true, 2 → false. El mensaje se personaliza según el nombre del campo (`opcion`).
+   @function validarCampoNumeroPasarBoolean
+   @param {string|number} numero - Valor numérico ingresado.
+   @param {string} opcion - Nombre del campo para personalizar el mensaje.
+   @returns {Object} Objeto con estado, mensaje y valor booleano.
+  */
   static validarCampoNumeroPasarBoolean(numero, opcion) {
     try {
-      const numeroPasarBoolean = Number(numero);
-
+      // 1. Verifica si el campo está vacío
       if (!numero) {
         return retornarRespuestaFunciones(
           "error",
@@ -407,6 +556,10 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Convierte el valor a número
+      const numeroPasarBoolean = Number(numero);
+
+      // 3. Verifica si es un número válido
       if (isNaN(numeroPasarBoolean)) {
         return retornarRespuestaFunciones(
           "error",
@@ -414,6 +567,7 @@ export default class ValidarCampos {
         );
       }
 
+      // 4. Verifica si es un número entero
       if (!Number.isInteger(numeroPasarBoolean)) {
         return retornarRespuestaFunciones(
           "error",
@@ -421,6 +575,7 @@ export default class ValidarCampos {
         );
       }
 
+      // 5. Verifica si el valor es 1 o 2
       if (!(numero === 1 || numero === 2 || numero === "1" || numero === "2")) {
         return retornarRespuestaFunciones(
           "error",
@@ -428,11 +583,15 @@ export default class ValidarCampos {
         );
       }
 
+      // 6. Retorna respuesta exitosa con el valor convertido a booleano
       return retornarRespuestaFunciones("ok", `Campo ${opcion} valido...`, {
         boolean: numeroPasarBoolean === 1 ? true : false,
       });
     } catch (error) {
+      // 7. Manejo de errores inesperados
       console.log(`Error, interno validando ${opcion}: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         `Error, interno validando ${opcion}`
@@ -440,84 +599,113 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida una fecha en formato ISO. Verifica que la fecha esté presente, tenga formato válido, sea
+   interpretable, no esté en el futuro y no sea anterior al año 1900.
+   @function validarCampoFechaISO
+   @param {string} fecha - Fecha en formato ISO (ej. "2023-08-15T00:00:00Z").
+   @returns {Object} Objeto con estado, mensaje y fecha convertida a objeto Date.
+  */
   static validarCampoFechaISO(fecha) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!fecha) {
         return retornarRespuestaFunciones("error", "Campo fecha vacio...");
       }
 
-      // Formato ISO 8601: "YYYY-MM-DDTHH:MM:SSZ"
-      const formatoISO =
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(Z)?$/;
-      if (!formatoISO.test(fecha)) {
+      // 2. Verifica si el formato cumple con la expresión regular ISO
+      if (!fechaFormatoIsoRegex.test(fecha)) {
         return retornarRespuestaFunciones(
           "error",
-          "Formato de fecha invalido..."
+          "Error formato de fecha invalido..."
         );
       }
 
+      // 3. Intenta convertir la fecha a objeto Date
       const fechaConvertida = new Date(fecha);
+
+      // 4. Si la verificación es incorrecta retorna un error
       if (isNaN(fechaConvertida.getTime())) {
         return retornarRespuestaFunciones(
           "error",
-          "No se puede interpretar la fecha..."
+          "Error no se puede interpretar la fecha..."
         );
       }
 
+      // 5. Define límites de fecha
       const ahora = new Date();
-      const fechaMinima = new Date("1900-01-01T00:00:00Z"); // ajustable si necesitas otro límite
+      const fechaMinima = new Date("1900-01-01T00:00:00Z"); // ajustable si se necesita otro límite
 
+      // 6. Verifica que la fecha no sea futura
       if (fechaConvertida > ahora) {
         return retornarRespuestaFunciones(
           "error",
-          "Fecha no puede pasar el dia actual..."
+          "Error fecha no puede pasar el dia actual..."
         );
       }
 
+      // 7. Verifica que la fecha no sea demasiado antigua
       if (fechaConvertida < fechaMinima) {
-        return retornarRespuestaFunciones("error", "Fecha muy antigua...");
+        return retornarRespuestaFunciones(
+          "error",
+          "Error fecha muy antigua..."
+        );
       }
 
-      return retornarRespuestaFunciones(
-        "ok",
-        "Campo fecha validada con exito...",
-        { fecha: fechaConvertida }
-      );
+      // 8. Retorna respuesta exitosa con la fecha convertida
+      return retornarRespuestaFunciones("ok", "Campo fecha correcto...", {
+        fecha: fechaConvertida,
+      });
     } catch (error) {
-      console.log(`Error, interno validando fecha: ` + error);
+      // 9. Manejo de errores inesperados
+      console.log(`Error interno, campo fecha: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando fecha..."
+        "Error, interno campo fecha..."
       );
     }
   }
 
+  /**
+   Valida el campo de cantidad de módulos. Verifica que el valor esté presente, sea un número
+   entero positivo, y que esté dentro del rango permitido (1 a MAX_MODULOS).
+   @function validarCampoModulo
+   @param {string|number} modulo - Cantidad de módulos ingresada por el usuario.
+   @returns {Object} Objeto con estado, mensaje y número de módulos validado.
+  */
   static validarCampoModulo(modulo) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!modulo) {
         return retornarRespuestaFunciones("error", "Campo modulo vacio...");
       }
 
+      // 2. Convierte el valor a número
       const moduloNumero = Number(modulo);
 
+      // 3. Verifica si es un número válido y positivo
       if (isNaN(moduloNumero) || moduloNumero <= 0) {
-        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
         return retornarRespuestaFunciones("error", "Error, modulo inválido...");
       }
 
+      // 4. Verifica si es un número entero
       if (!Number.isInteger(moduloNumero)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, debe ser un número entero..."
+          "Error, modulo debe ser un número entero..."
         );
       }
 
+      // 5. Verifica si el número mínimo es 1
       if (moduloNumero < 1) {
         return retornarRespuestaFunciones("error", "Error, minimo 1 modulo...");
       }
 
       const MAX_MODULOS = 9;
 
+      // 6. Verifica si excede el máximo permitido
       if (moduloNumero > MAX_MODULOS) {
         return retornarRespuestaFunciones(
           "error",
@@ -525,41 +713,51 @@ export default class ValidarCampos {
         );
       }
 
+      // 7. Retorna respuesta exitosa con el número de módulos validado
       return retornarRespuestaFunciones("ok", "Campo modulo valido...", {
         modulo: moduloNumero,
       });
     } catch (error) {
-      console.log(`Error, interno al (validar modulo): ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, interno (validar modulo)"
-      );
+      // 8. Manejo de errores inesperados
+      console.log(`Error interno campo modulo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo modulo");
     }
   }
 
+  /**
+   Valida el campo RIF (Registro de Información Fiscal). Verifica el formato general y el dígito
+   verificador según el algoritmo del SENIAT.
+   @function validarCampoRif
+   @param {string} rif - RIF ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y RIF validado.
+  */
   static validarCampoRif(rif) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!rif) {
         return retornarRespuestaFunciones("error", "Campo RIF vacío...");
       }
 
-      // Limpia el RIF: elimina espacios y lo convierte a mayúsculas
+      // 2. Limpia espacios y convierte a mayúsculas
       const rifLimpio = rif.trim().toUpperCase();
 
-      // Regex para validar formato: letra-8dígitos-dígito
-
+      // 3. Verifica el formato general con expresión regular
       if (!rifRegex.test(rifLimpio)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato de RIF inválido..."
+          "Error formato de RIF inválido..."
         );
       }
 
+      // 4. Extrae componentes del RIF
       // Validación del dígito verificador según SENIAT
       const letra = rifLimpio.charAt(0);
       const cuerpo = rifLimpio.slice(2, 10); // 8 dígitos
       const digitoOriginal = parseInt(rifLimpio.slice(-1), 10);
 
+      // 5. Tabla de valores para letras según SENIAT
       const valoresLetra = {
         V: 1,
         E: 2,
@@ -569,46 +767,57 @@ export default class ValidarCampos {
         C: 6,
         L: 7,
       };
-
       const pesos = [4, 3, 2, 7, 6, 5, 4, 3, 2];
 
+      // 6. Verifica si la letra es válida
       if (!valoresLetra[letra]) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, letra de RIF inválida..."
+          "Error letra de RIF inválida..."
         );
       }
 
+      // 7. Calcula el dígito verificador
       const rifNumerico = [
         valoresLetra[letra],
         ...cuerpo.split("").map(Number),
       ];
-
       const suma = rifNumerico.reduce((acc, num, i) => acc + num * pesos[i], 0);
       const resto = suma % 11;
       const digitoCalculado = resto < 2 ? resto : 11 - resto;
 
+      // 8. Compara con el dígito original
       if (digitoCalculado !== digitoOriginal) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, dígito verificador incorrecto según SENIAT"
+          "Error dígito verificador incorrecto según SENIAT..."
         );
       }
 
+      // 9. Retorna respuesta exitosa con el RIF validado
       return retornarRespuestaFunciones("ok", "RIF válido.", {
         rif: rifLimpio,
       });
     } catch (error) {
-      console.log(`Error interno validando campo RIF: ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        "Error interno validando campo RIF"
-      );
+      // 10. Manejo de errores inesperados
+      console.log(`Error interno campo RIF: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo RIF");
     }
   }
 
+  /**
+   Valida un campo numérico que representa un rango. Verifica que el valor esté presente, sea un
+   número válido y positivo. El mensaje se personaliza según el nombre del campo (`detalles`).
+   @function validarCampoRango
+   @param {string|number} rango - Valor numérico del rango.
+   @param {string} detalles - Nombre del campo para personalizar el mensaje.
+   @returns {Object} Objeto con estado, mensaje y rango validado.
+  */
   static validarCampoRango(rango, detalles) {
     try {
+      // 1. Verifica si el campo está vacío
       if (!rango) {
         return retornarRespuestaFunciones(
           "error",
@@ -616,28 +825,44 @@ export default class ValidarCampos {
         );
       }
 
+      // 2. Convierte el valor a número
       const numero = Number(rango);
 
+      // 3. Verifica si es un número válido y positivo
       if (isNaN(numero) || numero <= 0) {
-        // Si es NaN, o si es 0 o negativo (que no suelen ser ides válidas)
         return retornarRespuestaFunciones(
           "error",
-          `Error, ${detalles} inválido...`
+          `Error ${detalles} inválido...`
         );
       }
 
+      // 4. Retorna respuesta exitosa con el rango validado
       return retornarRespuestaFunciones("ok", `Campo ${detalles} valido...`, {
         rango: numero,
       });
     } catch (error) {
-      console.log(`Error, interno al (validar ${detalles}): ` + error);
-      return retornarRespuestaFunciones(
-        "error",
-        `Error, interno al (validar ${detalles})`
-      );
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno campo rango: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", `Error interno campo rango`);
     }
   }
 
+  /**
+   Valida todos los campos necesarios para registrar un nuevo usuario. Aplica validaciones
+   individuales para cada campo y retorna una respuesta consolidada.
+   @function validarCamposRegistro
+   @param {string|number} cedula - Cédula del usuario.
+   @param {string} nombre - Nombre del usuario.
+   @param {string} apellido - Apellido del usuario.
+   @param {string} correo - Correo electrónico del usuario.
+   @param {string} claveUno - Contraseña principal.
+   @param {string} claveDos - Confirmación de la contraseña.
+   @param {string|number} id_rol - ID del rol asignado al usuario.
+   @param {string|number} autorizar - Valor que indica si el usuario está autorizado.
+   @returns {Object} Objeto con estado, mensaje y datos validados o error.
+  */
   static validarCamposRegistro(
     cedula,
     nombre,
@@ -649,6 +874,7 @@ export default class ValidarCampos {
     autorizar
   ) {
     try {
+      // 1. Validaciones individuales
       const validarCorreo = this.validarCampoCorreo(correo);
       const validarCedula = this.validarCampoCedula(cedula);
       const validarNombre = this.validarCampoNombre(nombre);
@@ -660,6 +886,7 @@ export default class ValidarCampos {
         "autorizar"
       );
 
+      // 2. Retorna el primer error encontrado
       if (validarCedula.status === "error") return validarCedula;
       if (validarNombre.status === "error") return validarNombre;
       if (validarApellido.status === "error") return validarApellido;
@@ -668,6 +895,7 @@ export default class ValidarCampos {
       if (validarIdRol.status === "error") return validarIdRol;
       if (validarAutorizar.status === "error") return validarAutorizar;
 
+      // 3. Retorna respuesta exitosa con todos los datos validados
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         cedula: validarCedula.cedula,
         nombre: validarNombre.nombre,
@@ -679,26 +907,36 @@ export default class ValidarCampos {
         autorizar: validarAutorizar.boolean,
       });
     } catch (error) {
-      console.log(`Error interno, validar campos registro usuario: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno, campos registro usuario: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno campos usuario"
+        "Error, interno campos resgistro usuario"
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un país. Verifica nombre, capital, descripción y serial.
+   @function validarCamposCrearPais
+  */
   static validarCamposCrearPais(nombre, capital, descripcion, serial) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarCapital = this.validarCampoNombre(capital);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarSerial = this.validarCampoTexto(serial);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarCapital.status === "error") return validarCapital;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarSerial.status === "error") return validarSerial;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         capital: validarCapital.nombre,
@@ -706,11 +944,18 @@ export default class ValidarCampos {
         serial: validarSerial.texto,
       });
     } catch (error) {
-      console.log(`Error interno crear pais: ` + error);
-      return retornarRespuestaFunciones("error", "Error interno crear pais");
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos pais: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campos pais");
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un estado. Verifica nombre, capital, código postal,
+   descripción e ID del país. @function validarCamposCrearEstado
+  */
   static validarCamposCrearEstado(
     nombre,
     capital,
@@ -719,18 +964,21 @@ export default class ValidarCampos {
     id_pais
   ) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarCapital = this.validarCampoNombre(capital);
       const validarCodigoPostal = this.validarCampoCodigoPostal(codigoPostal);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarCapital.status === "error") return validarCapital;
       if (validarCodigoPostal.status === "error") return validarCodigoPostal;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         capital: validarCapital.nombre,
@@ -739,23 +987,33 @@ export default class ValidarCampos {
         id_pais: validarIdPais.id,
       });
     } catch (error) {
-      console.log(`Error interno crear estado: ` + error);
-      return retornarRespuestaFunciones("error", "Error interno crear estado");
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos estado: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campos estado");
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un municipio. Verifica nombre, descripción, ID del país e
+   ID del estado. @function validarCamposCrearMunicipio
+  */
   static validarCamposCrearMunicipio(nombre, descripcion, id_pais, id_estado) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
       const validarIdEstado = this.validarCampoId(id_estado);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
       if (validarIdEstado.status === "error") return validarIdEstado;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -763,14 +1021,21 @@ export default class ValidarCampos {
         id_estado: validarIdEstado.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos municipio crear: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos municipio: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos municipio crear..."
+        "Error interno campos municipio..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear una parroquia. Verifica nombre, descripción y las
+   relaciones con país, estado y municipio. @function validarCamposCrearParroquia
+  */
   static validarCamposCrearParroquia(
     nombre,
     descripcion,
@@ -779,18 +1044,21 @@ export default class ValidarCampos {
     id_municipio
   ) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
       const validarIdEstado = this.validarCampoId(id_estado);
       const validarIdMunicipio = this.validarCampoId(id_municipio);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
       if (validarIdEstado.status === "error") return validarIdEstado;
       if (validarIdMunicipio.status === "error") return validarIdMunicipio;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -799,14 +1067,21 @@ export default class ValidarCampos {
         id_municipio: validarIdMunicipio.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos parroquia crear: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos parroquia: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos parroquia crear..."
+        "Error interno campos parroquia..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear una institución. Verifica nombre, descripción, RIF, sector,
+   dirección y ubicación geográfica. @function validarCamposCrearInstitucion
+  */
   static validarCamposCrearInstitucion(
     nombre,
     descripcion,
@@ -819,6 +1094,7 @@ export default class ValidarCampos {
     id_parroquia
   ) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarRif = this.validarCampoRif(rif);
@@ -829,17 +1105,18 @@ export default class ValidarCampos {
       const validarIdMunicipio = this.validarCampoId(id_municipio, "municipio");
       const validarIdParroquia = this.validarCampoId(id_parroquia, "parroquia");
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarRif.status === "error") return validarRif;
       if (validarSector.status === "error") return validarSector;
       if (validarDireccion.status === "error") return validarDireccion;
-
       if (validarIdPais.status === "error") return validarIdPais;
       if (validarIdEstado.status === "error") return validarIdEstado;
       if (validarIdMunicipio.status === "error") return validarIdMunicipio;
       if (validarIdParroquia.status === "error") return validarIdParroquia;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -852,79 +1129,116 @@ export default class ValidarCampos {
         id_parroquia: validarIdParroquia.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos institucion: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos institución: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos institucion..."
+        "Error interno campos institución..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un departamento. Verifica nombre y descripción.
+   @function validarCamposCrearDepartamento
+  */
   static validarCamposCrearDepartamento(nombre, descripcion) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos departamento: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos departamento: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos departamento..."
+        "Error interno campos departamento..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para el inicio de sesión. Verifica correo y que la clave esté presente.
+   @function validarCamposLogin
+  */
   static validarCamposLogin(correo, clave) {
     try {
+      // 1. Validar cada campo individualmente
       const validarCorreo = this.validarCampoCorreo(correo);
 
+      // 2. Verificar si las validaciones fallan
       if (validarCorreo.status === "error") return validarCorreo;
-
       if (!clave) {
         return retornarRespuestaFunciones(
-          msjErrores.error,
-          msjErrores.errorClave.campoVacio
+          "error",
+          "Error, campo clave vacio..."
         );
       }
 
-      return retornarRespuestaFunciones(msjCorrectos.ok, msjCorrectos.okMixto);
+      // 3. Retornar respuesta exitosa con los datos validados
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        correo: validarCorreo.correo,
+        clave: clave,
+      });
     } catch (error) {
-      console.log(`${msjErrores.errorLogin}: `, error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos del login: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
-        msjErrores.error,
-        msjErrores.errorLogin
+        "error",
+        "Error interno campos del login"
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear una comuna. @function validarCamposCrearComuna
+  */
   static validarCamposCrearComuna(nombre, parroquiaId) {
     try {
+      // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoTexto(nombre);
       const validarParroquiaId = this.validarCampoId(parroquiaId);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarParroquiaId.status === "error") return validarParroquiaId;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
         id_parroquia: validarParroquiaId.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos vocero: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos comuna: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos vocero..."
+        "Error interno campos comuna..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un consejo comunal. @function validarCamposCrearConsejoComunal
+  */
   static validarCamposCrearConsejoComunal(
     nombre,
     usuarioId,
@@ -934,22 +1248,25 @@ export default class ValidarCampos {
     comunaCircuito
   ) {
     try {
+      // 1. Validar cada campo
       const validaciones = {
         nombre: this.validarCampoTexto(nombre),
         id_usuario: this.validarCampoId(usuarioId),
         id_parroquia: this.validarCampoId(parroquiaId),
       };
 
+      // 2. Verificar si alguna validación falló
       if (validaciones.nombre.status === "error") return validaciones.nombre;
       if (validaciones.id_usuario.status === "error")
         return validaciones.id_usuario;
       if (validaciones.id_parroquia.status === "error")
         return validaciones.id_parroquia;
 
-      // Validar solo el ID activo (comuna o circuito)
+      // 3. Variables para la condicion si pertenece a comuna o circuito comunal
       let id_comuna = null;
       let id_circuito = null;
 
+      // 4. Validar campo condicional (comuna o circuito)
       if (comunaCircuito === "comuna") {
         const result = this.validarCampoId(comunaId);
         if (result.status === "error") return result;
@@ -960,6 +1277,7 @@ export default class ValidarCampos {
         id_circuito = result.id;
       }
 
+      // 5. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones(
         "ok",
         "Campos validados correctamente...",
@@ -972,14 +1290,20 @@ export default class ValidarCampos {
         }
       );
     } catch (error) {
-      console.error("Error interno al validar campos del consejo:", error);
+      // 6. Manejo de errores inesperados
+      console.error("Error interno campos consejo comunal:", error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno al validar los campos del consejo..."
+        "Error interno campos consejo comunal..."
       );
     }
   }
 
+  /**
+   Valida los campos necesarios para registrar un vocero. @function validarCamposRegistroVocero
+  */
   static validarCamposRegistroVocero(
     nombre,
     nombre_dos,
@@ -998,6 +1322,7 @@ export default class ValidarCampos {
     id_circuito
   ) {
     try {
+      // 1. Validar cada campo individualmente
       const validarCorreo = this.validarCampoCorreo(correo);
       const validarNombre = this.validarCampoNombre(nombre);
       const validarNombreDos = this.validarCampoNombreApellidoDos(
@@ -1011,15 +1336,12 @@ export default class ValidarCampos {
       );
       const validarCedula = this.validarCampoCedula(cedula);
       const validarGenero = this.validarCampoGenero(genero);
-
       const validarEdad = this.validarCampoEdad(edad);
       const validarTelefono = this.validarCampoTelefono(telefono);
-
       const validarActividadLaboral = this.validarCampoNombre(laboral);
       const validarDireccion = this.validarCampoTexto(
         direccion ? direccion : "sin direccion"
       );
-
       const validarParroquia = this.validarCampoId(id_parroquia);
       const validarComuna = id_comuna
         ? this.validarCampoId(id_comuna)
@@ -1031,6 +1353,7 @@ export default class ValidarCampos {
         ? this.validarCampoId(id_consejo)
         : { id: null };
 
+      // 2. Verificar si alguna validación falló
       if (validarCorreo.status === "error") return validarCorreo;
       if (validarNombre.status === "error") return validarNombre;
       if (validarNombreDos.status === "error") return validarNombreDos;
@@ -1044,7 +1367,6 @@ export default class ValidarCampos {
         return validarActividadLaboral;
       if (validarDireccion.status === "error") return validarDireccion;
       if (validarParroquia.status === "error") return validarParroquia;
-
       if (validarComuna && validarComuna.status === "error")
         return validarComuna;
       if (validarCircuito && validarCircuito.status === "error")
@@ -1052,6 +1374,7 @@ export default class ValidarCampos {
       if (validarConsejo && validarConsejo.status === "error")
         return validarConsejo;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         cedula: validarCedula.cedula,
         edad: validarEdad.edad,
@@ -1070,10 +1393,13 @@ export default class ValidarCampos {
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos vocero: ` + error);
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos vocero: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos vocero..."
+        "Error interno campos vocero..."
       );
     }
   }
@@ -1094,10 +1420,11 @@ export default class ValidarCampos {
         descripcion: validarDescripcion.texto,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos formaciones: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos formación: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos formaciones..."
+        "Error interno campos formación..."
       );
     }
   }
@@ -1115,8 +1442,9 @@ export default class ValidarCampos {
         descripcion: validarDescripcion.texto,
       });
     } catch (error) {
-      console.log(`Error interno crear cargo: ` + error);
-      return retornarRespuestaFunciones("error", "Error interno crear cargo");
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos cargo: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno campos cargo");
     }
   }
 
@@ -1156,8 +1484,12 @@ export default class ValidarCampos {
         id_departamento: validarRango.rango === 1 ? null : validarId.id,
       });
     } catch (error) {
-      console.log(`Error interno crear novedad: ` + error);
-      return retornarRespuestaFunciones("error", "Error interno crear novedad");
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos novedad: ` + error);
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos novedad"
+      );
     }
   }
 
@@ -1180,10 +1512,11 @@ export default class ValidarCampos {
         id_pais: validarIdPais.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos pais editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar pais: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos pais editar..."
+        "Error interno campos editar pais..."
       );
     }
   }
@@ -1220,10 +1553,11 @@ export default class ValidarCampos {
         id_estado: validarIdEstado.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos estado editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar estado: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos estado editar..."
+        "Error interno campos editar estado..."
       );
     }
   }
@@ -1256,10 +1590,11 @@ export default class ValidarCampos {
         id_municipio: validarIdMunicipio.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos municipio editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar municipio: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos municipio editar..."
+        "Error interno campos editar municipio..."
       );
     }
   }
@@ -1296,10 +1631,11 @@ export default class ValidarCampos {
         id_parroquia: validarIdParroquia.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos parroquia editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar parroquia: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos parroquia editar..."
+        "Error interno campos editar parroquia..."
       );
     }
   }
@@ -1348,12 +1684,11 @@ export default class ValidarCampos {
         id_institucion: validarIdInstitucion.id,
       });
     } catch (error) {
-      console.log(
-        `Error, interno validando campos institucion editar: ` + error
-      );
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar institución: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos institucion editar..."
+        "Error interno campos editar institución..."
       );
     }
   }
@@ -1448,10 +1783,11 @@ export default class ValidarCampos {
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos vocero editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar vocero: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos vocero editar..."
+        "Error interno campos editar vocero..."
       );
     }
   }
@@ -1472,11 +1808,12 @@ export default class ValidarCampos {
         id_comuna: validarComuna.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos comuna editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar comuna: ` + error);
 
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos comuna editar..."
+        "Error interno campos editar comuna..."
       );
     }
   }
@@ -1497,11 +1834,12 @@ export default class ValidarCampos {
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos consejo editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar consejo comunal: ` + error);
 
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos consejo editar..."
+        "Error interno campos editar consejo comunal..."
       );
     }
   }
@@ -1523,12 +1861,11 @@ export default class ValidarCampos {
         id_departamento: validarIdDepartamento.id,
       });
     } catch (error) {
-      console.log(
-        `Error, interno validando campos departamento editar: ` + error
-      );
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar departamento: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos departamento editar..."
+        "Error interno campos editar departamento..."
       );
     }
   }
@@ -1549,10 +1886,11 @@ export default class ValidarCampos {
         id_cargo: validarIdCargo.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos cargo editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar cargo: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos cargo editar..."
+        "Error interno campos editar cargo..."
       );
     }
   }
@@ -1581,10 +1919,11 @@ export default class ValidarCampos {
         id_formacion: validarIdFormacion.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos formacion editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar formación: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos formacion editar..."
+        "Error interno campos editar formación..."
       );
     }
   }
@@ -1605,10 +1944,11 @@ export default class ValidarCampos {
         id_novedad: validarIdNovedad.id,
       });
     } catch (error) {
-      console.log(`Error, interno validando campos novedad editar: ` + error);
+      // Retorna una respuesta del error inesperado
+      console.log(`Error interno campos editar novedad: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno validando campos novedad editar..."
+        "Error interno campos editar novedad..."
       );
     }
   }

@@ -1,7 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-
-const rifRegex = /^[VEJPGCL]-\d{8}-\d$/; // formato válido: letra-8dígitos-dígito
+import { rifRegex } from "@/utils/constantes";
 
 export default function InputRif({
   type,
