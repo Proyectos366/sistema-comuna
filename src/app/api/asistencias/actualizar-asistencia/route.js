@@ -155,25 +155,25 @@ export async function PATCH(request) {
         {},
         400
       );
-    } else {
-      // 7. Registro de evento de éxito y retorno de la respuesta final.
-      await registrarEventoSeguro(request, {
-        tabla: "asistencia",
-        accion: "UPDATE_ASISTENCIA",
-        id_objeto: nuevaAsistencia.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Asistencia actualizada ${validaciones.id_asistencia} y modulo ${validaciones.modulo}`,
-        datosAntes: validaciones,
-        datosDespues: nuevaAsistencia,
-      });
-
-      return generarRespuesta(
-        "ok",
-        `Modulo ${validaciones.modulo} validado...`,
-        { curso: nuevaAsistencia },
-        201
-      );
     }
+
+    // 7. Registro de evento de éxito y retorno de la respuesta final.
+    await registrarEventoSeguro(request, {
+      tabla: "asistencia",
+      accion: "UPDATE_ASISTENCIA",
+      id_objeto: nuevaAsistencia.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Asistencia actualizada ${validaciones.id_asistencia} y modulo ${validaciones.modulo}`,
+      datosAntes: validaciones,
+      datosDespues: nuevaAsistencia,
+    });
+
+    return generarRespuesta(
+      "ok",
+      `Modulo ${validaciones.modulo} validado...`,
+      { curso: nuevaAsistencia },
+      201
+    );
   } catch (error) {
     console.log(`Error interno (asitencia): ` + error);
 

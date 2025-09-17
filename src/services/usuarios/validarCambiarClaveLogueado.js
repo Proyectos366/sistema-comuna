@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import nombreToken from "@/utils/nombreToken";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCambiarClaveLogueado(
   claveVieja,
@@ -63,7 +64,6 @@ export default async function validarCambiarClaveLogueado(
       });
     }
 
-    // Encriptar clave
     const claveEncriptada = await CifrarDescifrarClaves.cifrarClave(claveUno);
 
     if (claveEncriptada.status === "error") {
@@ -81,10 +81,12 @@ export default async function validarCambiarClaveLogueado(
       id_usuario: claveUsuarioActivo.id,
     });
   } catch (error) {
-    console.error(`Error interno, validar clave loggeado: ` + error);
+    console.error(`Error interno validar cambiar clave loggeado: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno, validar clave loggeado"
+      "Error interno validar cambiar clave loggeado"
     );
   }
 }

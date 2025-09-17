@@ -1209,8 +1209,31 @@ export default class ValidarCampos {
   /**
    Valida los campos necesarios para crear una comuna. @function validarCamposCrearComuna
   */
-  static validarCamposCrearComuna(nombre, parroquiaId) {
+  static validarCamposCrearComuna(
+    nombre,
+    direccion,
+    norte,
+    sur,
+    este,
+    oeste,
+    punto,
+    rif,
+    codigo,
+    parroquiaId
+  ) {
     try {
+      /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
+       segun sea el caso, por ahora solo estan de prueba
+      */
+      const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+      const norteMinuscula = norte ? norte.toLowerCase() : "";
+      const surMinuscula = sur ? sur.toLowerCase() : "";
+      const esteMinuscula = este ? este.toLowerCase() : "";
+      const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+      const puntoMinuscula = punto ? punto.toLowerCase() : "";
+      const rifMinuscula = rif ? rif.toLowerCase() : "";
+      const codigoMinuscula = codigo ? codigo.toLowerCase() : "";
+
       // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoTexto(nombre);
       const validarParroquiaId = this.validarCampoId(parroquiaId);
@@ -1222,6 +1245,14 @@ export default class ValidarCampos {
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
+        direccion: direccionMinuscula,
+        norte: norteMinuscula,
+        sur: surMinuscula,
+        este: esteMinuscula,
+        oeste: oesteMinuscula,
+        punto: puntoMinuscula,
+        rif: rifMinuscula,
+        codigo: codigoMinuscula,
         id_parroquia: validarParroquiaId.id,
       });
     } catch (error) {
@@ -1241,37 +1272,51 @@ export default class ValidarCampos {
   */
   static validarCamposCrearConsejoComunal(
     nombre,
-    usuarioId,
+    direccion,
+    norte,
+    sur,
+    este,
+    oeste,
+    punto,
+    rif,
+    codigo,
     parroquiaId,
     comunaId,
     circuitoId,
     comunaCircuito
   ) {
     try {
-      // 1. Validar cada campo
-      const validaciones = {
-        nombre: this.validarCampoTexto(nombre),
-        id_usuario: this.validarCampoId(usuarioId),
-        id_parroquia: this.validarCampoId(parroquiaId),
-      };
+      /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
+       segun sea el caso, por ahora solo estan de prueba
+      */
+      const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+      const norteMinuscula = norte ? norte.toLowerCase() : "";
+      const surMinuscula = sur ? sur.toLowerCase() : "";
+      const esteMinuscula = este ? este.toLowerCase() : "";
+      const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+      const puntoMinuscula = punto ? punto.toLowerCase() : "";
+      const rifMinuscula = rif ? rif.toLowerCase() : "";
+      const codigoMinuscula = codigo ? codigo.toLowerCase() : "";
+
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarIdParroquia = this.validarCampoId(parroquiaId, "parroquia");
 
       // 2. Verificar si alguna validación falló
-      if (validaciones.nombre.status === "error") return validaciones.nombre;
-      if (validaciones.id_usuario.status === "error")
-        return validaciones.id_usuario;
-      if (validaciones.id_parroquia.status === "error")
-        return validaciones.id_parroquia;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarIdParroquia.status === "error") return validarIdParroquia;
 
       // 3. Variables para la condicion si pertenece a comuna o circuito comunal
       let id_comuna = null;
       let id_circuito = null;
 
+      let circuitoComuna = comunaCircuito.toLowerCase();
+
       // 4. Validar campo condicional (comuna o circuito)
-      if (comunaCircuito === "comuna") {
+      if (circuitoComuna === "comuna") {
         const result = this.validarCampoId(comunaId);
         if (result.status === "error") return result;
         id_comuna = result.id;
-      } else if (comunaCircuito === "circuito") {
+      } else if (circuitoComuna === "circuito") {
         const result = this.validarCampoId(circuitoId);
         if (result.status === "error") return result;
         id_circuito = result.id;
@@ -1283,10 +1328,18 @@ export default class ValidarCampos {
         "Campos validados correctamente...",
         {
           nombre: validaciones.nombre.texto,
-          id_usuario: validaciones.id_usuario.id,
+          direccion: direccionMinuscula,
+          norte: norteMinuscula,
+          sur: surMinuscula,
+          este: esteMinuscula,
+          oeste: oesteMinuscula,
+          punto: puntoMinuscula,
+          rif: rifMinuscula,
+          codigo: codigoMinuscula,
           id_parroquia: validaciones.id_parroquia.id,
           id_comuna: id_comuna,
           id_circuito: id_circuito,
+          comunaCircuito: circuitoComuna,
         }
       );
     } catch (error) {
@@ -1404,24 +1457,36 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para crear una nueva formación.
+   @function validarCamposCrearFormacion
+   @param {string} nombre - El nombre de la formación.
+   @param {number} modulos - La cantidad de módulos de la formación.
+   @param {string} descripcion - La descripción detallada de la formación.
+  */
   static validarCamposCrearFormacion(nombre, modulos, descripcion) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarModulo = this.validarCampoModulo(modulos);
       const validarDescripcion = this.validarCampoTexto(descripcion);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarModulo.status === "error") return validarModulo;
       if (validarDescripcion.status === "error") return validarDescripcion;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         cantidadModulos: validarModulo.modulo,
         descripcion: validarDescripcion.texto,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos formación: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos formación..."
@@ -1429,25 +1494,46 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para crear un nuevo cargo.
+   @function validarCamposCrearCargo
+   @param {string} nombre - El nombre del cargo.
+   @param {string} descripcion - La descripción del cargo.
+  */
   static validarCamposCrearCargo(nombre, descripcion) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos cargo: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones("error", "Error interno campos cargo");
     }
   }
 
+  /**
+   Valida los campos necesarios para crear una novedad.
+   @function validarCamposCrearNovedad
+   @param {string} nombre - El nombre o título de la novedad.
+   @param {string} descripcion - La descripción detallada de la novedad.
+   @param {number} id_institucion - El ID de la institución (si aplica).
+   @param {number} id_departamento - El ID del departamento (si aplica).
+   @param {number} rango - El rango de la novedad (1 para institución, 2 para departamento).
+   @param {number} prioridad - La prioridad de la novedad.
+  */
   static validarCamposCrearNovedad(
     nombre,
     descripcion,
@@ -1457,24 +1543,27 @@ export default class ValidarCampos {
     prioridad
   ) {
     try {
-      let validarId;
-
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarRango = this.validarCampoRango(rango);
       const validarPrioridad = this.validarCampoRango(prioridad, "prioridad");
 
+      // 2. Se valida el ID de la institución o departamento según el rango.
+      let validarId;
       if (validarRango.rango === 1) {
         validarId = this.validarCampoId(id_institucion, "institucion");
       } else {
         validarId = this.validarCampoId(id_departamento, "departamento");
       }
 
+      // 3. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarId.status === "error") return validarId;
       if (validarPrioridad.status === "error") return validarPrioridad;
 
+      // 4. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -1484,8 +1573,10 @@ export default class ValidarCampos {
         id_departamento: validarRango.rango === 1 ? null : validarId.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 5. Manejo de errores inesperados
       console.log(`Error interno campos novedad: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos novedad"
@@ -1493,18 +1584,29 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un país.
+   @function validarCamposEditarPais
+   @param {string} nombre - El nuevo nombre del país.
+   @param {string} capital - La nueva capital del país.
+   @param {string} descripcion - La nueva descripción del país.
+   @param {number} id_pais - El ID del país a editar.
+  */
   static validarCamposEditarPais(nombre, capital, descripcion, id_pais) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarCapital = this.validarCampoNombre(capital);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarCapital.status === "error") return validarCapital;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         capital: validarCapital.nombre,
@@ -1512,8 +1614,10 @@ export default class ValidarCampos {
         id_pais: validarIdPais.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar pais: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar pais..."
@@ -1521,6 +1625,16 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un estado.
+   @function validarCamposEditarEstado
+   @param {string} nombre - El nuevo nombre del estado.
+   @param {string} capital - La nueva capital del estado.
+   @param {string} codigoPostal - El nuevo código postal del estado.
+   @param {string} descripcion - La nueva descripción del estado.
+   @param {number} id_pais - El ID del país al que pertenece el estado.
+   @param {number} id_estado - El ID del estado a editar.
+  */
   static validarCamposEditarEstado(
     nombre,
     capital,
@@ -1530,6 +1644,7 @@ export default class ValidarCampos {
     id_estado
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarCapital = this.validarCampoNombre(capital);
       const validarCodigoPostal = this.validarCampoCodigoPostal(codigoPostal);
@@ -1537,6 +1652,7 @@ export default class ValidarCampos {
       const validarIdPais = this.validarCampoId(id_pais);
       const validarIdEstado = this.validarCampoId(id_estado);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarCapital.status === "error") return validarCapital;
       if (validarCodigoPostal.status === "error") return validarCodigoPostal;
@@ -1544,6 +1660,7 @@ export default class ValidarCampos {
       if (validarIdPais.status === "error") return validarIdPais;
       if (validarIdEstado.status === "error") return validarIdEstado;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         capital: validarCapital.nombre,
@@ -1553,8 +1670,10 @@ export default class ValidarCampos {
         id_estado: validarIdEstado.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar estado: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar estado..."
@@ -1562,6 +1681,15 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un municipio.
+   @function validarCamposEditarMunicipio
+   @param {string} nombre - El nuevo nombre del municipio.
+   @param {string} descripcion - La nueva descripción del municipio.
+   @param {number} id_pais - El ID del país al que pertenece el municipio.
+   @param {number} id_estado - El ID del estado al que pertenece el municipio.
+   @param {number} id_municipio - El ID del municipio a editar.
+  */
   static validarCamposEditarMunicipio(
     nombre,
     descripcion,
@@ -1570,18 +1698,21 @@ export default class ValidarCampos {
     id_municipio
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
       const validarIdEstado = this.validarCampoId(id_estado);
       const validarIdMunicipio = this.validarCampoId(id_municipio);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
       if (validarIdEstado.status === "error") return validarIdEstado;
       if (validarIdMunicipio.status === "error") return validarIdMunicipio;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -1590,8 +1721,10 @@ export default class ValidarCampos {
         id_municipio: validarIdMunicipio.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar municipio: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar municipio..."
@@ -1599,6 +1732,16 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar una parroquia.
+   @function validarCamposEditarParroquia
+   @param {string} nombre - El nuevo nombre de la parroquia.
+   @param {string} descripcion - La nueva descripción de la parroquia.
+   @param {number} id_pais - El ID del país al que pertenece la parroquia.
+   @param {number} id_estado - El ID del estado al que pertenece la parroquia.
+   @param {number} id_municipio - El ID del municipio al que pertenece la parroquia.
+   @param {number} id_parroquia - El ID de la parroquia a editar.
+  */
   static validarCamposEditarParroquia(
     nombre,
     descripcion,
@@ -1608,6 +1751,7 @@ export default class ValidarCampos {
     id_parroquia
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdPais = this.validarCampoId(id_pais);
@@ -1615,6 +1759,7 @@ export default class ValidarCampos {
       const validarIdMunicipio = this.validarCampoId(id_municipio);
       const validarIdParroquia = this.validarCampoId(id_parroquia);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdPais.status === "error") return validarIdPais;
@@ -1622,6 +1767,7 @@ export default class ValidarCampos {
       if (validarIdMunicipio.status === "error") return validarIdMunicipio;
       if (validarIdParroquia.status === "error") return validarIdParroquia;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -1631,8 +1777,10 @@ export default class ValidarCampos {
         id_parroquia: validarIdParroquia.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar parroquia: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar parroquia..."
@@ -1640,6 +1788,19 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar una institución.
+   @function validarCamposEditarInstitucion
+   @param {string} nombre - El nuevo nombre de la institución.
+   @param {string} descripcion - La nueva descripción de la institución.
+   @param {string} rif - El RIF (Registro de Información Fiscal) de la institución.
+   @param {string} sector - El sector al que pertenece la institución.
+   @param {string} direccion - La nueva dirección de la institución.
+   @param {number} id_pais - El ID del país al que pertenece la institución.
+   @param {number} id_estado - El ID del estado al que pertenece la institución.
+   @param {number} id_municipio - El ID del municipio al que pertenece la institución.
+   @param {number} id_institucion - El ID de la institución a editar.
+  */
   static validarCamposEditarInstitucion(
     nombre,
     descripcion,
@@ -1652,6 +1813,7 @@ export default class ValidarCampos {
     id_institucion
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarRif = this.validarCampoRif(rif);
@@ -1662,6 +1824,7 @@ export default class ValidarCampos {
       const validarIdMunicipio = this.validarCampoId(id_municipio);
       const validarIdInstitucion = this.validarCampoId(id_institucion);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarRif.status === "error") return validarRif;
@@ -1672,6 +1835,7 @@ export default class ValidarCampos {
       if (validarIdMunicipio.status === "error") return validarIdMunicipio;
       if (validarIdInstitucion.status === "error") return validarIdInstitucion;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
@@ -1684,8 +1848,10 @@ export default class ValidarCampos {
         id_institucion: validarIdInstitucion.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar institución: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar institución..."
@@ -1693,6 +1859,25 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un vocero.
+   @function validarCamposEditarVocero
+   @param {string} nombre - El primer nombre del vocero.
+   @param {string} nombre_dos - El segundo nombre del vocero.
+   @param {string} apellido - El primer apellido del vocero.
+   @param {string} apellido_dos - El segundo apellido del vocero.
+   @param {string} cedula - La cédula de identidad del vocero.
+   @param {string} correo - El correo electrónico del vocero.
+   @param {string} genero - El género del vocero.
+   @param {number} edad - La edad del vocero.
+   @param {string} telefono - El número de teléfono del vocero.
+   @param {string} direccion - La dirección de residencia del vocero.
+   @param {string} laboral - La actividad laboral del vocero.
+   @param {number} id_parroquia - El ID de la parroquia del vocero.
+   @param {number} id_comuna - El ID de la comuna del vocero.
+   @param {number} id_consejo - El ID del consejo del vocero.
+   @param {number} id_circuito - El ID del circuito del vocero.
+  */
   static validarCamposEditarVocero(
     nombre,
     nombre_dos,
@@ -1711,6 +1896,7 @@ export default class ValidarCampos {
     id_circuito
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarCorreo = this.validarCampoCorreo(correo);
       const validarNombre = this.validarCampoNombre(nombre);
       const validarNombreDos = this.validarCampoNombreApellidoDos(
@@ -1724,15 +1910,12 @@ export default class ValidarCampos {
       );
       const validarCedula = this.validarCampoCedula(cedula);
       const validarGenero = this.validarCampoGenero(genero);
-
       const validarEdad = this.validarCampoEdad(edad);
       const validarTelefono = this.validarCampoTelefono(telefono);
-
       const validarActividadLaboral = this.validarCampoNombre(laboral);
       const validarDireccion = this.validarCampoTexto(
         direccion ? direccion : "sin direccion"
       );
-
       const validarParroquia = this.validarCampoId(id_parroquia);
       const validarComuna = id_comuna
         ? this.validarCampoId(id_comuna)
@@ -1744,6 +1927,7 @@ export default class ValidarCampos {
         ? this.validarCampoId(id_consejo)
         : { id: null };
 
+      // 2. Verificar si alguna validación falló
       if (validarCorreo.status === "error") return validarCorreo;
       if (validarNombre.status === "error") return validarNombre;
       if (validarNombreDos.status === "error") return validarNombreDos;
@@ -1757,7 +1941,6 @@ export default class ValidarCampos {
         return validarActividadLaboral;
       if (validarDireccion.status === "error") return validarDireccion;
       if (validarParroquia.status === "error") return validarParroquia;
-
       if (validarComuna && validarComuna.status === "error")
         return validarComuna;
       if (validarCircuito && validarCircuito.status === "error")
@@ -1765,6 +1948,7 @@ export default class ValidarCampos {
       if (validarConsejo && validarConsejo.status === "error")
         return validarConsejo;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         cedula: validarCedula.cedula,
         edad: validarEdad.edad,
@@ -1783,8 +1967,10 @@ export default class ValidarCampos {
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar vocero: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar vocero..."
@@ -1792,25 +1978,36 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar una comuna.
+   @function validarCamposEditarComuna
+   @param {string} nombre - El nuevo nombre de la comuna.
+   @param {number} id_parroquia - El ID de la parroquia a la que pertenece la comuna.
+   @param {number} id_comuna - El ID de la comuna a editar.
+  */
   static validarCamposEditarComuna(nombre, id_parroquia, id_comuna) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoTexto(nombre);
       const validarParroquia = this.validarCampoId(id_parroquia);
       const validarComuna = this.validarCampoId(id_comuna);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarParroquia.status === "error") return validarParroquia;
       if (validarComuna.status === "error") return validarComuna;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
         id_parroquia: validarParroquia.id,
         id_comuna: validarComuna.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar comuna: ` + error);
 
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar comuna..."
@@ -1818,25 +2015,36 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un consejo comunal.
+   @function validarCamposEditarConsejo
+   @param {string} nombre - El nuevo nombre del consejo comunal.
+   @param {number} id_comuna - El ID de la comuna a la que pertenece el consejo.
+   @param {number} id_consejo - El ID del consejo comunal a editar.
+  */
   static validarCamposEditarConsejo(nombre, id_comuna, id_consejo) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoTexto(nombre);
       const validarComuna = this.validarCampoId(id_comuna);
       const validarConsejo = this.validarCampoId(id_consejo);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarComuna.status === "error") return validarComuna;
       if (validarConsejo.status === "error") return validarConsejo;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
         id_comuna: validarComuna.id,
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar consejo comunal: ` + error);
 
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar consejo comunal..."
@@ -1844,25 +2052,37 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un departamento.
+   @function validarCamposEditarDepartamento
+   @param {string} nombre - El nuevo nombre del departamento.
+   @param {string} descripcion - La nueva descripción del departamento.
+   @param {number} id_departamento - El ID del departamento a editar.
+  */
   static validarCamposEditarDepartamento(nombre, descripcion, id_departamento) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdDepartamento = this.validarCampoId(id_departamento);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdDepartamento.status === "error")
         return validarIdDepartamento;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
         id_departamento: validarIdDepartamento.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar departamento: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar departamento..."
@@ -1870,24 +2090,36 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar un cargo.
+   @function validarCamposEditarCargo
+   @param {string} nombre - El nuevo nombre del cargo.
+   @param {string} descripcion - La nueva descripción del cargo.
+   @param {number} id_cargo - El ID del cargo a editar.
+  */
   static validarCamposEditarCargo(nombre, descripcion, id_cargo) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdCargo = this.validarCampoId(id_cargo);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdCargo.status === "error") return validarIdCargo;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
         id_cargo: validarIdCargo.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar cargo: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar cargo..."
@@ -1895,6 +2127,14 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar una formación.
+   @function validarCamposEditarFormacion
+   @param {string} nombre - El nuevo nombre de la formación.
+   @param {number} modulos - La nueva cantidad de módulos de la formación.
+   @param {string} descripcion - La nueva descripción de la formación.
+   @param {number} id_formacion - El ID de la formación a editar.
+  */
   static validarCamposEditarFormacion(
     nombre,
     modulos,
@@ -1902,16 +2142,19 @@ export default class ValidarCampos {
     id_formacion
   ) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarModulo = this.validarCampoModulo(modulos);
       const validarIdFormacion = this.validarCampoId(id_formacion);
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarModulo.status === "error") return validarModulo;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdFormacion.status === "error") return validarIdFormacion;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         cantidadModulos: validarModulo.modulo,
@@ -1919,8 +2162,10 @@ export default class ValidarCampos {
         id_formacion: validarIdFormacion.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar formación: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar formación..."
@@ -1928,24 +2173,36 @@ export default class ValidarCampos {
     }
   }
 
+  /**
+   Valida los campos necesarios para editar una novedad.
+   @function validarCamposEditarNovedad
+   @param {string} nombre - El nuevo nombre o título de la novedad.
+   @param {string} descripcion - La nueva descripción de la novedad.
+   @param {number} id_novedad - El ID de la novedad a editar.
+  */
   static validarCamposEditarNovedad(nombre, descripcion, id_novedad) {
     try {
+      // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdNovedad = this.validarCampoId(id_novedad, "novedad");
 
+      // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarIdNovedad.status === "error") return validarIdNovedad;
 
+      // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
         id_novedad: validarIdNovedad.id,
       });
     } catch (error) {
-      // Retorna una respuesta del error inesperado
+      // 4. Manejo de errores inesperados
       console.log(`Error interno campos editar novedad: ` + error);
+
+      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar novedad..."

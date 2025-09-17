@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarPais(
   nombre,
@@ -41,7 +42,6 @@ export default async function validarEditarPais(
       );
     }
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarPais(
       nombre,
       capital,
@@ -63,7 +63,7 @@ export default async function validarEditarPais(
       where: {
         nombre: validandoCampos.nombre,
         id: {
-          not: validandoCampos.id_pais, // excluye el pais que estás editando
+          not: validandoCampos.id_pais,
         },
       },
     });
@@ -82,10 +82,12 @@ export default async function validarEditarPais(
       id_pais: validandoCampos.id_pais,
     });
   } catch (error) {
-    console.log(`Error, interno al editar pais: ` + error);
+    console.log(`Error interno validar editar pais: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar pais..."
+      "Error interno validar editar pais..."
     );
   }
 }

@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearInstitucion(
   nombre,
@@ -95,10 +96,12 @@ export default async function validarCrearInstitucion(
       id_parroquia: validarCampos.id_parroquia,
     });
   } catch (error) {
-    console.log(`Error, interno al crear institución: ` + error);
+    console.log(`Error interno validar crear institución: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear institución"
+      "Error interno validar crear institución"
     );
   }
 }

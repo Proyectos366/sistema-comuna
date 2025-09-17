@@ -8,7 +8,7 @@
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
-import validarUsuarioPerfil from "@/services/usuarios/ValidarUsuarioPerfil"; // Servicio para validar el contexto del usuario
+import validarUsuarioPerfil from "@/services/usuarios/validarUsuarioPerfil"; // Servicio para validar el contexto del usuario
 
 /**
  * Maneja las solicitudes HTTP GET para obtener el perfil del usuario autenticado.

@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarInstitucion(
   nombre,
@@ -92,10 +93,12 @@ export default async function validarEditarInstitucion(
       id_institucion: validandoCampos.id_institucion,
     });
   } catch (error) {
-    console.log(`Error, interno al editar institucion: ` + error);
+    console.log(`Error interno validar editar institucion: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar institucion..."
+      "Error interno validar editar institucion..."
     );
   }
 }

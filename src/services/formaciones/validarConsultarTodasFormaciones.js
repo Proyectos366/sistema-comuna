@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarConsultarTodasFormaciones() {
   try {
@@ -74,35 +75,12 @@ export default async function validarConsultarTodasFormaciones() {
       id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
     });
   } catch (error) {
-    console.log(`Error, interno validar consultar todas formaciones: ` + error);
+    console.log(`Error interno validar consultar todas formaciones: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar consultar todas formaciones"
+      "Error interno validar consultar todas formaciones"
     );
   }
 }
-
-/**
-  // Esto es para futuro mostrar las formaciones por institucion
-  const listaInstituciones = datosUsuario?.MiembrosInstitucion?.map(inst => inst.id) || [];
-
-  whereCondicion = {
-    borrado: false,
-    culminada: false,
-    id_institucion: {
-      in: listaInstituciones,
-    },
-  };
-
-  const agrupadasPorInstitucion = {};
-
-  formaciones.forEach(formacion => {
-    const idInst = formacion.id_institucion;
-    
-    if (!agrupadasPorInstitucion[idInst]) {
-      agrupadasPorInstitucion[idInst] = [];
-    }
-
-    agrupadasPorInstitucion[idInst].push(formacion);
-  });
-*/

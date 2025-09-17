@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearFormacion(
   nombre,
@@ -106,10 +107,12 @@ export default async function validarCrearFormacion(
         : null,
     });
   } catch (error) {
-    console.log(`Error, interno al validar crear formacion: ` + error);
+    console.log(`Error interno validar crear formacion: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al validar crear formacion"
+      "Error interno validar crear formacion"
     );
   }
 }

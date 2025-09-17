@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearModulo(nombre) {
   try {
@@ -26,19 +27,17 @@ export default async function validarCrearModulo(nombre) {
       select: { id: true },
     });
 
-    return retornarRespuestaFunciones(
-      'ok',
-      'Validacion correcta',
-      {
-        id_usuario: idUsuario.id,
-        nombre: nombreMayuscula,
-      }
-    );
+    return retornarRespuestaFunciones("ok", "Validacion correcta", {
+      id_usuario: idUsuario.id,
+      nombre: nombreMayuscula,
+    });
   } catch (error) {
-    console.log(`Error, interno al crear modulo: ` + error);
+    console.log(`Error interno validar crear modulo: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear modulo"
+      "Error interno validar crear modulo"
     );
   }
 }

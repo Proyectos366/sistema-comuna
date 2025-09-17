@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarConsultarInstitucionMiembroId() {
   try {
@@ -27,13 +28,6 @@ export default async function validarConsultarInstitucionMiembroId() {
 
     const correo = descifrarToken.correo;
 
-    /** 
-      const datosUsuario = await prisma.usuario.findFirst({
-        where: { correo: correo },
-        select: { id: true },
-      });
-    */
-
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correo },
       select: {
@@ -56,21 +50,19 @@ export default async function validarConsultarInstitucionMiembroId() {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
-    
-
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: datosUsuario.id,
       correo: correo,
       id_institucion: datosUsuario.MiembrosInstitucion?.[0]?.id,
       id_municipio: datosUsuario.MiembrosMunicipios?.[0]?.id,
     });
-  } catch (error) {
-    console.log(
-      `Error, interno validar consultar institucion miembro: ` + error
-    );
+  } catch (err) {
+    console.log(`Error interno validar consultar institucion miembro: ` + err);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar consultar institucion miembro"
+      "Error interno validar consultar institucion miembro"
     );
   }
 }

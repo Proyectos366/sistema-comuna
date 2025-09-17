@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { quitarCaracteres } from "@/utils/quitarCaracteres";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarConsultarVoceroCedula(cedula) {
   try {
@@ -42,7 +43,12 @@ export default async function validarConsultarVoceroCedula(cedula) {
       cedula: cedulaNumero,
     });
   } catch (error) {
-    console.log(`Error, interno usuario cedula: ` + error);
-    return retornarRespuestaFunciones("error", "Error, interno usuario cedula");
+    console.log("Error interno validar usuario cedula: " + error);
+
+    // Retorna una respuesta del error inesperado
+    return retornarRespuestaFunciones(
+      "error",
+      "Error interno validar usuario cedula"
+    );
   }
 }

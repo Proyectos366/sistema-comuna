@@ -5,6 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearCambiarImgPerfil(request) {
   try {
@@ -62,6 +63,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
     }
 
     const imagen = (await request.formData()).get("imagen");
+
     if (!imagen) {
       return retornarRespuestaFunciones(
         "error",
@@ -83,10 +85,9 @@ export default async function validarCrearCambiarImgPerfil(request) {
     const nombreSinExtension = nombreOriginalImagen.replace(/\.[^/.]+$/, "");
     const nombreSistemaFecha = `${nombreSinExtension}_${Date.now()}.${extensionImagen}`;
 
-    // Asumiendo que lastModified es un número (timestamp)
-    const fecha = new Date(lastModified); // directamente al objeto Date
+    const fecha = new Date(lastModified);
 
-    const ultimaModificacionImagen = fecha.toISOString(); // formato ISO
+    const ultimaModificacionImagen = fecha.toISOString();
 
     const buffer = Buffer.from(await imagen.arrayBuffer());
 
@@ -95,7 +96,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
     const rutaUsuario = path.join(
       process.cwd(),
       "storage",
-      "uploads", // <— aquí agregamos "uploads" como raíz
+      "uploads",
       "img-perfil",
       nombreCarpetaUsuario
     );
@@ -121,7 +122,12 @@ export default async function validarCrearCambiarImgPerfil(request) {
       usuarioAntes: datosUsuario,
     });
   } catch (error) {
-    console.log("Error interno al subir imagen de perfil:", error);
-    return retornarRespuestaFunciones("error", "Error interno imagen perfil");
+    console.log("Error interno validar subir imagen de perfil: " + error);
+
+    // Retorna una respuesta del error inesperado
+    return retornarRespuestaFunciones(
+      "error",
+      "Error interno validar subir imagen de perfil"
+    );
   }
 }

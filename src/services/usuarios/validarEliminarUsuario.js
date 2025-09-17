@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEliminarUsuario(estado, idUsuario) {
   try {
@@ -59,10 +60,12 @@ export default async function validarEliminarUsuario(estado, idUsuario) {
       id_usuario_estado: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno al eliminar usuario: ` + error);
+    console.log(`Error interno validar eliminar usuario: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al eliminar usuario"
+      "Error interno validar eliminar usuario"
     );
   }
 }

@@ -5,6 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarVocero(
   nombre,
@@ -45,7 +46,6 @@ export default async function validarEditarVocero(
       },
     });
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarVocero(
       nombre,
       nombre_dos,
@@ -111,10 +111,12 @@ export default async function validarEditarVocero(
       id_consejo: validandoCampos.id_consejo,
     });
   } catch (error) {
-    console.log(`Error, interno al editar vocero: ` + error);
+    console.log("Error interno validar editar vocero: " + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar vocero..."
+      "Error interno validar editar vocero..."
     );
   }
 }

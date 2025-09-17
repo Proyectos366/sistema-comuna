@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarParroquia(
   nombre,
@@ -43,7 +44,6 @@ export default async function validarEditarParroquia(
       );
     }
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarParroquia(
       nombre,
       descripcion,
@@ -68,7 +68,7 @@ export default async function validarEditarParroquia(
         nombre: validandoCampos.nombre,
         id_municipio: validandoCampos.id_municipio,
         id: {
-          not: validandoCampos.id_parroquia, // excluye la parroquia que estás editando
+          not: validandoCampos.id_parroquia,
         },
       },
     });
@@ -93,10 +93,12 @@ export default async function validarEditarParroquia(
       id_parroquia: validandoCampos.id_parroquia,
     });
   } catch (error) {
-    console.log(`Error, interno al editar parroquia: ` + error);
+    console.log("Error interno validar editar parroquia: " + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar parroquia..."
+      "Error, interno validar editar parroquia..."
     );
   }
 }

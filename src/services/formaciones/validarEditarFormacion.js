@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarFormacion(
   nombre,
@@ -42,7 +43,6 @@ export default async function validarEditarFormacion(
       );
     }
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarFormacion(
       nombre,
       cantidadModulos,
@@ -78,7 +78,6 @@ export default async function validarEditarFormacion(
       );
     }
 
-    // 🔍 Obtener los módulos antes de actualizar
     const formacionAntes = await prisma.formacion.findUnique({
       where: { id: validandoCampos.id_formacion },
       include: { modulos: true },
@@ -103,7 +102,6 @@ export default async function validarEditarFormacion(
       );
     }
 
-    // 🛠️ Actualizar formación con nuevos módulos
     const actualizarFormacion = await prisma.formacion.update({
       where: { id: validandoCampos.id_formacion },
       data: {
@@ -200,10 +198,12 @@ export default async function validarEditarFormacion(
       id_formacion: validandoCampos.id_formacion,
     });
   } catch (error) {
-    console.log(`Error, interno al editar formación: ` + error);
+    console.log(`Error interno validar editar formación: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar formación..."
+      "Error interno validar editar formación..."
     );
   }
 }

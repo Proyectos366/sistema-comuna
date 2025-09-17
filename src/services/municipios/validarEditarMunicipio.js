@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarMunicipio(
   nombre,
@@ -42,7 +43,6 @@ export default async function validarEditarMunicipio(
       );
     }
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarMunicipio(
       nombre,
       descripcion,
@@ -66,7 +66,7 @@ export default async function validarEditarMunicipio(
         nombre: validandoCampos.nombre,
         id_estado: validandoCampos.id_estado,
         id: {
-          not: validandoCampos.id_municipio, // excluye el municipio que estás editando
+          not: validandoCampos.id_municipio,
         },
       },
     });
@@ -90,10 +90,12 @@ export default async function validarEditarMunicipio(
       id_municipio: validandoCampos.id_municipio,
     });
   } catch (error) {
-    console.log(`Error, interno al editar municipio: ` + error);
+    console.log(`Error interno validar editar municipio: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar municipio..."
+      "Error interno validar editar municipio..."
     );
   }
 }

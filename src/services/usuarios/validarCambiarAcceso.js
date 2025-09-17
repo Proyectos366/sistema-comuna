@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCambiarAcceso(validado, idUsuario) {
   try {
@@ -56,10 +57,12 @@ export default async function validarCambiarAcceso(validado, idUsuario) {
       id_usuario_validado: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno al cambiar acceso: ` + error);
+    console.log(`Error interno validar cambiar acceso: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al cambiar acceso"
+      "Error interno validar cambiar acceso"
     );
   }
 }

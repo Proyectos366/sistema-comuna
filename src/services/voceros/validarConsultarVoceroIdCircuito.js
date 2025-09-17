@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarConsultarVoceroIdCircuito(request) {
   try {
@@ -41,10 +42,12 @@ export default async function validarConsultarVoceroIdCircuito(request) {
       id_circuito: id_circuito.id,
     });
   } catch (error) {
-    console.log(`Error, interno validar vocero id_circuito: ` + error);
+    console.log("Error interno validar vocero id_circuito: " + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar vocero id_circuito"
+      "Error interno validar vocero id_circuito"
     );
   }
 }

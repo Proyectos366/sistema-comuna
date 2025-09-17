@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearEstado(
   nombre,
@@ -80,10 +81,12 @@ export default async function validarCrearEstado(
       id_pais: validarCampos.id_pais,
     });
   } catch (error) {
-    console.log(`Error, interno al crear estado: ` + error);
+    console.log(`Error interno validar crear estado: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear estado"
+      "Error interno validar crear estado"
     );
   }
 }

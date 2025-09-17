@@ -5,6 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearVocero(
   nombre,
@@ -38,18 +39,17 @@ export default async function validarCrearVocero(
 
     const correoUsuarioActivo = descifrarToken.correo;
 
-    const idUsuario = await prisma.usuario.findFirst({
+    const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: correoUsuarioActivo },
       select: {
-        id: true, // Selecciona solo el campo 'id'
+        id: true,
       },
     });
 
-    if (!idUsuario) {
+    if (!datosUsuario) {
       return retornarRespuestaFunciones("error", "Error de usuario...");
     }
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposRegistroVocero(
       nombre,
       nombre_dos,
@@ -73,7 +73,7 @@ export default async function validarCrearVocero(
         validandoCampos.status,
         validandoCampos.message,
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
@@ -88,14 +88,13 @@ export default async function validarCrearVocero(
       });
     } while (tokenEnUsoEnDB);
 
-    // Verificar si el usuario ya existe
     const voceroExistente = await prisma.vocero.findFirst({
       where: { cedula: validandoCampos.cedula },
     });
 
     if (voceroExistente) {
       return retornarRespuestaFunciones("error", "Error, vocero ya existe...", {
-        id_usuario: idUsuario.id,
+        id_usuario: datosUsuario.id,
       });
     }
 
@@ -108,7 +107,7 @@ export default async function validarCrearVocero(
         "error",
         "Error, edad o fecha de nacimiento incorrecta...",
         {
-          id_usuario: idUsuario.id,
+          id_usuario: datosUsuario.id,
         }
       );
     }
@@ -127,17 +126,19 @@ export default async function validarCrearVocero(
       token: tokenVocero,
       laboral: validandoCampos.laboral,
       fechaNacimiento: fechaNacimiento,
-      id_usuario: idUsuario.id,
+      id_usuario: datosUsuario.id,
       id_parroquia: validandoCampos.id_parroquia,
       id_comuna: validandoCampos.id_comuna,
       id_circuito: validandoCampos.id_circuito,
       id_consejo: validandoCampos.id_consejo,
     });
   } catch (error) {
-    console.log(`Error, interno al validar vocero: ` + error);
+    console.log(`Error interno validar crear vocero: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al validar vocero..."
+      "Error interno validar crear vocero..."
     );
   }
 }

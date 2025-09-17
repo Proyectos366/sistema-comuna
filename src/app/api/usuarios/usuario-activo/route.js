@@ -9,7 +9,8 @@
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
-import validarUsuarioActivo from "@/services/usuarios/ValidarUsuarioActivo"; // Servicio para validar el token y obtener el correo
+import validarUsuarioActivo from "@/services/usuarios/validarUsuarioActivo";
+// Servicio para validar el token y obtener el correo
 
 /**
  * Maneja las solicitudes HTTP GET para obtener los datos del usuario activo.

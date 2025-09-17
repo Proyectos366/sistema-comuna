@@ -5,6 +5,7 @@ import nombreToken from "@/utils/nombreToken";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearUsuario(
   cedula,
@@ -65,7 +66,6 @@ export default async function validarCrearUsuario(
 
     const tokenAuth = AuthTokens.tokenValidarUsuario(10);
 
-    // Verificar si el usuario ya existe
     const usuarioExistente = await prisma.usuario.findFirst({
       where: {
         OR: [
@@ -110,7 +110,6 @@ export default async function validarCrearUsuario(
       });
     }
 
-    // Encriptar clave
     const claveEncriptada = await CifrarDescifrarClaves.cifrarClave(claveUno);
 
     if (claveEncriptada.status === "error") {
@@ -134,10 +133,12 @@ export default async function validarCrearUsuario(
       token: tokenAuth,
     });
   } catch (error) {
-    console.error(`Error interno, validar crear usuario: ` + error);
+    console.error(`Error interno validar crear usuario: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno, validar crear usuario"
+      "Error interno validar crear usuario"
     );
   }
 }

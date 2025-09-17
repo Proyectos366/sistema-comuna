@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearMunicipio(
   nombre,
@@ -83,10 +84,12 @@ export default async function validarCrearMunicipio(
       id_estado: validarCampos.id_estado,
     });
   } catch (error) {
-    console.log(`Error, interno al crear municipio: ` + error);
+    console.log(`Error interno validar crear municipio: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al crear municipio"
+      "Error interno validar crear municipio"
     );
   }
 }

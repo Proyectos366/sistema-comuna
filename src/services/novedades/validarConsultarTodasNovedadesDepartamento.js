@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarConsultarTodasNovedadesDepartamento() {
   try {
@@ -49,13 +50,13 @@ export default async function validarConsultarTodasNovedadesDepartamento() {
       inicioSemana: inicioSemana,
       finSemana: finSemana,
     });
-  } catch (error) {
-    console.log(
-      `Error, interno validar consultar novedad departamento: ` + error
-    );
+  } catch (err) {
+    console.log("Error interno validar consultar novedad departamento: " + err);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno validar consultar novedad departamento"
+      "Error interno validar consultar novedad departamento"
     );
   }
 }

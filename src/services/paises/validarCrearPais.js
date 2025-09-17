@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCrearPais(
   nombre,
@@ -75,7 +76,12 @@ export default async function validarCrearPais(
       serial: validarCampos.serial,
     });
   } catch (error) {
-    console.log(`Error, interno al crear pais: ` + error);
-    return retornarRespuestaFunciones("error", "Error, interno al crear pais");
+    console.log(`Error interno validar crear pais: ` + error);
+
+    // Retorna una respuesta del error inesperado
+    return retornarRespuestaFunciones(
+      "error",
+      "Error interno validar crear pais"
+    );
   }
 }

@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarEditarNovedad(
   nombre,
@@ -32,7 +33,6 @@ export default async function validarEditarNovedad(
       },
     });
 
-    // Validar campos
     const validandoCampos = ValidarCampos.validarCamposEditarNovedad(
       nombre,
       descripcion,
@@ -53,7 +53,7 @@ export default async function validarEditarNovedad(
       where: {
         nombre: validandoCampos.nombre,
         id: {
-          not: validandoCampos.id_novedad, // excluye la novedad que estás editando
+          not: validandoCampos.id_novedad,
         },
       },
     });
@@ -74,10 +74,12 @@ export default async function validarEditarNovedad(
       id_novedad: validandoCampos.id_novedad,
     });
   } catch (error) {
-    console.log(`Error, interno al editar novedad: ` + error);
+    console.log(`Error interno validar editar novedad: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al editar novedad..."
+      "Error interno validar editar novedad..."
     );
   }
 }

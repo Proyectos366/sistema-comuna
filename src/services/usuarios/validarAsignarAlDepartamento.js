@@ -4,6 +4,7 @@ import AuthTokens from "@/libs/AuthTokens";
 import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
+import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarAsignarAlDepartamento(
   idDepartamento,
@@ -79,10 +80,12 @@ export default async function validarAsignarAlDepartamento(
       id_usuario_miembro: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error, interno asignar al departamento: ` + error);
+    console.log(`Error interno validar asignar departamento: ` + error);
+
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno asignar al departamento"
+      "Error interno validar asignar departamento"
     );
   }
 }
