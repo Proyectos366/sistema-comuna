@@ -32,7 +32,7 @@ export default function ListadoGeneral({
               </div>
 
               {typeof editando === "function" &&
-                (usuarioActivo.MiembrosDepartamentos?.[0]?.id ===
+                (usuarioActivo?.MiembrosDepartamentos?.[0]?.id ===
                   lista.id_departamento ||
                   usuarioActivo.id_rol === 1) && (
                   <div>

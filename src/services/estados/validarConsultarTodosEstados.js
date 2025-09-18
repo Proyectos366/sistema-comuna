@@ -1,50 +1,38 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+/**
+ @fileoverview Función utilitaria para validar la identidad del usuario antes de realizar una consulta
+ de todos los estados disponibles en el sistema. @module services/estados/validarConsultarTodosEstados
+*/
+
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
+/**
+ Valida la identidad del usuario que intenta consultar todos los estados disponibles.
+ @async
+ @function validarConsultarTodosEstados
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
 export default async function validarConsultarTodosEstados() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Obtener y validar los datos del usuario a través del token.
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    // 2. Si el token es inválido, se retorna un error.
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    if (descifrarToken.id_rol !== 1) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, usuario no tiene permiso..."
-      );
-    }
-
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
-    }
-
+    // 3. Si todas las validaciones son correctas, se retorna la información del usuario.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
-      correo: correo,
+      id_usuario: validaciones.id_usuario,
+      correo: validaciones.correo,
     });
   } catch (error) {
-    console.log(`Error interno validar consultar todos estados: ` + error);
+    // 4. Manejo de errores inesperados.
+    console.log("Error interno validar consultar todos estados: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

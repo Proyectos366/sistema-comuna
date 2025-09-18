@@ -97,7 +97,10 @@ export async function POST(request) {
             connect: { id: validaciones.institucion.id_parroquia },
           },
           MiembrosInstitucion: {
-            connect: institucion.map(({ id }) => ({ id })),
+            connect:
+              institucion?.length !== 0
+                ? institucion
+                : validaciones.id_institucion.map(({ id }) => ({ id })),
           },
           MiembrosDepartamentos: {
             connect: departamento.map(({ id }) => ({ id })),

@@ -22,7 +22,7 @@ export default async function validarConsultarConsejoIdCircuito(request) {
     const idCircuito = searchParams.get("idCircuito");
 
     // 2. Obtener los datos del usuario activo a través del token.
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 3. Si el token es inválido, se retorna un error.
     if (validaciones.status === "error") {

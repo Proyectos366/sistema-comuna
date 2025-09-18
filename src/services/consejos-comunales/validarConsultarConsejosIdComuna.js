@@ -21,7 +21,7 @@ export default async function validarConsultarConsejoIdComuna(request) {
     const idComuna = searchParams.get("idComuna");
 
     // 2. Obtener los datos del usuario activo a través del token.
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 3. Si el token es inválido, se retorna un error.
     if (validaciones.status === "error") {

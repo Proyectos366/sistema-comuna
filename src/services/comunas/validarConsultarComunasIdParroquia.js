@@ -23,7 +23,7 @@ export default async function validarConsultarComunasIdParroquia(request) {
     const idParroquia = searchParams.get("idParroquia");
 
     // 2. Obtener y validar el correo del usuario a través del token.
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 3. Si el token es inválido, se retorna un error.
     if (validaciones.status === "error") {

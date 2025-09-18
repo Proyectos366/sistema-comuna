@@ -13,7 +13,7 @@ export default function Input({
   readOnly,
   ref,
   max,
-  onKeyDown
+  onKeyDown,
 }) {
   const clasePorDefecto = `${
     indice === "clave" || indice === "clave2" ? "" : "uppercase"

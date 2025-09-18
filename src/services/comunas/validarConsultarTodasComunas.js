@@ -18,7 +18,7 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 export default async function validarConsultarTodasComunas() {
   try {
     // 1. Obtener y validar los datos del usuario (correo y rol) a través del token.
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 2. Si el token es inválido, se retorna un error.
     if (validaciones.status === "error") {
@@ -35,7 +35,7 @@ export default async function validarConsultarTodasComunas() {
     if (validaciones.id_rol !== 1) {
       const parroquias = await prisma.parroquia.findMany({
         where: {
-          id_municipio: datosUsuario.MiembrosInstitucion[0].id_municipio,
+          id_municipio: validaciones.id_municipio,
         },
         select: {
           id: true,

@@ -26,7 +26,7 @@ export default async function validarAsistenciaPorModulo(
 ) {
   try {
     // 1. Ejecuta la validación previa antes de consultar
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 2. Si la validación falla, retorna una respuesta de error
     if (validaciones.status === "error") {

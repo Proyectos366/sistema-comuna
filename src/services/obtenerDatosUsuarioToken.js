@@ -4,7 +4,7 @@ import obtenerCorreoToken from "@/utils/obtenerCorreoToken";
 
 export default async function obtenerDatosUsuarioToken() {
   try {
-    const validaciones = obtenerCorreoToken();
+    const validaciones = await obtenerCorreoToken();
 
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
@@ -15,7 +15,15 @@ export default async function obtenerDatosUsuarioToken() {
 
     const datosUsuario = await prisma.usuario.findFirst({
       where: { correo: validaciones.correo },
-      select: { id: true },
+      select: {
+        id: true,
+        MiembrosInstitucion: {
+          select: { id: true, nombre: true, id_municipio: true },
+        },
+        MiembrosDepartamentos: {
+          select: { id: true, nombre: true },
+        },
+      },
     });
 
     if (!datosUsuario) {
@@ -27,6 +35,9 @@ export default async function obtenerDatosUsuarioToken() {
       id_usuario: datosUsuario.id,
       correo: validaciones.correo,
       id_rol: validaciones.id_rol,
+      MiembrosInstitucion: datosUsuario.MiembrosInstitucion[0],
+      id_municipio: datosUsuario?.MiembrosInstitucion?.[0]?.id_municipio,
+      id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
     });
   } catch (error) {
     console.log(`Error, interno obtener datos usuario: ` + error);

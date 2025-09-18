@@ -24,7 +24,7 @@ export default async function validarEditarComuna(
 ) {
   try {
     // 1. Obtener y validar el correo del usuario a través del token.
-    const validaciones = obtenerDatosUsuarioToken();
+    const validaciones = await obtenerDatosUsuarioToken();
 
     // 2. Si el token es inválido, se retorna un error.
     if (validaciones.status === "error") {

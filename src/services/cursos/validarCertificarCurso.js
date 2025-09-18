@@ -1,39 +1,42 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import ValidarCampos from "../ValidarCampos";
+/**
+ @fileoverview Función utilitaria para validar la identidad del usuario y los parámetros necesarios
+ antes de certificar un curso asociado a un vocero. @module services/cursos/validarCertificarCurso
+*/
+
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
+import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+
+/**
+ Valida la identidad del usuario y los parámetros requeridos para certificar un curso vinculado a
+ un vocero.
+ @async
+ @function validarCertificarCurso
+ @param {string|number} id_curso - Identificador único del curso a certificar.
+ @param {string|number} id_vocero - Identificador único del vocero asociado al curso.
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
 
 export default async function validarCertificarCurso(id_curso, id_vocero) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Obtener y validar los datos del usuario a través del token.
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    // 2. Si el token es inválido, se retorna un error.
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
+    // 3. Validar el campo id_curso.
+    const validarIdCurso = ValidarCampos.validarCampoId(id_curso, "curso");
 
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
+    // 4. Validar el campo id_vocero.
+    const validarIdVocero = ValidarCampos.validarCampoId(id_vocero, "vocero");
 
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
-    }
-
-    const validarIdCurso = ValidarCampos.validarCampoId(id_curso);
-    const validarIdVocero = ValidarCampos.validarCampoId(id_vocero);
-
+    // 5. Si el id del curso es inválido, se retorna un error.
     if (validarIdCurso.status === "error") {
       return retornarRespuestaFunciones(
         validarIdCurso.status,
@@ -41,6 +44,7 @@ export default async function validarCertificarCurso(id_curso, id_vocero) {
       );
     }
 
+    // 6. Si el id del vocero es inválido, se retorna un error.
     if (validarIdVocero.status === "error") {
       return retornarRespuestaFunciones(
         validarIdVocero.status,
@@ -48,18 +52,20 @@ export default async function validarCertificarCurso(id_curso, id_vocero) {
       );
     }
 
+    // 7. Si todas las validaciones son correctas, se retorna la información consolidada.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
+      id_usuario: validaciones.id_usuario,
       id_curso: validarIdCurso.id,
       id_vocero: validarIdVocero.id,
     });
   } catch (error) {
-    console.log(`Error, interno al certificar curso: ` + error);
+    // 8. Manejo de errores inesperados.
+    console.log("Error interno validar certificar curso: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al certificar curso"
+      "Error interno validar certificar curso"
     );
   }
 }

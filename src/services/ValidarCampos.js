@@ -1327,7 +1327,7 @@ export default class ValidarCampos {
         "ok",
         "Campos validados correctamente...",
         {
-          nombre: validaciones.nombre.texto,
+          nombre: validarNombre.nombre,
           direccion: direccionMinuscula,
           norte: norteMinuscula,
           sur: surMinuscula,
@@ -1336,7 +1336,7 @@ export default class ValidarCampos {
           punto: puntoMinuscula,
           rif: rifMinuscula,
           codigo: codigoMinuscula,
-          id_parroquia: validaciones.id_parroquia.id,
+          id_parroquia: validarIdParroquia.id,
           id_comuna: id_comuna,
           id_circuito: id_circuito,
           comunaCircuito: circuitoComuna,

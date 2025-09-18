@@ -75,27 +75,27 @@ export async function POST(request) {
 
       // Retorna una respuesta de error con un código de estado 400
       return generarRespuesta("error", "Error, no se creo el cargo", {}, 400);
-    } else {
-      // 6. Condición de éxito: el cargo se creó correctamente
-      // Registra un evento de creación exitosa en la bitácora
-      await registrarEventoSeguro(request, {
-        tabla: "cargo",
-        accion: "CREAR_CARGO",
-        id_objeto: nuevoCargo.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Cargo creado con exito",
-        datosAntes: null,
-        datosDespues: nuevoCargo,
-      });
-
-      // Retorna una respuesta de éxito con un código de estado 201 (Created)
-      return generarRespuesta(
-        "ok",
-        "Cargo creado...",
-        { cargo: nuevoCargo },
-        201
-      );
     }
+
+    // 6. Condición de éxito: el cargo se creó correctamente
+    // Registra un evento de creación exitosa en la bitácora
+    await registrarEventoSeguro(request, {
+      tabla: "cargo",
+      accion: "CREAR_CARGO",
+      id_objeto: nuevoCargo.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Cargo creado con exito",
+      datosAntes: null,
+      datosDespues: nuevoCargo,
+    });
+
+    // Retorna una respuesta de éxito con un código de estado 201 (Created)
+    return generarRespuesta(
+      "ok",
+      "Cargo creado...",
+      { cargo: nuevoCargo },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados (bloque catch)
     console.log(`Error interno (cargos): ` + error);

@@ -112,7 +112,7 @@ export async function GET(request) {
         usuarioActivo: datosUsuarioActivo,
         departamento:
           datosUsuarioActivo?.MiembrosDepartamentos &&
-          datosUsuarioActivo.MiembrosDepartamentos.length > 0
+          datosUsuarioActivo?.MiembrosDepartamentos.length > 0
             ? datosUsuarioActivo.MiembrosDepartamentos[0]
             : null,
       },
