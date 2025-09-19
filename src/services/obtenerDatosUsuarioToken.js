@@ -17,6 +17,8 @@ export default async function obtenerDatosUsuarioToken() {
       where: { correo: validaciones.correo },
       select: {
         id: true,
+        cedula: true,
+        nombre: true,
         MiembrosInstitucion: {
           select: { id: true, nombre: true, id_municipio: true },
         },
@@ -32,12 +34,15 @@ export default async function obtenerDatosUsuarioToken() {
 
     return retornarRespuestaFunciones("ok", "Datos usuario obtenidos...", {
       datosUsuario: datosUsuario,
+      cedula: datosUsuario.cedula,
+      nombre: datosUsuario.nombre,
       id_usuario: datosUsuario.id,
       correo: validaciones.correo,
       id_rol: validaciones.id_rol,
       MiembrosInstitucion: datosUsuario.MiembrosInstitucion[0],
       id_municipio: datosUsuario?.MiembrosInstitucion?.[0]?.id_municipio,
       id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
+      id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
     });
   } catch (error) {
     console.log(`Error, interno obtener datos usuario: ` + error);

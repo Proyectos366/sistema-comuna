@@ -1,7 +1,3 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -9,57 +5,13 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 
 export default async function validarCrearCambiarImgPerfil(request) {
   try {
-    const token = (await cookies()).get(nombreToken)?.value;
-    const descifrarToken = AuthTokens.descifrarToken(token);
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
-    }
-
-    const { correo } = descifrarToken;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo },
-      select: {
-        id: true,
-        nombre: true,
-        apellido: true,
-        cedula: true,
-        correo: true,
-        id_rol: true,
-        borrado: true,
-        validado: true,
-        clave: true,
-        createdAt: true,
-        MiembrosDepartamentos: {
-          select: {
-            id: true,
-            nombre: true,
-          },
-        },
-        imagenes: {
-          orderBy: {
-            createdAt: "desc", // Más reciente primero
-          },
-          take: 1, // Solo la última imagen
-          select: {
-            id: true,
-            path: true,
-          },
-        },
-        roles: {
-          select: {
-            nombre: true,
-          },
-        },
-      },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario inválido...");
     }
 
     const imagen = (await request.formData()).get("imagen");
@@ -91,7 +43,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
 
     const buffer = Buffer.from(await imagen.arrayBuffer());
 
-    const nombreCarpetaUsuario = `${datosUsuario.nombre}${datosUsuario.cedula}`;
+    const nombreCarpetaUsuario = `${validaciones.nombre}${validaciones.cedula}`;
 
     const rutaUsuario = path.join(
       process.cwd(),
@@ -118,8 +70,8 @@ export default async function validarCrearCambiarImgPerfil(request) {
       nombreSinExtension: nombreSinExtension,
       rutaDestino: rutaUsuario,
       path: rutaRelativa,
-      id_usuario: datosUsuario.id,
-      usuarioAntes: datosUsuario,
+      id_usuario: validaciones.id,
+      usuarioAntes: validaciones,
     });
   } catch (error) {
     console.log("Error interno validar subir imagen de perfil: " + error);

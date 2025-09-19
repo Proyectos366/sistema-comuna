@@ -3,9 +3,18 @@ import prisma from "@/libs/prisma";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
-export default async function validarCrearNovedadTodos(validaciones) {
+export default async function validarCrearNovedadTodos(validar) {
   try {
-    const departamentos = validaciones.departamentos;
+    const validaciones = await obtenerDatosUsuarioToken();
+
+    if (validaciones.status === "error") {
+      return retornarRespuestaFunciones(
+        validaciones.status,
+        validaciones.message
+      );
+    }
+
+    const departamentos = validar.departamentos;
 
     if (!Array.isArray(departamentos) || departamentos.length === 0) {
       return retornarRespuestaFunciones(
@@ -19,11 +28,11 @@ export default async function validarCrearNovedadTodos(validaciones) {
     const resultado = await prisma.$transaction(async (tx) => {
       const nuevaNovedad = await tx.novedad.create({
         data: {
-          nombre: validaciones.nombre,
-          descripcion: validaciones.descripcion,
-          prioridad: validaciones.prioridad,
-          id_usuario: validaciones.id_usuario,
-          id_institucion: validaciones.id_institucion,
+          nombre: validar.nombre,
+          descripcion: validar.descripcion,
+          prioridad: validar.prioridad,
+          id_usuario: validar.id_usuario,
+          id_institucion: validar.id_institucion,
         },
       });
 

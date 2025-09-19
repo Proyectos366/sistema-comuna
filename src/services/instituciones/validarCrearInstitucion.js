@@ -1,11 +1,30 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import ValidarCampos from "../ValidarCampos";
+/**
+ @fileoverview Función utilitaria para validar la identidad del usuario, sus permisos
+ y los parámetros necesarios antes de crear una nueva institución en el sistema.
+ @module services/instituciones/validarCrearInstitucion
+*/
+
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
+import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
+/**
+ Valida la identidad del usuario, sus permisos y los datos requeridos para crear una nueva institución.
+ Verifica que no exista una institución duplicada en la misma ubicación geográfica.
+ @async
+ @function validarCrearInstitucion
+ @param {string} nombre - Nombre de la institución.
+ @param {string} descripcion - Descripción de la institución.
+ @param {string} rif - Registro de Información Fiscal de la institución.
+ @param {string} sector - Sector al que pertenece la institución.
+ @param {string} direccion - Dirección física de la institución.
+ @param {string|number} id_pais - Identificador del país.
+ @param {string|number} id_estado - Identificador del estado.
+ @param {string|number} id_municipio - Identificador del municipio.
+ @param {string|number} id_parroquia - Identificador de la parroquia.
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
 export default async function validarCrearInstitucion(
   nombre,
   descripcion,
@@ -18,20 +37,18 @@ export default async function validarCrearInstitucion(
   id_parroquia
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Validar identidad del usuario mediante el token.
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    // 2. Si el token es inválido, retornar error.
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
-
+    // 3. Validar los campos de entrada.
     const validarCampos = ValidarCampos.validarCamposCrearInstitucion(
       nombre,
       descripcion,
@@ -44,25 +61,24 @@ export default async function validarCrearInstitucion(
       id_parroquia
     );
 
+    // 4. Si los campos son inválidos, retornar error.
     if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
         validarCampos.status,
-        validarCampos.message
+        validarCampos.message,
+        { id_usuario: validaciones.id_usuario }
       );
     }
 
-    if (descifrarToken.id_rol !== 1) {
+    // 5. Verificar si el usuario tiene permisos de super admin (rol 1).
+    if (validaciones.id_rol !== 1) {
       return retornarRespuestaFunciones(
         "error",
         "Error, usuario no tiene permisos..."
       );
     }
 
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
-
+    // 6. Verificar si ya existe una institución con el mismo nombre en la misma ubicación.
     const nombreRepetido = await prisma.institucion.findFirst({
       where: {
         nombre: validarCampos.nombre,
@@ -73,30 +89,33 @@ export default async function validarCrearInstitucion(
       },
     });
 
+    // 7. Si el nombre esta repetido, retornar error.
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
         "Error, institución ya existe...",
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
 
+    // 8. Retornar respuesta con los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
+      id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       rif: validarCampos.rif,
       sector: validarCampos.sector,
       direccion: validarCampos.direccion,
-      id_usuario: datosUsuario.id,
       id_pais: validarCampos.id_pais,
       id_estado: validarCampos.id_estado,
       id_municipio: validarCampos.id_municipio,
       id_parroquia: validarCampos.id_parroquia,
     });
   } catch (error) {
-    console.log(`Error interno validar crear institución: ` + error);
+    // 8. Manejo de errores inesperados.
+    console.log("Error interno validar crear institución: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

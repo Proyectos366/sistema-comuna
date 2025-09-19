@@ -8,7 +8,7 @@ la validez de los datos, y un sistema de registro de eventos para la auditoría.
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
-import validarEditarEstado from "@/services/estados/validarEditarPais"; // Servicio para validar los datos de edición del estado.
+import validarEditarEstado from "@/services/estados/validarEditarEstado"; // Servicio para validar los datos de edición del estado.
 /**
 Maneja las solicitudes HTTP POST para editar un estado existente.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles del estado a editar.@returns {Promise>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */

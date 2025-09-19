@@ -1,7 +1,4 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -12,26 +9,14 @@ export default async function validarEditarNovedad(
   id_novedad
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
-
-    const correoUsuarioActivo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correoUsuarioActivo },
-      select: {
-        id: true,
-      },
-    });
 
     const validandoCampos = ValidarCampos.validarCamposEditarNovedad(
       nombre,
@@ -44,7 +29,7 @@ export default async function validarEditarNovedad(
         validandoCampos.status,
         validandoCampos.message,
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -62,19 +47,19 @@ export default async function validarEditarNovedad(
       return retornarRespuestaFunciones(
         "error",
         "Error, la novedad ya existe",
-        { id_usuario: datosUsuario.id },
+        { id_usuario: validaciones.id_usuario },
         400
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
+      id_usuario: validaciones.id_usuario,
       nombre: validandoCampos.nombre,
       descripcion: validandoCampos.descripcion,
-      id_usuario: datosUsuario.id,
       id_novedad: validandoCampos.id_novedad,
     });
   } catch (error) {
-    console.log(`Error interno validar editar novedad: ` + error);
+    console.log("Error interno validar editar novedad: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

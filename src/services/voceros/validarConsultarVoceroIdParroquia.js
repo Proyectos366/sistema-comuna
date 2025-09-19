@@ -1,7 +1,3 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -11,35 +7,31 @@ export default async function validarConsultarVoceroIdParroquia(request) {
     const { searchParams } = new URL(request.url);
     const idParroquia = searchParams.get("idParroquia");
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
+    const validarIdParroquia = ValidarCampos.validarCampoId(
+      idParroquia,
+      "parroquia"
+    );
 
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
+    if (validarIdParroquia.status === "error") {
+      return retornarRespuestaFunciones(
+        validarIdParroquia.status,
+        validarIdParroquia.message
+      );
     }
 
-    const id_parroquia = ValidarCampos.validarCampoId(idParroquia, "parroquia");
-
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
-      correo: correo,
-      id_parroquia: id_parroquia.id,
+      id_usuario: validaciones.id_usuario,
+      correo: validaciones.correo,
+      id_parroquia: validarIdParroquia.id,
     });
   } catch (error) {
     console.log("Error interno validar vocero id_parroquia: " + error);

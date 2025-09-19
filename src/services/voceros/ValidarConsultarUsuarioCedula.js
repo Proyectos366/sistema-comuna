@@ -1,46 +1,30 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import { quitarCaracteres } from "@/utils/quitarCaracteres";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import ValidarCampos from "../ValidarCampos";
 
 export default async function validarConsultarVoceroCedula(cedula) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    if (!cedula) {
-      return retornarRespuestaFunciones("error", "Campo cedula vacio...");
-    }
+    const validarCedula = ValidarCampos.validarCampoCedula(cedula);
 
-    const cedulaLimpia = quitarCaracteres(cedula);
-    const cedulaNumero = Number(cedulaLimpia);
-
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
+    if (validarCedula.status === "error") {
+      return retornarRespuestaFunciones(
+        validarCedula.status,
+        validarCedula.message
+      );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
-      cedula: cedulaNumero,
+      id_usuario: validaciones.id_usuario,
+      cedula: validarCedula.cedula,
     });
   } catch (error) {
     console.log("Error interno validar usuario cedula: " + error);

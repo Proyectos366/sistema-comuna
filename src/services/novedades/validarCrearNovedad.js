@@ -1,8 +1,5 @@
 import prisma from "@/libs/prisma";
 import { startOfWeek, endOfWeek } from "date-fns";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -16,15 +13,12 @@ export default async function validarCrearNovedad(
   prioridad
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
@@ -40,35 +34,14 @@ export default async function validarCrearNovedad(
     if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
         validarCampos.status,
-        validarCampos.message
+        validarCampos.message,
+        { id_usuario: validaciones.id_usuario }
       );
-    }
-
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: {
-        id: true,
-        id_rol: true,
-        MiembrosInstitucion: {
-          select: { id: true },
-        },
-        MiembrosDepartamentos: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
     let departamentos;
 
-    if (descifrarToken.id_rol === 1) {
+    if (validaciones.id_rol === 1) {
       departamentos = await prisma.departamento.findMany({
         where: {
           id_institucion: validarCampos.id_institucion,
@@ -114,7 +87,7 @@ export default async function validarCrearNovedad(
     const finSemana = endOfWeek(new Date(), { weekStartsOn: 1 });
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
+      id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       rango: validarCampos.rango,
@@ -126,16 +99,14 @@ export default async function validarCrearNovedad(
       id_institucion:
         validarCampos.rango === 1
           ? validarCampos.id_institucion
-          : datosUsuario.MiembrosInstitucion?.[0]?.id,
+          : validaciones.id_institucion,
       id_departamento:
         validarCampos.rango === 1 ? null : validarCampos.id_departamento,
       id_depa_origen:
-        validarCampos.rango === 1
-          ? null
-          : datosUsuario.MiembrosDepartamentos?.[0]?.id,
+        validarCampos.rango === 1 ? null : validaciones.id_departamento,
     });
   } catch (error) {
-    console.log(`Error interno validar crear novedad: ` + error);
+    console.log("Error interno validar crear novedad: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

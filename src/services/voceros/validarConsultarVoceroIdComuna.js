@@ -1,7 +1,3 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -11,35 +7,21 @@ export default async function validarConsultarVoceroIdComuna(request) {
     const { searchParams } = new URL(request.url);
     const idComuna = searchParams.get("idComuna");
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
-    }
-
-    const id_comuna = ValidarCampos.validarCampoId(idComuna, "comuna");
+    const validarIdComuna = ValidarCampos.validarCampoId(idComuna, "comuna");
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
-      correo: correo,
-      id_comuna: id_comuna.id,
+      id_usuario: validaciones.id_usuario,
+      correo: validaciones.correo,
+      id_comuna: validarIdComuna.id,
     });
   } catch (error) {
     console.log("Error interno validar vocero id_comuna: " + error);

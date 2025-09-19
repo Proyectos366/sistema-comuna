@@ -1,8 +1,5 @@
 import ValidarCampos from "@/services/ValidarCampos";
-import AuthTokens from "@/libs/AuthTokens";
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import nombreToken from "@/utils/nombreToken";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -10,25 +7,20 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 export default async function validarCambiarClaveLogueado(
   claveVieja,
   claveUno,
-  claveDos,
-  token
+  claveDos
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
-    const correo = descifrarToken.correo.toLowerCase();
 
     const claveUsuarioActivo = await prisma.usuario.findFirst({
-      where: { correo: correo },
+      where: { correo: validaciones.correo },
       select: {
         clave: true,
         id: true,
@@ -37,7 +29,7 @@ export default async function validarCambiarClaveLogueado(
 
     if (!claveUsuarioActivo) {
       return retornarRespuestaFunciones("error", "Error, usuario invalido...", {
-        id_usuario: 0,
+        id_usuario: validaciones.id_usuario,
       });
     }
 
@@ -48,7 +40,7 @@ export default async function validarCambiarClaveLogueado(
         validandoCampos.status,
         validandoCampos.message,
         {
-          id_usuario: claveUsuarioActivo.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -60,7 +52,7 @@ export default async function validarCambiarClaveLogueado(
 
     if (comparada.status === "error") {
       return retornarRespuestaFunciones(comparada.status, comparada.message, {
-        id_usuario: claveUsuarioActivo.id,
+        id_usuario: validaciones.id_usuario,
       });
     }
 
@@ -71,17 +63,17 @@ export default async function validarCambiarClaveLogueado(
         claveEncriptada.status,
         claveEncriptada.message,
         {
-          id_usuario: claveUsuarioActivo.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validacion completa", {
       claveEncriptada: claveEncriptada.claveEncriptada,
-      id_usuario: claveUsuarioActivo.id,
+      id_usuario: validaciones.id_usuario,
     });
   } catch (error) {
-    console.error(`Error interno validar cambiar clave loggeado: ` + error);
+    console.error("Error interno validar cambiar clave loggeado: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

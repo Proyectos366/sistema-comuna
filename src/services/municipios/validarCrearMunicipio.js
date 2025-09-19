@@ -1,7 +1,4 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -13,15 +10,12 @@ export default async function validarCrearMunicipio(
   id_estado
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
@@ -35,16 +29,10 @@ export default async function validarCrearMunicipio(
     if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
         validarCampos.status,
-        validarCampos.message
+        validarCampos.message,
+        { id_usuario: validaciones.id_usuario }
       );
     }
-
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
 
     const datosEstado = await prisma.estado.findFirst({
       where: { id: validarCampos.id_estado },
@@ -63,7 +51,7 @@ export default async function validarCrearMunicipio(
         "error",
         "Error, municipio ya existe...",
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -76,7 +64,7 @@ export default async function validarCrearMunicipio(
     const serialMunicipio = `${datosEstado.serial}-${numeroFormateado}`;
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
+      id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       serial: serialMunicipio,
@@ -84,7 +72,7 @@ export default async function validarCrearMunicipio(
       id_estado: validarCampos.id_estado,
     });
   } catch (error) {
-    console.log(`Error interno validar crear municipio: ` + error);
+    console.log("Error interno validar crear municipio: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

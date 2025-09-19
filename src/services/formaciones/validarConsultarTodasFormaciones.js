@@ -1,81 +1,72 @@
-import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+/**
+ @fileoverview Función utilitaria para validar los datos necesarios antes de consultar
+ todas las formaciones disponibles en la base de datos, según el rol del usuario.
+ @module services/formaciones/validarConsultarTodas
+*/
+
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
+/**
+ Valida la identidad del usuario y construye la condición de búsqueda para consultar formaciones.
+ @async
+ @function validarConsultarTodasFormaciones
+ @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación y la condición de búsqueda.
+*/
 export default async function validarConsultarTodasFormaciones() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Obtener y validar el correo del usuario a través del token.
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    // 2. Si el token es inválido, se retorna un error.
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: {
-        id: true,
-        id_rol: true,
-        MiembrosInstitucion: {
-          select: { id: true, nombre: true },
-        },
-        MiembrosDepartamentos: {
-          select: { id: true, nombre: true },
-        },
-      },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
-    }
-
+    // 3. Construir la condición de búsqueda según el rol del usuario.
     let whereCondicion;
-    const institucion_id = datosUsuario?.MiembrosInstitucion?.[0]?.id;
-    const departamento_id = datosUsuario?.MiembrosDepartamentos?.[0]?.id;
 
-    if (datosUsuario.id_rol === 1) {
-      // Usuario privilegiado: ver todas las formaciones no borradas ni culminadas
+    // Rol 1: Acceso general a todas las formaciones no borradas ni culminadas.
+    if (validaciones.id_rol === 1) {
       whereCondicion = {
         borrado: false,
         culminada: false,
       };
-    } else if (datosUsuario.id_rol === 2) {
-      // Admin o usuario privilegiado: ver todas las formaciones no borradas ni culminadas
+    }
+    // Rol 2: Acceso limitado a formaciones de su institución.
+    else if (validaciones.id_rol === 2) {
       whereCondicion = {
         borrado: false,
         culminada: false,
-        id_institucion: institucion_id,
+        id_institucion: validaciones.id_institucion,
       };
-    } else {
+    }
+    // Otros roles: Acceso a formaciones de su institución o departamento.
+    else {
       whereCondicion = {
         borrado: false,
         culminada: false,
         OR: [
-          { id_institucion: institucion_id }, // Formaciones creadas por el usuario
-          { id_departamento: departamento_id }, // Formaciones del departamento del usuario
+          { id_institucion: validaciones.id_institucion },
+          { id_departamento: validaciones.id_departamento },
         ],
       };
     }
 
+    // 4. Retornar respuesta exitosa con la condición de búsqueda y datos del usuario.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
-      correo: correo,
+      id_usuario: validaciones.id_usuario,
+      correo: validaciones.correo,
       condicion: whereCondicion,
-      id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
-      id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
+      id_institucion: validaciones.id_institucion,
+      id_departamento: validaciones.id_departamento,
     });
   } catch (error) {
-    console.log(`Error interno validar consultar todas formaciones: ` + error);
+    // 5. Manejo de errores inesperados.
+    console.log("Error interno validar consultar todas formaciones: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

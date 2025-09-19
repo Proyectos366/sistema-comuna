@@ -1,7 +1,4 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import ValidarCampos from "../ValidarCampos";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
@@ -15,28 +12,16 @@ export default async function validarEditarParroquia(
   id_parroquia
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    const correo = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: {
-        id: true,
-      },
-    });
-
-    if (descifrarToken.id_rol !== 1) {
+    if (validaciones.id_rol !== 1) {
       return retornarRespuestaFunciones(
         "error",
         "Error, usuario no tiene permiso",
@@ -56,10 +41,7 @@ export default async function validarEditarParroquia(
     if (validandoCampos.status === "error") {
       return retornarRespuestaFunciones(
         validandoCampos.status,
-        validandoCampos.message,
-        {
-          id_usuario: datosUsuario.id,
-        }
+        validandoCampos.message
       );
     }
 
@@ -78,15 +60,15 @@ export default async function validarEditarParroquia(
         "error",
         "Error, la parroquia ya existe",
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
+      id_usuario: validaciones.id,
       nombre: validandoCampos.nombre,
       descripcion: validandoCampos.descripcion,
-      id_usuario: datosUsuario.id,
       id_pais: validandoCampos.id_pais,
       id_estado: validandoCampos.id_estado,
       id_municipio: validandoCampos.id_municipio,

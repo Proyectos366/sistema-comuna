@@ -1,7 +1,5 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
 import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import CifrarDescifrarClaves from "@/libs/CifrarDescifrarClaves";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
@@ -19,32 +17,14 @@ export default async function validarCrearUsuario(
   instituciones
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
-
-    const correoDescifrado = descifrarToken.correo;
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correoDescifrado },
-      select: {
-        id: true,
-        MiembrosInstitucion: {
-          select: { id: true, nombre: true },
-        },
-        MiembrosDepartamentos: {
-          select: { id: true, nombre: true },
-        },
-      },
-    });
 
     const validandoCampos = ValidarCampos.validarCamposRegistro(
       cedula,
@@ -82,7 +62,7 @@ export default async function validarCrearUsuario(
 
     let datosInstitucion;
 
-    if (descifrarToken.id_rol === 1) {
+    if (validaciones.id_rol === 1) {
       datosInstitucion = await prisma.institucion.findFirst({
         where: {
           id: instituciones?.[0].id,
@@ -98,7 +78,7 @@ export default async function validarCrearUsuario(
     } else {
       datosInstitucion = await prisma.institucion.findFirst({
         where: {
-          id: datosUsuario?.MiembrosInstitucion?.[0].id,
+          id: validaciones.id_institucion,
         },
         select: {
           id: true,
@@ -120,7 +100,7 @@ export default async function validarCrearUsuario(
     }
 
     return retornarRespuestaFunciones("ok", "Validaciones correctas", {
-      id_usuario: datosUsuario.id,
+      id_usuario: validaciones.id_usuario,
       cedula: validandoCampos.cedula,
       nombre: validandoCampos.nombre,
       apellido: validandoCampos.apellido,
@@ -130,11 +110,11 @@ export default async function validarCrearUsuario(
       autorizar: validandoCampos.autorizar,
       institucion: datosInstitucion,
       id_institucion: [{ id: datosInstitucion.id }],
-      id_creador: datosUsuario.id,
+      id_creador: validaciones.id_usuario,
       token: tokenAuth,
     });
   } catch (error) {
-    console.error(`Error interno validar crear usuario: ` + error);
+    console.log("Error interno validar crear usuario: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

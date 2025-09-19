@@ -1,36 +1,30 @@
 import prisma from "@/libs/prisma";
-import { cookies } from "next/headers";
-import AuthTokens from "@/libs/AuthTokens";
-import nombreToken from "@/utils/nombreToken";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "../ValidarCampos";
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 export default async function validarCambiarRol(idRol, idUsuario) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    const validaciones = await obtenerDatosUsuarioToken();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    if (descifrarToken.status === "error") {
+    if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+        validaciones.status,
+        validaciones.message
       );
     }
 
-    if (descifrarToken.id_rol !== 1 && descifrarToken.id_rol !== 2) {
+    if (validaciones.id_rol !== 1 && validaciones.id_rol !== 2) {
       return retornarRespuestaFunciones(
         "error",
         "Error, usuario no tiene permisos..."
       );
     }
 
-    const correo = descifrarToken.correo;
+    const correo = validaciones.correo;
 
-    const validarIdRol = ValidarCampos.validarCampoId(idRol);
-    const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario);
+    const validarIdRol = ValidarCampos.validarCampoId(idRol, "rol");
+    const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario, "usuario");
 
     if (validarIdRol.status === "error") {
       return retornarRespuestaFunciones(
@@ -44,15 +38,6 @@ export default async function validarCambiarRol(idRol, idUsuario) {
         validarIdUsuario.status,
         validarIdUsuario.message
       );
-    }
-
-    const datosUsuario = await prisma.usuario.findFirst({
-      where: { correo: correo },
-      select: { id: true },
-    });
-
-    if (!datosUsuario) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...");
     }
 
     const yaTieneRol = await prisma.usuario.findFirst({
@@ -72,12 +57,12 @@ export default async function validarCambiarRol(idRol, idUsuario) {
     }
 
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: datosUsuario.id,
+      id_usuario: validaciones.id_usuario,
       id_rol: validarIdRol.id,
       id_usuario_rol: validarIdUsuario.id,
     });
   } catch (error) {
-    console.log(`Error interno validar cambiar rol: ` + error);
+    console.log("Error interno validar cambiar rol: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
