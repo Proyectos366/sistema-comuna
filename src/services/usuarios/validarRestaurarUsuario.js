@@ -1,11 +1,28 @@
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import ValidarCampos from "../ValidarCampos";
+/**
+ @fileoverview Función utilitaria para validar la identidad del usuario, sus permisos
+ y los parámetros necesarios antes de restaurar o deshabilitar un usuario en el sistema.
+ @module services/usuarios/validarRestaurarUsuario
+*/
+
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
+import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
+/**
+ Valida la identidad del usuario, sus permisos y los parámetros requeridos para restaurar o desactivar otro usuario.
+ Verifica que el estado sea booleano y que el ID del usuario objetivo sea válido.
+ @async
+ @function validarRestaurarUsuario
+ @param {boolean} estado - Estado booleano que indica si se debe restaurar (true) o desactivar (false) el usuario.
+ @param {string|number} idUsuario - Identificador único del usuario a restaurar o desactivar.
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
 export default async function validarRestaurarUsuario(estado, idUsuario) {
   try {
+    // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
 
+    // 2. Si el token es inválido, retornar error.
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
@@ -13,6 +30,7 @@ export default async function validarRestaurarUsuario(estado, idUsuario) {
       );
     }
 
+    // 3. Verificar si el usuario tiene permisos (rol 1 = master, rol 2 = administrador).
     if (validaciones.id_rol !== 1 && validaciones.id_rol !== 2) {
       return retornarRespuestaFunciones(
         "error",
@@ -20,6 +38,7 @@ export default async function validarRestaurarUsuario(estado, idUsuario) {
       );
     }
 
+    // 4. Validar que el estado proporcionado sea booleano.
     if (estado !== true && estado !== false) {
       return retornarRespuestaFunciones(
         "error",
@@ -27,8 +46,10 @@ export default async function validarRestaurarUsuario(estado, idUsuario) {
       );
     }
 
+    // 5. Validar que el ID del usuario objetivo sea válido.
     const validarIdUsuario = ValidarCampos.validarCampoId(idUsuario, "usuario");
 
+    // 6. Si el ID es inválido, retornar error.
     if (validarIdUsuario.status === "error") {
       return retornarRespuestaFunciones(
         validarIdUsuario.status,
@@ -36,12 +57,14 @@ export default async function validarRestaurarUsuario(estado, idUsuario) {
       );
     }
 
+    // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       borrado: false,
       id_usuario_estado: validarIdUsuario.id,
     });
   } catch (error) {
+    // 8. Manejo de errores inesperados.
     console.log("Error interno validar restaurar usuario: " + error);
 
     // Retorna una respuesta del error inesperado

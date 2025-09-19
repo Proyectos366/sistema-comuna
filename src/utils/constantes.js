@@ -94,3 +94,8 @@ export const sinCaracteresRegex = /[a-zA-Z.\-]/g;
 */
 export const fechaFormatoIsoRegex =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(Z)?$/;
+
+/**
+ Expresión regular para validar una extension de un archivo
+*/
+export const extensionArchivoRegex = /\.[^/.]+$/;
