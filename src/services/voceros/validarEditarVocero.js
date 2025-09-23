@@ -1,117 +1,8 @@
-import prisma from "@/libs/prisma";
-import ValidarCampos from "../ValidarCampos";
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas";
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
-
-export default async function validarEditarVocero(
-  nombre,
-  nombre_dos,
-  apellido,
-  apellido_dos,
-  cedula,
-  correo,
-  genero,
-  edad,
-  telefono,
-  direccion,
-  laboral,
-  id_parroquia,
-  id_comuna,
-  id_consejo,
-  id_circuito
-) {
-  try {
-    const validaciones = await obtenerDatosUsuarioToken();
-
-    if (validaciones.status === "error") {
-      return retornarRespuestaFunciones(
-        validaciones.status,
-        validaciones.message
-      );
-    }
-
-    const validandoCampos = ValidarCampos.validarCamposEditarVocero(
-      nombre,
-      nombre_dos,
-      apellido,
-      apellido_dos,
-      cedula,
-      correo,
-      genero,
-      edad,
-      telefono,
-      direccion,
-      laboral,
-      id_parroquia,
-      id_comuna,
-      id_consejo,
-      id_circuito
-    );
-
-    if (validandoCampos.status === "error") {
-      return retornarRespuestaFunciones(
-        validandoCampos.status,
-        validandoCampos.message,
-        {
-          id_usuario: validaciones.id_usuario,
-        }
-      );
-    }
-
-    const fechaNacimiento = calcularFechaNacimientoPorEdad(
-      validandoCampos.edad
-    );
-
-    const existente = await prisma.vocero.findUnique({
-      where: { cedula: validandoCampos.cedula },
-    });
-
-    if (!existente) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error el vocero no existe",
-        { id_usuario: validaciones.id_usuario },
-        404
-      );
-    }
-
-    return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
-      id_usuario: validaciones.id_usuario,
-      nombre: validandoCampos.nombre,
-      nombreDos: validandoCampos.nombre_dos,
-      apellido: validandoCampos.apellido,
-      apellidoDos: validandoCampos.apellido_dos,
-      cedula: validandoCampos.cedula,
-      genero: validandoCampos.genero,
-      edad: validandoCampos.edad,
-      telefono: validandoCampos.telefono,
-      direccion: validandoCampos.direccion,
-      correo: validandoCampos.correo,
-      laboral: validandoCampos.laboral,
-      fechaNacimiento: fechaNacimiento,
-      id_parroquia: validandoCampos.id_parroquia,
-      id_comuna: validandoCampos.id_comuna,
-      id_circuito: validandoCampos.id_circuito,
-      id_consejo: validandoCampos.id_consejo,
-    });
-  } catch (error) {
-    console.log("Error interno validar editar vocero: " + error);
-
-    // Retorna una respuesta del error inesperado
-    return retornarRespuestaFunciones(
-      "error",
-      "Error interno validar editar vocero..."
-    );
-  }
-}
-
-
 /**
- * @fileoverview Función utilitaria para validar la identidad del usuario, los campos requeridos
- * y la existencia del vocero antes de permitir su edición.
- * @module services/voceros/validarEditarVocero
- */
+ @fileoverview Función utilitaria para validar la identidad del usuario, los campos requeridos
+ y la existencia del vocero antes de permitir su edición.
+ @module services/voceros/validarEditarVocero
+*/
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
@@ -120,27 +11,28 @@ import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas"; // Función par
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
- * Valida los datos del usuario activo, los campos del vocero y la existencia del registro
- * antes de permitir su edición.
- * @async
- * @function validarEditarVocero
- * @param {string} nombre - Primer nombre del vocero.
- * @param {string} nombre_dos - Segundo nombre del vocero.
- * @param {string} apellido - Primer apellido del vocero.
- * @param {string} apellido_dos - Segundo apellido del vocero.
- * @param {string|number} cedula - Cédula del vocero.
- * @param {string} correo - Correo electrónico del vocero.
- * @param {string} genero - Género del vocero.
- * @param {number} edad - Edad del vocero.
- * @param {string} telefono - Teléfono de contacto.
- * @param {string} direccion - Dirección de residencia.
- * @param {string} laboral - Condición laboral.
- * @param {number} id_parroquia - ID de la parroquia asociada.
- * @param {number} id_comuna - ID de la comuna asociada.
- * @param {number} id_consejo - ID del consejo comunal asociado.
- * @param {number} id_circuito - ID del circuito asociado.
- * @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
- */
+ Valida los datos del usuario activo, los campos del vocero y la existencia del registro
+ antes de permitir su edición.
+ @async
+ @function validarEditarVocero
+ @param {string} nombre - Primer nombre del vocero.
+ @param {string} nombre_dos - Segundo nombre del vocero.
+ @param {string} apellido - Primer apellido del vocero.
+ @param {string} apellido_dos - Segundo apellido del vocero.
+ @param {string|number} cedula - Cédula del vocero.
+ @param {string} correo - Correo electrónico del vocero.
+ @param {string} genero - Género del vocero.
+ @param {number} edad - Edad del vocero.
+ @param {string} telefono - Teléfono de contacto.
+ @param {string} direccion - Dirección de residencia.
+ @param {string} laboral - Condición laboral.
+ @param {number} id_parroquia - ID de la parroquia asociada.
+ @param {number} id_comuna - ID de la comuna asociada.
+ @param {number} id_consejo - ID del consejo comunal asociado.
+ @param {number} id_circuito - ID del circuito asociado.
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
+
 export default async function validarEditarVocero(
   nombre,
   nombre_dos,
@@ -214,7 +106,7 @@ export default async function validarEditarVocero(
     if (!existente) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, el vocero no existe",
+        "Error el vocero no existe",
         { id_usuario: validaciones.id_usuario },
         404
       );
@@ -244,6 +136,7 @@ export default async function validarEditarVocero(
     // 9. Manejo de errores inesperados.
     console.log("Error interno validar editar vocero: " + error);
 
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
       "Error interno validar editar vocero..."

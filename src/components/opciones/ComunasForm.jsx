@@ -215,6 +215,7 @@ export default function ComunasForm({
           </ModalDatosContenedor>
 
           <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
+
           <BotonesModal
             aceptar={crearComuna}
             cancelar={cerrarModal}

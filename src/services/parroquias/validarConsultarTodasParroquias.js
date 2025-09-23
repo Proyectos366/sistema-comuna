@@ -26,22 +26,14 @@ export default async function validarConsultarTodasParroquias() {
       );
     }
 
-    // 3. Verificar si el usuario tiene permisos de master (rol 1).
-    if (validaciones.id_rol !== 1) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, usuario no tiene permiso..."
-      );
-    }
-
-    // 4. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
+    // 3. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
       id_municipio: validaciones.id_municipio,
     });
   } catch (error) {
-    // 5. Manejo de errores inesperados.
+    // 4. Manejo de errores inesperados.
     console.log("Error interno validar consultar todas parroquias: " + error);
 
     // Retorna una respuesta del error inesperado

@@ -1,61 +1,22 @@
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
-import ValidarCampos from "../ValidarCampos";
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
-
-export default async function validarConsultarVoceroIdCircuito(request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const idCircuito = searchParams.get("idCircuito");
-
-    const validaciones = await obtenerDatosUsuarioToken();
-
-    if (validaciones.status === "error") {
-      return retornarRespuestaFunciones(
-        validaciones.status,
-        validaciones.message
-      );
-    }
-
-    const validarIdCircuito = ValidarCampos.validarCampoId(
-      idCircuito,
-      "circuito"
-    );
-
-    return retornarRespuestaFunciones("ok", "Validacion correcta", {
-      id_usuario: validaciones.id_usuario,
-      correo: validaciones.correo,
-      id_circuito: validarIdCircuito.id,
-    });
-  } catch (error) {
-    console.log("Error interno validar vocero id_circuito: " + error);
-
-    // Retorna una respuesta del error inesperado
-    return retornarRespuestaFunciones(
-      "error",
-      "Error interno validar vocero id_circuito"
-    );
-  }
-}
-
-
 /**
- * @fileoverview Función utilitaria para validar la identidad del usuario y el parámetro
- * de circuito recibido en la URL antes de consultar voceros asociados a dicho circuito.
- * @module services/voceros/validarConsultarVoceroIdCircuito
- */
+ @fileoverview Función utilitaria para validar la identidad del usuario y el parámetro
+ de circuito recibido en la URL antes de consultar voceros asociados a dicho circuito.
+ @module services/voceros/validarConsultarVoceroIdCircuito
+*/
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo mediante el token de autenticación
 
 /**
- * Valida el token del usuario activo y el parámetro 'idCircuito' recibido en la URL.
- * Retorna los datos validados si todo es correcto.
- * @async
- * @function validarConsultarVoceroIdCircuito
- * @param {Request} request - Objeto de solicitud HTTP que contiene la URL con parámetros.
- * @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
- */
+ Valida el token del usuario activo y el parámetro 'idCircuito' recibido en la URL.
+ Retorna los datos validados si todo es correcto.
+ @async
+ @function validarConsultarVoceroIdCircuito
+ @param {Request} request - Objeto de solicitud HTTP que contiene la URL con parámetros.
+ @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+*/
+
 export default async function validarConsultarVoceroIdCircuito(request) {
   try {
     // 1. Extraer el parámetro 'idCircuito' desde la URL del request.
@@ -88,7 +49,7 @@ export default async function validarConsultarVoceroIdCircuito(request) {
     }
 
     // 6. Si todas las validaciones son correctas, retornar los datos consolidados.
-    return retornarRespuestaFunciones("ok", "Validación correcta", {
+    return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
       id_circuito: validarIdCircuito.id,
@@ -97,6 +58,7 @@ export default async function validarConsultarVoceroIdCircuito(request) {
     // 7. Manejo de errores inesperados.
     console.log("Error interno validar vocero id_circuito: " + error);
 
+    // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
       "Error interno validar vocero id_circuito"

@@ -72,13 +72,21 @@ export default async function validarInicioSesion(correo, clave) {
       return retornarRespuestaFunciones("error", "Usuario no autorizado...");
     }
 
-    // 6. Comparar la contraseña ingresada con la almacenada
+    // 6. Verificar si el usuario está eliminado o suspendido
+    if (datosInicioSesion.borrado) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Usuario eliminado o suspendido..."
+      );
+    }
+
+    // 7. Comparar la contraseña ingresada con la almacenada
     const claveEncriptada = await CifrarDescifrarClaves.compararClave(
       validandoCampos.clave,
       datosInicioSesion.clave
     );
 
-    // 7. Si la validación falla retornamos una respuesta
+    // 8. Si la validación falla retornamos una respuesta
     if (claveEncriptada.status === "error") {
       return retornarRespuestaFunciones(
         claveEncriptada.status,
@@ -86,7 +94,7 @@ export default async function validarInicioSesion(correo, clave) {
       );
     }
 
-    // 8. Determinar la ruta de redirección según el rol del usuario
+    // 9. Determinar la ruta de redirección según el rol del usuario
     const redirecciones = {
       1: "/dashboard/master",
       2: "/dashboard/administrador",
@@ -94,16 +102,16 @@ export default async function validarInicioSesion(correo, clave) {
       4: "/dashboard/empleados",
     };
 
-    // 9. Tomamos la direccion por el id_rol o la raiz
+    // 10. Tomamos la direccion por el id_rol o la raiz
     const redirect = redirecciones[datosInicioSesion.id_rol] || "/";
 
-    // 10. Generar token de sesión
+    // 11. Generar token de sesión
     const crearTokenInicioSesion = AuthTokens.tokenInicioSesion(
       validandoCampos.correo,
       datosInicioSesion.id_rol
     );
 
-    // 11. Si la validación falla retornamos una respuesta
+    // 12. Si la validación falla retornamos una respuesta
     if (crearTokenInicioSesion.status === "error") {
       return retornarRespuestaFunciones(
         crearTokenInicioSesion.status,
@@ -111,7 +119,7 @@ export default async function validarInicioSesion(correo, clave) {
       );
     }
 
-    // 12. Retornar respuesta exitosa con datos del usuario y token
+    // 13. Retornar respuesta exitosa con datos del usuario y token
     return retornarRespuestaFunciones("ok", "Iniciando sesion", {
       token: crearTokenInicioSesion.token,
       cookie: crearTokenInicioSesion.cookieOption,
@@ -120,7 +128,7 @@ export default async function validarInicioSesion(correo, clave) {
       datosUsuario: datosInicioSesion,
     });
   } catch (error) {
-    // 13. Manejo de errores inesperados
+    // 14. Manejo de errores inesperados
     console.error(`Error interno validar inicio sesion: ` + error);
 
     // Retorna una respuesta del error inesperado

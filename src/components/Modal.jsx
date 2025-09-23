@@ -27,7 +27,7 @@ export default function Modal({ isVisible, onClose, children, titulo }) {
           &times;
         </button>
 
-        <div className="flex flex-col items-center w-full space-y-4">
+        <div className="flex flex-col items-center w-full">
           <div className="w-full flex justify-center">
             <Titulos
               indice={2}
@@ -36,7 +36,7 @@ export default function Modal({ isVisible, onClose, children, titulo }) {
             />
           </div>
 
-          <div className="w-full flex flex-col items-center space-y-4">
+          <div className="w-full flex flex-col items-center gap-2">
             {children}
           </div>
         </div>

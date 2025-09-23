@@ -378,14 +378,7 @@ model beneficio {
 
 model familiar {
   id         Int      @id @default(autoincrement())
-  nombre     String
-  apellido   String
-  cedula     Int      @unique
   parentesco String // ejemplo: madre, padre, hijo, etc.
-  f_n        DateTime
-  genero     Boolean
-  telefono   String?
-  direccion  String?
   borrado    Boolean  @default(false)
   id_vocero  Int
   id_usuario Int

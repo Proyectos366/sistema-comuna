@@ -284,14 +284,7 @@ CREATE TABLE "beneficio" (
 -- CreateTable
 CREATE TABLE "familiar" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "apellido" TEXT NOT NULL,
-    "cedula" INTEGER NOT NULL,
     "parentesco" TEXT NOT NULL,
-    "f_n" DATETIME NOT NULL,
-    "genero" BOOLEAN NOT NULL,
-    "telefono" TEXT,
-    "direccion" TEXT,
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_vocero" INTEGER NOT NULL,
     "id_usuario" INTEGER NOT NULL,
@@ -605,9 +598,6 @@ CREATE UNIQUE INDEX "proyecto_nombre_key" ON "proyecto"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "beneficio_nombre_key" ON "beneficio"("nombre");
-
--- CreateIndex
-CREATE UNIQUE INDEX "familiar_cedula_key" ON "familiar"("cedula");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "vocero_cedula_key" ON "vocero"("cedula");
