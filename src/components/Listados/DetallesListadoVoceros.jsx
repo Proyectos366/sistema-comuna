@@ -6,6 +6,7 @@ import { formatearTelefono } from "@/utils/formatearTelefono";
 
 import { useEffect, useRef } from "react";
 import ListaDetallesVocero from "./ListaDetalleVocero";
+import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
 
 export default function DetallesListadoVoceros({
   abierto,
@@ -106,13 +107,22 @@ export default function DetallesListadoVoceros({
                 <ul className="mt-2 list-disc list-inside text-sm text-gray-700 flex flex-col gap-2">
                   {curso.asistencias.map((asistencia, j) => {
                     return (
-                      <li key={j} className="flex gap-2">
+                      <li
+                        key={j}
+                        className="flex flex-col border rounded-md p-2"
+                      >
                         <ListaDetallesVocero
                           indice={3}
                           nombre={asistencia.modulos?.nombre}
                           valor={asistencia.presente}
                           fecha={formatearFecha(asistencia.fecha_registro)}
                           formador={asistencia.formador}
+                        />
+
+                        <ListaDetallesVocero
+                          indice={1}
+                          nombre={"Observación"}
+                          valor={formatoTituloSimple(asistencia.descripcion)}
                         />
                       </li>
                     );

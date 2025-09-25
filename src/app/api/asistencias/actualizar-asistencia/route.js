@@ -24,7 +24,7 @@ import registrarEventoSeguro from "@/libs/trigget";
 export async function PATCH(request) {
   try {
     // 1. Desestructuración del cuerpo de la solicitud JSON.
-    const { modulo, fecha, id_asistencia, nombreFormador } =
+    const { modulo, fecha, id_asistencia, nombreFormador, descripcion } =
       await request.json();
 
     // 2. Ejecución del servicio de validación para verificar los datos de la asistencia.
@@ -32,7 +32,8 @@ export async function PATCH(request) {
       modulo,
       fecha,
       id_asistencia,
-      nombreFormador
+      nombreFormador,
+      descripcion
     );
 
     // 3. Manejo de errores de validación.
@@ -72,6 +73,7 @@ export async function PATCH(request) {
             presente: true,
             fecha_registro: validaciones.fecha,
             formador: validaciones.nombreFormador,
+            descripcion: validaciones.descripcion,
           },
         });
 

@@ -22,6 +22,8 @@ import { formatearCedula } from "@/utils/formatearCedula";
 import ListaDetallesVocero from "../listados/ListaDetalleVocero";
 import { formatearTelefono } from "@/utils/formatearTelefono";
 import Titulos from "../Titulos";
+import LabelInput from "../inputs/LabelInput";
+import InputDescripcion from "../inputs/InputDescripcion";
 
 export default function ParticipantesForm({
   mostrar,
@@ -54,6 +56,8 @@ export default function ParticipantesForm({
   const [idFormador, setIdFormador] = useState("");
   const [formadores, setFormadores] = useState([]);
   const [nombreFormador, setNombreFormador] = useState("");
+
+  const [descripcionValidarModulo, setDescripcionValidarModulo] = useState("");
 
   const [datos, setDatos] = useState([]);
 
@@ -286,6 +290,7 @@ export default function ParticipantesForm({
           fecha: `${datosActualizar.fecha}T00:00:00Z`, // Asegurar formato ISO
           id_asistencia: datosActualizar.id_asistencia,
           nombreFormador: nombreFormador,
+          descripcion: descripcionValidarModulo,
         }
       );
       setCursos((prevCursos) =>
@@ -511,16 +516,29 @@ export default function ParticipantesForm({
                   fechaAprobacionModulo[idModulo] + "T00:00:00Z"
                 )}
               />
-              <SelectOpcion
-                idOpcion={idFormador}
-                nombre="Formador"
-                handleChange={cambiarSeleccionFormador}
-                opciones={formadores}
-                seleccione="Seleccione"
-                setNombre={setNombreFormador}
-                setDatos={setDatos}
-                indice={1}
-              />
+              <div className="w-full flex flex-col gap-1 mt-2">
+                <SelectOpcion
+                  idOpcion={idFormador}
+                  nombre="Formador"
+                  handleChange={cambiarSeleccionFormador}
+                  opciones={formadores}
+                  seleccione="Seleccione"
+                  setNombre={setNombreFormador}
+                  setDatos={setDatos}
+                  indice={1}
+                  letraOpcion={1}
+                />
+
+                <LabelInput nombre={"Observación"}>
+                  <InputDescripcion
+                    value={descripcionValidarModulo}
+                    setValue={setDescripcionValidarModulo}
+                    rows={6}
+                    max={500}
+                    autoComplete="off"
+                  />
+                </LabelInput>
+              </div>
             </>
           )}
 

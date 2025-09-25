@@ -56,6 +56,7 @@ export async function GET() {
                 id: true,
                 presente: true,
                 formador: true,
+                descripcion: true,
                 fecha_registro: true,
                 modulos: {
                   select: {

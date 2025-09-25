@@ -27,21 +27,13 @@ export default async function validarConsultarTodosUsuariosNombres() {
       );
     }
 
-    // 3. Verificar si el usuario tiene permisos (rol 1 o rol 2).
-    if (validaciones.id_rol !== 1 && validaciones.id_rol !== 2) {
-      return retornarRespuestaFunciones(
-        "error",
-        "Error, usuario no tiene permisos..."
-      );
-    }
-
-    // 4. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
+    // 3. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
     });
   } catch (error) {
-    // 5. Manejo de errores inesperados.
+    // 4. Manejo de errores inesperados.
     console.log("Error interno validar consultar todos usuarios: " + error);
 
     // Retorna una respuesta del error inesperado

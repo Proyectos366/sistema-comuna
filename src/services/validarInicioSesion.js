@@ -64,7 +64,9 @@ export default async function validarInicioSesion(correo, clave) {
 
     // 4. Verificar si el usuario existe
     if (!datosInicioSesion) {
-      return retornarRespuestaFunciones("error", "Credenciales invalidas...");
+      return retornarRespuestaFunciones("error", "Error usuario no existe...", {
+        correo: validandoCampos.correo,
+      });
     }
 
     // 5. Verificar si el usuario está validado

@@ -11,7 +11,7 @@ export default function ListadoGeneral({
   usuarioActivo,
 }) {
   return (
-    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-2">
+    <div className="w-full bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl p-6">
       <Titulos indice={2} titulo={nombreListado} />
 
       {isLoading ? (

@@ -83,6 +83,7 @@ export async function GET(req) {
                 id: true,
                 presente: true,
                 formador: true,
+                descripcion: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
               },

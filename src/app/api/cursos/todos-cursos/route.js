@@ -89,17 +89,17 @@ export async function GET() {
         {},
         400
       );
-    } else {
-      // 5. Condición de éxito: se encontraron cursos
-      return generarRespuesta(
-        "ok",
-        "Todas los cursos...",
-        {
-          cursos: todosCursos,
-        },
-        201
-      );
     }
+
+    // 5. Condición de éxito: se encontraron cursos
+    return generarRespuesta(
+      "ok",
+      "Todas los cursos...",
+      {
+        cursos: todosCursos,
+      },
+      201
+    );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(`Error interno consultar (cursos): ` + error);

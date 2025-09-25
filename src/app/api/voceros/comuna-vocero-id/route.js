@@ -9,6 +9,7 @@
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import validarConsultarVoceroIdComuna from "@/services/voceros/validarConsultarVoceroIdComuna"; // Servicio para validar el ID de comuna
+import registrarEventoSeguro from "@/libs/trigget";
 
 /**
  * Maneja las solicitudes HTTP GET para consultar voceros por ID de comuna.
@@ -83,6 +84,7 @@ export async function GET(request) {
                 id: true,
                 presente: true,
                 formador: true,
+                descripcion: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
               },

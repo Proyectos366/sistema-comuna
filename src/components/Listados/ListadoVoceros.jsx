@@ -103,12 +103,15 @@ export default function ListadoVoceros({ voceros, editar, open, setOpen }) {
 
   const totalVoceros = vocerosFiltrados.length;
   const totalHombres = vocerosFiltrados.filter((v) => v.genero === true).length;
+
   const totalMujeres = vocerosFiltrados.filter(
     (v) => v.genero === false
   ).length;
+
   const totalAdultosMayoresHombres = vocerosFiltrados.filter(
     (v) => v.genero === true && v.edad >= 60
   ).length;
+
   const totalAdultosMayoresMujeres = vocerosFiltrados.filter(
     (v) => v.genero === false && v.edad >= 55
   ).length;

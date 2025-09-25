@@ -39,17 +39,23 @@ export async function GET(request) {
       where: {
         correo: {
           not: {
-            in: [validaciones.correo, "carlosjperazab@gmail.com"],
+            in: ["carlosjperazab@gmail.com"],
           },
         },
       },
       orderBy: {
         nombre: "asc",
       },
-      include: {
-        MiembrosDepartamentos: true,
+      select: {
+        id: true,
+        nombre: true,
+        MiembrosDepartamentos: {
+          select: { id: true, nombre: true, descripcion: true },
+        },
       },
     });
+
+    console.log(todosUsuarios);
 
     // 4. Verifica si se obtuvieron resultados válidos
     if (!todosUsuarios) {

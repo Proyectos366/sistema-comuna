@@ -7,19 +7,20 @@ export async function GET() {
       {
         nombre: "unidad ejecutiva",
         id_usuario: 1,
-        descripcion: "sin descripcion",
+        descripcion:
+          "encargada de implementar y ejecutar tareas específicas que forman parte de un plan o proyecto más amplio, transformando el presupuesto en bienes y servicios o gestionando fondos",
         borrado: false,
       },
       {
         nombre: "unidad financiera",
         id_usuario: 1,
-        descripcion: "sin descripcion",
+        descripcion: "encargada de manejar los recursos que se han obtenido",
         borrado: false,
       },
       {
         nombre: "contraloria social",
         id_usuario: 1,
-        descripcion: "sin descripcion",
+        descripcion: "encargado de controlar los recursos publicos",
         borrado: false,
       },
     ];

@@ -12,6 +12,7 @@ export default function SelectOpcion({
   setNombre,
   setDatos,
   indice,
+  letraOpcion,
 }) {
   const [abierto, setAbierto] = useState(false);
   const [seleccionado, setSeleccionado] = useState("");
@@ -56,7 +57,13 @@ export default function SelectOpcion({
   return (
     <div className="w-full relative overflow-visible" ref={selectRef}>
       <label className="block">
-        <span className="text-gray-800 font-semibold">{nombre}:</span>
+        <span
+          className={`${
+            letraOpcion === 1 ? "text-sm text-gray-800 uppercase" : ""
+          } font-semibold `}
+        >
+          {nombre}:
+        </span>
         <div
           className={` uppercase flex justify-between items-center w-full py-2 px-4 
           rounded-md shadow-sm transition-all cursor-pointer focus:outline-none hover:border-[#082158]

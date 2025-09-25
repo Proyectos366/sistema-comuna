@@ -28,8 +28,23 @@ export async function GET() {
     }
 
     // 3. Consulta todas las formaciones en la base de datos
+    // const todasFormaciones = await prisma.formacion.findMany({
+    //   where: validaciones.condicion,
+    //   include: { modulos: true },
+    // });
+
     const todasFormaciones = await prisma.formacion.findMany({
-      where: validaciones.condicion,
+      where: {
+        borrado: false,
+        culminada: false,
+        OR: [
+          { id_institucion: 1 },
+          { id_departamento: 1 },
+          {
+            AND: [{ id_institucion: null }, { id_departamento: null }],
+          },
+        ],
+      },
       include: { modulos: true },
     });
 

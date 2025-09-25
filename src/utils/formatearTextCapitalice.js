@@ -71,3 +71,25 @@ export function formatoTituloPersonalizado(texto) {
     return false;
   }
 }
+
+/**
+ Formatea un título con estilo personalizado:
+ - La primera palabra se capitaliza (solo primera letra en mayúscula).
+ - Las palabras restantes se convierten completamente en minúsculas.
+ @function formatoTituloSimple
+ @param {string} texto - Cadena de texto a formatear.
+ @returns {string} Texto formateado con estilo mixto.
+*/
+export function formatoTituloSimple(texto) {
+  try {
+    const limpio = texto.trim().toLowerCase();
+    if (limpio.length === 0) return "";
+
+    const resultado = limpio.charAt(0).toUpperCase() + limpio.slice(1);
+
+    return resultado;
+  } catch (error) {
+    console.log("Error interno al capitalizar título simple: " + error);
+    return false;
+  }
+}

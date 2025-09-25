@@ -22,7 +22,8 @@ export default async function validarAsistenciaPorModulo(
   modulo,
   fecha,
   id_asistencia,
-  nombreFormador
+  nombreFormador,
+  descripcion
 ) {
   try {
     // 1. Ejecuta la validación previa antes de consultar
@@ -41,6 +42,7 @@ export default async function validarAsistenciaPorModulo(
     const moduloNumero = ValidarCampos.validarCampoId(modulo);
     const validarNombre = ValidarCampos.validarCampoNombre(nombreFormador);
     const validarFecha = ValidarCampos.validarCampoFechaISO(fecha);
+    const validarDescr = ValidarCampos.validarCampoTexto(descripcion);
 
     // 4. Verificar si el idAsistencia es invalido se retorna un error.
     if (idAsistencia.status === "error") {
@@ -48,7 +50,7 @@ export default async function validarAsistenciaPorModulo(
         idAsistencia.status,
         idAsistencia.message,
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -59,7 +61,7 @@ export default async function validarAsistenciaPorModulo(
         moduloNumero.status,
         moduloNumero.message,
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -70,7 +72,7 @@ export default async function validarAsistenciaPorModulo(
         validarNombre.status,
         validarNombre.message,
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -81,7 +83,7 @@ export default async function validarAsistenciaPorModulo(
         validarFecha.status,
         validarFecha.message,
         {
-          id_usuario: datosUsuario.id,
+          id_usuario: validaciones.id_usuario,
         }
       );
     }
@@ -93,6 +95,7 @@ export default async function validarAsistenciaPorModulo(
       id_asistencia: idAsistencia.id,
       nombreFormador: validarNombre.nombre,
       fecha: validarFecha.fecha,
+      descripcion: validarDescr.texto,
     });
   } catch (error) {
     // 9. Manejo de errores inesperados.

@@ -99,7 +99,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
       nombreSinExtension: nombreSinExtension,
       rutaDestino: rutaUsuario,
       path: rutaRelativa,
-      id_usuario: validaciones.id,
+      id_usuario: validaciones.id_usuario,
       usuarioAntes: validaciones,
     });
   } catch (error) {
