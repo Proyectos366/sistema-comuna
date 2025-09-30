@@ -5,7 +5,7 @@
 }
 
 .fuente-arial-black {
-  font-family: 'Arial Black', sans-serif;
+  font-family: "Arial Black", sans-serif;
 }
 
 .color-fondo {
@@ -15,7 +15,6 @@
 .borde-fondo {
   border: 1px solid #082158;
 }
-
 
 /* globals.css */
 .no-scrollbar::-webkit-scrollbar {
@@ -28,5 +27,22 @@
 }
 
 .icono-filter {
-  filter: drop-shadow(1px 1px 10px #1b52e7cc);
+  filter: drop-shadow(1px 1px 10px #082158);
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation-name: fadeInUp;
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
 }

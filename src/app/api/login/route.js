@@ -60,7 +60,7 @@ export async function POST(request) {
     // 5. Crea una respuesta JSON con el token y redirección
     const response = NextResponse.json({
       status: "ok",
-      message: "Inicio de sesion correcto",
+      message: "Iniciando sesión...",
       token: validaciones.token,
       redirect: validaciones.redirect,
     });

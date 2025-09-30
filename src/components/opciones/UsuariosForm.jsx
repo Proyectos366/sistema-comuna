@@ -16,6 +16,7 @@ import Paginador from "../templates/PlantillaPaginacion";
 import FormCrearUsuario from "../formularios/FormCrearUsuario";
 import DivTresDentroSectionRegistroMostrar from "../DivTresDentroSectionRegistroMostrar";
 import ListadoUsuarios from "../listados/ListadoUsuarios";
+import { BounceLoader } from "react-spinners";
 
 export default function UsuariosForm({
   mostrar,
@@ -138,6 +139,7 @@ export default function UsuariosForm({
 
   useEffect(() => {
     const fetchDatos = async () => {
+      if (isLoading) return; // Evita múltiples envíos rápidos
       try {
         const promesas = [
           axios.get("/api/usuarios/todos-usuarios"),
@@ -169,6 +171,8 @@ export default function UsuariosForm({
         }
       } catch (error) {
         console.log("Error al obtener datos:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -590,25 +594,26 @@ export default function UsuariosForm({
         <DivUnoDentroSectionRegistroMostrar nombre={"Representación usuarios"}>
           <div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#082158]"></div>
-                <span className="font-medium">Administradores</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#2FA807]"></div>
-                <span className="font-medium">Directores</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#A62A69]"></div>
-                <span className="font-medium">Obreros</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#E61C45]"></div>
-                <span className="font-medium">Inhabilitados</span>
-              </div>
+              {[
+                { color: "#082158", label: "Administradores" },
+                { color: "#2FA807", label: "Directores" },
+                { color: "#A62A69", label: "Obreros" },
+                { color: "#E61C45", label: "Inhabilitados" },
+              ].map((item, index) => (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-2 fade-in-up"
+                  style={{
+                    animationDelay: `${index * 0.3}s`,
+                  }}
+                >
+                  <div
+                    className="w-5 h-5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span className="font-medium">{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </DivUnoDentroSectionRegistroMostrar>
@@ -674,36 +679,42 @@ export default function UsuariosForm({
             </div>
           ) : (
             <div className="flex flex-col w-full gap-2">
-              {todosUsuarios?.length !== 0 && (
-                <>
-                  <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 mb-4 sm:p-4 rounded-md shadow-lg">
-                    <Input
-                      type="text"
-                      placeholder="🔍 Buscar..."
-                      value={searchTerm}
-                      className={`bg-white ps-4 placeholder:px-5`}
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setFirst(0);
-                      }}
-                    />
+              <>
+                <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 mb-4 sm:p-4 rounded-md shadow-lg">
+                  <Input
+                    type="text"
+                    placeholder="🔍 Buscar..."
+                    value={searchTerm}
+                    className={`bg-white ps-4 placeholder:px-5`}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setFirst(0);
+                    }}
+                  />
 
-                    <OrdenarListaUsuarios
-                      ordenCampo={ordenCampo}
-                      setOrdenCampo={setOrdenCampo}
-                      setOrdenAscendente={setOrdenAscendente}
-                      ordenAscendente={ordenAscendente}
-                    />
+                  <OrdenarListaUsuarios
+                    ordenCampo={ordenCampo}
+                    setOrdenCampo={setOrdenCampo}
+                    setOrdenAscendente={setOrdenAscendente}
+                    ordenAscendente={ordenAscendente}
+                  />
+                </div>
+
+                {todosUsuarios?.length === 0 ? (
+                  <div className="flex items-center gap-4">
+                    <BounceLoader color="#082158" size={50} /> Cargando
+                    usuarios...
                   </div>
+                ) : (
+                  <>
+                    {usuarioPorPagina.map((usuario, index) => {
+                      const departamentoActual =
+                        usuario?.MiembrosDepartamentos?.[0];
 
-                  {usuarioPorPagina.map((usuario) => {
-                    const departamentoActual =
-                      usuario?.MiembrosDepartamentos?.[0];
-
-                    return (
-                      <div
-                        key={usuario.id}
-                        className={`bg-[#e2e8f0] rounded-md shadow-md border 
+                      return (
+                        <div
+                          key={usuario.id}
+                          className={`fade-in-up bg-[#e2e8f0] rounded-md shadow-md border 
                               ${
                                 usuario.borrado
                                   ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45]  hover:text-white"
@@ -718,14 +729,15 @@ export default function UsuariosForm({
                                   : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
                               }
                               transition-all`}
-                      >
-                        <button
-                          onClick={() =>
-                            setExpanded(
-                              expanded === usuario.id ? null : usuario.id
-                            )
-                          }
-                          className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
+                          style={{ animationDelay: `${index * 0.4}s` }}
+                        >
+                          <button
+                            onClick={() =>
+                              setExpanded(
+                                expanded === usuario.id ? null : usuario.id
+                              )
+                            }
+                            className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
                           ${
                             expanded === usuario.id
                               ? "rounded-t-md mb-2 sm:mb-0 hover:text-white"
@@ -745,43 +757,43 @@ export default function UsuariosForm({
                               : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
                           }
                           cursor-pointer transition-colors duration-200`}
-                        >
-                          👤 {usuario.nombre} {usuario.apellido}
-                        </button>
+                          >
+                            👤 {usuario.nombre} {usuario.apellido}
+                          </button>
 
-                        {expanded === usuario.id && (
-                          <ListadoUsuarios
-                            usuario={usuario}
-                            departamentoActual={departamentoActual}
-                            abrirModal={abrirModal}
-                            setAccion={setAccion}
-                            setNombreUsuario={setNombreUsuario}
-                            setNombreDepartamento={setNombreDepartamento}
-                            setIdDepartamento={setIdDepartamento}
-                            setIdUsuario={setIdUsuario}
-                            setIdRol={setIdRol}
-                            setEstado={setEstado}
-                            setValidado={setValidado}
-                            setNombreRol={setNombreRol}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-
-                  <div className="mt-4">
-                    <Paginador
-                      first={first}
-                      setFirst={setFirst}
-                      rows={rows}
-                      setRows={setRows}
-                      totalRecords={totalRecords}
-                      open={open}
-                      setOpen={setOpen}
-                    />
-                  </div>
-                </>
-              )}
+                          {expanded === usuario.id && (
+                            <ListadoUsuarios
+                              usuario={usuario}
+                              departamentoActual={departamentoActual}
+                              abrirModal={abrirModal}
+                              setAccion={setAccion}
+                              setNombreUsuario={setNombreUsuario}
+                              setNombreDepartamento={setNombreDepartamento}
+                              setIdDepartamento={setIdDepartamento}
+                              setIdUsuario={setIdUsuario}
+                              setIdRol={setIdRol}
+                              setEstado={setEstado}
+                              setValidado={setValidado}
+                              setNombreRol={setNombreRol}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+                <div className="mt-4">
+                  <Paginador
+                    first={first}
+                    setFirst={setFirst}
+                    rows={rows}
+                    setRows={setRows}
+                    totalRecords={totalRecords}
+                    open={open}
+                    setOpen={setOpen}
+                  />
+                </div>
+              </>
             </div>
           )}
         </DivTresDentroSectionRegistroMostrar>
