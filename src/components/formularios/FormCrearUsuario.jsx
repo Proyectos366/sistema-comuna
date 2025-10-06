@@ -1,16 +1,18 @@
 "use client";
 
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import InputNombre from "../inputs/InputNombre";
-import InputCedula from "../inputs/InputCedula";
-import InputCorreo from "../inputs/InputCorreo";
-import SelectOpcion from "../SelectOpcion";
-import InputClave from "../inputs/InputClave";
-import MostrarMsj from "../MostrarMensaje";
-import InputCheckBox from "../inputs/InputCheckBox";
 import { useEffect, useState } from "react";
+import Div from "@/components/padres/Div";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputCedula from "@/components/inputs/InputCedula";
+import InputCorreo from "@/components/inputs/InputCorreo";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputClave from "@/components/inputs/InputClave";
+import MostrarMsj from "@/components/MostrarMensaje";
+import InputCheckBox from "@/components/inputs/InputCheckBox";
+
 
 export default function FormCrearUsuario({
   idDepartamento,
@@ -111,7 +113,7 @@ export default function FormCrearUsuario({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
+      <Div className="overflow-y-auto h-[390px] no-scrollbar flex flex-col w-full gap-2 px-1">
         <LabelInput nombre={"Cedula"}>
           <InputCedula
             type="text"
@@ -279,7 +281,7 @@ export default function FormCrearUsuario({
             }}
           />
         </div>
-      </div>
+      </Div>
     </Formulario>
   );
 }

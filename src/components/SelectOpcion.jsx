@@ -58,14 +58,14 @@ export default function SelectOpcion({
     <div className="w-full relative overflow-visible" ref={selectRef}>
       <label className="block">
         <span
-          className={`${
-            letraOpcion === 1 ? "text-sm text-gray-800 uppercase" : ""
-          } font-semibold `}
+          className={`text-gray-700 ${
+            letraOpcion === 1 ? "text-sm  uppercase" : ""
+          } font-medium `}
         >
           {nombre}:
         </span>
         <div
-          className={` uppercase flex justify-between items-center w-full py-2 px-4 
+          className={` uppercase text-gray-600 flex justify-between items-center w-full py-2 px-4 
           rounded-md shadow-sm transition-all cursor-pointer focus:outline-none hover:border-[#082158]
           ${
             seleccionado === "Seleccione"

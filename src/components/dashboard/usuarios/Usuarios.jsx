@@ -2,23 +2,29 @@
 
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import Modal from "../Modal";
-import ModalDatos from "../ModalDatos";
-import SectionRegistroMostrar from "../SectionRegistroMostrar";
-import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import BotonesModal from "../BotonesModal";
-import ModalDatosContenedor from "../ModalDatosContenedor";
-import SelectOpcion from "../SelectOpcion";
-import Input from "../inputs/Input";
-import OrdenarListaUsuarios from "../listados/OrdenarListaUsuarios";
-import Paginador from "../templates/PlantillaPaginacion";
-import FormCrearUsuario from "../formularios/FormCrearUsuario";
-import DivTresDentroSectionRegistroMostrar from "../DivTresDentroSectionRegistroMostrar";
-import ListadoUsuarios from "../listados/ListadoUsuarios";
+import Modal from "@/components/Modal";
+import ModalDatos from "@/components/ModalDatos";
+import DivUnoDentroSectionRegistroMostrar from "@/components/DivUnoDentroSectionRegistroMostrar";
+import MostarMsjEnModal from "@/components/MostrarMsjEnModal";
+import BotonesModal from "@/components/BotonesModal";
+import ModalDatosContenedor from "@/components/ModalDatosContenedor";
+import SelectOpcion from "@/components/SelectOpcion";
+import Input from "@/components/inputs/Input";
+import OrdenarListaUsuarios from "@/components/listados/OrdenarListaUsuarios";
+import Paginador from "@/components/templates/PlantillaPaginacion";
+import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
+import DivTresDentroSectionRegistroMostrar from "@/components/DivTresDentroSectionRegistroMostrar";
+import ListadoUsuarios from "@/components/dashboard/usuarios/components/ListadoUsuarios";
 import { BounceLoader } from "react-spinners";
+import SectionMain from "@/components/SectionMain";
+import SectionPrimary from "@/components/SectionPrimary";
+import Div from "@/components/padres/Div";
+import Span from "@/components/padres/Span";
+import SectionTertiary from "@/components/SectionTertiary";
+import ModalPrincipal from "@/components/modales/ModalPrincipal";
+import ButtonToggleDetallesUsuario from "./components/ButtonToggleDetallesUsuario";
 
-export default function UsuariosForm({
+export default function UsuariosView({
   mostrar,
   abrirModal,
   cerrarModal,
@@ -56,7 +62,7 @@ export default function UsuariosForm({
   const [expanded, setExpanded] = useState("");
   const [accion, setAccion] = useState("");
 
-  const [estado, setEstado] = useState(null);
+  const [estado, setEstado] = useState("");
   const [validado, setValidado] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -182,6 +188,17 @@ export default function UsuariosForm({
   useEffect(() => {
     if (!mostrar) {
       setAccion("");
+      setOpcion("");
+      setCedulaUsuario("");
+      setNombreUsuario("");
+      setApellidoUsuario("");
+      setCorreoUsuario("");
+      setClaveUnoUsuario("");
+      setClaveDosUsuario("");
+      setIdRol("");
+      setIdInstitucion("");
+      setIdDepartamento("");
+      setAutorizar("");
     }
   }, [mostrar]);
 
@@ -321,13 +338,13 @@ export default function UsuariosForm({
     }
   };
 
-  const eliminarRestaurarUsuario = async () => {
+  const eliminarRestaurarUsuario = async (estatus, usuarioId) => {
     try {
       const response = await axios.patch(
-        `/api/usuarios/${!estado ? "eliminar" : "restaurar"}-usuario`,
+        `/api/usuarios/${!estatus ? "eliminar" : "restaurar"}-usuario`,
         {
-          idUsuario,
-          estado,
+          id_usuario: usuarioId,
+          estado: estatus,
         }
       );
 
@@ -342,7 +359,7 @@ export default function UsuariosForm({
       abrirMensaje(response.data.message);
       ejecutarAccionesConRetraso([
         { accion: cerrarModal, tiempo: 3000 },
-        { accion: () => setEstado(null), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
       abrirMensaje(
@@ -352,11 +369,11 @@ export default function UsuariosForm({
     }
   };
 
-  const cambiarUsuarioAcceso = async () => {
+  const cambiarUsuarioAcceso = async (valido, usuarioId) => {
     try {
       const response = await axios.patch("/api/usuarios/cambiar-acceso", {
-        idUsuario: idUsuario,
-        validado: validado,
+        idUsuario: usuarioId,
+        validado: valido,
       });
 
       const usuarioActualizado = response.data.usuario;
@@ -370,7 +387,7 @@ export default function UsuariosForm({
       abrirMensaje(response.data.message);
       ejecutarAccionesConRetraso([
         { accion: cerrarModal, tiempo: 3000 },
-        { accion: () => setEstado(null), tiempo: 3000 }, // Se ejecutará en 3 segundos
+        { accion: () => setEstado(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
       ]);
     } catch (error) {
       abrirMensaje(
@@ -413,6 +430,8 @@ export default function UsuariosForm({
         return validado
           ? "¿Restringir este usuario?"
           : "¿Autorizar este usuario?";
+      case "nuevoUsuario":
+        return "¿Crear usuario?";
       default:
         return () => {}; // función vacía si no hay acción
     }
@@ -469,9 +488,26 @@ export default function UsuariosForm({
     }
   };
 
+  const nuevoUsuario = () => {
+    setAccion("nuevoUsuario");
+    setOpcion("nuevoUsuario");
+    abrirModal();
+  };
+
+  const aceptarCrearUsuario = () => {
+    setAccion("crear");
+    setOpcion("crear");
+    abrirModal();
+  };
+
+  const cancelarCrearUsuario = () => {
+    setAccion("nuevoUsuario");
+    setOpcion("nuevoUsuario");
+  };
+
   return (
     <>
-      {opcion === "crear" ? (
+      {opcion === "crear" && (
         <Modal
           isVisible={mostrar}
           onClose={cerrarModal}
@@ -510,7 +546,7 @@ export default function UsuariosForm({
 
           <BotonesModal
             aceptar={crearUsuario}
-            cancelar={cerrarModal}
+            cancelar={cancelarCrearUsuario}
             indiceUno={"crear"}
             indiceDos={"cancelar"}
             nombreUno={"Aceptar"}
@@ -526,7 +562,9 @@ export default function UsuariosForm({
             }}
           />
         </Modal>
-      ) : (
+      )}
+
+      {opcion === "editar" && (
         <Modal
           isVisible={mostrar}
           onClose={cerrarModal}
@@ -590,131 +628,132 @@ export default function UsuariosForm({
         </Modal>
       )}
 
-      <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar nombre={"Representación usuarios"}>
-          <div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      {opcion === "nuevoUsuario" && (
+        <ModalPrincipal
+          isVisible={mostrar}
+          onClose={cerrarModal}
+          titulo={obtenerTituloAccion()}
+        >
+          <ModalDatosContenedor>
+            <FormCrearUsuario
+              idInstitucion={idInstitucion}
+              idDepartamento={idDepartamento}
+              idRol={idRol}
+              setIdInstitucion={setIdInstitucion}
+              setIdDepartamento={setIdDepartamento}
+              setIdRol={setIdRol}
+              setNombreDepartamento={setNombreDepartamento}
+              setNombreInstitucion={setNombreInstitucion}
+              setNombreRol={setNombreRol}
+              cedula={cedulaUsuario}
+              setCedula={setCedulaUsuario}
+              correo={correoUsuario}
+              setCorreo={setCorreoUsuario}
+              nombre={nombreUsuario}
+              setNombre={setNombreUsuario}
+              apellido={apellidoUsuario}
+              setApellido={setApellidoUsuario}
+              claveUno={claveUnoUsuario}
+              setClaveUno={setClaveUnoUsuario}
+              claveDos={claveDosUsuario}
+              setClaveDos={setClaveDosUsuario}
+              validarCedula={validarCedulaUsuario}
+              setValidarCedula={setValidarCedulaUsuario}
+              validarCorreo={validarCorreoUsuario}
+              setValidarCorreo={setValidarCorreoUsuario}
+              validarNombre={validarNombreUsuario}
+              setValidarNombre={setValidarNombreUsuario}
+              validarApellido={validarApellidoUsuario}
+              setValidarApellido={setValidarApellidoUsuario}
+              validarClave={validarClaveUsuario}
+              setValidarClave={setValidarClaveUsuario}
+              limpiarCampos={limpiarCampos}
+              mostrarModal={aceptarCrearUsuario}
+              mensaje={mensajeValidar}
+              setMensaje={setMensajeValidar}
+              cambiarSeleccionDepartamento={cambiarSeleccionDepartamento}
+              cambiarSeleccionInstitucion={cambiarSeleccionInstitucion}
+              cambiarSeleccionRol={cambiarSeleccionRol}
+              departamentos={todosDepartamentos}
+              instituciones={
+                todasInstituciones?.length > 0
+                  ? todasInstituciones
+                  : [institucionMiembro]
+              }
+              roles={todosRoles}
+              autorizar={autorizar}
+              setAutorizar={setAutorizar}
+              toggleAutorizar={toggleAutorizar}
+              usuarioActivo={usuarioActivo}
+            />
+          </ModalDatosContenedor>
+        </ModalPrincipal>
+      )}
+
+      <SectionMain>
+        <SectionPrimary nombre={"Representación usuarios"}>
+          <Div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
+            <Div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
               {[
                 { color: "#082158", label: "Administradores" },
                 { color: "#2FA807", label: "Directores" },
                 { color: "#A62A69", label: "Obreros" },
                 { color: "#E61C45", label: "Inhabilitados" },
               ].map((item, index) => (
-                <div
+                <Div
                   key={item.label}
-                  className="flex items-center gap-2 fade-in-up"
+                  className="flex flex-col items-center gap-2 fade-in-up"
                   style={{
                     animationDelay: `${index * 0.3}s`,
                   }}
                 >
-                  <div
+                  <Div
                     className="w-5 h-5 rounded-full"
                     style={{ backgroundColor: item.color }}
-                  ></div>
-                  <span className="font-medium">{item.label}</span>
-                </div>
+                  ></Div>
+                  <Span className="font-medium">{item.label}</Span>
+                </Div>
               ))}
-            </div>
-          </div>
-        </DivUnoDentroSectionRegistroMostrar>
+            </Div>
+          </Div>
+        </SectionPrimary>
 
-        <DivTresDentroSectionRegistroMostrar
-          nombre={opcion === "crear" ? "Crear usuario" : "Todos los usuarios"}
-          toggle={toggleUsuarioCrearMostrar}
-          opcion={crearMostrar}
-        >
-          {opcion === "crear" ? (
-            <div className="w-full">
-              <FormCrearUsuario
-                idInstitucion={idInstitucion}
-                idDepartamento={idDepartamento}
-                idRol={idRol}
-                setIdInstitucion={setIdInstitucion}
-                setIdDepartamento={setIdDepartamento}
-                setIdRol={setIdRol}
-                setNombreDepartamento={setNombreDepartamento}
-                setNombreInstitucion={setNombreInstitucion}
-                setNombreRol={setNombreRol}
-                cedula={cedulaUsuario}
-                setCedula={setCedulaUsuario}
-                correo={correoUsuario}
-                setCorreo={setCorreoUsuario}
-                nombre={nombreUsuario}
-                setNombre={setNombreUsuario}
-                apellido={apellidoUsuario}
-                setApellido={setApellidoUsuario}
-                claveUno={claveUnoUsuario}
-                setClaveUno={setClaveUnoUsuario}
-                claveDos={claveDosUsuario}
-                setClaveDos={setClaveDosUsuario}
-                validarCedula={validarCedulaUsuario}
-                setValidarCedula={setValidarCedulaUsuario}
-                validarCorreo={validarCorreoUsuario}
-                setValidarCorreo={setValidarCorreoUsuario}
-                validarNombre={validarNombreUsuario}
-                setValidarNombre={setValidarNombreUsuario}
-                validarApellido={validarApellidoUsuario}
-                setValidarApellido={setValidarApellidoUsuario}
-                validarClave={validarClaveUsuario}
-                setValidarClave={setValidarClaveUsuario}
-                limpiarCampos={limpiarCampos}
-                mostrarModal={abrirModal}
-                mensaje={mensajeValidar}
-                setMensaje={setMensajeValidar}
-                cambiarSeleccionDepartamento={cambiarSeleccionDepartamento}
-                cambiarSeleccionInstitucion={cambiarSeleccionInstitucion}
-                cambiarSeleccionRol={cambiarSeleccionRol}
-                departamentos={todosDepartamentos}
-                instituciones={
-                  todasInstituciones?.length > 0
-                    ? todasInstituciones
-                    : [institucionMiembro]
-                }
-                roles={todosRoles}
-                autorizar={autorizar}
-                setAutorizar={setAutorizar}
-                toggleAutorizar={toggleAutorizar}
-                usuarioActivo={usuarioActivo}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col w-full gap-2">
+        <SectionTertiary nombre={"Gestión usuarios"} funcion={nuevoUsuario}>
+          <Div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] rounded-md shadow-lg">
+            <Input
+              type="text"
+              placeholder="🔍 Buscar..."
+              value={searchTerm}
+              className={`bg-white ps-4 placeholder:px-5`}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setFirst(0);
+              }}
+            />
+
+            <OrdenarListaUsuarios
+              ordenCampo={ordenCampo}
+              setOrdenCampo={setOrdenCampo}
+              setOrdenAscendente={setOrdenAscendente}
+              ordenAscendente={ordenAscendente}
+            />
+          </Div>
+
+          <Div>
+            {todosUsuarios?.length === 0 ? (
+              <Div className="flex items-center gap-4">
+                <BounceLoader color="#082158" size={50} /> Cargando usuarios...
+              </Div>
+            ) : (
               <>
-                <div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] p-1 mb-4 sm:p-4 rounded-md shadow-lg">
-                  <Input
-                    type="text"
-                    placeholder="🔍 Buscar..."
-                    value={searchTerm}
-                    className={`bg-white ps-4 placeholder:px-5`}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setFirst(0);
-                    }}
-                  />
+                {usuarioPorPagina.map((usuario, index) => {
+                  const departamentoActual =
+                    usuario?.MiembrosDepartamentos?.[0];
 
-                  <OrdenarListaUsuarios
-                    ordenCampo={ordenCampo}
-                    setOrdenCampo={setOrdenCampo}
-                    setOrdenAscendente={setOrdenAscendente}
-                    ordenAscendente={ordenAscendente}
-                  />
-                </div>
-
-                {todosUsuarios?.length === 0 ? (
-                  <div className="flex items-center gap-4">
-                    <BounceLoader color="#082158" size={50} /> Cargando
-                    usuarios...
-                  </div>
-                ) : (
-                  <>
-                    {usuarioPorPagina.map((usuario, index) => {
-                      const departamentoActual =
-                        usuario?.MiembrosDepartamentos?.[0];
-
-                      return (
-                        <div
-                          key={usuario.id}
-                          className={`fade-in-up bg-[#e2e8f0] rounded-md shadow-md border 
+                  return (
+                    <Div
+                      key={usuario.id}
+                      className={`fade-in-up bg-[#e2e8f0] rounded-md shadow-md border 
                               ${
                                 usuario.borrado
                                   ? "border-[#E61C45] hover:bg-[#E61C45] text-[#E61C45]  hover:text-white"
@@ -729,75 +768,53 @@ export default function UsuariosForm({
                                   : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
                               }
                               transition-all`}
-                          style={{ animationDelay: `${index * 0.4}s` }}
-                        >
-                          <button
-                            onClick={() =>
-                              setExpanded(
-                                expanded === usuario.id ? null : usuario.id
-                              )
-                            }
-                            className={`w-full text-left font-semibold tracking-wide uppercase p-2  sm:p-0 sm:py-2 sm:px-4 transition-colors duration-200 cursor-pointer
-                          ${
-                            expanded === usuario.id
-                              ? "rounded-t-md mb-2 sm:mb-0 hover:text-white"
-                              : "rounded-md"
-                          }
-                          ${
-                            usuario.borrado
-                              ? "border-[#E61C45] hover:bg-[#E61C45] hover:text-[white] hover:border-[#E61C45]"
-                              : usuario.id_rol === 1
-                              ? "bg-[#e2e8f0] hover:bg-gray-100 text-[#082158] border-gray-300"
-                              : usuario.id_rol === 2
-                              ? "border-[#082158] hover:bg-[#082158] hover:text-[white]"
-                              : usuario.id_rol === 3
-                              ? "border-[#2FA807] hover:bg-[#2FA807] hover:text-[white]"
-                              : usuario.id_rol === 4
-                              ? "border-[#A62A69] hover:bg-[#A62A69] hover:text-[white]"
-                              : "border-gray-300 text-gray-600" // Estilo por defecto si el rol no es reconocido
-                          }
-                          cursor-pointer transition-colors duration-200`}
-                          >
-                            👤 {usuario.nombre} {usuario.apellido}
-                          </button>
+                      style={{ animationDelay: `${index * 0.4}s` }}
+                    >
+                      <ButtonToggleDetallesUsuario
+                        expanded={expanded}
+                        usuario={usuario}
+                        setExpanded={setExpanded}
+                      />
 
-                          {expanded === usuario.id && (
-                            <ListadoUsuarios
-                              usuario={usuario}
-                              departamentoActual={departamentoActual}
-                              abrirModal={abrirModal}
-                              setAccion={setAccion}
-                              setNombreUsuario={setNombreUsuario}
-                              setNombreDepartamento={setNombreDepartamento}
-                              setIdDepartamento={setIdDepartamento}
-                              setIdUsuario={setIdUsuario}
-                              setIdRol={setIdRol}
-                              setEstado={setEstado}
-                              setValidado={setValidado}
-                              setNombreRol={setNombreRol}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
-                <div className="mt-4">
-                  <Paginador
-                    first={first}
-                    setFirst={setFirst}
-                    rows={rows}
-                    setRows={setRows}
-                    totalRecords={totalRecords}
-                    open={open}
-                    setOpen={setOpen}
-                  />
-                </div>
+                      {expanded === usuario.id && (
+                        <ListadoUsuarios
+                          usuario={usuario}
+                          departamentoActual={departamentoActual}
+                          abrirModal={abrirModal}
+                          setAccion={setAccion}
+                          setOpcion={setOpcion}
+                          setNombreUsuario={setNombreUsuario}
+                          setNombreDepartamento={setNombreDepartamento}
+                          setIdDepartamento={setIdDepartamento}
+                          setIdUsuario={setIdUsuario}
+                          setIdRol={setIdRol}
+                          setEstado={setEstado}
+                          setValidado={setValidado}
+                          setNombreRol={setNombreRol}
+                          cambiarUsuarioAcceso={cambiarUsuarioAcceso}
+                          eliminarRestaurarUsuario={eliminarRestaurarUsuario}
+                        />
+                      )}
+                    </Div>
+                  );
+                })}
               </>
-            </div>
-          )}
-        </DivTresDentroSectionRegistroMostrar>
-      </SectionRegistroMostrar>
+            )}
+          </Div>
+
+          <Div>
+            <Paginador
+              first={first}
+              setFirst={setFirst}
+              rows={rows}
+              setRows={setRows}
+              totalRecords={totalRecords}
+              open={open}
+              setOpen={setOpen}
+            />
+          </Div>
+        </SectionTertiary>
+      </SectionMain>
     </>
   );
 }

@@ -17,13 +17,13 @@ import VoceroForm from "../opciones/VoceroForm";
 //import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
 import FormacionesForm from "../opciones/FormacionesForm";
 import ParticipantesForm from "../opciones/ParticipantesForm";
-import UsuariosForm from "../opciones/UsuariosForm";
 import DepartamentosForm from "../opciones/DepartamentosForm";
 import PaisesForm from "../opciones/PaisForm";
 import EstadosForm from "../opciones/EstadoForm";
 import MunicipiosForm from "../opciones/MunicipioForm";
 import InstitucionesForm from "../opciones/InstitucionesForm";
 import NovedadesForm from "../opciones/NovedadesForm";
+import UsuariosView from "../dashboard/usuarios/Usuarios";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {
@@ -243,7 +243,7 @@ export default function VistaUniversalUsuarios({ children }) {
               ) : (
                 <>
                   {vista === "usuarios" && (
-                    <UsuariosForm
+                    <UsuariosView
                       mostrar={mostrarModal}
                       abrirModal={abrirModal}
                       cerrarModal={cerrarModal}

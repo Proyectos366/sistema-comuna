@@ -152,6 +152,69 @@ CREATE TABLE "departamento" (
 );
 
 -- CreateTable
+CREATE TABLE "estante" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT DEFAULT 'sin descripcion',
+    "alias" TEXT NOT NULL,
+    "codigo" TEXT NOT NULL,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_usuario" INTEGER NOT NULL,
+    "id_institucion" INTEGER NOT NULL,
+    "id_departamento" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "estante_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "estante_id_institucion_fkey" FOREIGN KEY ("id_institucion") REFERENCES "institucion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "estante_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "carpeta" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "descripcion" TEXT DEFAULT 'sin descripcion',
+    "alias" TEXT NOT NULL,
+    "codigo" TEXT NOT NULL,
+    "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_usuario" INTEGER NOT NULL,
+    "id_departamento" INTEGER NOT NULL,
+    "id_estante" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "carpeta_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "carpeta_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "carpeta_id_estante_fkey" FOREIGN KEY ("id_estante") REFERENCES "estante" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "archivo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "nombre_original" TEXT NOT NULL,
+    "nombre_sistema" TEXT NOT NULL,
+    "descripcion" TEXT NOT NULL,
+    "codigo" TEXT NOT NULL,
+    "alias" TEXT NOT NULL,
+    "extension" TEXT NOT NULL,
+    "tipo" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "path" TEXT NOT NULL,
+    "estado" BOOLEAN NOT NULL,
+    "borrado" BOOLEAN NOT NULL,
+    "id_usuario" INTEGER NOT NULL,
+    "id_departamento" INTEGER NOT NULL,
+    "id_estante" INTEGER NOT NULL,
+    "id_carpeta" INTEGER NOT NULL,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "archivo_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "archivo_id_departamento_fkey" FOREIGN KEY ("id_departamento") REFERENCES "departamento" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "archivo_id_estante_fkey" FOREIGN KEY ("id_estante") REFERENCES "estante" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "archivo_id_carpeta_fkey" FOREIGN KEY ("id_carpeta") REFERENCES "carpeta" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "cargo" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
@@ -574,6 +637,15 @@ CREATE UNIQUE INDEX "parroquia_serial_key" ON "parroquia"("serial");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "institucion_rif_key" ON "institucion"("rif");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "estante_codigo_key" ON "estante"("codigo");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "carpeta_codigo_key" ON "carpeta"("codigo");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "archivo_nombre_sistema_key" ON "archivo"("nombre_sistema");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "cargo_nombre_key" ON "cargo"("nombre");

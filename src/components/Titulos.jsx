@@ -3,7 +3,7 @@ export default function Titulos({ indice, titulo, className }) {
     indice === 1
       ? "text-4xl"
       : indice === 2
-      ? "text-2xl font-semibold mb-4 text-center text-gray-800"
+      ? "text-2xl font-semibold text-center text-gray-800"
       : indice === 3
       ? "text-xl"
       : indice === 4

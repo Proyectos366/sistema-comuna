@@ -25,10 +25,10 @@ import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar e
 export async function PATCH(request) {
   try {
     // 1. Extrae los datos del cuerpo de la solicitud
-    const { estado, idUsuario } = await request.json();
+    const { estado, id_usuario } = await request.json();
 
     // 2. Ejecuta la validación de los datos recibidos
-    const validaciones = await validarRestaurarUsuario(estado, idUsuario);
+    const validaciones = await validarRestaurarUsuario(estado, id_usuario);
 
     // 3. Si la validación falla, registra el intento fallido y retorna error 400
     if (validaciones.status === "error") {

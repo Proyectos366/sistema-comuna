@@ -1,8 +1,11 @@
-export default function LabelInput({ children, nombre }) {
+import Label from "../padres/Label";
+import Span from "../padres/Span";
+
+export default function LabelInput({ children, nombre, htmlFor }) {
   return (
-    <label className="block w-full">
-      <span className="text-gray-700 font-medium">{nombre}: </span>
+    <Label className="block w-full" htmlFor={htmlFor}>
+      <Span className="text-gray-700 font-medium">{nombre}: </Span>
       {children}
-    </label>
+    </Label>
   );
 }

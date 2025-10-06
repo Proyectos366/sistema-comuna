@@ -47,17 +47,21 @@ model usuario {
   creador                usuario?       @relation(name: "CreadorUsuarios", fields: [id_usuario], references: [id])
   usuarios_creados       usuario[]      @relation(name: "CreadorUsuarios")
   imagenes               imagen[] // Relación uno a muchos con Imagen
-  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
-  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
   CreadorInstitucion     institucion[]  @relation(name: "CreadorInstitucion")
   MiembrosInstitucion    institucion[]  @relation(name: "MiembrosInstitucion")
-  creadorDeComunas       comuna[]       @relation(name: "CreadorComuna")
-  creadorDeCircuitos     circuito[]     @relation(name: "CreadorCircuito")
-  creadorDeConsejos      consejo[]      @relation(name: "CreadorConsejo")
-  beneficios             beneficio[]    @relation(name: "CreadorBeneficio")
-  familiares             familiar[]     @relation(name: "CreadorFamiliar")
-  voceros                vocero[]       @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
-  novedades              novedad[]      @relation(name: "CreadorNovedad")
+  CreadorDeDepartamentos departamento[] @relation(name: "CreadorDepartamento")
+  MiembrosDepartamentos  departamento[] @relation(name: "MiembrosDepartamento")
+  CreadorEstantes        estante[]      @relation(name: "CreadorEstante")
+  CreadorCarpetas        carpeta[]      @relation(name: "CreadorCarpeta")
+  CreadorArchivos        archivo[]      @relation(name: "CreadorArchivo")
+
+  creadorDeComunas   comuna[]    @relation(name: "CreadorComuna")
+  creadorDeCircuitos circuito[]  @relation(name: "CreadorCircuito")
+  creadorDeConsejos  consejo[]   @relation(name: "CreadorConsejo")
+  beneficios         beneficio[] @relation(name: "CreadorBeneficio")
+  familiares         familiar[]  @relation(name: "CreadorFamiliar")
+  voceros            vocero[]    @relation(name: "CreadorVocero") // El usuario solo crea voceros, no los "posee"
+  novedades          novedad[]   @relation(name: "CreadorNovedad")
 
   MiembrosPaises pais[] @relation(name: "MiembrosPaises")
   CreadorPaises  pais[] @relation(name: "CreadorPaises")
@@ -206,6 +210,7 @@ model institucion {
   municipios    municipio      @relation(fields: [id_municipio], references: [id])
   parroquias    parroquia      @relation(fields: [id_parroquia], references: [id])
   departamentos departamento[]
+  estante       estante[]
   formaciones   formacion[]    @relation(name: "FormacionInstitucion")
   novedad       novedad[]
 }
@@ -229,6 +234,78 @@ model departamento {
   novedades               novedad[] // Novedades creadas por este departamento (si aplica)
   notificacionesEnviadas  notificacion[]        @relation("Emisor")
   notificacionesRecibidas notificacion[]        @relation("Receptor")
+  estantes                estante[]
+  carpetas                carpeta[]
+  archivos                archivo[]
+}
+
+model estante {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  descripcion     String?  @default("sin descripcion")
+  alias           String
+  codigo          String   @unique
+  borrado         Boolean  @default(false)
+  id_usuario      Int
+  id_institucion  Int
+  id_departamento Int
+  updatedAt       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  // Relaciones
+  creador       usuario      @relation(name: "CreadorEstante", fields: [id_usuario], references: [id])
+  institucion   institucion  @relation(fields: [id_institucion], references: [id])
+  departamentos departamento @relation(fields: [id_departamento], references: [id])
+  carpetas      carpeta[]
+  archivos      archivo[]
+}
+
+model carpeta {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  descripcion     String?  @default("sin descripcion")
+  alias           String
+  codigo          String   @unique
+  borrado         Boolean  @default(false)
+  id_usuario      Int
+  id_departamento Int
+  id_estante      Int
+  updatedAt       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  // Relaciones
+  creador       usuario      @relation(name: "CreadorCarpeta", fields: [id_usuario], references: [id])
+  departamentos departamento @relation(fields: [id_departamento], references: [id])
+  estantes      estante      @relation(fields: [id_estante], references: [id])
+  archivos      archivo[]
+}
+
+model archivo {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  nombre_original String
+  nombre_sistema  String   @unique
+  descripcion     String
+  codigo          String
+  alias           String
+  extension       String
+  tipo            String
+  size            Int
+  path            String
+  estado          Boolean
+  borrado         Boolean
+  id_usuario      Int // Clave foránea hacia usuario
+  id_departamento Int // Clave foránea hacia departamento
+  id_estante      Int // Clave foránea hacia estante
+  id_carpeta      Int // Clave foránea hacia carpeta
+  updatedAt       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  // Relaciones
+  creador      usuario      @relation(name: "CreadorArchivo", fields: [id_usuario], references: [id])
+  departamento departamento @relation(fields: [id_departamento], references: [id])
+  estante      estante      @relation(fields: [id_estante], references: [id])
+  carpeta      carpeta      @relation(fields: [id_carpeta], references: [id])
 }
 
 model cargo {
@@ -377,9 +454,9 @@ model beneficio {
 }
 
 model familiar {
-  id         Int      @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   parentesco String // ejemplo: madre, padre, hijo, etc.
-  borrado    Boolean  @default(false)
+  borrado    Boolean @default(false)
   id_vocero  Int
   id_usuario Int
 
