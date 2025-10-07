@@ -5,6 +5,7 @@ export default function Button({
   disabled,
   onClick,
   nombre,
+  title,
 }) {
   return (
     <button
@@ -12,6 +13,7 @@ export default function Button({
       disabled={disabled}
       onClick={onClick}
       className={className}
+      title={title}
     >
       {children}
       {nombre}

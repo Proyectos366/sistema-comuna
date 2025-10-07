@@ -3,6 +3,9 @@ import { formatearCedula } from "@/utils/formatearCedula";
 import ListaDetallesVocero from "../../../Listados/ListaDetalleVocero";
 import SwitchToggle from "@/components/SwitchToggle";
 import Button from "@/components/padres/Button";
+import Div from "@/components/padres/Div";
+import Span from "@/components/padres/Span";
+import Image from "next/image";
 
 export default function ListadoUsuarios({
   usuario,
@@ -14,15 +17,13 @@ export default function ListadoUsuarios({
   setIdDepartamento,
   setIdUsuario,
   setIdRol,
-  setEstado,
-  setValidado,
   setNombreRol,
   setOpcion,
   cambiarUsuarioAcceso,
   eliminarRestaurarUsuario,
 }) {
   return (
-    <div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
+    <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <ListaDetallesVocero
         indice={1}
         nombre={"Cédula"}
@@ -35,17 +36,17 @@ export default function ListadoUsuarios({
         valor={usuario.correo}
       />
 
-      <div className="flex items-center justify-between">
+      <Div className="flex items-center justify-between">
         <ListaDetallesVocero
           indice={1}
           nombre={"Departamento"}
           valor={departamentoActual?.nombre}
         />
 
-        <div className="flex items-center justify-between">
+        <Div className="flex items-center justify-between">
           {departamentoActual?.nombre ? (
             <>
-              <button
+              <Button
                 title="Cambiar departamento"
                 onClick={() => {
                   abrirModal();
@@ -58,14 +59,19 @@ export default function ListadoUsuarios({
                 }}
                 className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
               >
-                <span className="hidden sm:block">Cambiar</span>
-                <div className="sm:hidden w-6 h-6 flex items-center justify-center">
-                  <img className="w-6 h-5" src="/img/editar.png" alt="" />
-                </div>
-              </button>
+                <Span className="hidden sm:block">Cambiar</Span>
+                <Div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                  <Image
+                    width={24}
+                    height={20}
+                    src="/img/editar.png"
+                    alt="Imagen del boton editar"
+                  />
+                </Div>
+              </Button>
             </>
           ) : (
-            <button
+            <Button
               title="Asignar departamento"
               onClick={() => {
                 abrirModal();
@@ -78,16 +84,21 @@ export default function ListadoUsuarios({
               }}
               className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#2FA807] text-white shadow-md hover:scale-105 transition cursor-pointer"
             >
-              <span className="hidden sm:block">Asignar</span>
-              <div className="sm:hidden w-6 h-6 flex items-center justify-center">
-                <img className="w-6 h-5" src="/img/editar.png" alt="" />
-              </div>
-            </button>
+              <Span className="hidden sm:block">Asignar</Span>
+              <Div className="sm:hidden w-6 h-6 flex items-center justify-center">
+                <Image
+                  width={24}
+                  height={20}
+                  src="/img/editar.png"
+                  alt="Imagen del boton editar"
+                />
+              </Div>
+            </Button>
           )}
-        </div>
-      </div>
+        </Div>
+      </Div>
 
-      <div className="flex items-center justify-between">
+      <Div className="flex items-center justify-between">
         <ListaDetallesVocero
           indice={1}
           nombre={"Rol"}
@@ -102,7 +113,7 @@ export default function ListadoUsuarios({
           }
         />
 
-        <button
+        <Button
           title="Cambiar rol"
           onClick={() => {
             abrirModal();
@@ -115,14 +126,19 @@ export default function ListadoUsuarios({
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158] text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
-          <span className="hidden sm:block">Cambiar</span>
-          <div className="sm:hidden w-6 h-6 flex items-center justify-center">
-            <img className="w-6 h-5" src="/img/editar.png" alt="" />
-          </div>
-        </button>
-      </div>
+          <Span className="hidden sm:block">Cambiar</Span>
+          <Div className="sm:hidden w-6 h-6 flex items-center justify-center">
+            <Image
+              width={24}
+              height={20}
+              src="/img/editar.png"
+              alt="Imagen del boton editar"
+            />
+          </Div>
+        </Button>
+      </Div>
 
-      <div className="flex items-center justify-between">
+      <Div className="flex items-center justify-between">
         <ListaDetallesVocero
           indice={4}
           nombre={"Estado"}
@@ -135,9 +151,9 @@ export default function ListadoUsuarios({
             eliminarRestaurarUsuario(usuario.borrado, usuario.id);
           }}
         />
-      </div>
+      </Div>
 
-      <div className="flex items-center justify-between">
+      <Div className="flex items-center justify-between">
         <ListaDetallesVocero
           indice={5}
           nombre={"Autorizado"}
@@ -150,13 +166,13 @@ export default function ListadoUsuarios({
             cambiarUsuarioAcceso(usuario.validado, usuario.id);
           }}
         />
-      </div>
+      </Div>
 
       <ListaDetallesVocero
         indice={1}
         nombre={"Creado"}
         valor={formatearFecha(usuario.createdAt)}
       />
-    </div>
+    </Div>
   );
 }

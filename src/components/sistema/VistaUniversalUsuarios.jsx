@@ -23,7 +23,7 @@ import EstadosForm from "../opciones/EstadoForm";
 import MunicipiosForm from "../opciones/MunicipioForm";
 import InstitucionesForm from "../opciones/InstitucionesForm";
 import NovedadesForm from "../opciones/NovedadesForm";
-import UsuariosView from "../dashboard/usuarios/Usuarios";
+import UsuariosView from "../dashboard/usuarios/UsuariosView";
 
 export default function VistaUniversalUsuarios({ children }) {
   const {

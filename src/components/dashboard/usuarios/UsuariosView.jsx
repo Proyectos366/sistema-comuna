@@ -4,25 +4,22 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Modal from "@/components/Modal";
 import ModalDatos from "@/components/ModalDatos";
-import DivUnoDentroSectionRegistroMostrar from "@/components/DivUnoDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "@/components/MostrarMsjEnModal";
 import BotonesModal from "@/components/BotonesModal";
 import ModalDatosContenedor from "@/components/ModalDatosContenedor";
 import SelectOpcion from "@/components/SelectOpcion";
-import Input from "@/components/inputs/Input";
-import OrdenarListaUsuarios from "@/components/listados/OrdenarListaUsuarios";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
-import DivTresDentroSectionRegistroMostrar from "@/components/DivTresDentroSectionRegistroMostrar";
 import ListadoUsuarios from "@/components/dashboard/usuarios/components/ListadoUsuarios";
 import { BounceLoader } from "react-spinners";
 import SectionMain from "@/components/SectionMain";
 import SectionPrimary from "@/components/SectionPrimary";
 import Div from "@/components/padres/Div";
-import Span from "@/components/padres/Span";
 import SectionTertiary from "@/components/SectionTertiary";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import ButtonToggleDetallesUsuario from "./components/ButtonToggleDetallesUsuario";
+import LeyendaUsuarios from "@/components/dashboard/usuarios/components/LeyendaUsuarios";
+import BuscarOrdenar from "@/components/dashboard/usuarios/components/BuscarOrdenar";
 
 export default function UsuariosView({
   mostrar,
@@ -692,54 +689,21 @@ export default function UsuariosView({
 
       <SectionMain>
         <SectionPrimary nombre={"Representación usuarios"}>
-          <Div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
-            <Div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              {[
-                { color: "#082158", label: "Administradores" },
-                { color: "#2FA807", label: "Directores" },
-                { color: "#A62A69", label: "Obreros" },
-                { color: "#E61C45", label: "Inhabilitados" },
-              ].map((item, index) => (
-                <Div
-                  key={item.label}
-                  className="flex flex-col items-center gap-2 fade-in-up"
-                  style={{
-                    animationDelay: `${index * 0.3}s`,
-                  }}
-                >
-                  <Div
-                    className="w-5 h-5 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  ></Div>
-                  <Span className="font-medium">{item.label}</Span>
-                </Div>
-              ))}
-            </Div>
-          </Div>
+          <LeyendaUsuarios />
         </SectionPrimary>
 
         <SectionTertiary nombre={"Gestión usuarios"} funcion={nuevoUsuario}>
-          <Div className="flex flex-col sm:flex-row gap-4 bg-[#eef1f5] rounded-md shadow-lg">
-            <Input
-              type="text"
-              placeholder="🔍 Buscar..."
-              value={searchTerm}
-              className={`bg-white ps-4 placeholder:px-5`}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setFirst(0);
-              }}
-            />
+          <BuscarOrdenar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            setFirst={setFirst}
+            ordenCampo={ordenCampo}
+            setOrdenCampo={setOrdenCampo}
+            ordenAscendente={ordenAscendente}
+            setOrdenAscendente={setOrdenAscendente}
+          />
 
-            <OrdenarListaUsuarios
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              setOrdenAscendente={setOrdenAscendente}
-              ordenAscendente={ordenAscendente}
-            />
-          </Div>
-
-          <Div>
+          <Div className={`flex flex-col gap-2`}>
             {todosUsuarios?.length === 0 ? (
               <Div className="flex items-center gap-4">
                 <BounceLoader color="#082158" size={50} /> Cargando usuarios...
@@ -788,8 +752,6 @@ export default function UsuariosView({
                           setIdDepartamento={setIdDepartamento}
                           setIdUsuario={setIdUsuario}
                           setIdRol={setIdRol}
-                          setEstado={setEstado}
-                          setValidado={setValidado}
                           setNombreRol={setNombreRol}
                           cambiarUsuarioAcceso={cambiarUsuarioAcceso}
                           eliminarRestaurarUsuario={eliminarRestaurarUsuario}

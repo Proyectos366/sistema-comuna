@@ -55,8 +55,6 @@ export async function GET(request) {
       },
     });
 
-    console.log(todosUsuarios);
-
     // 4. Verifica si se obtuvieron resultados válidos
     if (!todosUsuarios) {
       return generarRespuesta("error", "Error, no hay usuarios", {}, 404);
