@@ -6,14 +6,17 @@ import axios from "axios";
 import Titulos from "../Titulos";
 import ToggleMenuLateral from "./ToggleMenuLateral";
 import EnlacesBarraLateral from "./EnlacesBarraLateral";
+import { useSelector, useDispatch } from "react-redux";
+import { cerrarSesion } from "@/store/features/auth/thunks/cerrarSesion";
 
 export default function HeaderUsuarios({
   abrirDashboar,
   abrirPanel,
-  usuarioActivo,
   cambiarRuta,
   vista,
 }) {
+  const { usuarioActivo } = useSelector((state) => state.auth);
+
   const router = useRouter();
   const [menuOpcionesUsuario, setMenuOpcionesUsuario] = useState(false); // Estado para la modal
   const refMenuPerfil = useRef(null);
@@ -35,17 +38,28 @@ export default function HeaderUsuarios({
     };
   }, []);
 
-  const cerrarSesion = async () => {
-    try {
-      const response = await axios.get(`/api/login`);
+  const dispatch = useDispatch();
 
-      if (response?.data?.status === "ok") {
-        router.push("/", { shallow: true });
-      }
+  const handleCerrarSesion = async () => {
+    try {
+      await dispatch(cerrarSesion()).unwrap();
+      router.push("/", { shallow: true });
     } catch (error) {
-      console.error("Error, no se pudo cerrar sesión:", error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
+
+  // const cerrarSesion = async () => {
+  //   try {
+  //     const response = await axios.get(`/api/login`);
+
+  //     if (response?.data?.status === "ok") {
+  //       router.push("/", { shallow: true });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error, no se pudo cerrar sesión:", error);
+  //   }
+  // };
 
   return (
     <section className="bg-white rounded-md p-2 flex justify-between items-center mt-2">
@@ -119,7 +133,7 @@ export default function HeaderUsuarios({
                 <li
                   className="px-4 py-2 text-center hover:bg-[#E61C45] hover:text-white hover:rounded-md hover:font-semibold cursor-pointer text-red-500"
                   onClick={() => {
-                    cerrarSesion();
+                    handleCerrarSesion();
                     setMenuOpcionesUsuario(false);
                   }}
                 >

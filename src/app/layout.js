@@ -7,6 +7,7 @@ import "./globals.css"; // 1. Importa los estilos globales personalizados
 import "primereact/resources/themes/saga-blue/theme.css"; // 2. Tema visual de PrimeReact
 import "primereact/resources/primereact.min.css"; // 3. Estilos base de PrimeReact
 import "primeicons/primeicons.css"; // 4. Iconos utilizados por PrimeReact
+import ReduxProvider from "@/store/provider";
 
 // 5. Proveedor de configuración para componentes PrimeReact
 import { PrimeReactProvider } from "primereact/api";
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="color-fondo">
-        <PrimeReactProvider>{children}</PrimeReactProvider>
+        <ReduxProvider>
+          <PrimeReactProvider>{children}</PrimeReactProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

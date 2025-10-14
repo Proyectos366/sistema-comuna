@@ -37,12 +37,12 @@ export async function GET(request) {
         id_usuario: 0,
         descripcion: "Token invalido para consultar usuario activo",
         datosAntes: null,
-        datosDespues: descifrarToken,
+        datosDespues: validaciones,
       });
 
       return generarRespuesta(
-        descifrarToken.status,
-        descifrarToken.message,
+        validaciones.status,
+        validaciones.message,
         {},
         400
       );

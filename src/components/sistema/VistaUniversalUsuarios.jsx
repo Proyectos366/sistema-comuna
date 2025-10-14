@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/app/context/AuthContext";
+import { useSelector } from "react-redux";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
@@ -25,10 +26,8 @@ import InstitucionesForm from "../opciones/InstitucionesForm";
 import NovedadesForm from "../opciones/NovedadesForm";
 import UsuariosView from "../dashboard/usuarios/UsuariosView";
 
-export default function VistaUniversalUsuarios({ children }) {
+export default function VistaUniversalUsuarios() {
   const {
-    usuarioActivo,
-    departamento,
     screenSize,
     mostrarModal,
     abrirModal,
@@ -40,11 +39,10 @@ export default function VistaUniversalUsuarios({ children }) {
     ejecutarAccionesConRetraso,
   } = useUser();
 
-  const [vista, setVista] = useState("");
-  const [cargandoVista, setCargandoVista] = useState(false);
-  const [abrirPanel, setAbrirPanel] = useState(true);
+  const { usuarioActivo, departamento } = useSelector((state) => state.auth);
 
-  const [vistaCargando, setVistaCargando] = useState("");
+  const [vista, setVista] = useState("");
+  const [abrirPanel, setAbrirPanel] = useState(true);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -183,16 +181,12 @@ export default function VistaUniversalUsuarios({ children }) {
       return;
     }
 
-    setCargandoVista(true);
-    setVistaCargando(nuevaVista);
-
     // **Primero cambiar la URL**
     router.push(`${baseRuta}/${subRuta || "inicio"}`, { shallow: true });
 
     // **Luego actualizar la vista después de que la URL cambie**
     setTimeout(() => {
       setVista(nuevaVista);
-      setCargandoVista(false);
     }, 3000);
   };
 
@@ -206,19 +200,11 @@ export default function VistaUniversalUsuarios({ children }) {
             abrirPanel ? "" : "container mx-auto px-2"
           }`}
         >
-          <div
-            className={`fixed inset-y-0 left-0 transform ${
-              abrirPanel ? "translate-x-0" : "-translate-x-full"
-            } transition-transform duration-500 ease-in-out w-56 z-30`}
-          >
-            <MenuLateralUsuario
-              vista={vista}
-              cambiarRuta={cambiarRuta}
-              abrirPanel={abrirPanel}
-              id_rol={usuarioActivo.id_rol}
-              nombreDepartamento={departamento?.nombre}
-            />
-          </div>
+          <MenuLateralUsuario
+            vista={vista}
+            cambiarRuta={cambiarRuta}
+            abrirPanel={abrirPanel}
+          />
 
           <div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 ${
@@ -229,275 +215,251 @@ export default function VistaUniversalUsuarios({ children }) {
               <HeaderUsuarios
                 abrirDashboar={abrirDashboar}
                 abrirPanel={abrirPanel}
-                usuarioActivo={usuarioActivo}
                 vista={vista}
                 cambiarRuta={cambiarRuta}
               />
             </header>
 
             <main className="bg-[#faf5f8] rounded-md">
-              {cargandoVista ? (
-                <p className="text-center text-gray-600 text-xl">
-                  Cargando vista {vistaCargando}...
-                </p>
-              ) : (
-                <>
-                  {vista === "usuarios" && (
-                    <UsuariosView
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "usuarios" && (
+                <UsuariosView
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "paises" && (
-                    <PaisesForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "paises" && (
+                <PaisesForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "estados" && (
-                    <EstadosForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "estados" && (
+                <EstadosForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "municipios" && (
-                    <MunicipiosForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "municipios" && (
+                <MunicipiosForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "parroquias" && (
-                    <ParroquiasForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "parroquias" && (
+                <ParroquiasForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "instituciones" && (
-                    <InstitucionesForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "instituciones" && (
+                <InstitucionesForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "departamentos" && (
-                    <DepartamentosForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "departamentos" && (
+                <DepartamentosForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "cargos" && (
-                    <CargosForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "cargos" && (
+                <CargosForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "formaciones" && (
-                    <FormacionesForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "formaciones" && (
+                <FormacionesForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "participantes" && (
-                    <ParticipantesForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "participantes" && (
+                <ParticipantesForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "comunas" && (
-                    <ComunasForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "comunas" && (
+                <ComunasForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "circuitos-comunales" && (
-                    <CircuitoForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "circuitos-comunales" && (
+                <CircuitoForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "consejos-comunales" && (
-                    <ConsejoForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "consejos-comunales" && (
+                <ConsejoForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "voceros" && (
-                    <VoceroForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "voceros" && (
+                <VoceroForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {/* {vista === "oac" &&
-                    (departamento?.nombre === "oac" ||
-                      usuarioActivo?.id_rol === 1) && (
-                      <OacDepartamento
-                        mostrar={mostrarModal}
-                        abrirModal={abrirModal}
-                        cerrarModal={cerrarModal}
-                        mensaje={mensaje}
-                        mostrarMensaje={mostrarMensaje}
-                        abrirMensaje={abrirMensaje}
-                        limpiarCampos={limpiarCampos}
-                        ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                        usuarioActivo={usuarioActivo}
-                      />
-                    )} */}
+              {vista === "perfil" && (
+                <MostrarPerfilUsuario
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "perfil" && (
-                    <MostrarPerfilUsuario
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
+              {vista === "cambiar-clave" && (
+                <MostrarCambiarClaveUsuario
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
+              )}
 
-                  {vista === "cambiar-clave" && (
-                    <MostrarCambiarClaveUsuario
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
-
-                  {vista === "novedades" && (
-                    <NovedadesForm
-                      mostrar={mostrarModal}
-                      abrirModal={abrirModal}
-                      cerrarModal={cerrarModal}
-                      mensaje={mensaje}
-                      mostrarMensaje={mostrarMensaje}
-                      abrirMensaje={abrirMensaje}
-                      limpiarCampos={limpiarCampos}
-                      ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                      usuarioActivo={usuarioActivo}
-                    />
-                  )}
-                </>
+              {vista === "novedades" && (
+                <NovedadesForm
+                  mostrar={mostrarModal}
+                  abrirModal={abrirModal}
+                  cerrarModal={cerrarModal}
+                  mensaje={mensaje}
+                  mostrarMensaje={mostrarMensaje}
+                  abrirMensaje={abrirMensaje}
+                  limpiarCampos={limpiarCampos}
+                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
+                  usuarioActivo={usuarioActivo}
+                />
               )}
             </main>
+
             <Footer />
           </div>
         </div>

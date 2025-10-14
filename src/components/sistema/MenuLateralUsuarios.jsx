@@ -1,14 +1,15 @@
 import EnlacesBarraLateral from "./EnlacesBarraLateral";
+import { useSelector } from "react-redux";
 
-export default function MenuLateralUsuario({
-  abrirPanel,
-  cambiarRuta,
-  vista,
-  id_rol,
-  nombreDepartamento,
-}) {
+export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
+  const { usuarioActivo, departamento } = useSelector((state) => state.auth);
+
   return (
-    <>
+    <div
+      className={`fixed inset-y-0 left-0 transform ${
+        abrirPanel ? "translate-x-0" : "-translate-x-full"
+      } transition-transform duration-500 ease-in-out w-56 z-30`}
+    >
       <section
         className={`w-56 h-full py-2 px-4 fixed inset-y-0 left-0 transform ${
           abrirPanel
@@ -33,17 +34,17 @@ export default function MenuLateralUsuario({
 
             <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[390px] no-scrollbar">
               <EnlacesBarraLateral
-                id_rol={id_rol}
+                id_rol={usuarioActivo.id_rol}
                 cambiarRuta={cambiarRuta}
                 vista={vista}
                 vistaActual={"inicio"}
                 nombre={"Inicio"}
               />
 
-              {id_rol === 1 && (
+              {usuarioActivo.id_rol === 1 && (
                 <>
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"usuarios"}
@@ -51,7 +52,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"paises"}
@@ -59,7 +60,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"estados"}
@@ -67,7 +68,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"municipios"}
@@ -75,7 +76,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"parroquias"}
@@ -83,7 +84,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"instituciones"}
@@ -91,7 +92,7 @@ export default function MenuLateralUsuario({
                   />
 
                   {/* <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"oac"}
@@ -99,7 +100,7 @@ export default function MenuLateralUsuario({
                   /> */}
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"departamentos"}
@@ -107,7 +108,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"cargos"}
@@ -115,7 +116,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"formaciones"}
@@ -123,7 +124,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"participantes"}
@@ -131,28 +132,28 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"comunas"}
                     nombre={"Comunas"}
                   />
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
                     nombre={"Circuitos comunales"}
                   />
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"consejos-comunales"}
                     nombre={"Consejos comunales"}
                   />
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"voceros"}
@@ -161,10 +162,10 @@ export default function MenuLateralUsuario({
                 </>
               )}
 
-              {id_rol === 2 && (
+              {usuarioActivo.id_rol === 2 && (
                 <>
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"usuarios"}
@@ -172,7 +173,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"departamentos"}
@@ -180,7 +181,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"formaciones"}
@@ -188,7 +189,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"participantes"}
@@ -196,7 +197,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"comunas"}
@@ -204,7 +205,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"circuitos-comunales"}
@@ -212,7 +213,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"consejos-comunales"}
@@ -220,7 +221,7 @@ export default function MenuLateralUsuario({
                   />
 
                   <EnlacesBarraLateral
-                    id_rol={id_rol}
+                    id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
                     vista={vista}
                     vistaActual={"voceros"}
@@ -229,12 +230,12 @@ export default function MenuLateralUsuario({
                 </>
               )}
 
-              {id_rol === 3 && (
+              {usuarioActivo.id_rol === 3 && (
                 <>
-                  {nombreDepartamento === "oac" && (
+                  {departamento.nombre === "oac" && (
                     <>
                       {/* <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"oac"}
@@ -242,7 +243,7 @@ export default function MenuLateralUsuario({
                       /> */}
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"formaciones"}
@@ -250,7 +251,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"participantes"}
@@ -258,7 +259,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"comunas"}
@@ -266,7 +267,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"consejos-comunales"}
@@ -274,7 +275,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"voceros"}
@@ -285,12 +286,12 @@ export default function MenuLateralUsuario({
                 </>
               )}
 
-              {id_rol === 4 && (
+              {usuarioActivo.id_rol === 4 && (
                 <>
-                  {nombreDepartamento === "oac" && (
+                  {departamento.nombre === "oac" && (
                     <>
                       {/* <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"oac"}
@@ -298,7 +299,7 @@ export default function MenuLateralUsuario({
                       /> */}
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"participantes"}
@@ -306,7 +307,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"comunas"}
@@ -314,7 +315,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"consejos-comunales"}
@@ -322,7 +323,7 @@ export default function MenuLateralUsuario({
                       />
 
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"voceros"}
@@ -331,10 +332,10 @@ export default function MenuLateralUsuario({
                     </>
                   )}
 
-                  {nombreDepartamento === "administracion y presupuesto" && (
+                  {departamento.nombre === "administracion y presupuesto" && (
                     <>
                       <EnlacesBarraLateral
-                        id_rol={id_rol}
+                        id_rol={usuarioActivo.id_rol}
                         cambiarRuta={cambiarRuta}
                         vista={vista}
                         vistaActual={"administracion"}
@@ -346,7 +347,7 @@ export default function MenuLateralUsuario({
               )}
 
               <EnlacesBarraLateral
-                id_rol={id_rol}
+                id_rol={usuarioActivo.id_rol}
                 cambiarRuta={cambiarRuta}
                 vista={vista}
                 vistaActual={"novedades"}
@@ -363,6 +364,6 @@ export default function MenuLateralUsuario({
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

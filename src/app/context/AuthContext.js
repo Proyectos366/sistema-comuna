@@ -27,12 +27,10 @@ const UserContext = createContext();
 */
 export const UserProvider = ({ children }) => {
   // 2. Estados globales del contexto
-  const [usuarioActivo, setUsuarioActivo] = useState("");
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 }); // Tamaño de pantalla
   const [mostrarModal, setMostrarModal] = useState(false); // Estado para el modal
   const [mensaje, setMensaje] = useState(""); // Texto del mensaje o respuesta a mostrar
   const [mostrarMensaje, setMostrarMensaje] = useState(false); // Visibilidad del mensaje
-  const [departamento, setDepartamento] = useState(""); // Departamento del usuario
 
   const router = useRouter();
 
@@ -40,32 +38,32 @@ export const UserProvider = ({ children }) => {
    Consulta el usuario activo desde la API. Si la respuesta es válida, actualiza el estado. Si hay
    error 400, redirige al inicio. @async @function consultarUserActivo
   */
-  const consultarUserActivo = useCallback(async () => {
-    try {
-      // 3. Realiza la consulta al endpoint de usuario activo
-      const response = await axios.get(`/api/usuarios/usuario-activo`);
+  // const consultarUserActivo = useCallback(async () => {
+  //   try {
+  //     // 3. Realiza la consulta al endpoint de usuario activo
+  //     const response = await axios.get(`/api/usuarios/usuario-activo`);
 
-      // 4. Si la respuesta es válida, actualiza los estados
-      if (response?.data?.status === "ok") {
-        setUsuarioActivo(response.data.usuarioActivo);
-        setDepartamento(response.data.departamento);
-      }
-    } catch (error) {
-      // 5. Manejo de errores y redirección si es necesario
-      console.error("Error, al mostrar usuario activo: " + error);
+  //     // 4. Si la respuesta es válida, actualiza los estados
+  //     if (response?.data?.status === "ok") {
+  //       setUsuarioActivo(response.data.usuarioActivo);
+  //       setDepartamento(response.data.departamento);
+  //     }
+  //   } catch (error) {
+  //     // 5. Manejo de errores y redirección si es necesario
+  //     console.error("Error, al mostrar usuario activo: " + error);
 
-      if (error?.response?.status === 400) {
-        router.push("/", { shallow: true });
-      }
-    }
-  }, [router]);
+  //     if (error?.response?.status === 400) {
+  //       router.push("/", { shallow: true });
+  //     }
+  //   }
+  // }, [router]);
 
-  // 6. Ejecuta la consulta del usuario activo al montar el componente
-  useEffect(() => {
-    if (!usuarioActivo) {
-      consultarUserActivo();
-    }
-  }, [usuarioActivo, consultarUserActivo]);
+  // // 6. Ejecuta la consulta del usuario activo al montar el componente
+  // useEffect(() => {
+  //   if (!usuarioActivo) {
+  //     consultarUserActivo();
+  //   }
+  // }, [usuarioActivo, consultarUserActivo]);
 
   // 7. Actualiza el tamaño de pantalla al montar y en cada cambio de tamaño
   useEffect(() => {
@@ -145,8 +143,6 @@ export const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        usuarioActivo,
-        departamento,
         screenSize,
         mostrarModal,
         abrirModal,

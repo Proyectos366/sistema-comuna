@@ -11,6 +11,7 @@
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
     "@prisma/client": "^6.5.0",
+    "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
@@ -20,6 +21,7 @@
     "primereact": "^10.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
     "react-spinners": "^0.17.0",
     "react-switch": "^7.1.0",
     "react-toastify": "^11.0.5"

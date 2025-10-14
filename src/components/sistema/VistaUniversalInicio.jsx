@@ -8,11 +8,10 @@ import Footer from "../Footer";
 import MostrarAlInicioUsuarios from "@/components/sistema/MostrarInicioUsuarios";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import { useUser } from "@/app/context/AuthContext";
+import { useSelector } from "react-redux";
 
 export default function VistaUniversalInicio() {
   const {
-    usuarioActivo,
-    departamento,
     screenSize,
     mostrarModal,
     abrirModal,
@@ -23,6 +22,9 @@ export default function VistaUniversalInicio() {
     limpiarCampos,
     ejecutarAccionesConRetraso,
   } = useUser();
+
+  const { usuarioActivo, departamento } = useSelector((state) => state.auth);
+
   const [vista, setVista] = useState("");
 
   const [abrirPanel, setAbrirPanel] = useState(true);
@@ -365,8 +367,6 @@ export default function VistaUniversalInicio() {
               vista={vista}
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
-              id_rol={usuarioActivo.id_rol}
-              nombreDepartamento={departamento?.nombre}
             />
           </div>
 
@@ -379,7 +379,6 @@ export default function VistaUniversalInicio() {
               <HeaderUsuarios
                 abrirDashboar={abrirDashboar}
                 abrirPanel={abrirPanel}
-                usuarioActivo={usuarioActivo}
                 vista={vista}
                 cambiarRuta={cambiarRuta}
               />
