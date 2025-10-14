@@ -1,11 +1,11 @@
 import { formatearFecha } from "@/utils/Fechas";
 import { formatearCedula } from "@/utils/formatearCedula";
-import ListaDetallesVocero from "../../../Listados/ListaDetalleVocero";
 import SwitchToggle from "@/components/SwitchToggle";
 import Button from "@/components/padres/Button";
 import Div from "@/components/padres/Div";
 import Span from "@/components/padres/Span";
 import Image from "next/image";
+import BloqueInfoUsuario from "./BloqueInfoUsuario";
 
 export default function ListadoUsuarios({
   usuario,
@@ -24,20 +24,16 @@ export default function ListadoUsuarios({
 }) {
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
-      <ListaDetallesVocero
+      <BloqueInfoUsuario
         indice={1}
         nombre={"Cédula"}
         valor={formatearCedula(usuario.cedula)}
       />
 
-      <ListaDetallesVocero
-        indice={1}
-        nombre={"Correo"}
-        valor={usuario.correo}
-      />
+      <BloqueInfoUsuario indice={1} nombre={"Correo"} valor={usuario.correo} />
 
       <Div className="flex items-center justify-between">
-        <ListaDetallesVocero
+        <BloqueInfoUsuario
           indice={1}
           nombre={"Departamento"}
           valor={departamentoActual?.nombre}
@@ -99,7 +95,7 @@ export default function ListadoUsuarios({
       </Div>
 
       <Div className="flex items-center justify-between">
-        <ListaDetallesVocero
+        <BloqueInfoUsuario
           indice={1}
           nombre={"Rol"}
           valor={
@@ -139,10 +135,10 @@ export default function ListadoUsuarios({
       </Div>
 
       <Div className="flex items-center justify-between">
-        <ListaDetallesVocero
-          indice={4}
+        <BloqueInfoUsuario
+          indice={!usuario.borrado ? 3 : 2}
           nombre={"Estado"}
-          valor={usuario.borrado}
+          valor={!usuario.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
@@ -154,10 +150,10 @@ export default function ListadoUsuarios({
       </Div>
 
       <Div className="flex items-center justify-between">
-        <ListaDetallesVocero
-          indice={5}
+        <BloqueInfoUsuario
+          indice={usuario.validado ? 3 : 2}
           nombre={"Autorizado"}
-          valor={usuario.validado}
+          valor={usuario.validado ? "Si" : "No"}
         />
 
         <SwitchToggle
@@ -168,7 +164,7 @@ export default function ListadoUsuarios({
         />
       </Div>
 
-      <ListaDetallesVocero
+      <BloqueInfoUsuario
         indice={1}
         nombre={"Creado"}
         valor={formatearFecha(usuario.createdAt)}
