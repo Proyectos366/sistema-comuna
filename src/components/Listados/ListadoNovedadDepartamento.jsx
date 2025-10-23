@@ -1,6 +1,6 @@
 import React from "react";
 import ListaDetallesVocero from "./ListaDetalleVocero";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import { formatearFecha } from "@/utils/Fechas";
 
 export default function ListadoNovedadDepartamento({

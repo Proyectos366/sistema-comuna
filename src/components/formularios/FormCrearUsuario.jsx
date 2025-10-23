@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Div from "@/components/padres/Div";
 import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputCedula from "@/components/inputs/InputCedula";
@@ -12,7 +12,6 @@ import SelectOpcion from "@/components/SelectOpcion";
 import InputClave from "@/components/inputs/InputClave";
 import MostrarMsj from "@/components/MostrarMensaje";
 import InputCheckBox from "@/components/inputs/InputCheckBox";
-
 
 export default function FormCrearUsuario({
   idDepartamento,

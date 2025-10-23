@@ -2,11 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import Modal from "@/components/Modal";
-import ModalDatos from "@/components/ModalDatos";
-import MostarMsjEnModal from "@/components/MostrarMsjEnModal";
-import BotonesModal from "@/components/BotonesModal";
-import ModalDatosContenedor from "@/components/ModalDatosContenedor";
 import SelectOpcion from "@/components/SelectOpcion";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
@@ -21,6 +16,16 @@ import ButtonToggleDetallesUsuario from "./components/ButtonToggleDetallesUsuari
 import LeyendaUsuarios from "@/components/dashboard/usuarios/components/LeyendaUsuarios";
 import BuscarOrdenar from "@/components/dashboard/usuarios/components/BuscarOrdenar";
 import FichaUsuario from "./components/FichaUsuario";
+import { useSelector, useDispatch } from "react-redux";
+
+import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario"; // ajusta la ruta según tu estructura
+import { nuevoUsuarioAbrirModal } from "@/components/dashboard/usuarios/funciones/nuevoUsuarioAbrirModal";
+import { obtenerTituloAccion } from "@/components/dashboard/usuarios/funciones/obtenerTituloAccion";
+import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
+
+import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
+import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
 
 export default function UsuariosView({
   mostrar,
@@ -31,8 +36,193 @@ export default function UsuariosView({
   abrirMensaje,
   limpiarCampos,
   ejecutarAccionesConRetraso,
-  usuarioActivo,
 }) {
+  const dispatch = useDispatch();
+  const { usuarioActivo } = useSelector((state) => state.auth);
+  const { roles } = useSelector((state) => state.roles);
+  const { departamentos } = useSelector((state) => state.departamentos);
+  const { instituciones } = useSelector((state) => state.instituciones);
+
+
+
+  useEffect(() => {
+    dispatch(fetchDepartamentos());
+    dispatch(fetchRoles());
+    if (usuarioActivo.id_rol === 1) {
+      dispatch(fetchInstituciones());
+    }
+  }, [dispatch]);
+
+  const [cedulaUsuario, setCedulaUsuario] = useState("");
+  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [apellidoUsuario, setApellidoUsuario] = useState("");
+  const [correoUsuario, setCorreoUsuario] = useState("");
+  const [claveUnoUsuario, setClaveUnoUsuario] = useState("");
+  const [claveDosUsuario, setClaveDosUsuario] = useState("");
+  const [mensajeValidar, setMensajeValidar] = useState("");
+
+  const [todosUsuarios, setTodosUsuarios] = useState([]);
+  const [todosRoles, setTodosRoles] = useState([]);
+  //const [todosDepartamentos, setTodosDepartamentos] = useState([]);
+  const [institucionMiembro, setInstitucionMiembro] = useState([]);
+  const [todasInstituciones, setTodasInstituciones] = useState([]);
+
+  const [nombreInstitucion, setNombreInstitucion] = useState("");
+  const [nombreDepartamento, setNombreDepartamento] = useState("");
+
+  const [idDepartamento, setIdDepartamento] = useState("");
+  const [idRol, setIdRol] = useState("");
+  const [nombreRol, setNombreRol] = useState("");
+  const [idUsuario, setIdUsuario] = useState("");
+  const [idInstitucion, setIdInstitucion] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [expanded, setExpanded] = useState("");
+  const [accion, setAccion] = useState("");
+
+  const [estado, setEstado] = useState("");
+  const [validado, setValidado] = useState(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+
+  const [open, setOpen] = useState(false);
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenAscendente, setOrdenAscendente] = useState(true);
+
+  const [opcion, setOpcion] = useState("");
+
+  const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
+  const [validarCorreoUsuario, setValidarCorreoUsuario] = useState(false);
+  const [validarNombreUsuario, setValidarNombreUsuario] = useState(false);
+  const [validarApellidoUsuario, setValidarApellidoUsuario] = useState(false);
+  const [validarClaveUsuario, setValidarClaveUsuario] = useState(false);
+
+  const [seleccionarDepartamentos, setSeleccionarDepartamentos] = useState([]);
+  const [seleccionarInstitucion, setSeleccionarInstitucion] = useState([]);
+
+  const [autorizar, setAutorizar] = useState("");
+  const [crearMostrar, setCrearMostrar] = useState(false);
+
+  const handleCrearUsuario = async () => {
+    try {
+      const nuevoUsuario = {
+        cedula: cedulaUsuario,
+        nombre: nombreUsuario,
+        apellido: apellidoUsuario,
+        correo: correoUsuario,
+      };
+      await dispatch(crearUsuario(nuevoUsuario)).unwrap();
+      // El nuevo usuario ya se muestra, y la lista se actualizará en segundo plano
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const acciones = {
+    opcion,
+    accion,
+    mostrar,
+    cerrarModal,
+    limpiarCampos,
+    mostrarModal: abrirModal,
+    mostrarMensaje,
+    crear: handleCrearUsuario,
+    cancelar: cerrarModal,
+    setNombreRol,
+    setNombreDepartamento,
+    setIdInstitucion,
+    setIdDepartamento,
+    setIdRol,
+    setNombreInstitucion,
+    setCedula: setCedulaUsuario,
+    setNombre: setNombreUsuario,
+    setApellido: setApellidoUsuario,
+    setCorreo: setCorreoUsuario,
+    setClaveUno: setClaveUnoUsuario,
+    setClaveDos: setClaveDosUsuario,
+    setMensaje: setMensajeValidar,
+    setAutorizar,
+  };
+
+  const datosUsuario = {
+    cedula: cedulaUsuario,
+    nombre: nombreUsuario,
+    apellido: apellidoUsuario,
+    correo: correoUsuario,
+    nombreInstitucion: nombreInstitucion,
+    nombreDepartamento: nombreDepartamento,
+    claveUno: claveUnoUsuario,
+    claveDos: claveDosUsuario,
+    mensaje: mensaje,
+    nombreRol: nombreRol,
+    idRol: idRol,
+    roles: roles,
+    idDepartamento: idDepartamento,
+    idInstitucion: idInstitucion,
+    departamentos: departamentos,
+    instituciones: instituciones,
+    institucionMiembro: institucionMiembro,
+    autorizar: autorizar,
+    estado,
+    validado,
+  };
+
+  const validaciones = {
+    validarCedula: validarCedulaUsuario,
+    setValidarCedula: setValidarCedulaUsuario,
+    validarNombre: validarNombreUsuario,
+    setValidarNombre: setValidarNombreUsuario,
+    validarApellido: validarApellidoUsuario,
+    setValidarApellido: setValidarApellidoUsuario,
+    validarCorreo: validarCorreoUsuario,
+    setValidarCorreo: setValidarCorreoUsuario,
+    validarClave: validarClaveUsuario,
+    setValidarClave: setValidarClaveUsuario,
+  };
+
+  return (
+    <>
+      <ModalUsuarios
+        acciones={acciones}
+        datosUsuario={datosUsuario}
+        validaciones={validaciones}
+      />
+      <SectionMain>
+        <SectionPrimary nombre={"Representación usuarios"}>
+          <LeyendaUsuarios />
+        </SectionPrimary>
+
+        <SectionTertiary
+          nombre={"Gestión usuarios"}
+          funcion={() =>
+            nuevoUsuarioAbrirModal(setAccion, setOpcion, abrirModal)
+          }
+        ></SectionTertiary>
+      </SectionMain>
+    </>
+  );
+}
+
+/** 
+export default function UsuariosView({
+  mostrar,
+  abrirModal,
+  cerrarModal,
+  mensaje,
+  mostrarMensaje,
+  abrirMensaje,
+  limpiarCampos,
+  ejecutarAccionesConRetraso,
+}) {
+  const dispatch = useDispatch();
+  const { usuarioActivo } = useSelector((state) => state.auth);
+
+  const { setUsuarios, isCargando, error } = useSelector(
+    (state) => state.usuarios
+  );
+
   const [cedulaUsuario, setCedulaUsuario] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [apellidoUsuario, setApellidoUsuario] = useState("");
@@ -140,6 +330,10 @@ export default function UsuariosView({
 
   const usuarioPorPagina = usuariosOrdenados.slice(first, first + rows);
   const totalRecords = usuariosFiltrados.length;
+
+  useEffect(() => {
+    dispatch(fetchUsuarios());
+  }, []);
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -434,6 +628,10 @@ export default function UsuariosView({
         return () => {}; // función vacía si no hay acción
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchUsuarios());
+  }, []);
 
   const crearUsuario = async () => {
     try {
@@ -767,3 +965,4 @@ export default function UsuariosView({
     </>
   );
 }
+*/

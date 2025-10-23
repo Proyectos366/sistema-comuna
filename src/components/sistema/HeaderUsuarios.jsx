@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import Titulos from "../Titulos";
 import ToggleMenuLateral from "./ToggleMenuLateral";
 import EnlacesBarraLateral from "./EnlacesBarraLateral";

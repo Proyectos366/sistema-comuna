@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import Modal from "../Modal";
-import ModalDatos from "../ModalDatos";
+import ModalDatos from "../modales/ModalDatos";
 import SectionRegistroMostrar from "../SectionRegistroMostrar";
 import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
-import ModalDatosContenedor from "../ModalDatosContenedor";
+import ModalDatosContenedor from "../modales/ModalDatosContenedor";
 import Boton from "../Boton";
 import { calcularEdadPorFechaNacimiento, formatearFecha } from "@/utils/Fechas";
 import InputDate from "../InputDate";

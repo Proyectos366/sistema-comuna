@@ -1,4 +1,4 @@
-import MostrarMsj from "./MostrarMensaje";
+import MostrarMsj from "../MostrarMensaje";
 
 export default function MostarMsjEnModal({ mostrarMensaje, mensaje }) {
   return (

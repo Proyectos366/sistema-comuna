@@ -8,7 +8,7 @@ import Label from "@/components/Label";
 import Boton from "@/components/Boton";
 import LinkPaginas from "@/components/Link";
 import Modal from "@/components/Modal";
-import ModalDatos from "@/components/ModalDatos";
+import ModalDatos from "@/components/modales/ModalDatos";
 import MostrarMsj from "@/components/MostrarMensaje";
 import Titulos from "@/components/Titulos";
 import Formulario from "@/components/Formulario";

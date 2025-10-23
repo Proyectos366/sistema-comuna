@@ -9,20 +9,20 @@ import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
 import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
 import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
-import ParroquiasForm from "../opciones/ParroquiasForm";
-import CargosForm from "../opciones/CargosForm";
-import ComunasForm from "../opciones/ComunasForm";
-import CircuitoForm from "../opciones/CircuitosForm";
-import ConsejoForm from "../opciones/ConsejoForm";
-import VoceroForm from "../opciones/VoceroForm";
-//import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
-import FormacionesForm from "../opciones/FormacionesForm";
-import ParticipantesForm from "../opciones/ParticipantesForm";
-import DepartamentosForm from "../opciones/DepartamentosForm";
-import PaisesForm from "../opciones/PaisForm";
-import EstadosForm from "../opciones/EstadoForm";
-import MunicipiosForm from "../opciones/MunicipioForm";
-import InstitucionesForm from "../opciones/InstitucionesForm";
+// import ParroquiasForm from "../opciones/ParroquiasForm";
+// import CargosForm from "../opciones/CargosForm";
+// import ComunasForm from "../opciones/ComunasForm";
+// import CircuitoForm from "../opciones/CircuitosForm";
+// import ConsejoForm from "../opciones/ConsejoForm";
+// import VoceroForm from "../opciones/VoceroForm";
+// //import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
+// import FormacionesForm from "../opciones/FormacionesForm";
+// import ParticipantesForm from "../opciones/ParticipantesForm";
+// import DepartamentosForm from "../opciones/DepartamentosForm";
+// import PaisesForm from "../opciones/PaisForm";
+// import EstadosForm from "../opciones/EstadoForm";
+// import MunicipiosForm from "../opciones/MunicipioForm";
+// import InstitucionesForm from "../opciones/InstitucionesForm";
 import NovedadesForm from "../opciones/NovedadesForm";
 import UsuariosView from "../dashboard/usuarios/UsuariosView";
 
@@ -231,10 +231,9 @@ export default function VistaUniversalUsuarios() {
                   abrirMensaje={abrirMensaje}
                   limpiarCampos={limpiarCampos}
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
                 />
               )}
-
+{/* 
               {vista === "paises" && (
                 <PaisesForm
                   mostrar={mostrarModal}
@@ -415,7 +414,7 @@ export default function VistaUniversalUsuarios() {
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                   usuarioActivo={usuarioActivo}
                 />
-              )}
+              )} */}
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario
