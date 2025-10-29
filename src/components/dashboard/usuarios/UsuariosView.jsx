@@ -18,39 +18,20 @@ import BuscarOrdenar from "@/components/dashboard/usuarios/components/BuscarOrde
 import FichaUsuario from "./components/FichaUsuario";
 import { useSelector, useDispatch } from "react-redux";
 
-import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario"; // ajusta la ruta según tu estructura
 import { nuevoUsuarioAbrirModal } from "@/components/dashboard/usuarios/funciones/nuevoUsuarioAbrirModal";
 import { obtenerTituloAccion } from "@/components/dashboard/usuarios/funciones/obtenerTituloAccion";
 import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
+import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
 
-import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
-import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
-import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
+import { abrirModal } from "@/store/features/modal/slicesModal";
 
-export default function UsuariosView({
-  mostrar,
-  abrirModal,
-  cerrarModal,
-  mensaje,
-  mostrarMensaje,
-  abrirMensaje,
-  limpiarCampos,
-  ejecutarAccionesConRetraso,
-}) {
+export default function UsuariosView({ limpiarCampos }) {
   const dispatch = useDispatch();
-  const { usuarioActivo } = useSelector((state) => state.auth);
-  const { roles } = useSelector((state) => state.roles);
-  const { departamentos } = useSelector((state) => state.departamentos);
-  const { instituciones } = useSelector((state) => state.instituciones);
 
-
+  const { usuarios } = useSelector((state) => state.usuarios);
 
   useEffect(() => {
-    dispatch(fetchDepartamentos());
-    dispatch(fetchRoles());
-    if (usuarioActivo.id_rol === 1) {
-      dispatch(fetchInstituciones());
-    }
+    dispatch(fetchUsuarios());
   }, [dispatch]);
 
   const [cedulaUsuario, setCedulaUsuario] = useState("");
@@ -61,12 +42,6 @@ export default function UsuariosView({
   const [claveDosUsuario, setClaveDosUsuario] = useState("");
   const [mensajeValidar, setMensajeValidar] = useState("");
 
-  const [todosUsuarios, setTodosUsuarios] = useState([]);
-  const [todosRoles, setTodosRoles] = useState([]);
-  //const [todosDepartamentos, setTodosDepartamentos] = useState([]);
-  const [institucionMiembro, setInstitucionMiembro] = useState([]);
-  const [todasInstituciones, setTodasInstituciones] = useState([]);
-
   const [nombreInstitucion, setNombreInstitucion] = useState("");
   const [nombreDepartamento, setNombreDepartamento] = useState("");
 
@@ -76,12 +51,8 @@ export default function UsuariosView({
   const [idUsuario, setIdUsuario] = useState("");
   const [idInstitucion, setIdInstitucion] = useState("");
 
-  const [isLoading, setIsLoading] = useState(false);
   const [expanded, setExpanded] = useState("");
   const [accion, setAccion] = useState("");
-
-  const [estado, setEstado] = useState("");
-  const [validado, setValidado] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [first, setFirst] = useState(0);
@@ -99,37 +70,11 @@ export default function UsuariosView({
   const [validarApellidoUsuario, setValidarApellidoUsuario] = useState(false);
   const [validarClaveUsuario, setValidarClaveUsuario] = useState(false);
 
-  const [seleccionarDepartamentos, setSeleccionarDepartamentos] = useState([]);
-  const [seleccionarInstitucion, setSeleccionarInstitucion] = useState([]);
-
   const [autorizar, setAutorizar] = useState("");
-  const [crearMostrar, setCrearMostrar] = useState(false);
-
-  const handleCrearUsuario = async () => {
-    try {
-      const nuevoUsuario = {
-        cedula: cedulaUsuario,
-        nombre: nombreUsuario,
-        apellido: apellidoUsuario,
-        correo: correoUsuario,
-      };
-      await dispatch(crearUsuario(nuevoUsuario)).unwrap();
-      // El nuevo usuario ya se muestra, y la lista se actualizará en segundo plano
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const acciones = {
-    opcion,
     accion,
-    mostrar,
-    cerrarModal,
     limpiarCampos,
-    mostrarModal: abrirModal,
-    mostrarMensaje,
-    crear: handleCrearUsuario,
-    cancelar: cerrarModal,
     setNombreRol,
     setNombreDepartamento,
     setIdInstitucion,
@@ -155,18 +100,13 @@ export default function UsuariosView({
     nombreDepartamento: nombreDepartamento,
     claveUno: claveUnoUsuario,
     claveDos: claveDosUsuario,
-    mensaje: mensaje,
+    mensaje: mensajeValidar,
     nombreRol: nombreRol,
+    idUsuario: idUsuario,
     idRol: idRol,
-    roles: roles,
     idDepartamento: idDepartamento,
     idInstitucion: idInstitucion,
-    departamentos: departamentos,
-    instituciones: instituciones,
-    institucionMiembro: institucionMiembro,
     autorizar: autorizar,
-    estado,
-    validado,
   };
 
   const validaciones = {
@@ -196,10 +136,65 @@ export default function UsuariosView({
 
         <SectionTertiary
           nombre={"Gestión usuarios"}
-          funcion={() =>
-            nuevoUsuarioAbrirModal(setAccion, setOpcion, abrirModal)
-          }
-        ></SectionTertiary>
+          funcion={() => {
+            dispatch(abrirModal("crear"));
+          }}
+        >
+          {/* <BuscarOrdenar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            setFirst={setFirst}
+            ordenCampo={ordenCampo}
+            setOrdenCampo={setOrdenCampo}
+            ordenAscendente={ordenAscendente}
+            setOrdenAscendente={setOrdenAscendente}
+          /> */}
+
+          <Div className={`flex flex-col gap-2`}>
+            {usuarios?.length === 0 ? (
+              <Div className="flex items-center gap-4">
+                <BounceLoader color="#082158" size={50} /> Cargando usuarios...
+              </Div>
+            ) : (
+              <>
+                {usuarios.map((usuario, index) => {
+                  const departamentoActual =
+                    usuario?.MiembrosDepartamentos?.[0];
+
+                  return (
+                    <FichaUsuario
+                      key={usuario.id}
+                      usuario={usuario}
+                      index={index}
+                    >
+                      <ButtonToggleDetallesUsuario
+                        expanded={expanded}
+                        usuario={usuario}
+                        setExpanded={setExpanded}
+                      />
+
+                      {expanded === usuario.id && (
+                        <ListadoUsuarios
+                          usuario={usuario}
+                          departamentoActual={departamentoActual}
+                          abrirModal={abrirModal}
+                          setAccion={setAccion}
+                          setOpcion={setOpcion}
+                          setNombreUsuario={setNombreUsuario}
+                          setNombreDepartamento={setNombreDepartamento}
+                          setIdDepartamento={setIdDepartamento}
+                          setIdUsuario={setIdUsuario}
+                          setIdRol={setIdRol}
+                          setNombreRol={setNombreRol}
+                        />
+                      )}
+                    </FichaUsuario>
+                  );
+                })}
+              </>
+            )}
+          </Div>
+        </SectionTertiary>
       </SectionMain>
     </>
   );

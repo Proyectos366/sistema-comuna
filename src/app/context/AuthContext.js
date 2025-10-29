@@ -12,10 +12,8 @@ import {
   useContext,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 // 1. Crea el contexto de usuario
 const UserContext = createContext();
@@ -34,36 +32,7 @@ export const UserProvider = ({ children }) => {
 
   const router = useRouter();
 
-  /**
-   Consulta el usuario activo desde la API. Si la respuesta es válida, actualiza el estado. Si hay
-   error 400, redirige al inicio. @async @function consultarUserActivo
-  */
-  // const consultarUserActivo = useCallback(async () => {
-  //   try {
-  //     // 3. Realiza la consulta al endpoint de usuario activo
-  //     const response = await axios.get(`/api/usuarios/usuario-activo`);
-
-  //     // 4. Si la respuesta es válida, actualiza los estados
-  //     if (response?.data?.status === "ok") {
-  //       setUsuarioActivo(response.data.usuarioActivo);
-  //       setDepartamento(response.data.departamento);
-  //     }
-  //   } catch (error) {
-  //     // 5. Manejo de errores y redirección si es necesario
-  //     console.error("Error, al mostrar usuario activo: " + error);
-
-  //     if (error?.response?.status === 400) {
-  //       router.push("/", { shallow: true });
-  //     }
-  //   }
-  // }, [router]);
-
-  // // 6. Ejecuta la consulta del usuario activo al montar el componente
-  // useEffect(() => {
-  //   if (!usuarioActivo) {
-  //     consultarUserActivo();
-  //   }
-  // }, [usuarioActivo, consultarUserActivo]);
+  
 
   // 7. Actualiza el tamaño de pantalla al montar y en cada cambio de tamaño
   useEffect(() => {

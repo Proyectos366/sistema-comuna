@@ -6,6 +6,9 @@ import Div from "@/components/padres/Div";
 import Span from "@/components/padres/Span";
 import Image from "next/image";
 import BloqueInfoUsuario from "./BloqueInfoUsuario";
+import { useDispatch } from "react-redux";
+import { cambiarAccesoUsuario } from "@/store/features/usuarios/thunks/cambiarAccesoUsuario";
+import { eliminarRestaurarUsuario } from "@/store/features/usuarios/thunks/eliminarRestaurarUsuario";
 
 export default function ListadoUsuarios({
   usuario,
@@ -19,9 +22,9 @@ export default function ListadoUsuarios({
   setIdRol,
   setNombreRol,
   setOpcion,
-  cambiarUsuarioAcceso,
-  eliminarRestaurarUsuario,
 }) {
+  const dispatch = useDispatch();
+
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <BloqueInfoUsuario
@@ -144,7 +147,12 @@ export default function ListadoUsuarios({
         <SwitchToggle
           checked={!usuario.borrado}
           onToggle={() => {
-            eliminarRestaurarUsuario(usuario.borrado, usuario.id);
+            dispatch(
+              eliminarRestaurarUsuario({
+                estado: usuario.borrado,
+                id_usuario: usuario.id,
+              })
+            );
           }}
         />
       </Div>
@@ -159,7 +167,12 @@ export default function ListadoUsuarios({
         <SwitchToggle
           checked={usuario.validado}
           onToggle={() => {
-            cambiarUsuarioAcceso(usuario.validado, usuario.id);
+            dispatch(
+              cambiarAccesoUsuario({
+                validado: usuario.validado,
+                idUsuario: usuario.id,
+              })
+            );
           }}
         />
       </Div>

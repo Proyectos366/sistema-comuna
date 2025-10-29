@@ -222,18 +222,10 @@ export default function VistaUniversalUsuarios() {
 
             <main className="bg-[#faf5f8] rounded-md">
               {vista === "usuarios" && (
-                <UsuariosView
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                />
+                <UsuariosView limpiarCampos={limpiarCampos} />
               )}
-{/* 
+              
+              {/* 
               {vista === "paises" && (
                 <PaisesForm
                   mostrar={mostrarModal}

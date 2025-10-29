@@ -144,7 +144,10 @@ export default async function validarCrearUsuario(
       id_rol: validandoCampos.id_rol,
       autorizar: validandoCampos.autorizar,
       institucion: datosInstitucion,
-      id_institucion: [{ id: datosInstitucion.id }],
+      id_institucion:
+        validaciones.id_rol === 1
+          ? instituciones
+          : [{ id: datosInstitucion.id }],
       id_creador: validaciones.id_usuario,
       token: tokenAuth,
     });
