@@ -1,28 +1,22 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
+
 import Button from "@/components/padres/Button";
 import Div from "@/components/padres/Div";
 import Li from "@/components/padres/Li";
 import Span from "@/components/padres/Span";
 import Ul from "@/components/padres/Ul";
-import { useState, useEffect, useRef } from "react";
 
-export default function OrdenarListaUsuarios({
+export default function OrdenarLista({
   ordenCampo,
   setOrdenCampo,
-  setOrdenAscendente,
-  ordenAscendente,
+  ordenDireccion,
+  setOrdenDireccion,
+  opcionesOrden,
 }) {
   const [abierto, setAbierto] = useState(false);
   const selectRef = useRef(null);
-
-  // Opciones de orden disponibles
-  const opcionesOrden = [
-    { id: "nombre", nombre: "Nombre" },
-    { id: "cedula", nombre: "Cédula" },
-    { id: "borrado", nombre: "Activo" },
-    { id: "validado", nombre: "Autorizado" },
-  ];
 
   const seleccionActual = opcionesOrden.find((o) => o.id === ordenCampo);
 
@@ -42,11 +36,14 @@ export default function OrdenarListaUsuarios({
         <Div
           className={` flex justify-between items-center border w-full py-2 px-4 rounded-md shadow-sm transition-all cursor-pointer hover:font-semibold
             ${
-              ordenAscendente
+              ordenDireccion === "asc"
                 ? "border-[#2FA807] text-[#2FA807]"
                 : "border-[#E61C45] text-[#E61C45]"
             }`}
-          onClick={() => setAbierto(!abierto)}
+          onClick={() => {
+            console.log("aosjdhoajshd");
+            setAbierto(!abierto);
+          }}
         >
           <Span className="whitespace-nowrap">
             {seleccionActual?.nombre || "Seleccione"}
@@ -56,7 +53,7 @@ export default function OrdenarListaUsuarios({
         {abierto && (
           <Ul
             className={`absolute z-10 mt-1 w-full bg-white px-2 no-scrollbar border ${
-              ordenAscendente ? "border-[#2FA807]" : "border-[#E61C45]"
+              ordenDireccion === "asc" ? "border-[#2FA807]" : "border-[#E61C45]"
             } rounded-md shadow-md max-h-[300px] overflow-y-auto`}
           >
             {opcionesOrden.map((opcion, index) => (
@@ -78,16 +75,18 @@ export default function OrdenarListaUsuarios({
       </Div>
 
       <Button
-        onClick={() => setOrdenAscendente(!ordenAscendente)}
+        onClick={() =>
+          setOrdenDireccion((prev) => (prev === "asc" ? "desc" : "asc"))
+        }
         className={`px-3 py-2 rounded-md text-white font-medium cursor-pointer transition-all shadow-md hover:scale-105 ${
-          ordenAscendente ? "bg-[#2FA807]" : "bg-[#E61C45]"
+          ordenDireccion === "asc" ? "bg-[#2FA807]" : "bg-[#E61C45]"
         }`}
       >
         <Span className="hidden sm:block">
-          {ordenAscendente ? "Ascendente" : "Descendente"}
+          {ordenDireccion === "asc" ? "Ascendente" : "Descendente"}
         </Span>
         <Span className="block sm:hidden">
-          {ordenAscendente ? (
+          {ordenDireccion === "asc" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

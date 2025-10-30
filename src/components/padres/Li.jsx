@@ -1,3 +1,3 @@
-export default function Li({ children, className }) {
-  return <li className={className}>{children}</li>;
+export default function Li({ children, className, onClick }) {
+  return <li className={className} onClick={onClick}>{children}</li>;
 }

@@ -5,11 +5,13 @@ import institucionesSlices from "@/store/features/instituciones/institucionesSli
 import departamentosReducer from "@/store/features/departamentos/departamentosSlices";
 import rolesReducer from "@/store/features/roles/rolesSlices";
 import modalReducer from "@/store/features/modal/slicesModal";
+import formsReducer from "@/store/features/formularios/formSlices";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     modal: modalReducer,
+    forms: formsReducer,
     roles: rolesReducer,
     usuarios: usuariosReducer,
     instituciones: institucionesSlices,

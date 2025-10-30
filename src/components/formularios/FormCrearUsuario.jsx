@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
 import Div from "@/components/padres/Div";
 import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
@@ -12,13 +14,15 @@ import SelectOpcion from "@/components/SelectOpcion";
 import InputClave from "@/components/inputs/InputClave";
 import MostrarMsj from "@/components/MostrarMensaje";
 import InputCheckBox from "@/components/inputs/InputCheckBox";
-import { cambiarSeleccionRol } from "../dashboard/usuarios/funciones/cambiarSeleccionRol";
-import { cambiarSeleccionInstitucion } from "../dashboard/usuarios/funciones/cambiarSeleccionInstitucion";
-import { cambiarSeleccionDepartamento } from "../dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
-import { toggleAutorizar } from "../dashboard/usuarios/funciones/toggleAutorizar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
+import { cambiarSeleccionInstitucion } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionInstitucion";
+import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
+import { toggleAutorizar } from "@/components/dashboard/usuarios/funciones/toggleAutorizar";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { useDispatch } from "react-redux";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormCrearUsuario({
   idDepartamento,
@@ -49,7 +53,6 @@ export default function FormCrearUsuario({
   setValidarApellido,
   validarClave,
   setValidarClave,
-  limpiarCampos,
   mensaje,
   setMensaje,
   departamentos,
@@ -262,23 +265,10 @@ export default function FormCrearUsuario({
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setCedula,
-                setCorreo,
-                setNombre,
-                setApellido,
-                setClaveUno,
-                setClaveDos,
-                setIdRol,
-                setIdInstitucion,
-                setIdDepartamento,
-                setAutorizar,
-              });
+              dispatch(resetForm("usuarioForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               cedula,
               correo,

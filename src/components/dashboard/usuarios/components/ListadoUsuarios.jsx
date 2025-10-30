@@ -1,12 +1,15 @@
-import { formatearFecha } from "@/utils/Fechas";
-import { formatearCedula } from "@/utils/formatearCedula";
+import { useDispatch } from "react-redux";
+import Image from "next/image";
+
 import SwitchToggle from "@/components/SwitchToggle";
 import Button from "@/components/padres/Button";
 import Div from "@/components/padres/Div";
 import Span from "@/components/padres/Span";
-import Image from "next/image";
-import BloqueInfoUsuario from "./BloqueInfoUsuario";
-import { useDispatch } from "react-redux";
+import BloqueInfoUsuario from "@/components/dashboard/usuarios/components/BloqueInfoUsuario";
+
+import { formatearFecha } from "@/utils/Fechas";
+import { formatearCedula } from "@/utils/formatearCedula";
+
 import { cambiarAccesoUsuario } from "@/store/features/usuarios/thunks/cambiarAccesoUsuario";
 import { eliminarRestaurarUsuario } from "@/store/features/usuarios/thunks/eliminarRestaurarUsuario";
 
@@ -21,7 +24,6 @@ export default function ListadoUsuarios({
   setIdUsuario,
   setIdRol,
   setNombreRol,
-  setOpcion,
 }) {
   const dispatch = useDispatch();
 
@@ -48,9 +50,8 @@ export default function ListadoUsuarios({
               <Button
                 title="Cambiar departamento"
                 onClick={() => {
-                  abrirModal();
+                  dispatch(abrirModal("editar"));
                   setAccion("cambiarDepartamento");
-                  setOpcion("editar");
                   setNombreUsuario(usuario.nombre);
                   setNombreDepartamento(departamentoActual.nombre);
                   setIdDepartamento("");
@@ -73,9 +74,8 @@ export default function ListadoUsuarios({
             <Button
               title="Asignar departamento"
               onClick={() => {
-                abrirModal();
+                dispatch(abrirModal("editar"));
                 setAccion("asignarDepartamento");
-                setOpcion("editar");
                 setNombreUsuario(usuario.nombre);
                 setNombreDepartamento("");
                 setIdDepartamento("");
@@ -115,9 +115,8 @@ export default function ListadoUsuarios({
         <Button
           title="Cambiar rol"
           onClick={() => {
-            abrirModal();
+            dispatch(abrirModal("editar"));
             setAccion("cambiarRol");
-            setOpcion("editar");
             setNombreUsuario(usuario.nombre);
             setIdRol("");
             setNombreRol(usuario.roles.nombre);

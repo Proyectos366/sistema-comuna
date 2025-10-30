@@ -9,8 +9,6 @@ export default function Paginador({
   setRows,
   totalRecords,
   colorFondo,
-  open,
-  setOpen,
 }) {
   const color = "#082158";
 
@@ -75,6 +73,72 @@ export default function Paginador({
         <Ripple />
       </button>
     ),
+
+    PageLinks: (options) => {
+      const { page, currentPage, totalPages, onClick } = options;
+
+      const maxVisible = 5;
+      const isCurrent = page === currentPage;
+      const isFirst = page === 0;
+      const isLast = page === totalPages - 1;
+
+      const shouldShow = () => {
+        if (isFirst || isLast || isCurrent) return true;
+        if (Math.abs(page - currentPage) <= 1) return true;
+        if (currentPage <= 2 && page <= 3) return true;
+        if (currentPage >= totalPages - 3 && page >= totalPages - 4)
+          return true;
+        return false;
+      };
+
+      const isEllipsisBefore =
+        page === currentPage - 2 && page > 1 && totalPages > maxVisible;
+
+      const isEllipsisAfter =
+        page === currentPage + 2 &&
+        page < totalPages - 2 &&
+        totalPages > maxVisible;
+
+      if (isEllipsisBefore || isEllipsisAfter) {
+        const targetPage = isEllipsisBefore
+          ? Math.max(currentPage - 3, 1)
+          : Math.min(currentPage + 3, totalPages - 2);
+
+        return (
+          <button
+            type="button"
+            className="text-gray-400 px-2 cursor-pointer hover:scale-105 transition"
+            onClick={(e) =>
+              onClick({
+                originalEvent: e,
+                page: targetPage,
+              })
+            }
+          >
+            …
+          </button>
+        );
+      }
+
+      if (!shouldShow()) return null;
+
+      return (
+        <button
+          type="button"
+          className={`px-2 rounded mx-[3px] h-full ${
+            isCurrent
+              ? `bg-[${color}] text-white`
+              : "bg-white border border-gray-300"
+          } cursor-pointer transition hover:scale-105 duration-500`}
+          onClick={onClick}
+        >
+          {page + 1}
+          <Ripple />
+        </button>
+      );
+    },
+
+    /** 
     PageLinks: (options) => {
       const isEllipsis =
         (options.view.startPage === options.page &&
@@ -101,6 +165,8 @@ export default function Paginador({
         </button>
       );
     },
+    */
+
     RowsPerPageDropdown: () => {
       const [abierto, setAbierto] = useState(null);
       const dropdownRef = useRef(null);
@@ -112,7 +178,6 @@ export default function Paginador({
         const cerrar = (e) => {
           if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
             setAbierto(false);
-            setOpen(false);
           }
         };
         document.addEventListener("click", cerrar);
@@ -124,7 +189,6 @@ export default function Paginador({
           <div
             onClick={() => {
               setAbierto(!abierto);
-              setOpen(!abierto);
             }}
             className={`flex justify-between items-center text-sm px-4 py-1 rounded-md shadow-md bg-white cursor-pointer transition hover:scale-105 duration-500 border ${
               abierto ? `border-[${color}]` : "border-gray-300"

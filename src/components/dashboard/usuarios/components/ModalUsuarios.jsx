@@ -3,15 +3,14 @@
 import { useEffect } from "react";
 import BotonesModal from "@/components/botones/BotonesModal";
 import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
-import MostarMsjEnModal from "@/components/mensaje/MostrarMsjEnModal";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import SelectOpcion from "@/components/SelectOpcion";
+
 import { useSelector, useDispatch } from "react-redux";
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
-import { obtenerTituloAccion } from "@/components/dashboard/usuarios/funciones/obtenerTituloAccion";
 import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
 import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
 import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
@@ -33,6 +32,9 @@ export default function ModalUsuarios({
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.usuarioForm
+  );
 
   const notify = (msj) => toast(msj);
 
@@ -49,9 +51,24 @@ export default function ModalUsuarios({
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!mostrarConfirmar && !mostrarEditar && !mostrarCrear) {
+      setCedula("");
+      setCorreo("");
+      setNombre("");
+      setApellido("");
+      setIdRol("");
+      setIdInstitucion("");
+      setIdDepartamento("");
+      setClaveUno("");
+      setClaveDos("");
+      setAutorizar("");
+      setMensaje("");
+    }
+  }, [reiniciarForm, mostrarConfirmar, mostrarEditar, mostrarCrear]);
+
   const {
     accion,
-    limpiarCampos,
     setNombreRol,
     setNombreDepartamento,
     setIdInstitucion,
@@ -66,6 +83,7 @@ export default function ModalUsuarios({
     setClaveDos,
     setMensaje,
     setAutorizar,
+    setAccion,
   } = acciones;
 
   const {
@@ -118,9 +136,9 @@ export default function ModalUsuarios({
           nuevoUsuario: nuevoUsuario,
           notify: notify,
           cerrarModal: cerrarModal,
+          setAccion: setAccion,
         })
       ).unwrap();
-      // El nuevo usuario ya se muestra, y la lista se actualizará en segundo plano
     } catch (error) {
       console.log(error);
     }
@@ -181,6 +199,7 @@ export default function ModalUsuarios({
         isVisible={mostrarEditar}
         onClose={() => {
           dispatch(cerrarModal("editar"));
+          setAccion("");
         }}
         titulo={"¿Actualizar este usuario?"}
       >
@@ -238,10 +257,11 @@ export default function ModalUsuarios({
             ) {
               dispatch(
                 cambiarDepartamentoUsuario({
-                  idUsuario,
-                  idDepartamento,
-                  cerrarModal,
-                  notify,
+                  idUsuario: idUsuario,
+                  idDepartamento: idDepartamento,
+                  cerrarModal: cerrarModal,
+                  notify: notify,
+                  setAccion: setAccion,
                 })
               );
             }
@@ -249,15 +269,19 @@ export default function ModalUsuarios({
             if (accion === "cambiarRol") {
               dispatch(
                 cambiarRolUsuario({
-                  idRol,
-                  idUsuario,
-                  cerrarModal,
-                  notify,
+                  idRol: idRol,
+                  idUsuario: idUsuario,
+                  cerrarModal: cerrarModal,
+                  notify: notify,
+                  setAccion: setAccion,
                 })
               );
             }
           }}
-          cancelar={cerrarModal}
+          cancelar={() => {
+            dispatch(cerrarModal("editar"));
+            setAccion("");
+          }}
           indiceUno="crear"
           indiceDos="cancelar"
           nombreUno="Aceptar"
@@ -270,6 +294,7 @@ export default function ModalUsuarios({
         isVisible={mostrarCrear}
         onClose={() => {
           dispatch(cerrarModal("crear"));
+          setAccion("");
         }}
         titulo={"¿Crear usuario?"}
       >
@@ -306,7 +331,6 @@ export default function ModalUsuarios({
             setValidarApellido={setValidarApellido}
             validarClave={validarClave}
             setValidarClave={setValidarClave}
-            limpiarCampos={limpiarCampos}
             mensaje={mensaje}
             setMensaje={setMensaje}
             departamentos={departamentos}

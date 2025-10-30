@@ -10,8 +10,9 @@ export const cambiarRolUsuario = createAsyncThunk(
         idUsuario: data.idUsuario,
       });
 
-      data.cerrarModal();
       data.notify(response?.data?.message);
+      data.setAccion("");
+      thunkAPI.dispatch(data.cerrarModal("editar"));
       return response?.data?.usuarios;
     } catch (error) {
       data.notify(error?.response?.data?.message);

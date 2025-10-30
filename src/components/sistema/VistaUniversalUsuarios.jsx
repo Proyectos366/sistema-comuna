@@ -222,7 +222,7 @@ export default function VistaUniversalUsuarios() {
 
             <main className="bg-[#faf5f8] rounded-md">
               {vista === "usuarios" && (
-                <UsuariosView limpiarCampos={limpiarCampos} />
+                <UsuariosView />
               )}
               
               {/* 

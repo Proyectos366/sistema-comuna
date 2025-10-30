@@ -1,33 +1,28 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import axios from "axios";
-import SelectOpcion from "@/components/SelectOpcion";
-import Paginador from "@/components/templates/PlantillaPaginacion";
-import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
-import ListadoUsuarios from "@/components/dashboard/usuarios/components/ListadoUsuarios";
 import { BounceLoader } from "react-spinners";
+import { useSelector, useDispatch } from "react-redux";
+
 import SectionMain from "@/components/SectionMain";
 import SectionPrimary from "@/components/SectionPrimary";
 import Div from "@/components/padres/Div";
 import SectionTertiary from "@/components/SectionTertiary";
-import ModalPrincipal from "@/components/modales/ModalPrincipal";
-import ButtonToggleDetallesUsuario from "./components/ButtonToggleDetallesUsuario";
+
+import ListadoUsuarios from "@/components/dashboard/usuarios/components/ListadoUsuarios";
+import ButtonToggleDetallesUsuario from "@/components/dashboard/usuarios/components/ButtonToggleDetallesUsuario";
 import LeyendaUsuarios from "@/components/dashboard/usuarios/components/LeyendaUsuarios";
-import BuscarOrdenar from "@/components/dashboard/usuarios/components/BuscarOrdenar";
-import FichaUsuario from "./components/FichaUsuario";
-import { useSelector, useDispatch } from "react-redux";
-
-import { nuevoUsuarioAbrirModal } from "@/components/dashboard/usuarios/funciones/nuevoUsuarioAbrirModal";
-import { obtenerTituloAccion } from "@/components/dashboard/usuarios/funciones/obtenerTituloAccion";
+import FichaUsuario from "@/components/dashboard/usuarios/components/FichaUsuario";
 import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
-import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
+import BuscadorOrdenador from "@/components/BuscadorOrdenador";
+import Paginador from "@/components/templates/PlantillaPaginacion";
 
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
 import { abrirModal } from "@/store/features/modal/slicesModal";
 
-export default function UsuariosView({ limpiarCampos }) {
+export default function UsuariosView() {
   const dispatch = useDispatch();
-
   const { usuarios } = useSelector((state) => state.usuarios);
 
   useEffect(() => {
@@ -54,15 +49,8 @@ export default function UsuariosView({ limpiarCampos }) {
   const [expanded, setExpanded] = useState("");
   const [accion, setAccion] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
-
-  const [open, setOpen] = useState(false);
-  const [ordenCampo, setOrdenCampo] = useState("nombre");
-  const [ordenAscendente, setOrdenAscendente] = useState(true);
-
-  const [opcion, setOpcion] = useState("");
+  const [rows, setRows] = useState(1);
 
   const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
   const [validarCorreoUsuario, setValidarCorreoUsuario] = useState(false);
@@ -72,9 +60,38 @@ export default function UsuariosView({ limpiarCampos }) {
 
   const [autorizar, setAutorizar] = useState("");
 
+  const [busqueda, setBusqueda] = useState("");
+  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
+  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+
+  const camposBusqueda = ["cedula", "nombre", "apellido", "correo"];
+  const opcionesOrden = [
+    { id: "cedula", nombre: "Cédula" },
+    { id: "correo", nombre: "Correo" },
+    { id: "nombre", nombre: "Nombre" },
+    { id: "apellido", nombre: "Apellido" },
+  ];
+
+  const usuariosFiltradosYOrdenados = useMemo(() => {
+    return filtrarOrdenar(
+      usuarios,
+      busqueda,
+      ordenCampo,
+      ordenDireccion,
+      camposBusqueda
+    );
+  }, [usuarios, busqueda, ordenCampo, ordenDireccion]);
+
+  const usuariosPaginados = useMemo(() => {
+    return usuariosFiltradosYOrdenados.slice(first, first + rows);
+  }, [usuariosFiltradosYOrdenados, first, rows]);
+
+  useEffect(() => {
+    setFirst(0);
+  }, [busqueda, ordenCampo, ordenDireccion]);
+
   const acciones = {
     accion,
-    limpiarCampos,
     setNombreRol,
     setNombreDepartamento,
     setIdInstitucion,
@@ -89,6 +106,7 @@ export default function UsuariosView({ limpiarCampos }) {
     setClaveDos: setClaveDosUsuario,
     setMensaje: setMensajeValidar,
     setAutorizar,
+    setAccion,
   };
 
   const datosUsuario = {
@@ -140,15 +158,15 @@ export default function UsuariosView({ limpiarCampos }) {
             dispatch(abrirModal("crear"));
           }}
         >
-          {/* <BuscarOrdenar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            setFirst={setFirst}
+          <BuscadorOrdenador
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
             ordenCampo={ordenCampo}
             setOrdenCampo={setOrdenCampo}
-            ordenAscendente={ordenAscendente}
-            setOrdenAscendente={setOrdenAscendente}
-          /> */}
+            ordenDireccion={ordenDireccion}
+            setOrdenDireccion={setOrdenDireccion}
+            opcionesOrden={opcionesOrden}
+          />
 
           <Div className={`flex flex-col gap-2`}>
             {usuarios?.length === 0 ? (
@@ -157,42 +175,59 @@ export default function UsuariosView({ limpiarCampos }) {
               </Div>
             ) : (
               <>
-                {usuarios.map((usuario, index) => {
-                  const departamentoActual =
-                    usuario?.MiembrosDepartamentos?.[0];
+                {usuariosPaginados?.length !== 0 ? (
+                  usuariosPaginados.map((usuario, index) => {
+                    const departamentoActual =
+                      usuario?.MiembrosDepartamentos?.[0];
 
-                  return (
-                    <FichaUsuario
-                      key={usuario.id}
-                      usuario={usuario}
-                      index={index}
-                    >
-                      <ButtonToggleDetallesUsuario
-                        expanded={expanded}
+                    return (
+                      <FichaUsuario
+                        key={usuario.id}
                         usuario={usuario}
-                        setExpanded={setExpanded}
-                      />
-
-                      {expanded === usuario.id && (
-                        <ListadoUsuarios
+                        index={index}
+                      >
+                        <ButtonToggleDetallesUsuario
+                          expanded={expanded}
                           usuario={usuario}
-                          departamentoActual={departamentoActual}
-                          abrirModal={abrirModal}
-                          setAccion={setAccion}
-                          setOpcion={setOpcion}
-                          setNombreUsuario={setNombreUsuario}
-                          setNombreDepartamento={setNombreDepartamento}
-                          setIdDepartamento={setIdDepartamento}
-                          setIdUsuario={setIdUsuario}
-                          setIdRol={setIdRol}
-                          setNombreRol={setNombreRol}
+                          setExpanded={setExpanded}
                         />
-                      )}
-                    </FichaUsuario>
-                  );
-                })}
+
+                        {expanded === usuario.id && (
+                          <ListadoUsuarios
+                            usuario={usuario}
+                            departamentoActual={departamentoActual}
+                            abrirModal={abrirModal}
+                            setAccion={setAccion}
+                            setNombreUsuario={setNombreUsuario}
+                            setNombreDepartamento={setNombreDepartamento}
+                            setIdDepartamento={setIdDepartamento}
+                            setIdUsuario={setIdUsuario}
+                            setIdRol={setIdRol}
+                            setNombreRol={setNombreRol}
+                          />
+                        )}
+                      </FichaUsuario>
+                    );
+                  })
+                ) : (
+                  <Div
+                    className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
+                  >
+                    No hay coincidencias...
+                  </Div>
+                )}
               </>
             )}
+          </Div>
+
+          <Div>
+            <Paginador
+              first={first}
+              setFirst={setFirst}
+              rows={rows}
+              setRows={setRows}
+              totalRecords={usuariosFiltradosYOrdenados.length}
+            />
           </Div>
         </SectionTertiary>
       </SectionMain>
