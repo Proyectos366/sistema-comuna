@@ -17,8 +17,8 @@ export default function FormCrearPais({
   setValidarNombre,
   validarCapital,
   setValidarCapital,
-  abrirModal,
-  limpiarCampos,
+  validarSerial,
+  setValidarSerial,
 }) {
   return (
     <Formulario

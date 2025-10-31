@@ -5,9 +5,9 @@
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
-import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos específicos
+import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar campos específicos
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
  Valida la identidad del usuario, sus permisos y los datos requeridos para editar un país.

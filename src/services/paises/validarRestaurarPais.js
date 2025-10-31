@@ -1,7 +1,7 @@
 /**
  @fileoverview Función utilitaria para validar la identidad del pais, sus permisos
- y los parámetros necesarios antes de eliminar (desactivar) un pais en el sistema.
- @module services/paises/validarEliminarPais
+ y los parámetros necesarios antes de restaurar (activar) un pais en el sistema.
+ @module services/paises/validarRestaurarPais
 */
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
@@ -9,15 +9,15 @@ import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar c
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
- Valida la identidad del pais, sus permisos y los parámetros requeridos para eliminar (desactivar) otro pais.
+ Valida la identidad del pais, sus permisos y los parámetros requeridos para restaurar (activar) otro pais.
  Verifica que el estado sea booleano y que el ID del pais objetivo sea válido.
  @async
- @function validarEliminarPais
- @param {boolean} estado - Estado booleano que indica si se debe eliminar.
- @param {string|number} idPais - Identificador único del pais a eliminar.
+ @function validarRestaurarPais
+ @param {boolean} estado - Estado booleano que indica si se debe restaurar.
+ @param {string|number} idPais - Identificador único del pais a restaurar.
  @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
 */
-export default async function validarEliminarPais(estado, idPais) {
+export default async function validarRestaurarPais(estado, idPais) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -60,17 +60,17 @@ export default async function validarEliminarPais(estado, idPais) {
     // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
-      borrado: true,
+      borrado: false,
       id_pais: validarIdPais.id,
     });
   } catch (error) {
     // 8. Manejo de errores inesperados.
-    console.log("Error interno validar eliminar pais: " + error);
+    console.log("Error interno validar restaurar pais: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar eliminar pais"
+      "Error interno validar restaurar pais"
     );
   }
 }

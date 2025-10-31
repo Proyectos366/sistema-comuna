@@ -16,6 +16,7 @@ import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaPais from "@/components/dashboard/paises/components/FichaPais";
 import ButtonToggleDetallesPais from "@/components/dashboard/paises/components/ButtonToggleDetallesPais";
 import ListadoPaises from "@/components/dashboard/paises/components/ListadoPaises";
+import ModalPaises from "@/components/dashboard/paises/components/ModalPaises";
 
 export default function PaisesView() {
   const dispatch = useDispatch();
@@ -30,13 +31,11 @@ export default function PaisesView() {
   const [descripcionPais, setDescripcionPais] = useState("");
   const [serialPais, setSerialPais] = useState("");
 
-  const [idPais, setIdPais] = useState("");
-
   const [expanded, setExpanded] = useState("");
-  const [accion, setAccion] = useState("");
 
   const [validarNombrePais, setValidarNombrePais] = useState("");
   const [validarCapitalPais, setValidarCapitalPais] = useState("");
+  const [validarSerialPais, setValidarSerialPais] = useState("");
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -51,6 +50,29 @@ export default function PaisesView() {
     { id: "capital", nombre: "Capital" },
     { id: "serial", nombre: "Serial" },
   ];
+
+  const acciones = {
+    setNombre: setNombrePais,
+    setCapital: setCapitalPais,
+    setDescripcion: setDescripcionPais,
+    setSerial: setSerialPais,
+  };
+
+  const datosPais = {
+    nombre: nombrePais,
+    capital: capitalPais,
+    descripcion: descripcionPais,
+    serial: serialPais,
+  };
+
+  const validaciones = {
+    validarNombre: validarNombrePais,
+    setValidarNombrePais,
+    validarCapitalPais,
+    setValidarCapitalPais,
+    validarSerialPais,
+    setValidarSerialPais,
+  };
 
   const paisesFiltradosOrdenados = useMemo(() => {
     return filtrarOrdenar(
@@ -70,140 +92,13 @@ export default function PaisesView() {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  // useEffect(() => {
-  //   const fetchDatosPaises = async () => {
-  //     try {
-  //       const response = await axios.get("/api/paises/todos-paises");
-  //       setTodosPaises(response.data.paises || []);
-  //     } catch (error) {
-  //       console.log("Error al obtener los paises:", error);
-  //     } finally {
-  //       setIsLoading(false); // Evita el pantallazo mostrando carga antes de datos
-  //     }
-  //   };
-
-  //   fetchDatosPaises();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (accion === "editar" && !mostrar) {
-  //     setAccion("");
-  //     setIdPais("");
-  //     setNombrePais("");
-  //     setCapitalPais("");
-  //     setDescripcionPais("");
-  //   }
-  // }, [accion, mostrar]);
-
-  // useEffect(() => {
-  //   if (!idPais) {
-  //     setNombrePais("");
-  //     setCapitalPais("");
-  //     setDescripcionPais("");
-  //     setSerialPais("");
-  //     return;
-  //   }
-  // }, [idPais]);
-
-  // const crearPais = async () => {
-  //   if (nombrePais.trim()) {
-  //     try {
-  //       const response = await axios.post("/api/paises/crear-pais", {
-  //         nombre: nombrePais,
-  //         capital: capitalPais,
-  //         descripcion: descripcionPais,
-  //         serial: serialPais,
-  //       });
-
-  //       setTodosPaises((prev) =>
-  //         prev ? [...prev, response.data.paises] : [response.data.paises]
-  //       );
-
-  //       abrirMensaje(response.data.message);
-
-  //       ejecutarAccionesConRetraso([
-  //         { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setNombrePais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setCapitalPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setSerialPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //       ]);
-  //     } catch (error) {
-  //       console.log("Error, al crear pais: " + error);
-  //       abrirMensaje(error?.response?.data?.message);
-  //       ejecutarAccionesConRetraso([
-  //         { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //       ]);
-  //     }
-  //   }
-  // };
-
-  // const editandoPais = async (datos) => {
-  //   try {
-  //     setAccion("editar");
-  //     setIdPais(datos.id);
-  //     setNombrePais(datos.nombre);
-  //     setCapitalPais(datos.capital);
-  //     setDescripcionPais(datos.descripcion);
-
-  //     abrirModal();
-  //   } catch (error) {
-  //     console.log("Error, editando pais: " + error);
-  //   }
-  // };
-
-  // const editarPais = async () => {
-  //   if (nombrePais.trim()) {
-  //     try {
-  //       const data = {
-  //         nombre: nombrePais.trim(),
-  //         capital: capitalPais,
-  //         descripcion: descripcionPais,
-  //         id_pais: idPais,
-  //       };
-
-  //       const response = await axios.post(
-  //         "/api/paises/actualizar-datos-pais",
-  //         data
-  //       );
-
-  //       setTodosPaises((prevPaises) =>
-  //         prevPaises.map((paises) =>
-  //           paises.id === response.data.paises.id
-  //             ? response.data.paises
-  //             : paises
-  //         )
-  //       );
-
-  //       abrirMensaje(response.data.message);
-
-  //       ejecutarAccionesConRetraso([
-  //         { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setNombrePais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setCapitalPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //       ]);
-  //     } catch (error) {
-  //       console.log("Error, al actualizar datos del pais: " + error);
-  //       abrirMensaje(error?.response?.data?.message);
-  //       ejecutarAccionesConRetraso([
-  //         { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setAccion(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setNombrePais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setCapitalPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setDescripcionPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //         { accion: () => setIdPais(""), tiempo: 3000 }, // Se ejecutará en 3 segundos
-  //       ]);
-  //     }
-  //   } else {
-  //     console.log("Todos los campos son obligatorios.");
-  //   }
-  // };
-
   return (
     <>
+      <ModalPaises
+        acciones={acciones}
+        datosPais={datosPais}
+        validaciones={validaciones}
+      />
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión paises"}
