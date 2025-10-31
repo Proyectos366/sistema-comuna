@@ -201,7 +201,15 @@ export default function ModalUsuarios({
           dispatch(cerrarModal("editar"));
           setAccion("");
         }}
-        titulo={"¿Actualizar este usuario?"}
+        titulo={
+          accion === "cambiarDepartamento"
+            ? "¿Cambiar departamento?"
+            : accion === "asignarDepartamento"
+            ? "¿Asignar departamento?"
+            : accion === "cambiarRol"
+            ? "¿Cambiar rol?"
+            : "¿Actualizar este usuario?"
+        }
       >
         <ModalDatosContenedor>
           {accion === "cambiarDepartamento" && (
