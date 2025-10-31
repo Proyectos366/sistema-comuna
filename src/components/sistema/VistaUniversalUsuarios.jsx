@@ -19,12 +19,13 @@ import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 // import FormacionesForm from "../opciones/FormacionesForm";
 // import ParticipantesForm from "../opciones/ParticipantesForm";
 // import DepartamentosForm from "../opciones/DepartamentosForm";
-// import PaisesForm from "../opciones/PaisForm";
 // import EstadosForm from "../opciones/EstadoForm";
 // import MunicipiosForm from "../opciones/MunicipioForm";
 // import InstitucionesForm from "../opciones/InstitucionesForm";
 import NovedadesForm from "../opciones/NovedadesForm";
-import UsuariosView from "../dashboard/usuarios/UsuariosView";
+
+import UsuariosView from "@/components/dashboard/usuarios/UsuariosView";
+import PaisesView from "@/components/dashboard/paises/PaisesView";
 
 export default function VistaUniversalUsuarios() {
   const {
@@ -221,25 +222,11 @@ export default function VistaUniversalUsuarios() {
             </header>
 
             <main className="bg-[#faf5f8] rounded-md">
-              {vista === "usuarios" && (
-                <UsuariosView />
-              )}
-              
-              {/* 
-              {vista === "paises" && (
-                <PaisesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "usuarios" && <UsuariosView />}
 
+              {vista === "paises" && <PaisesView />}
+
+              {/* 
               {vista === "estados" && (
                 <EstadosForm
                   mostrar={mostrarModal}
