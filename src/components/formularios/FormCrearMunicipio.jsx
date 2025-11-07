@@ -1,4 +1,5 @@
 import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
+import { cambiarSeleccionPais } from "../dashboard/estados/funciones/cambiarSeleccionPais";
 import Formulario from "../Formulario";
 import InputDescripcion from "../inputs/InputDescripcion";
 import InputNombre from "../inputs/InputNombre";
@@ -18,8 +19,6 @@ export default function FormCrearMunicipio({
   limpiarCampos,
   paises,
   estados,
-  cambiarSeleccionPais,
-  cambiarSeleccionEstado,
   setNombrePais,
   setNombreEstado,
 }) {

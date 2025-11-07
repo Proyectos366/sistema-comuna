@@ -1,22 +1,22 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Thunk para crear un nuevo pais
-export const crearPais = createAsyncThunk(
-  "paises/crearPais",
+// Thunk para actualizar un nuevo pais
+export const actualizarPais = createAsyncThunk(
+  "paises/actualizarPais",
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/paises/crear-pais",
-        data.nuevoPais
+        "/api/paises/actualizar-datos-pais",
+        data.paisActualizado
       );
 
-      const paisCreado = response.data.paises;
+      const paisActualizado = response.data.paises;
 
       data.notify(response.data.message);
 
       thunkAPI.dispatch(data.cerrarModal("confirmar"));
-      return paisCreado;
+      return paisActualizado;
     } catch (error) {
       data.notify(error?.response?.data.message);
       const mensajeError =

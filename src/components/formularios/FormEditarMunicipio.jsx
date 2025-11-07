@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputNombre from "../inputs/InputNombre";
-import InputDescripcion from "../inputs/InputDescripcion";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
 
 export default function FormEditarMunicipio({
   nombre,
@@ -56,10 +54,6 @@ export default function FormEditarMunicipio({
             autoComplete="off"
           />
         </LabelInput>
-
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
 
         <div className="flex space-x-4">
           <BotonAceptarCancelar

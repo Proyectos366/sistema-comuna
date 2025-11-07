@@ -4,19 +4,19 @@ import { useState, useEffect, useMemo } from "react";
 import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
+import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-
-import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
-import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Div from "@/components/padres/Div";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaPais from "@/components/dashboard/paises/components/FichaPais";
 import ButtonToggleDetallesPais from "@/components/dashboard/paises/components/ButtonToggleDetallesPais";
 import ListadoPaises from "@/components/dashboard/paises/components/ListadoPaises";
 import ModalPaises from "@/components/dashboard/paises/components/ModalPaises";
+
+import { abrirModal } from "@/store/features/modal/slicesModal";
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
 export default function PaisesView() {
   const dispatch = useDispatch();
@@ -67,11 +67,11 @@ export default function PaisesView() {
 
   const validaciones = {
     validarNombre: validarNombrePais,
-    setValidarNombrePais,
-    validarCapitalPais,
-    setValidarCapitalPais,
-    validarSerialPais,
-    setValidarSerialPais,
+    setValidarNombre: setValidarNombrePais,
+    validarCapital: validarCapitalPais,
+    setValidarCapital: setValidarCapitalPais,
+    validarSerial: validarSerialPais,
+    setValidarSerial: setValidarSerialPais,
   };
 
   const paisesFiltradosOrdenados = useMemo(() => {
@@ -159,95 +159,6 @@ export default function PaisesView() {
           </Div>
         </SectionTertiary>
       </SectionMain>
-
-      {/* {accion === "editar" ? (
-        <ModalEditar
-          isVisible={mostrar}
-          onClose={cerrarModal}
-          titulo={"¿Actualizar este pais?"}
-        >
-          <div className="w-full">
-            <FormEditarPais
-              nombre={nombrePais}
-              setNombre={setNombrePais}
-              capital={capitalPais}
-              setCapital={setCapitalPais}
-              descripcion={descripcionPais}
-              setDescripcion={setDescripcionPais}
-              validarNombre={validarNombrePais}
-              setValidarNombre={setValidarNombrePais}
-              validarCapital={validarCapitalPais}
-              setValidarCapital={setValidarCapitalPais}
-              limpiarCampos={limpiarCampos}
-              mostrarMensaje={mostrarMensaje}
-              editar={editarPais}
-              mensaje={mensaje}
-            />
-          </div>
-        </ModalEditar>
-      ) : (
-        <Modal
-          isVisible={mostrar}
-          onClose={cerrarModal}
-          titulo={"¿Crear este pais?"}
-        >
-          <ModalDatosContenedor>
-            <ModalDatos titulo={"Nombre"} descripcion={nombrePais} />
-            <ModalDatos titulo={"Capital"} descripcion={capitalPais} />
-            <ModalDatos titulo={"Descripción"} descripcion={descripcionPais} />
-            <ModalDatos titulo={"Serial"} descripcion={serialPais} />
-          </ModalDatosContenedor>
-
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-
-          <BotonesModal
-            aceptar={crearPais}
-            cancelar={cerrarModal}
-            indiceUno={"crear"}
-            indiceDos={"cancelar"}
-            nombreUno={"Aceptar"}
-            nombreDos={"Cancelar"}
-            campos={{
-              nombrePais,
-              capitalPais,
-              descripcionPais,
-              serialPais,
-            }}
-          />
-        </Modal>
-      )} */}
-
-      {/* <SectionRegistroMostrar>
-        <DivUnoDentroSectionRegistroMostrar nombre={"Crear Pais"}>
-          <FormCrearPais
-            nombre={nombrePais}
-            setNombre={setNombrePais}
-            capital={capitalPais}
-            setCapital={setCapitalPais}
-            descripcion={descripcionPais}
-            setDescripcion={setDescripcionPais}
-            serial={serialPais}
-            setSerial={setSerialPais}
-            validarNombre={validarNombrePais}
-            setValidarNombre={setValidarNombrePais}
-            validarCapital={validarCapitalPais}
-            setValidarCapital={setValidarCapitalPais}
-            abrirModal={abrirModal}
-            limpiarCampos={limpiarCampos}
-          />
-        </DivUnoDentroSectionRegistroMostrar>
-
-        <DivDosDentroSectionRegistroMostrar>
-          <ListadoPaises
-            isLoading={isLoading}
-            listado={todosPaises}
-            nombreListado="Paises"
-            mensajeVacio="No hay paises disponibles..."
-            editando={editandoPais}
-            usuarioActivo={usuarioActivo}
-          />
-        </DivDosDentroSectionRegistroMostrar>
-      </SectionRegistroMostrar> */}
     </>
   );
 }

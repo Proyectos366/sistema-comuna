@@ -1,8 +1,17 @@
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import InputDescripcion from "../inputs/InputDescripcion";
-import InputNombre from "../inputs/InputNombre";
-import LabelInput from "../inputs/LabelInput";
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormCrearPais({
   nombre,
@@ -20,6 +29,22 @@ export default function FormCrearPais({
   validarSerial,
   setValidarSerial,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.paisForm
+  );
+
+  useEffect(() => {
+    if (mostrarCrear) {
+      setNombre("");
+      setSerial("");
+      setDescripcion("");
+      setCapital("");
+    }
+  }, [reiniciarForm, mostrarCrear]);
+
   return (
     <Formulario
       onSubmit={(e) => {
@@ -59,13 +84,23 @@ export default function FormCrearPais({
       </LabelInput>
 
       <LabelInput nombre={"Serial"}>
-        <InputNombre type="text" value={serial} setValue={setSerial} />
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={serial}
+          setValue={setSerial}
+          validarNombre={validarSerial}
+          setValidarNombre={setValidarSerial}
+        />
       </LabelInput>
 
       <div className="flex space-x-3">
         <BotonAceptarCancelar
           indice={"aceptar"}
-          aceptar={abrirModal}
+          aceptar={() => {
+            dispatch(cerrarModal("crear"));
+            dispatch(abrirModal("confirmar"));
+          }}
           nombre={"Crear"}
           campos={{
             nombre,
@@ -75,12 +110,10 @@ export default function FormCrearPais({
           }}
         />
 
-        <BotonAceptarCancelar
-          indice={"limpiar"}
+        <BotonLimpiarCampos
           aceptar={() => {
-            limpiarCampos({ setNombre, setCapital, setDescripcion, setSerial });
+            dispatch(resetForm("paisForm"));
           }}
-          nombre={"Limpiar"}
           campos={{
             nombre,
             capital,

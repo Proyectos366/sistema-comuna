@@ -1,21 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearPais from "@/components/formularios/FormCrearPais";
+import FormCrearEstado from "@/components/formularios/FormCrearEstado";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearPais } from "@/store/features/paises/thunks/crearPais";
+import { crearEstado } from "@/store/features/estados/thunks/crearEstado";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import FormEditarPais from "@/components/formularios/FormEditarPais";
+import FormEditarEstado from "@/components/formularios/FormEditarEstado";
+import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
-export default function ModalPaises({ acciones, datosPais, validaciones }) {
+export default function ModalEstados({ acciones, datosEstado, validaciones }) {
   const dispatch = useDispatch();
+  const { paises } = useSelector((state) => state.paises);
+
+  useEffect(() => {
+    dispatch(fetchPaises());
+  }, [dispatch]);
+
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
   );
@@ -24,30 +32,39 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
 
   const notify = (msj) => toast(msj);
 
-  const { setNombre, setCapital, setDescripcion, setSerial } = acciones;
+  const {
+    setIdPais,
+    setNombrePais,
+    setNombre,
+    setCapital,
+    setCodigoPostal,
+    setDescripcion,
+  } = acciones;
 
-  const { nombre, capital, descripcion, serial } = datosPais;
+  const { idPais, nombrePais, nombre, capital, descripcion, codigoPostal } =
+    datosEstado;
 
   const {
     validarNombre,
     setValidarNombre,
     validarCapital,
     setValidarCapital,
-    validarSerial,
-    setValidarSerial,
+    validarCodigoPostal,
+    setValidarCodigoPostal,
   } = validaciones;
 
-  const handleCrearPais = async () => {
+  const handleCrearEstado = async () => {
     try {
-      const nuevoPais = {
+      const nuevoEstado = {
         nombre: nombre,
         capital: capital,
         descripcion: descripcion,
-        serial: serial,
+        codigoPostal: codigoPostal,
+        id_pais: idPais,
       };
       await dispatch(
-        crearPais({
-          nuevoPais: nuevoPais,
+        crearEstado({
+          nuevoEstado: nuevoEstado,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -66,17 +83,18 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear este pais?"}
+        titulo={"¿Crear este estado?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo="Pais" descripcion={nombrePais} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Capital" descripcion={capital} />
+          <ModalDatos titulo="Codigo postal" descripcion={codigoPostal} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Serial" descripcion={serial} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearPais}
+          aceptar={handleCrearEstado}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -88,8 +106,8 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
           campos={{
             nombre,
             capital,
+            codigoPostal,
             descripcion,
-            serial,
           }}
         />
       </Modal>
@@ -99,20 +117,28 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar este pais?"}
+        titulo={"¿Actualizar este estado?"}
       >
         <ModalDatosContenedor>
-          <FormEditarPais
+          <FormEditarEstado
+            idPais={idPais}
+            setIdPais={setIdPais}
             nombre={nombre}
             setNombre={setNombre}
             capital={capital}
             setCapital={setCapital}
             descripcion={descripcion}
             setDescripcion={setDescripcion}
+            codigoPostal={codigoPostal}
+            setCodigoPostal={setCodigoPostal}
             validarNombre={validarNombre}
             setValidarNombre={setValidarNombre}
             validarCapital={validarCapital}
             setValidarCapital={setValidarCapital}
+            validarCodigoPostal={validarCodigoPostal}
+            setValidarCodigoPostal={setValidarCodigoPostal}
+            setNombrePais={setNombrePais}
+            paises={paises}
           />
         </ModalDatosContenedor>
       </Modal>
@@ -122,24 +148,27 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear pais?"}
+        titulo={"¿Crear estado?"}
       >
         <ModalDatosContenedor>
-          <FormCrearPais
+          <FormCrearEstado
+            idPais={idPais}
+            setIdPais={setIdPais}
+            setNombrePais={setNombrePais}
             nombre={nombre}
             setNombre={setNombre}
             capital={capital}
             setCapital={setCapital}
             descripcion={descripcion}
             setDescripcion={setDescripcion}
-            serial={serial}
-            setSerial={setSerial}
+            codigoPostal={codigoPostal}
+            setCodigoPostal={setCodigoPostal}
             validarNombre={validarNombre}
             setValidarNombre={setValidarNombre}
             validarCapital={validarCapital}
             setValidarCapital={setValidarCapital}
-            validarSerial={validarSerial}
-            setValidarSerial={setValidarSerial}
+            validarCodigoPostal={validarCodigoPostal}
+            setValidarCodigoPostal={setValidarCodigoPostal}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

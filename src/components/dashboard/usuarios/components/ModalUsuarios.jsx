@@ -32,9 +32,6 @@ export default function ModalUsuarios({
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
-  const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.usuarioForm
-  );
 
   const notify = (msj) => toast(msj);
 
@@ -50,22 +47,6 @@ export default function ModalUsuarios({
       dispatch(fetchInstituciones());
     }
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!mostrarConfirmar && !mostrarEditar && !mostrarCrear) {
-      setCedula("");
-      setCorreo("");
-      setNombre("");
-      setApellido("");
-      setIdRol("");
-      setIdInstitucion("");
-      setIdDepartamento("");
-      setClaveUno("");
-      setClaveDos("");
-      setAutorizar("");
-      setMensaje("");
-    }
-  }, [reiniciarForm, mostrarConfirmar, mostrarEditar, mostrarCrear]);
 
   const {
     accion,

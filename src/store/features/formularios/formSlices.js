@@ -5,6 +5,9 @@ const initialState = {
   reiniciarForm: {
     loginForm: 0,
     usuarioForm: 0,
+    paisForm: 0,
+    estadoForm: 0,
+    municipioForm: 0,
   },
 };
 

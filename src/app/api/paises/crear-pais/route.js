@@ -53,15 +53,35 @@ export async function POST(request) {
     }
 
     // 4. Crea el nuevo país en la base de datos
-    const nuevoPais = await prisma.pais.create({
-      data: {
-        nombre: validaciones.nombre,
-        capital: validaciones.capital,
-        descripcion: validaciones.descripcion,
-        serial: validaciones.serial,
-        id_usuario: validaciones.id_usuario,
-      },
-    });
+    const [nuevoPais, paisCreado] = await prisma.$transaction([
+      prisma.pais.create({
+        data: {
+          nombre: validaciones.nombre,
+          capital: validaciones.capital,
+          descripcion: validaciones.descripcion,
+          serial: validaciones.serial,
+          id_usuario: validaciones.id_usuario,
+        },
+      }),
+
+      prisma.pais.findFirst({
+        where: {
+          nombre: validaciones.nombre,
+        },
+        include: {
+          estados: {
+            include: {
+              municipios: {
+                include: {
+                  parroquias: true,
+                  instituciones: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
 
     // 5. Si no se crea correctamente, registra el error
     if (!nuevoPais) {
@@ -76,27 +96,25 @@ export async function POST(request) {
       });
 
       return generarRespuesta("error", "Error, no se creo el pais", {}, 400);
-    } else {
-      // 6. Si se crea correctamente, registra el evento exitoso
-      await registrarEventoSeguro(request, {
-        tabla: "pais",
-        accion: "CREAR_PAIS",
-        id_objeto: nuevoPais.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Pais creado con exito",
-        datosAntes: null,
-        datosDespues: nuevoPais,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Pais creado...",
-        {
-          paises: nuevoPais,
-        },
-        201
-      );
     }
+
+    // 6. Si se crea correctamente, registra el evento exitoso
+    await registrarEventoSeguro(request, {
+      tabla: "pais",
+      accion: "CREAR_PAIS",
+      id_objeto: nuevoPais.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Pais creado con exito",
+      datosAntes: null,
+      datosDespues: nuevoPais,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Pais creado...",
+      { paises: paisCreado },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (pais): ` + error);

@@ -26,6 +26,8 @@ import NovedadesForm from "../opciones/NovedadesForm";
 
 import UsuariosView from "@/components/dashboard/usuarios/UsuariosView";
 import PaisesView from "@/components/dashboard/paises/PaisesView";
+import EstadosView from "@/components/dashboard/estados/EstadosView";
+import MunicipiosView from "@/components/dashboard/municipios/MunicipiosView";
 
 export default function VistaUniversalUsuarios() {
   const {
@@ -226,35 +228,10 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "paises" && <PaisesView />}
 
-              {/* 
-              {vista === "estados" && (
-                <EstadosForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "estados" && <EstadosView />}
 
-              {vista === "municipios" && (
-                <MunicipiosForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
-
+              {vista === "municipios" && <MunicipiosView />}
+              {/*
               {vista === "parroquias" && (
                 <ParroquiasForm
                   mostrar={mostrarModal}

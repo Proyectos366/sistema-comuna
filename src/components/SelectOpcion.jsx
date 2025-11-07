@@ -97,7 +97,6 @@ export default function SelectOpcion({
           } left-0 top-full border border-[#082158] w-full mt-1 py-2 bg-white rounded-lg shadow-md z-50`}
         >
           <div className="px-2">
-            {/* Contenedor con sticky input */}
             <div className="bg-white sticky top-0 z-10 pb-2">
               <Input
                 type="text"
@@ -149,60 +148,6 @@ export default function SelectOpcion({
           </div>
         </div>
       )}
-
-      {/* {abierto && (
-        <div
-          className={`overflow-y-auto max-h-[300px] no-scrollbar ${
-            !indice ? "absolute" : "relative"
-          } left-0 top-full border border-[#082158] w-full px-2 mt-1 ${
-            busqueda ? "pb-2" : ""
-          } pt-2 bg-white rounded-lg shadow-md z-50`}
-        >
-          <Input
-            type={"text"}
-            placeholder={"Buscar..."}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-
-          <ul>
-            {!busqueda && (
-              <li
-                className="p-2 bg-gray-100 hover:bg-gray-300 uppercase cursor-pointer transition duration-150 rounded-md mt-2"
-                onClick={() => manejarSeleccion("", seleccione)}
-              >
-                {seleccione}
-              </li>
-            )}
-
-            {opciones &&
-              opciones
-                .filter((opc) =>
-                  opc.nombre.toLowerCase().includes(busqueda.toLowerCase())
-                )
-                .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                .map((opc, index) => (
-                  <li
-                    key={opc.id}
-                    className={`uppercase p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer transition duration-150 rounded-md mt-2 ${
-                      index === opciones.length - 1 ? "mb-2" : ""
-                    }`}
-                    onClick={() => {
-                      manejarSeleccion(opc.id, opc.nombre);
-                      if (typeof setNombre === "function") {
-                        setNombre(opc.nombre); // Solo se ejecuta si se pasó la función
-                      }
-
-                      if (typeof setDatos === "function") {
-                        setDatos(opc); // Solo se ejecuta si se pasó la función
-                      }
-                    }}
-                  >
-                    {opc.nombre}
-                  </li>
-                ))}
-          </ul>
-        </div>
-      )} */}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Div from "@/components/padres/Div";
 import LabelInput from "@/components/inputs/LabelInput";
@@ -66,6 +66,10 @@ export default function FormCrearUsuario({
   usuarioActivo,
 }) {
   const dispatch = useDispatch();
+  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.usuarioForm
+  );
 
   const [idInstiDepa, setIdInstiDepa] = useState("");
 
@@ -73,6 +77,22 @@ export default function FormCrearUsuario({
     const nuevoId = usuarioActivo.id_rol === 1 ? idInstitucion : idDepartamento;
     setIdInstiDepa(nuevoId);
   }, [idInstitucion, idDepartamento, usuarioActivo.id_rol]);
+
+  useEffect(() => {
+    if (mostrarCrear) {
+      setCedula("");
+      setCorreo("");
+      setNombre("");
+      setApellido("");
+      setIdRol("");
+      setIdInstitucion("");
+      setIdDepartamento("");
+      setClaveUno("");
+      setClaveDos("");
+      setAutorizar("");
+      setMensaje("");
+    }
+  }, [reiniciarForm, mostrarCrear]);
 
   const leyendoClave1 = (e) => {
     const claveUnoUno = e.target.value;
