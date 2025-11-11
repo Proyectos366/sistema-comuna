@@ -1,27 +1,54 @@
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import { cambiarSeleccionPais } from "../dashboard/estados/funciones/cambiarSeleccionPais";
-import Formulario from "../Formulario";
-import InputDescripcion from "../inputs/InputDescripcion";
-import InputNombre from "../inputs/InputNombre";
-import LabelInput from "../inputs/LabelInput";
-import SelectOpcion from "../SelectOpcion";
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import LabelInput from "@/components/inputs/LabelInput";
+import SelectOpcion from "@/components/SelectOpcion";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
+import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormCrearMunicipio({
   idPais,
+  setIdPais,
   idEstado,
+  setIdEstado,
   nombre,
   setNombre,
   descripcion,
   setDescripcion,
   validarNombre,
   setValidarNombre,
-  abrirModal,
-  limpiarCampos,
   paises,
   estados,
   setNombrePais,
   setNombreEstado,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.municipioForm
+  );
+
+  useEffect(() => {
+    if (mostrarCrear) {
+      setNombre("");
+      setDescripcion("");
+      setNombrePais("");
+      setNombreEstado("");
+    }
+  }, [reiniciarForm, mostrarCrear]);
+
   return (
     <Formulario
       onSubmit={(e) => {
@@ -31,18 +58,24 @@ export default function FormCrearMunicipio({
       <SelectOpcion
         idOpcion={idPais}
         nombre={"Paises"}
-        handleChange={cambiarSeleccionPais}
+        handleChange={(e) => {
+          cambiarSeleccionPais(e, setIdPais);
+          if (idEstado) {
+            setIdEstado("");
+          }
+        }}
         opciones={paises}
         seleccione={"Seleccione"}
         setNombre={setNombrePais}
-        indice={1}
       />
 
       {idPais && (
         <SelectOpcion
           idOpcion={idEstado}
           nombre={"Estados"}
-          handleChange={cambiarSeleccionEstado}
+          handleChange={(e) => {
+            cambiarSeleccionEstado(e, setIdEstado);
+          }}
           opciones={estados}
           seleccione={"Seleccione"}
           setNombre={setNombreEstado}
@@ -78,7 +111,10 @@ export default function FormCrearMunicipio({
       <div className="flex space-x-3">
         <BotonAceptarCancelar
           indice={"aceptar"}
-          aceptar={abrirModal}
+          aceptar={() => {
+            dispatch(cerrarModal("crear"));
+            dispatch(abrirModal("confirmar"));
+          }}
           nombre={"Crear"}
           campos={{
             nombre,
@@ -88,18 +124,15 @@ export default function FormCrearMunicipio({
           }}
         />
 
-        <BotonAceptarCancelar
-          indice={"limpiar"}
+        <BotonLimpiarCampos
           aceptar={() => {
-            limpiarCampos({
-              setNombre,
-              setDescripcion,
-            });
+            dispatch(resetForm("municipioForm"));
           }}
-          nombre={"Limpiar"}
           campos={{
             nombre,
             descripcion,
+            idPais,
+            idEstado,
           }}
         />
       </div>

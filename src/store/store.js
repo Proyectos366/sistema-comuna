@@ -4,6 +4,7 @@ import usuariosReducer from "@/store/features/usuarios/usuariosSlices";
 import paisesReducer from "@/store/features/paises/paisesSlices";
 import estadosReducer from "@/store/features/estados/estadosSlices";
 import municipiosReducer from "@/store/features/municipios/municipiosSlices";
+import parroquiasReducer from "@/store/features/parroquias/parroquiasSlices";
 import institucionesSlices from "@/store/features/instituciones/institucionesSlices";
 import departamentosReducer from "@/store/features/departamentos/departamentosSlices";
 import rolesReducer from "@/store/features/roles/rolesSlices";
@@ -20,6 +21,7 @@ const store = configureStore({
     paises: paisesReducer,
     estados: estadosReducer,
     municipios: municipiosReducer,
+    parroquias: parroquiasReducer,
     instituciones: institucionesSlices,
     departamentos: departamentosReducer,
     // Aquí se agregarán los reducers de los "slices"

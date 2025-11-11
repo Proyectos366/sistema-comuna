@@ -20,7 +20,7 @@ import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import SelectOpcion from "@/components/SelectOpcion";
-import { cambiarSeleccionPais } from "./funciones/cambiarSeleccionPais";
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 export default function EstadosView() {
   const dispatch = useDispatch();

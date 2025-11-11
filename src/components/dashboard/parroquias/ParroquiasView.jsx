@@ -10,10 +10,10 @@ import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 
-import FichaMunicipio from "@/components/dashboard/municipios/components/FichaMunicipio";
-import ButtonToggleDetallesMunicipio from "@/components/dashboard/municipios/components/ButtonToggleDetallesMunicipio";
-import ListadoMunicipios from "@/components/dashboard/municipios/components/ListadoMunicipios";
-import ModalMunicipios from "@/components/dashboard/municipios/components/ModalMunicipios";
+import FichaParroquia from "@/components/dashboard/parroquias/components/FichaParroquia";
+import ButtonToggleDetallesParroquia from "@/components/dashboard/parroquias/components/ButtonToggleDetallesParroquia";
+import ListadoParroquias from "@/components/dashboard/parroquias/components/ListadoParroquias";
+import ModalParroquias from "@/components/dashboard/parroquias/components/ModalParroquias";
 import SelectOpcion from "@/components/SelectOpcion";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
@@ -21,15 +21,18 @@ import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
+import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
+import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
 
-export default function MunicipiosView() {
+export default function ParroquiasView() {
   const dispatch = useDispatch();
   const { paises } = useSelector((state) => state.paises);
   const { estados } = useSelector((state) => state.estados);
-  const { municipios, loading } = useSelector((state) => state.municipios);
+  const { municipios } = useSelector((state) => state.municipios);
+  const { parroquias, loading } = useSelector((state) => state.parroquias);
 
   useEffect(() => {
     dispatch(fetchPaises());
@@ -37,16 +40,18 @@ export default function MunicipiosView() {
 
   const [nombrePais, setNombrePais] = useState("");
   const [nombreEstado, setNombreEstado] = useState("");
-
   const [nombreMunicipio, setNombreMunicipio] = useState("");
-  const [descripcionMunicipio, setDescripcionMunicipio] = useState("");
+
+  const [nombreParroquia, setNombreParroquia] = useState("");
+  const [descripcionParroquia, setDescripcionParroquia] = useState("");
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
+  const [idMunicipio, setIdMunicipio] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreMunicipio, setValidarNombreMunicipio] = useState("");
+  const [validarNombreParroquia, setValidarNombreParroquia] = useState("");
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -59,11 +64,19 @@ export default function MunicipiosView() {
     if (idPais) {
       dispatch(fetchEstadosIdPais(idPais));
     }
+  }, [dispatch, idPais]);
 
+  useEffect(() => {
     if (idEstado) {
       dispatch(fetchMunicipiosIdEstado(idEstado));
     }
-  }, [dispatch, idPais, idEstado]);
+  }, [dispatch, idEstado]);
+
+  useEffect(() => {
+    if (idMunicipio) {
+      dispatch(fetchParroquiasIdMunicipio(idMunicipio));
+    }
+  }, [dispatch, idMunicipio]);
 
   const camposBusqueda = ["nombre"];
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
@@ -71,39 +84,43 @@ export default function MunicipiosView() {
   const acciones = {
     setIdPais: setIdPais,
     setIdEstado: setIdEstado,
+    setIdMunicipio: setIdMunicipio,
     setNombrePais: setNombrePais,
     setNombreEstado: setNombreEstado,
-    setNombre: setNombreMunicipio,
-    setDescripcion: setDescripcionMunicipio,
+    setNombreMunicipio: setNombreMunicipio,
+    setNombre: setNombreParroquia,
+    setDescripcion: setDescripcionParroquia,
   };
 
-  const datosMunicipio = {
+  const datosParroquia = {
     idPais: idPais,
     idEstado: idEstado,
+    idMunicipio: idMunicipio,
     nombrePais: nombrePais,
     nombreEstado: nombreEstado,
-    nombre: nombreMunicipio,
-    descripcion: descripcionMunicipio,
+    nombreMunicipio: nombreMunicipio,
+    nombre: nombreParroquia,
+    descripcion: descripcionParroquia,
   };
 
   const validaciones = {
-    validarNombre: validarNombreMunicipio,
-    setValidarNombre: setValidarNombreMunicipio,
+    validarNombre: validarNombreParroquia,
+    setValidarNombre: setValidarNombreParroquia,
   };
 
-  const municipiosFiltradosOrdenados = useMemo(() => {
+  const parroquiasFiltradasOrdenadas = useMemo(() => {
     return filtrarOrdenar(
-      municipios,
+      parroquias,
       busqueda,
       ordenCampo,
       ordenDireccion,
       camposBusqueda
     );
-  }, [municipios, busqueda, ordenCampo, ordenDireccion]);
+  }, [parroquias, busqueda, ordenCampo, ordenDireccion]);
 
-  const municipiosPaginados = useMemo(() => {
-    return municipiosFiltradosOrdenados.slice(first, first + rows);
-  }, [municipiosFiltradosOrdenados, first, rows]);
+  const parroquiasPaginados = useMemo(() => {
+    return parroquiasFiltradasOrdenadas.slice(first, first + rows);
+  }, [parroquiasFiltradasOrdenadas, first, rows]);
 
   useEffect(() => {
     setFirst(0);
@@ -111,19 +128,19 @@ export default function MunicipiosView() {
 
   return (
     <>
-      <ModalMunicipios
+      <ModalParroquias
         acciones={acciones}
-        datosMunicipio={datosMunicipio}
+        datosParroquia={datosParroquia}
         validaciones={validaciones}
       />
       <SectionMain>
         <SectionTertiary
-          nombre={"Gestión municipios"}
+          nombre={"Gestión parroquias"}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {municipios.length !== 0 && (
+          {parroquias.length !== 0 && (
             <BuscadorOrdenador
               busqueda={busqueda}
               setBusqueda={setBusqueda}
@@ -143,6 +160,10 @@ export default function MunicipiosView() {
               if (idEstado) {
                 setIdEstado("");
               }
+
+              if (idMunicipio) {
+                setIdMunicipio("");
+              }
             }}
             opciones={paises}
             seleccione={"Seleccione"}
@@ -153,7 +174,12 @@ export default function MunicipiosView() {
             <SelectOpcion
               idOpcion={idEstado}
               nombre={"Estados"}
-              handleChange={(e) => cambiarSeleccionEstado(e, setIdEstado)}
+              handleChange={(e) => {
+                cambiarSeleccionEstado(e, setIdEstado);
+                if (idMunicipio) {
+                  setIdMunicipio("");
+                }
+              }}
               opciones={estados}
               seleccione={"Seleccione"}
               setNombre={setNombreEstado}
@@ -161,38 +187,51 @@ export default function MunicipiosView() {
           )}
 
           {idEstado && (
+            <SelectOpcion
+              idOpcion={idMunicipio}
+              nombre={"Municipios"}
+              handleChange={(e) => {
+                cambiarSeleccionMunicipio(e, setIdMunicipio);
+              }}
+              opciones={municipios}
+              seleccione={"Seleccione"}
+              setNombre={setNombreMunicipio}
+            />
+          )}
+
+          {idMunicipio && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && municipios?.length === 0 ? (
+                {loading && parroquias?.length === 0 ? (
                   <Div className="flex items-center gap-4">
                     <BounceLoader color="#082158" size={50} /> Cargando
-                    municipios...
+                    parroquias...
                   </Div>
                 ) : (
                   <>
-                    {municipiosPaginados?.length !== 0 ? (
-                      municipiosPaginados.map((municipio, index) => {
+                    {parroquiasPaginados?.length !== 0 ? (
+                      parroquiasPaginados.map((parroquia, index) => {
                         return (
-                          <FichaMunicipio
-                            key={municipio.id}
-                            municipio={municipio}
+                          <FichaParroquia
+                            key={parroquia.id}
+                            parroquia={parroquia}
                             index={index}
                           >
-                            <ButtonToggleDetallesMunicipio
+                            <ButtonToggleDetallesParroquia
                               expanded={expanded}
-                              municipio={municipio}
+                              parroquia={parroquia}
                               setExpanded={setExpanded}
                             />
 
-                            {expanded === municipio.id && (
-                              <ListadoMunicipios municipio={municipio} />
+                            {expanded === parroquia.id && (
+                              <ListadoParroquias parroquia={parroquia} />
                             )}
-                          </FichaMunicipio>
+                          </FichaParroquia>
                         );
                       })
                     ) : (
                       <>
-                        {municipios.length !== 0 && (
+                        {parroquias.length !== 0 && (
                           <Div
                             className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
                           >
@@ -200,9 +239,9 @@ export default function MunicipiosView() {
                           </Div>
                         )}
 
-                        {!loading && municipios.length === 0 && (
+                        {!loading && parroquias.length === 0 && (
                           <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay municipios para este estado...
+                            No hay parroquias para este municipio...
                           </Div>
                         )}
                       </>
@@ -216,7 +255,7 @@ export default function MunicipiosView() {
                   setFirst={setFirst}
                   rows={rows}
                   setRows={setRows}
-                  totalRecords={municipiosFiltradosOrdenados.length}
+                  totalRecords={parroquiasFiltradasOrdenadas.length}
                 />
               </Div>{" "}
             </>

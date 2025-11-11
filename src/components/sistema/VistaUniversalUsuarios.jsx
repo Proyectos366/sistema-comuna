@@ -9,7 +9,7 @@ import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
 import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
 import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
-// import ParroquiasForm from "../opciones/ParroquiasForm";
+
 // import CargosForm from "../opciones/CargosForm";
 // import ComunasForm from "../opciones/ComunasForm";
 // import CircuitoForm from "../opciones/CircuitosForm";
@@ -28,6 +28,7 @@ import UsuariosView from "@/components/dashboard/usuarios/UsuariosView";
 import PaisesView from "@/components/dashboard/paises/PaisesView";
 import EstadosView from "@/components/dashboard/estados/EstadosView";
 import MunicipiosView from "@/components/dashboard/municipios/MunicipiosView";
+import ParroquiasView from "@/components/dashboard/parroquias/ParroquiasView";
 
 export default function VistaUniversalUsuarios() {
   const {
@@ -231,21 +232,10 @@ export default function VistaUniversalUsuarios() {
               {vista === "estados" && <EstadosView />}
 
               {vista === "municipios" && <MunicipiosView />}
-              {/*
-              {vista === "parroquias" && (
-                <ParroquiasForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
 
+              {vista === "parroquias" && <ParroquiasView />}
+
+              {/*
               {vista === "instituciones" && (
                 <InstitucionesForm
                   mostrar={mostrarModal}

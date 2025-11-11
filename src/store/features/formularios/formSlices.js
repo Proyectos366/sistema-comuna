@@ -8,6 +8,7 @@ const initialState = {
     paisForm: 0,
     estadoForm: 0,
     municipioForm: 0,
+    parroquiaForm: 0,
   },
 };
 

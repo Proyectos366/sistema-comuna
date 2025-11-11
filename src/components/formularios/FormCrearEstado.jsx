@@ -12,7 +12,7 @@ import LabelInput from "@/components/inputs/LabelInput";
 import SelectOpcion from "@/components/SelectOpcion";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
-import { cambiarSeleccionPais } from "@/components/dashboard/estados/funciones/cambiarSeleccionPais";
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
 

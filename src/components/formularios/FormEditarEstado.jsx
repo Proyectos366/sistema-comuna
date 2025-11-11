@@ -8,7 +8,7 @@ import InputNombre from "../inputs/InputNombre";
 import SelectOpcion from "../SelectOpcion";
 import InputDescripcion from "../inputs/InputDescripcion";
 import InputCodigoPostal from "../inputs/InputCodigoPostal";
-import { cambiarSeleccionPais } from "../dashboard/estados/funciones/cambiarSeleccionPais";
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 export default function FormEditarEstado({
   idPais,
