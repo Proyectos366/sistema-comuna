@@ -31,7 +31,7 @@ export default function ListadoParroquias({ parroquia }) {
           onToggle={() => {
             dispatch(
               eliminarRestaurarParroquia({
-                parroquia: parroquia.borrado,
+                estado: parroquia.borrado,
                 id_parroquia: parroquia.id,
               })
             );

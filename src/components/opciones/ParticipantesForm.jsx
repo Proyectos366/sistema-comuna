@@ -9,7 +9,7 @@ import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMo
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import BotonesModal from "../BotonesModal";
 import ModalDatosContenedor from "../modales/ModalDatosContenedor";
-import Boton from "../Boton";
+import Boton from "../botones/Boton";
 import { calcularEdadPorFechaNacimiento, formatearFecha } from "@/utils/Fechas";
 import InputDate from "../InputDate";
 import SelectOpcion from "../SelectOpcion";

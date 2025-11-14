@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Input from "./Input";
+import Input from "@/components/inputs/Input";
 
 export default function SelectOpcion({
   nombre,

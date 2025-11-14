@@ -6,6 +6,7 @@ const initialState = {
     crear: false,
     editar: false,
     confirmar: false,
+    confirmarCambios: false,
   },
 };
 
@@ -32,28 +33,3 @@ const modalSlice = createSlice({
 export const { abrirModal, cerrarModal, cerrarTodosLosModales } =
   modalSlice.actions;
 export default modalSlice.reducer;
-
-/** 
-// redux/modalSlice.js
-import { createSlice } from "@reduxjs/toolkit";
-
-const initialState = {
-  mostrarModal: false,
-};
-
-const modalSlice = createSlice({
-  name: "modal",
-  initialState,
-  reducers: {
-    abrirModal: (state) => {
-      state.mostrarModal = true;
-    },
-    cerrarModal: (state) => {
-      state.mostrarModal = false;
-    },
-  },
-});
-
-export const { abrirModal, cerrarModal } = modalSlice.actions;
-export default modalSlice.reducer;
-*/

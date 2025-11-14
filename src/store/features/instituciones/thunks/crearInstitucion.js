@@ -1,30 +1,27 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { fetchInstituciones } from "./todasInstituciones";
 
-// Thunk para crear un nuevo instituciones
+// Thunk para crear un nuevo pais
 export const crearInstitucion = createAsyncThunk(
-  "institucion/crearInstitucion",
-  async (nuevaInstitucion, { dispatch, rejectWithValue }) => {
+  "instituciones/crearInstitucion",
+  async (data, thunkAPI) => {
     try {
       const response = await axios.post(
         "/api/instituciones/crear-institucion",
-        nuevaInstitucion
+        data.nuevaInstitucion
       );
 
-      const institucionesCreada = response.data.instituciones;
+      const institucionCreada = response.data.instituciones;
 
-      // Actualiza la lista completa en segundo plano
-      setTimeout(() => {
-        dispatch(fetchInstituciones());
-      }, 0);
+      data.notify(response.data.message);
 
-      return institucionesCreada;
+      thunkAPI.dispatch(data.cerrarModal("confirmar"));
+      return institucionCreada;
     } catch (error) {
-      // Manejo de error con fallback
+      data.notify(error?.response?.data.message);
       const mensajeError =
         error.response?.data?.message || error.message || "Error desconocido";
-      return rejectWithValue(mensajeError);
+      return thunkAPI.rejectWithValue(mensajeError);
     }
   }
 );

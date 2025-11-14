@@ -14,7 +14,7 @@ import ModalDatosContenedor from "../modales/ModalDatosContenedor";
 import SelectOpcion from "../SelectOpcion";
 import ListadoVoceros from "../listados/ListadoVoceros";
 import InputCedula from "../inputs/InputCedula";
-import Boton from "../Boton";
+import Boton from "../botones/Boton";
 import FormEditarVocero from "../formularios/FormEditarVocero";
 import ModalEditar from "../modales/ModalEditar";
 import BotonSelecOpcionVocero from "../botones/BotonSelecOpcion";

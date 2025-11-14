@@ -33,6 +33,7 @@ export default async function validarEditarInstitucion(
   id_pais,
   id_estado,
   id_municipio,
+  id_parroquia,
   id_institucion
 ) {
   try {
@@ -57,6 +58,7 @@ export default async function validarEditarInstitucion(
       id_pais,
       id_estado,
       id_municipio,
+      id_parroquia,
       id_institucion
     );
 

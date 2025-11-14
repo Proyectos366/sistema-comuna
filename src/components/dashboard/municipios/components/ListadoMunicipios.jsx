@@ -31,7 +31,7 @@ export default function ListadoMunicipios({ municipio }) {
           onToggle={() => {
             dispatch(
               eliminarRestaurarMunicipio({
-                municipio: municipio.borrado,
+                estado: municipio.borrado,
                 id_municipio: municipio.id,
               })
             );

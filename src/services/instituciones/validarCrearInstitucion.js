@@ -81,11 +81,18 @@ export default async function validarCrearInstitucion(
     // 6. Verificar si ya existe una institución con el mismo nombre en la misma ubicación.
     const nombreRepetido = await prisma.institucion.findFirst({
       where: {
-        nombre: validarCampos.nombre,
-        id_pais: validarCampos.id_pais,
-        id_estado: validarCampos.id_estado,
-        id_municipio: validarCampos.id_municipio,
-        id_parroquia: validarCampos.id_parroquia,
+        OR: [
+          {
+            nombre: validarCampos.nombre,
+            id_pais: validarCampos.id_pais,
+            id_estado: validarCampos.id_estado,
+            id_municipio: validarCampos.id_municipio,
+            id_parroquia: validarCampos.id_parroquia,
+          },
+          {
+            rif: validarCampos.rif,
+          },
+        ],
       },
     });
 

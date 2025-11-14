@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
-import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
-import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
+//import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
+//import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 
 // import CargosForm from "../opciones/CargosForm";
 // import ComunasForm from "../opciones/ComunasForm";
@@ -22,13 +22,14 @@ import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 // import EstadosForm from "../opciones/EstadoForm";
 // import MunicipiosForm from "../opciones/MunicipioForm";
 // import InstitucionesForm from "../opciones/InstitucionesForm";
-import NovedadesForm from "../opciones/NovedadesForm";
+//import NovedadesForm from "../opciones/NovedadesForm";
 
 import UsuariosView from "@/components/dashboard/usuarios/UsuariosView";
 import PaisesView from "@/components/dashboard/paises/PaisesView";
 import EstadosView from "@/components/dashboard/estados/EstadosView";
 import MunicipiosView from "@/components/dashboard/municipios/MunicipiosView";
 import ParroquiasView from "@/components/dashboard/parroquias/ParroquiasView";
+import InstitucionesView from "@/components/dashboard/instituciones/InstitucionesView";
 
 export default function VistaUniversalUsuarios() {
   const {
@@ -235,21 +236,9 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "parroquias" && <ParroquiasView />}
 
-              {/*
-              {vista === "instituciones" && (
-                <InstitucionesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "instituciones" && <InstitucionesView />}
 
+              {/*
               {vista === "departamentos" && (
                 <DepartamentosForm
                   mostrar={mostrarModal}
@@ -360,7 +349,7 @@ export default function VistaUniversalUsuarios() {
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                   usuarioActivo={usuarioActivo}
                 />
-              )} */}
+              )} 
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario
@@ -402,7 +391,7 @@ export default function VistaUniversalUsuarios() {
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                   usuarioActivo={usuarioActivo}
                 />
-              )}
+              )}*/}
             </main>
 
             <Footer />
