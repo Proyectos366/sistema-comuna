@@ -2,15 +2,17 @@
 
 import { useEffect } from "react";
 import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
 import InputNombre from "../inputs/InputNombre";
 import SelectOpcion from "../SelectOpcion";
 import InputDescripcion from "../inputs/InputDescripcion";
+import InputCodigoPostal from "../inputs/InputCodigoPostal";
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 export default function FormEditarEstado({
+  idPais,
+  setIdPais,
   nombre,
   setNombre,
   capital,
@@ -23,10 +25,10 @@ export default function FormEditarEstado({
   setValidarNombre,
   validarCapital,
   setValidarCapital,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  validarCodigoPostal,
+  setValidarCodigoPostal,
+  setNombrePais,
+  paises,
 }) {
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
@@ -39,84 +41,90 @@ export default function FormEditarEstado({
 
     validarYActualizar(nombre, setValidarNombre);
     validarYActualizar(capital, setValidarCapital);
+    validarYActualizar(codigoPostal, setValidarCodigoPostal);
   }, [nombre, capital]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+      <SelectOpcion
+        idOpcion={idPais}
+        nombre={"Paises"}
+        handleChange={(e) => cambiarSeleccionPais(e, setIdPais)}
+        opciones={paises}
+        seleccione={"Seleccione"}
+        setNombre={setNombrePais}
+      />
 
-        <LabelInput nombre={"Capital"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={capital}
-            setValue={setCapital}
-            validarNombre={validarCapital}
-            setValidarNombre={setValidarCapital}
-          />
-        </LabelInput>
+      <LabelInput nombre={"Nombre"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
+      </LabelInput>
 
-        <LabelInput nombre={"Código postal"}>
-          <Input
-            type={"text"}
-            value={codigoPostal}
-            onChange={(e) => setCodigoPostal(e.target.value)}
-          />
-        </LabelInput>
+      <LabelInput nombre={"Capital"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={capital}
+          setValue={setCapital}
+          validarNombre={validarCapital}
+          setValidarNombre={setValidarCapital}
+        />
+      </LabelInput>
 
-        <LabelInput nombre={"Descripción"}>
-          <InputDescripcion
-            value={descripcion}
-            setValue={setDescripcion}
-            rows={6}
-            max={500}
-            autoComplete="off"
-          />
-        </LabelInput>
+      <LabelInput nombre={"Código postal"}>
+        <InputCodigoPostal
+          value={codigoPostal}
+          setValue={setCodigoPostal}
+          validarCodigoPostal={validarCodigoPostal}
+          setValidarCodigoPostal={setValidarCodigoPostal}
+        />
+      </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
+      <LabelInput nombre={"Descripción"}>
+        <InputDescripcion
+          value={descripcion}
+          setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
+        />
+      </LabelInput>
 
-        <div className="flex space-x-4">
-          <BotonAceptarCancelar
-            indice={"aceptar"}
-            aceptar={editar}
-            nombre={"Guardar cambios"}
-            campos={{
-              nombre,
-              capital,
-              descripcion,
-            }}
-          />
+      <div className="flex space-x-3">
+        <BotonAceptarCancelar
+          indice={"aceptar"}
+          aceptar={() => {
+            dispatch(cerrarModal("crear"));
+            dispatch(abrirModal("confirmar"));
+          }}
+          nombre={"Crear"}
+          campos={{
+            nombre,
+            capital,
+            codigoPostal,
+            descripcion,
+            idPais,
+          }}
+        />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
-            aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setCapital,
-                setDescripcion,
-              });
-            }}
-            nombre={"Limpiar"}
-            campos={{
-              nombre,
-              capital,
-              descripcion,
-            }}
-          />
-        </div>
+        <BotonLimpiarCampos
+          aceptar={() => {
+            dispatch(resetForm("estadoForm"));
+          }}
+          campos={{
+            nombre,
+            capital,
+            codigoPostal,
+            descripcion,
+            idPais,
+          }}
+        />
       </div>
     </Formulario>
   );

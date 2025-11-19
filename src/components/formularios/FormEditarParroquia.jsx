@@ -1,26 +1,39 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputNombre from "../inputs/InputNombre";
-import InputDescripcion from "../inputs/InputDescripcion";
+import { useDispatch, useSelector } from "react-redux";
+
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 export default function FormEditarParroquia({
+  idPais,
+  setIdPais,
+  idEstado,
+  setIdEstado,
+  idMunicipio,
+  setIdMunicipio,
   nombre,
   setNombre,
   descripcion,
   setDescripcion,
   validarNombre,
   setValidarNombre,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  setNombrePais,
+  setNombreEstado,
+  setNombreMunicipio,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.parroquiaForm
+  );
+
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
@@ -32,6 +45,14 @@ export default function FormEditarParroquia({
 
     validarYActualizar(nombre, setValidarNombre);
   }, [nombre]);
+
+  useEffect(() => {
+    if (mostrarCrear) {
+      setNombre("");
+      setDescripcion("");
+      setNombreMunicipio("");
+    }
+  }, [reiniciarForm, mostrarCrear]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
@@ -57,33 +78,29 @@ export default function FormEditarParroquia({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
         <div className="flex space-x-4">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
-            nombre={"Guardar cambios"}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
+            nombre={"Crear"}
             campos={{
               nombre,
               descripcion,
+              idMunicipio,
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setDescripcion,
-              });
+              dispatch(resetForm("parroquiaForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
               descripcion,
+              idMunicipio,
             }}
           />
         </div>

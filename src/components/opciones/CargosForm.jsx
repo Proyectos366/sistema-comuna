@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "../Modal";
-import ModalDatos from "../ModalDatos";
+import ModalDatos from "../modales/ModalDatos";
 import SectionRegistroMostrar from "../SectionRegistroMostrar";
 import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
 import DivDosDentroSectionRegistroMostrar from "../DivDosDentroSectionRegistroMostrar";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
-import BotonesModal from "../BotonesModal";
+import BotonesModal from "../botones/BotonesModal";
 import FormCrearCargo from "../formularios/FormCrearCargo";
-import ModalDatosContenedor from "../ModalDatosContenedor";
+import ModalDatosContenedor from "../modales/ModalDatosContenedor";
 import ModalEditar from "../modales/ModalEditar";
 import FormEditarCargo from "../formularios/FormEditarCargo";
 import ListadoGeneral from "../listados/ListadoGeneral";

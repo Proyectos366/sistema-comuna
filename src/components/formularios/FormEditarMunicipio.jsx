@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputNombre from "../inputs/InputNombre";
-import InputDescripcion from "../inputs/InputDescripcion";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonLimpiarCampos from "../botones/BotonLimpiarCampos";
 
 export default function FormEditarMunicipio({
   nombre,
@@ -57,30 +56,24 @@ export default function FormEditarMunicipio({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
-            nombre={"Guardar cambios"}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
+            nombre={"Crear"}
             campos={{
               nombre,
               descripcion,
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setDescripcion,
-              });
+              dispatch(resetForm("estadoForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
               descripcion,

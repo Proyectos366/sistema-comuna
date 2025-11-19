@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import InputNombre from "../inputs/InputNombre";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import MostarMsjEnModal from "@/components/mensaje/MostrarMsjEnModal";
+import InputNombre from "@/components/inputs/InputNombre";
 
 export default function FormEditarUsuario({
   nombre,

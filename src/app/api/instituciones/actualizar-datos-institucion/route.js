@@ -1,9 +1,9 @@
 /**
-@fileoverview Controlador de API para la edición de una institución existente. Este archivo
-maneja la lógica para actualizar los detalles de una institución en la base de datos a través
-de una solicitud POST. Utiliza Prisma para la interacción con la base de datos, un servicio de
-validación para asegurar la validez de los datos, y un sistema de registro de eventos para la
-auditoría.@module
+  @fileoverview Controlador de API para la edición de una institución existente. Este archivo
+  maneja la lógica para actualizar los detalles de una institución en la base de datos a través
+  de una solicitud PATCH. Utiliza Prisma para la interacción con la base de datos, un servicio de
+  validación para asegurar la validez de los datos, y un sistema de registro de eventos para la
+  auditoría.@module /api/instituciones/actualizar-datos-institucion
 */
 // Importaciones de módulos y librerías
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
@@ -11,10 +11,13 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para e
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
 import validarEditarInstitucion from "@/services/instituciones/validarEditarInstitucion"; // Servicio para validar los datos de edición de la institución.
 /**
-Maneja las solicitudes HTTP POST para editar una institución existente.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles de la institución a editar.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
+  Maneja las solicitudes HTTP PATCH para editar una institución existente.
+  @async@function PATCH@param {Request} request - Objeto de la solicitud que contiene los detalles
+  de la institución a editar.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con
+  el resultado de la operación o un error.
 */
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
     const {
@@ -26,6 +29,7 @@ export async function POST(request) {
       id_pais,
       id_estado,
       id_municipio,
+      id_parroquia,
       id_institucion,
     } = await request.json();
 
@@ -39,6 +43,7 @@ export async function POST(request) {
       id_pais,
       id_estado,
       id_municipio,
+      id_parroquia,
       id_institucion
     );
 
@@ -72,10 +77,11 @@ export async function POST(request) {
           rif: validaciones.rif,
           sector: validaciones.sector,
           direccion: validaciones.direccion,
+          id_parroquia: validaciones.id_parroquia,
         },
       }),
 
-      prisma.institucion.findMany({
+      prisma.institucion.findFirst({
         where: {
           id: validaciones.id_institucion,
           borrado: false,
@@ -127,32 +133,32 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 6. Condición de éxito: la institución fue actualizada correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "institucion",
-        accion: "UPDATE_INSTITUCION",
-        id_objeto: institucionActualizada?.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Institucion actualizada con exito id: ${validaciones.id_institucion}`,
-        datosAntes: {
-          nombre: nombre,
-          descripcion: descripcion,
-          rif: rif,
-          sector: sector,
-          direccion: direccion,
-          id_institucion: id_institucion,
-        },
-        datosDespues: institucionActualizada,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Institución actualizada...",
-        { instituciones: institucionActualizada[0], paises: todosPaises },
-        201
-      );
     }
+
+    // 6. Condición de éxito: la institución fue actualizada correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "institucion",
+      accion: "UPDATE_INSTITUCION",
+      id_objeto: institucionActualizada?.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Institucion actualizada con exito id: ${validaciones.id_institucion}`,
+      datosAntes: {
+        nombre: nombre,
+        descripcion: descripcion,
+        rif: rif,
+        sector: sector,
+        direccion: direccion,
+        id_institucion: id_institucion,
+      },
+      datosDespues: institucionActualizada,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Institución actualizada...",
+      { instituciones: institucionActualizada, paises: todosPaises },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (actualizar institucion): ` + error);

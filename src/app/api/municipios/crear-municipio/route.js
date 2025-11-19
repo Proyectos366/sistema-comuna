@@ -93,28 +93,28 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 7. Condición de éxito: el municipio fue creado correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "municipio",
-        accion: "CREAR_MUNICIPIO",
-        id_objeto: nuevoMunicipio.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Municipio creado con exito",
-        datosAntes: null,
-        datosDespues: nuevoMunicipio,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Municipio creado...",
-        {
-          municipios: nuevoMunicipio,
-          paises: todosPaises,
-        },
-        201
-      );
     }
+
+    // 7. Condición de éxito: el municipio fue creado correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "municipio",
+      accion: "CREAR_MUNICIPIO",
+      id_objeto: nuevoMunicipio.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Municipio creado con exito",
+      datosAntes: null,
+      datosDespues: nuevoMunicipio,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Municipio creado...",
+      {
+        municipios: nuevoMunicipio,
+        paises: todosPaises,
+      },
+      201
+    );
   } catch (error) {
     // 8. Manejo de errores inesperados
     console.log(`Error interno (municipio): ` + error);

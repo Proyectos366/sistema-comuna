@@ -5,6 +5,8 @@
 */
 import "@/app/globals.css"; // 1. Importa los estilos globales de la aplicación
 import { UserProvider } from "@/app/context/AuthContext"; // 2. Importa el proveedor de contexto de usuario
+import ReduxProvider from "@/store/provider";
+import InitAuth from "@/components/InitAuth";
 
 /**
  Metadatos para el dashboard del director. Utilizados por Next.js para configurar el título y
@@ -25,5 +27,10 @@ export const metadata = {
 */
 export default function DashboardDirectorLayout({ children }) {
   // 5. Retorna el layout envuelto en el contexto de usuario
-  return <UserProvider>{children}</UserProvider>;
+  return (
+    <ReduxProvider>
+      <InitAuth />
+      <UserProvider>{children}</UserProvider>
+    </ReduxProvider>
+  );
 }

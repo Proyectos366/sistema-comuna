@@ -3,18 +3,18 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Modal from "@/components/Modal";
-import ModalDatos from "@/components/ModalDatos";
+import Modal from "@/components/modales/Modal";
+import ModalDatos from "@/components/modales/ModalDatos";
 import MostrarMsj from "@/components/MostrarMensaje";
 import Formulario from "@/components/Formulario";
-import ModalDatosContenedor from "../ModalDatosContenedor";
-import BotonesModal from "../BotonesModal";
-import SectionRegistroMostrar from "../SectionRegistroMostrar";
-import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import LabelInput from "../inputs/LabelInput";
-import InputClave from "../inputs/InputClave";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
+import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
+import BotonesModal from "@/components/botones/BotonesModal";
+import SectionRegistroMostrar from "@/components/SectionRegistroMostrar";
+import DivUnoDentroSectionRegistroMostrar from "@/components/DivUnoDentroSectionRegistroMostrar";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import LabelInput from "@/components/inputs/LabelInput";
+import InputClave from "@/components/inputs/InputClave";
+import MostarMsjEnModal from "@/components/mensaje/MostrarMsjEnModal";
 
 export default function MostrarCambiarClaveUsuario({
   mostrar,

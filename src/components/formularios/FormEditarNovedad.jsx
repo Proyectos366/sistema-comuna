@@ -1,9 +1,9 @@
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputDescripcion from "../inputs/InputDescripcion";
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import MostarMsjEnModal from "@/components/mensaje/MostrarMsjEnModal";
+import Input from "@/components/inputs/Input";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
 
 export default function FormEditarNovedad({
   nombre,

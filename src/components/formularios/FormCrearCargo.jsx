@@ -1,4 +1,4 @@
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import InputDescripcion from "../inputs/InputDescripcion";
 import InputNombre from "../inputs/InputNombre";

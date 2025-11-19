@@ -3,7 +3,7 @@ import BotonEditar from "../botones/BotonEditar";
 import BotonEliminar from "../botones/BotonEliminar";
 import Titulos from "../Titulos";
 import ListaDetallesVocero from "./ListaDetalleVocero";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import ListadoNovedadDepartamento from "./ListadoNovedadDepartamento";
 
 export default function ListadoNovedades({

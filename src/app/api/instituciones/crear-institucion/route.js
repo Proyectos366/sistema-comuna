@@ -114,28 +114,28 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 7. Condición de éxito: la institución fue creada correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "institucion",
-        accion: "CREAR_INSTITUCION",
-        id_objeto: nuevaInstitucion.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Institucion creada con exito",
-        datosAntes: null,
-        datosDespues: nuevaInstitucion,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Institución creada...",
-        {
-          instituciones: nuevaInstitucion,
-          paises: todosPaises,
-        },
-        201
-      );
     }
+
+    // 7. Condición de éxito: la institución fue creada correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "institucion",
+      accion: "CREAR_INSTITUCION",
+      id_objeto: nuevaInstitucion.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Institucion creada con exito",
+      datosAntes: null,
+      datosDespues: nuevaInstitucion,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Institución creada...",
+      {
+        instituciones: nuevaInstitucion,
+        paises: todosPaises,
+      },
+      201
+    );
   } catch (error) {
     // 8. Manejo de errores inesperados
     console.log(`Error interno (institucion): ` + error);

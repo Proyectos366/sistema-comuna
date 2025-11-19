@@ -43,15 +43,15 @@ export async function GET(request) {
         { consejos: [] },
         200
       );
-    } else {
-      // 5. Condición de éxito: se encontraron consejos comunales
-      return generarRespuesta(
-        "ok",
-        "Consejos comunales encontrados.",
-        { consejos: consejosComunales },
-        200
-      );
     }
+    
+    // 5. Condición de éxito: se encontraron consejos comunales
+    return generarRespuesta(
+      "ok",
+      "Consejos comunales encontrados.",
+      { consejos: consejosComunales },
+      200
+    );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(`Error interno al consultar consejos comunales: ${error}`);

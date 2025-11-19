@@ -3,7 +3,7 @@ import Span from "@/components/padres/Span";
 
 export default function LeyendaUsuarios() {
   return (
-    <Div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl p-4 space-y-6 border border-gray-300">
+    <Div className="w-full bg-gray-100 backdrop-blur-md rounded-md shadow-xl mb-4 p-4 border border-gray-300">
       <Div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {[
           { color: "#082158", label: "Administradores" },

@@ -7,24 +7,29 @@ import { useSelector } from "react-redux";
 import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
 import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
 import Footer from "../Footer";
-import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
-import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
-import ParroquiasForm from "../opciones/ParroquiasForm";
-import CargosForm from "../opciones/CargosForm";
-import ComunasForm from "../opciones/ComunasForm";
-import CircuitoForm from "../opciones/CircuitosForm";
-import ConsejoForm from "../opciones/ConsejoForm";
-import VoceroForm from "../opciones/VoceroForm";
-//import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
-import FormacionesForm from "../opciones/FormacionesForm";
-import ParticipantesForm from "../opciones/ParticipantesForm";
-import DepartamentosForm from "../opciones/DepartamentosForm";
-import PaisesForm from "../opciones/PaisForm";
-import EstadosForm from "../opciones/EstadoForm";
-import MunicipiosForm from "../opciones/MunicipioForm";
-import InstitucionesForm from "../opciones/InstitucionesForm";
-import NovedadesForm from "../opciones/NovedadesForm";
-import UsuariosView from "../dashboard/usuarios/UsuariosView";
+//import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
+//import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
+
+// import CargosForm from "../opciones/CargosForm";
+// import ComunasForm from "../opciones/ComunasForm";
+// import CircuitoForm from "../opciones/CircuitosForm";
+// import ConsejoForm from "../opciones/ConsejoForm";
+// import VoceroForm from "../opciones/VoceroForm";
+// //import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
+// import FormacionesForm from "../opciones/FormacionesForm";
+// import ParticipantesForm from "../opciones/ParticipantesForm";
+// import DepartamentosForm from "../opciones/DepartamentosForm";
+// import EstadosForm from "../opciones/EstadoForm";
+// import MunicipiosForm from "../opciones/MunicipioForm";
+// import InstitucionesForm from "../opciones/InstitucionesForm";
+//import NovedadesForm from "../opciones/NovedadesForm";
+
+import UsuariosView from "@/components/dashboard/usuarios/UsuariosView";
+import PaisesView from "@/components/dashboard/paises/PaisesView";
+import EstadosView from "@/components/dashboard/estados/EstadosView";
+import MunicipiosView from "@/components/dashboard/municipios/MunicipiosView";
+import ParroquiasView from "@/components/dashboard/parroquias/ParroquiasView";
+import InstitucionesView from "@/components/dashboard/instituciones/InstitucionesView";
 
 export default function VistaUniversalUsuarios() {
   const {
@@ -221,90 +226,19 @@ export default function VistaUniversalUsuarios() {
             </header>
 
             <main className="bg-[#faf5f8] rounded-md">
-              {vista === "usuarios" && (
-                <UsuariosView
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "usuarios" && <UsuariosView />}
 
-              {vista === "paises" && (
-                <PaisesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "paises" && <PaisesView />}
 
-              {vista === "estados" && (
-                <EstadosForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "estados" && <EstadosView />}
 
-              {vista === "municipios" && (
-                <MunicipiosForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "municipios" && <MunicipiosView />}
 
-              {vista === "parroquias" && (
-                <ParroquiasForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "parroquias" && <ParroquiasView />}
 
-              {vista === "instituciones" && (
-                <InstitucionesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "instituciones" && <InstitucionesView />}
 
+              {/*
               {vista === "departamentos" && (
                 <DepartamentosForm
                   mostrar={mostrarModal}
@@ -415,7 +349,7 @@ export default function VistaUniversalUsuarios() {
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                   usuarioActivo={usuarioActivo}
                 />
-              )}
+              )} 
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario
@@ -457,7 +391,7 @@ export default function VistaUniversalUsuarios() {
                   ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
                   usuarioActivo={usuarioActivo}
                 />
-              )}
+              )}*/}
             </main>
 
             <Footer />

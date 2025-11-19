@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Div from "@/components/padres/Div";
 import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputCedula from "@/components/inputs/InputCedula";
@@ -12,7 +14,15 @@ import SelectOpcion from "@/components/SelectOpcion";
 import InputClave from "@/components/inputs/InputClave";
 import MostrarMsj from "@/components/MostrarMensaje";
 import InputCheckBox from "@/components/inputs/InputCheckBox";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
+import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
+import { cambiarSeleccionInstitucion } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionInstitucion";
+import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
+import { toggleAutorizar } from "@/components/dashboard/usuarios/funciones/toggleAutorizar";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormCrearUsuario({
   idDepartamento,
@@ -43,13 +53,8 @@ export default function FormCrearUsuario({
   setValidarApellido,
   validarClave,
   setValidarClave,
-  limpiarCampos,
-  mostrarModal,
   mensaje,
   setMensaje,
-  cambiarSeleccionDepartamento,
-  cambiarSeleccionInstitucion,
-  cambiarSeleccionRol,
   departamentos,
   instituciones,
   roles,
@@ -58,15 +63,36 @@ export default function FormCrearUsuario({
   setNombreRol,
   autorizar,
   setAutorizar,
-  toggleAutorizar,
   usuarioActivo,
 }) {
+  const dispatch = useDispatch();
+  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.usuarioForm
+  );
+
   const [idInstiDepa, setIdInstiDepa] = useState("");
 
   useEffect(() => {
     const nuevoId = usuarioActivo.id_rol === 1 ? idInstitucion : idDepartamento;
     setIdInstiDepa(nuevoId);
   }, [idInstitucion, idDepartamento, usuarioActivo.id_rol]);
+
+  useEffect(() => {
+    if (mostrarCrear) {
+      setCedula("");
+      setCorreo("");
+      setNombre("");
+      setApellido("");
+      setIdRol("");
+      setIdInstitucion("");
+      setIdDepartamento("");
+      setClaveUno("");
+      setClaveDos("");
+      setAutorizar("");
+      setMensaje("");
+    }
+  }, [reiniciarForm, mostrarCrear]);
 
   const leyendoClave1 = (e) => {
     const claveUnoUno = e.target.value;
@@ -161,7 +187,7 @@ export default function FormCrearUsuario({
         <SelectOpcion
           idOpcion={idRol}
           nombre={"Roles"}
-          handleChange={cambiarSeleccionRol}
+          handleChange={(e) => cambiarSeleccionRol(e, setIdRol)}
           opciones={roles}
           seleccione={"Seleccione"}
           setNombre={setNombreRol}
@@ -171,7 +197,9 @@ export default function FormCrearUsuario({
           <SelectOpcion
             idOpcion={idInstitucion}
             nombre={"Instituciones"}
-            handleChange={cambiarSeleccionInstitucion}
+            handleChange={(e) =>
+              cambiarSeleccionInstitucion(e, setIdInstitucion)
+            }
             opciones={instituciones}
             seleccione={"Seleccione"}
             setNombre={setNombreInstitucion}
@@ -181,7 +209,9 @@ export default function FormCrearUsuario({
         <SelectOpcion
           idOpcion={idDepartamento}
           nombre={"Departamentos"}
-          handleChange={cambiarSeleccionDepartamento}
+          handleChange={(e) =>
+            cambiarSeleccionDepartamento(e, setIdDepartamento)
+          }
           opciones={departamentos}
           seleccione={"Seleccione"}
           setNombre={setNombreDepartamento}
@@ -220,7 +250,9 @@ export default function FormCrearUsuario({
                 id={opcion.id}
                 nombre={opcion.nombre}
                 isChecked={autorizar === opcion.id} // Solo una opción puede estar seleccionada
-                onToggle={() => toggleAutorizar(opcion.id)} // Cambia el estado con la opción elegida
+                onToggle={() =>
+                  toggleAutorizar(opcion.id, setAutorizar, autorizar)
+                } // Cambia el estado con la opción elegida
               />
             ))}
           </div>
@@ -235,7 +267,10 @@ export default function FormCrearUsuario({
         <div className="flex space-x-4">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={mostrarModal}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
             nombre={"Crear"}
             campos={{
               cedula,
@@ -250,23 +285,10 @@ export default function FormCrearUsuario({
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setCedula,
-                setCorreo,
-                setNombre,
-                setApellido,
-                setClaveUno,
-                setClaveDos,
-                setIdRol,
-                setIdInstitucion,
-                setIdDepartamento,
-                setAutorizar,
-              });
+              dispatch(resetForm("usuarioForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               cedula,
               correo,

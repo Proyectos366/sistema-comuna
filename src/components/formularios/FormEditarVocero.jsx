@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import SelectOpcion from "../SelectOpcion";
 import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import InputCheckBox from "../InputCheckBox";
 import InputCedula from "../inputs/InputCedula";

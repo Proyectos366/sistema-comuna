@@ -1,35 +1,74 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputNombre from "../inputs/InputNombre";
-import InputRif from "../inputs/InputRif";
-import InputDescripcion from "../inputs/InputDescripcion";
+import { useDispatch, useSelector } from "react-redux";
+
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import Input from "@/components/inputs/Input";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputRif from "@/components/inputs/InputRif";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+import SelectOpcion from "@/components/SelectOpcion";
+import DivScroll from "@/components/DivScroll";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
+
+import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
+import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
+import { fetchInstitucionesIdMunicipio } from "@/store/features/instituciones/thunks/institucionesIdMunicipio";
 
 export default function FormEditarInstitucion({
-  nombre,
-  setNombre,
-  descripcion,
-  setDescripcion,
-  rif,
-  setRif,
-  sector,
-  setSector,
-  direccion,
-  setDireccion,
-  validarNombre,
-  setValidarNombre,
-  validarRif,
-  setValidarRif,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  acciones,
+  datosInstitucion,
+  validaciones,
+  parroquias,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.institucionForm
+  );
+
+  const {
+    setIdPais,
+    setIdEstado,
+    setIdMunicipio,
+    setIdParroquia,
+    setNombrePais,
+    setNombreEstado,
+    setNombreMunicipio,
+    setNombreParroquia,
+    setNombre,
+    setDescripcion,
+    setRif,
+    setSector,
+    setDireccion,
+  } = acciones;
+
+  const {
+    idPais,
+    idEstado,
+    idMunicipio,
+    idParroquia,
+    nombrePais,
+    nombreEstado,
+    nombreMunicipio,
+    nombreParroquia,
+    nombre,
+    descripcion,
+    rif,
+    sector,
+    direccion,
+  } = datosInstitucion;
+
+  const { validarNombre, setValidarNombre, validarRif, setValidarRif } =
+    validaciones;
+
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
@@ -51,9 +90,38 @@ export default function FormEditarInstitucion({
     validarRif(rif, setValidarRif);
   }, [nombre, rif]);
 
+  useEffect(() => {
+    if (!mostrarEditar) {
+      setNombre("");
+      setDescripcion("");
+      setRif("");
+      setSector("");
+      setDireccion("");
+    }
+  }, [reiniciarForm, mostrarEditar]);
+
+  useEffect(() => {
+    if (idMunicipio) {
+      dispatch(fetchParroquiasIdMunicipio(idMunicipio));
+      dispatch(fetchInstitucionesIdMunicipio(idMunicipio));
+    }
+  }, [dispatch, idMunicipio]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
+      <DivScroll>
+        <SelectOpcion
+          idOpcion={idParroquia}
+          nombre={"Parroquias"}
+          handleChange={(e) => {
+            cambiarSeleccionParroquia(e, setIdParroquia);
+          }}
+          opciones={parroquias}
+          seleccione={"Seleccione"}
+          setNombre={setNombreParroquia}
+          indice={0}
+        />
+
         <LabelInput nombre={"Nombre"}>
           <InputNombre
             type="text"
@@ -102,14 +170,13 @@ export default function FormEditarInstitucion({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
+            aceptar={() => {
+              dispatch(cerrarModal("editar"));
+              dispatch(abrirModal("confirmarCambios"));
+            }}
             nombre={"Guardar cambios"}
             campos={{
               nombre,
@@ -117,21 +184,14 @@ export default function FormEditarInstitucion({
               rif,
               sector,
               direccion,
+              idParroquia,
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setDescripcion,
-                setRif,
-                setSector,
-                setDireccion,
-              });
+              dispatch(resetForm("institucionForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
               descripcion,
@@ -141,7 +201,7 @@ export default function FormEditarInstitucion({
             }}
           />
         </div>
-      </div>
+      </DivScroll>
     </Formulario>
   );
 }

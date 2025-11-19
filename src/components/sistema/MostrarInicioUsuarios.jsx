@@ -1,14 +1,6 @@
-import Titulos from "../Titulos";
-import Boton from "../Boton";
-import Input from "../Input";
-import InputCheckBox from "../InputCheckBox";
-import DivDosConsultas from "./opciones_inicio/DivDosConsultas";
-import ConsultarCedula from "./opciones_inicio/ConsultarCedula";
-import ConsultarTodasParroquias from "./opciones_inicio/ConsultarParroquias";
-import ConsultarTodasComunas from "./opciones_inicio/ConsultarComunas";
-import ConsultarTodosConsejos from "./opciones_inicio/ConsultarConsejosComunales";
-import Modal from "../Modal";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
+import Titulos from "@/components/Titulos";
+import Modal from "@/components/modales/Modal";
+import MostarMsjEnModal from "@/components/mensaje/MostrarMsjEnModal";
 
 export default function MostrarAlInicioUsuarios({
   mostrar,

@@ -1,6 +1,6 @@
 import SelectOpcion from "../SelectOpcion";
 import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import Formulario from "../Formulario";
 import MostarMsjEnModal from "../MostrarMsjEnModal";
 import Input from "../inputs/Input";

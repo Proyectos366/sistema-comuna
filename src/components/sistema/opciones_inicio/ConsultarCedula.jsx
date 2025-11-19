@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Input from "@/components/Input";
-import Boton from "@/components/Boton";
+import Boton from "@/components/botones/Boton";
 
 export default function ConsultarCedula({
   seleccionarConsulta,

@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputNombre from "../inputs/InputNombre";
-import InputDescripcion from "../inputs/InputDescripcion";
+import { useDispatch, useSelector } from "react-redux";
+
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormEditarPais({
   nombre,
@@ -20,11 +24,14 @@ export default function FormEditarPais({
   setValidarNombre,
   validarCapital,
   setValidarCapital,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.paisForm
+  );
+
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
@@ -38,74 +45,73 @@ export default function FormEditarPais({
     validarYActualizar(capital, setValidarCapital);
   }, [nombre, capital]);
 
+  useEffect(() => {
+    if (mostrarEditar) {
+      setNombre("");
+      setDescripcion("");
+      setCapital("");
+    }
+  }, [reiniciarForm, mostrarEditar]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+      <LabelInput nombre={"Nombre"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
+      </LabelInput>
 
-        <LabelInput nombre={"Capital"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={capital}
-            setValue={setCapital}
-            validarNombre={validarCapital}
-            setValidarNombre={setValidarCapital}
-          />
-        </LabelInput>
+      <LabelInput nombre={"Capital"}>
+        <InputNombre
+          type="text"
+          indice="nombre"
+          value={capital}
+          setValue={setCapital}
+          validarNombre={validarCapital}
+          setValidarNombre={setValidarCapital}
+        />
+      </LabelInput>
 
-        <LabelInput nombre={"Descripción"}>
-          <InputDescripcion
-            value={descripcion}
-            setValue={setDescripcion}
-            rows={6}
-            max={500}
-            autoComplete="off"
-          />
-        </LabelInput>
+      <LabelInput nombre={"Descripción"}>
+        <InputDescripcion
+          value={descripcion}
+          setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
+        />
+      </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
+      <div className="flex space-x-3">
+        <BotonAceptarCancelar
+          indice={"aceptar"}
+          aceptar={() => {
+            dispatch(cerrarModal("crear"));
+            dispatch(abrirModal("confirmar"));
+          }}
+          nombre={"Crear"}
+          campos={{
+            nombre,
+            capital,
+            descripcion,
+          }}
+        />
 
-        <div className="flex space-x-4">
-          <BotonAceptarCancelar
-            indice={"aceptar"}
-            aceptar={editar}
-            nombre={"Guardar cambios"}
-            campos={{
-              nombre,
-              capital,
-              descripcion,
-            }}
-          />
-
-          <BotonAceptarCancelar
-            indice={"limpiar"}
-            aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setCapital,
-                setDescripcion,
-              });
-            }}
-            nombre={"Limpiar"}
-            campos={{
-              nombre,
-              capital,
-              descripcion,
-            }}
-          />
-        </div>
+        <BotonLimpiarCampos
+          aceptar={() => {
+            dispatch(resetForm("paisForm"));
+          }}
+          campos={{
+            nombre,
+            capital,
+            descripcion,
+          }}
+        />
       </div>
     </Formulario>
   );

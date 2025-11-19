@@ -2,7 +2,7 @@ import SelectOpcion from "../SelectOpcion";
 import Formulario from "../Formulario";
 import LabelInput from "../inputs/LabelInput";
 import Input from "../inputs/Input";
-import BotonAceptarCancelar from "../BotonAceptarCancelar";
+import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 
 export default function FormCrearCircuito({
   idParroquia,

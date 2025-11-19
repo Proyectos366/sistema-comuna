@@ -62,8 +62,23 @@ export async function PATCH(request) {
         where: {
           id: validaciones.id_usuario_rol,
         },
-        orderBy: { nombre: "asc" },
-        include: { MiembrosDepartamentos: true },
+        select: {
+          id: true,
+          cedula: true,
+          correo: true,
+          nombre: true,
+          apellido: true,
+          borrado: true,
+          validado: true,
+          createdAt: true,
+          id_rol: true,
+          roles: {
+            select: { id: true, nombre: true },
+          },
+          MiembrosDepartamentos: {
+            select: { id: true, nombre: true, descripcion: true },
+          },
+        },
       }),
     ]);
 
@@ -103,7 +118,7 @@ export async function PATCH(request) {
       "ok",
       "Cambio exitoso...",
       {
-        usuario: usuarioActualizado,
+        usuarios: usuarioActualizado,
       },
       200
     );

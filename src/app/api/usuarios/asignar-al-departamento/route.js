@@ -66,9 +66,25 @@ export async function PATCH(request) {
           },
         }),
 
-        prisma.usuario.findUnique({
+        prisma.usuario.findFirst({
           where: { id: validaciones.id_usuario_miembro },
-          include: { MiembrosDepartamentos: true },
+          select: {
+            id: true,
+            cedula: true,
+            correo: true,
+            nombre: true,
+            apellido: true,
+            borrado: true,
+            validado: true,
+            createdAt: true,
+            id_rol: true,
+            roles: {
+              select: { id: true, nombre: true },
+            },
+            MiembrosDepartamentos: {
+              select: { id: true, nombre: true, descripcion: true },
+            },
+          },
         }),
       ]);
 

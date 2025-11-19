@@ -16,7 +16,7 @@ import Formulario from "@/components/Formulario";
 import InputCorreo from "@/components/inputs/InputCorreo";
 import InputClave from "@/components/inputs/InputClave";
 import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/BotonAceptarCancelar";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import ImgRegistroLogin from "@/components/ImgRegistroLogin";
 import { ToastContainer, toast } from "react-toastify";
 
