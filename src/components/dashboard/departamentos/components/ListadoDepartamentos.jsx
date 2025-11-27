@@ -1,20 +1,18 @@
 import { useDispatch } from "react-redux";
+import Image from "next/image";
 
 import SwitchToggle from "@/components/SwitchToggle";
 import Div from "@/components/padres/Div";
-import BloqueInfoDepartamento from "@/components/dashboard/departamentoscomponents/BloqueInfoDepartamento";
-
-import { formatearFecha } from "@/utils/Fechas";
-import { eliminarRestaurarDepartamento } from "@/store/features/departamentosthunks/eliminarRestaurarDepartamento";
 import Button from "@/components/padres/Button";
 import Span from "@/components/padres/Span";
-import Image from "next/image";
+import BloqueInfoDepartamento from "@/components/dashboard/departamentos/components/BloqueInfoDepartamento";
 
+import { formatearFecha } from "@/utils/Fechas";
+import { eliminarRestaurarDepartamento } from "@/store/features/departamentos/thunks/eliminarRestaurarDepartamento";
 
-
-export default function ListadoInstituciones({
-  institucion,
-  editarInstitucion,
+export default function ListadoDepartamentos({
+  departamento,
+  editarDepartamento,
 }) {
   const dispatch = useDispatch();
 
@@ -24,13 +22,13 @@ export default function ListadoInstituciones({
         <BloqueInfoDepartamento
           indice={1}
           nombre={"Descripción"}
-          valor={institucion.descripcion}
+          valor={departamento.descripcion}
         />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarInstitucion(institucion);
+            editarDepartamento(departamento);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -46,37 +44,20 @@ export default function ListadoInstituciones({
         </Button>
       </Div>
 
-      <BloqueInfoDepartamento
-        indice={1}
-        nombre={"Rif"}
-        valor={institucion.rif}
-      />
-
-      <BloqueInfoDepartamento
-        indice={1}
-        nombre={"Sector"}
-        valor={institucion.sector}
-      />
-      <BloqueInfoDepartamento
-        indice={1}
-        nombre={"Dirección"}
-        valor={institucion.direccion}
-      />
-
       <Div className="flex items-center justify-between">
         <BloqueInfoDepartamento
-          indice={!institucion.borrado ? 3 : 2}
-          nombre={"Institución"}
-          valor={!institucion.borrado ? "Activo" : "Inactivo"}
+          indice={!departamento.borrado ? 3 : 2}
+          nombre={"Departamento"}
+          valor={!departamento.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!institucion.borrado}
+          checked={!departamento.borrado}
           onToggle={() => {
             dispatch(
               eliminarRestaurarDepartamento({
-                estado: institucion.borrado,
-                id_institucion: institucion.id,
+                estado: departamento.borrado,
+                id_departamento: departamento.id,
               })
             );
           }}
@@ -86,7 +67,7 @@ export default function ListadoInstituciones({
       <BloqueInfoDepartamento
         indice={1}
         nombre={"Creada"}
-        valor={formatearFecha(institucion.createdAt)}
+        valor={formatearFecha(departamento.createdAt)}
       />
     </Div>
   );

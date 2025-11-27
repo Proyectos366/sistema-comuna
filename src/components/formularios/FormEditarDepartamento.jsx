@@ -1,28 +1,63 @@
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputDescripcion from "../inputs/InputDescripcion";
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import LabelInput from "@/components/inputs/LabelInput";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import Formulario from "@/components/Formulario";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import DivScroll from "@/components/DivScroll";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 export default function FormEditarDepartamento({
-  nombre,
-  setNombre,
-  descripcion,
-  setDescripcion,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  acciones,
+  datosDepartamento,
+  validaciones,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.departamentoForm
+  );
+
+  const { setNombre, setDescripcion } = acciones;
+
+  const { nombre, descripcion } = datosDepartamento;
+
+  const { validarNombre, setValidarNombre } = validaciones;
+
+  useEffect(() => {
+    const validarYActualizar = (valor, setValidar) => {
+      if (valor) {
+        const limpio = String(valor).trim();
+        const esValido = /^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/.test(limpio);
+        if (typeof setValidar === "function") setValidar(esValido);
+      }
+    };
+
+    validarYActualizar(nombre, setValidarNombre);
+  }, [nombre]);
+
+  useEffect(() => {
+    if (!mostrarEditar) {
+      setNombre("");
+      setDescripcion("");
+    }
+  }, [reiniciarForm, mostrarEditar]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
+      <DivScroll>
         <LabelInput nombre={"Nombre"}>
-          <Input
-            type={"text"}
+          <InputNombre
+            type="text"
+            indice="nombre"
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            setValue={setNombre}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
           />
         </LabelInput>
 
@@ -36,14 +71,13 @@ export default function FormEditarDepartamento({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
+            aceptar={() => {
+              dispatch(cerrarModal("editar"));
+              dispatch(abrirModal("confirmarCambios"));
+            }}
             nombre={"Guardar cambios"}
             campos={{
               nombre,
@@ -51,22 +85,17 @@ export default function FormEditarDepartamento({
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setDescripcion,
-              });
+              dispatch(resetForm("institucionForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
               descripcion,
             }}
           />
         </div>
-      </div>
+      </DivScroll>
     </Formulario>
   );
 }

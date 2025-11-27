@@ -12,10 +12,10 @@ import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearDepartamento } from "@/store/features/instituciones/thunks/crearDepartamento";
-import { actualizarDepartamento } from "@/store/features/instituciones/thunks/actualizarDepartamento";
+import { crearDepartamento } from "@/store/features/departamentos/thunks/crearDepartamento";
+import { actualizarDepartamento } from "@/store/features/departamentos/thunks/actualizarDepartamento";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
 
 export default function ModalDepartamentos({
   acciones,
@@ -34,11 +34,11 @@ export default function ModalDepartamentos({
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
-  const { idInstitucion, nombreInstitucion, nombre, descripcion } =
+  const { idInstitucion, nombre, descripcion, nombreInstitucion } =
     datosDepartamento;
 
   useEffect(() => {
-    dispatch(fetchInstituciones());
+    dispatch(fetchTodasInstituciones());
   }, [dispatch]);
 
   const notify = (msj) => toast(msj);
@@ -161,7 +161,6 @@ export default function ModalDepartamentos({
             acciones={acciones}
             datosDepartamento={datosDepartamento}
             validaciones={validaciones}
-            instituciones={instituciones}
           />
         </ModalDatosContenedor>
       </Modal>
@@ -178,7 +177,7 @@ export default function ModalDepartamentos({
             acciones={acciones}
             datosDepartamento={datosDepartamento}
             validaciones={validaciones}
-            departamentos={departamentos}
+            instituciones={instituciones}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

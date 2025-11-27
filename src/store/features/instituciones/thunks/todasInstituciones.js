@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Thunk para obtener todos los instituciones con manejo de errores
-export const fetchInstituciones = createAsyncThunk(
-  "instituciones/fetchInstituciones",
+export const fetchTodasInstituciones = createAsyncThunk(
+  "instituciones/fetchTodasInstituciones",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(

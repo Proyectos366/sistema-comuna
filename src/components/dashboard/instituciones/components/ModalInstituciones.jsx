@@ -224,7 +224,7 @@ export default function ModalInstituciones({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear parroquia?"}
+        titulo={"¿Crear institución?"}
       >
         <ModalDatosContenedor>
           <FormCrearInstitucion

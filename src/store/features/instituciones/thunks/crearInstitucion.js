@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Thunk para crear un nuevo pais
+// Thunk para crear una nueva institucion
 export const crearInstitucion = createAsyncThunk(
   "instituciones/crearInstitucion",
   async (data, thunkAPI) => {

@@ -42,17 +42,16 @@ export async function GET() {
         {},
         400
       );
-    } else {
-      // 5. Condición de éxito: se encontraron instituciones
-      return generarRespuesta(
-        "ok",
-        "Todas las instituciones...",
-        {
-          instituciones: todasInstituciones,
-        },
-        201
-      );
     }
+    // 5. Condición de éxito: se encontraron instituciones
+    return generarRespuesta(
+      "ok",
+      "Todas las instituciones...",
+      {
+        instituciones: todasInstituciones,
+      },
+      201
+    );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(`Error interno consultar (instituciones): ` + error);

@@ -30,19 +30,10 @@ import EstadosView from "@/components/dashboard/estados/EstadosView";
 import MunicipiosView from "@/components/dashboard/municipios/MunicipiosView";
 import ParroquiasView from "@/components/dashboard/parroquias/ParroquiasView";
 import InstitucionesView from "@/components/dashboard/instituciones/InstitucionesView";
+import DepartamentosView from "@/components/dashboard/departamentos/DepartamentosView";
 
 export default function VistaUniversalUsuarios() {
-  const {
-    screenSize,
-    mostrarModal,
-    abrirModal,
-    cerrarModal,
-    mensaje,
-    mostrarMensaje,
-    abrirMensaje,
-    limpiarCampos,
-    ejecutarAccionesConRetraso,
-  } = useUser();
+  const { screenSize } = useUser();
 
   const { usuarioActivo, departamento } = useSelector((state) => state.auth);
 
@@ -238,21 +229,9 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "instituciones" && <InstitucionesView />}
 
-              {/*
-              {vista === "departamentos" && (
-                <DepartamentosForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "departamentos" && <DepartamentosView />}
 
+              {/*
               {vista === "cargos" && (
                 <CargosForm
                   mostrar={mostrarModal}

@@ -18,7 +18,11 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
  @param {string} descripcion - Descripción del departamento.
  @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
 */
-export default async function validarCrearDepartamento(nombre, descripcion) {
+export default async function validarCrearDepartamento(
+  nombre,
+  descripcion,
+  id_institucion
+) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -34,7 +38,8 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
     // 3. Validar los campos nombre y descripción del departamento.
     const validarCampos = ValidarCampos.validarCamposCrearDepartamento(
       nombre,
-      descripcion
+      descripcion,
+      id_institucion
     );
 
     // 4. Si los campos son inválidos, se retorna un error.
@@ -49,7 +54,7 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
     const nombreRepetido = await prisma.departamento.findFirst({
       where: {
         nombre: validarCampos.nombre,
-        id_institucion: validaciones.id_institucion,
+        id_institucion: validarCampos.id_institucion,
       },
     });
 
@@ -59,7 +64,7 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
         "error",
         "Error, departamento ya existe...",
         {
-          id_usuario: validaciones.id_usuario,
+          id_usuario: validarCampos.id_usuario,
         }
       );
     }
@@ -69,7 +74,7 @@ export default async function validarCrearDepartamento(nombre, descripcion) {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
-      id_institucion: validaciones.id_institucion,
+      id_institucion: validarCampos.id_institucion,
     });
   } catch (error) {
     // 8. Manejo de errores inesperados.

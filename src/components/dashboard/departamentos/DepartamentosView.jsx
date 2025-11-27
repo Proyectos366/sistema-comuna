@@ -1,5 +1,11 @@
 "use client";
 
+
+
+// Debemos crear el endpoint para consultar los departamentos por isntitución
+
+
+
 import { useState, useEffect, useMemo } from "react";
 import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,7 +26,8 @@ import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 
 import { cambiarSeleccionInstitucion } from "@/utils/dashboard/cambiarSeleccionInstitucion";
-import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchDepartamentosIdInstitucion } from "@/store/features/departamentos/thunks/departamentosIdInstitucion";
 
 export default function DepartamentosView() {
   const dispatch = useDispatch();
@@ -30,7 +37,7 @@ export default function DepartamentosView() {
   );
 
   useEffect(() => {
-    dispatch(fetchInstituciones());
+    dispatch(fetchTodasInstituciones());
   }, [dispatch]);
 
   const [nombreInstitucion, setNombreInstitucion] = useState("");
@@ -53,6 +60,12 @@ export default function DepartamentosView() {
 
   const camposBusqueda = ["nombre"];
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
+
+  useEffect(() => {
+    if (idInstitucion) {
+      dispatch(fetchDepartamentosIdInstitucion(idInstitucion));
+    }
+  }, [dispatch, idInstitucion]);
 
   const acciones = {
     setIdInstitucion: setIdInstitucion,
@@ -194,6 +207,7 @@ export default function DepartamentosView() {
                   </>
                 )}
               </Div>
+
               <Div>
                 <Paginador
                   first={first}

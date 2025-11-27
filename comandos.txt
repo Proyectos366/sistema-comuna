@@ -77,3 +77,9 @@ Admin-1234
 // Usuario
 token: qfr42dw5rit5w1v8
 clave: $2b$05$DhTLzYeILlXISknpXrWI7ehlc2jrVd8PbmpUgzCo5YUwUnTb8yplu
+
+- J-12345678-4
+- G-20001980-8
+- V-12345678-5
+- E-87654321-7
+- P-11223344-0

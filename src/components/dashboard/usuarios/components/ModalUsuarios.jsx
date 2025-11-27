@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+
 import BotonesModal from "@/components/botones/BotonesModal";
 import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
 import Modal from "@/components/modales/Modal";
@@ -9,15 +12,16 @@ import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import SelectOpcion from "@/components/SelectOpcion";
 
-import { useSelector, useDispatch } from "react-redux";
+import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
+import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
+
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
 import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
-import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
-import { fetchInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
-import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
+
 import { cambiarDepartamentoUsuario } from "@/store/features/usuarios/thunks/cambiarDepartamentoUsuario";
 import { cambiarRolUsuario } from "@/store/features/usuarios/thunks/cambiarRolUsuario";
-import { ToastContainer, toast } from "react-toastify";
+
 import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
@@ -44,7 +48,7 @@ export default function ModalUsuarios({
     dispatch(fetchRoles());
     dispatch(fetchDepartamentos());
     if (usuarioActivo.id_rol === 1) {
-      dispatch(fetchInstituciones());
+      dispatch(fetchTodasInstituciones());
     }
   }, [dispatch]);
 

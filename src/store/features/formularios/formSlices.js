@@ -10,6 +10,7 @@ const initialState = {
     municipioForm: 0,
     parroquiaForm: 0,
     institucionForm: 0,
+    departamentoForm: 0,
   },
 };
 

@@ -14,12 +14,13 @@ import FichaEstado from "@/components/dashboard/estados/components/FichaEstado";
 import ButtonToggleDetallesEstado from "@/components/dashboard/estados/components/ButtonToggleDetallesEstado";
 import ListadoEstados from "@/components/dashboard/estados/components/ListadoEstados";
 import ModalEstados from "@/components/dashboard/estados/components/ModalEstados";
+import SelectOpcion from "@/components/SelectOpcion";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
-import SelectOpcion from "@/components/SelectOpcion";
+
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 export default function EstadosView() {

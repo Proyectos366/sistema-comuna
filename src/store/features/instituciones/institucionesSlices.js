@@ -4,6 +4,7 @@ import { fetchInstitucionesIdMunicipio } from "@/store/features/instituciones/th
 import { crearInstitucion } from "@/store/features/instituciones/thunks/crearInstitucion";
 import { actualizarInstitucion } from "@/store/features/instituciones/thunks/actualizarInstitucion";
 import { eliminarRestaurarInstitucion } from "@/store/features/instituciones/thunks/eliminarRestaurarInstitucion";
+import { fetchTodasInstituciones } from "./thunks/todasInstituciones";
 
 const institucionesSlice = createSlice({
   name: "instituciones",
@@ -15,6 +16,18 @@ const institucionesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchTodasInstituciones.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTodasInstituciones.fulfilled, (state, action) => {
+        state.loading = false;
+        state.instituciones = action.payload;
+      })
+      .addCase(fetchTodasInstituciones.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(fetchInstitucionesIdMunicipio.pending, (state) => {
         state.loading = true;
         state.error = null;

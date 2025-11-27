@@ -1144,20 +1144,26 @@ export default class ValidarCampos {
    Valida los campos necesarios para crear un departamento. Verifica nombre y descripción.
    @function validarCamposCrearDepartamento
   */
-  static validarCamposCrearDepartamento(nombre, descripcion) {
+  static validarCamposCrearDepartamento(nombre, descripcion, id_institucion) {
     try {
       // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarIdInstitucion = this.validarCampoId(
+        id_institucion,
+        "institución"
+      );
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdInstitucion.status === "error") return validarIdInstitucion;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
+        id_institucion: validarIdInstitucion.id,
       });
     } catch (error) {
       // 4. Manejo de errores inesperados
