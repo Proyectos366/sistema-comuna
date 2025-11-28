@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
 import Div from "@/components/padres/Div";
@@ -9,12 +8,13 @@ import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-
-import FichaEstado from "@/components/dashboard/estados/components/FichaEstado";
-import ButtonToggleDetallesEstado from "@/components/dashboard/estados/components/ButtonToggleDetallesEstado";
+import FichaDetalles from "@/components/FichaDetalles";
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoEstados from "@/components/dashboard/estados/components/ListadoEstados";
 import ModalEstados from "@/components/dashboard/estados/components/ModalEstados";
 import SelectOpcion from "@/components/SelectOpcion";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
@@ -149,49 +149,32 @@ export default function EstadosView() {
           {idPais && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && estados?.length === 0 ? (
-                  <Div className="flex items-center gap-4">
-                    <BounceLoader color="#082158" size={50} /> Cargando
-                    estados...
-                  </Div>
+                {estados?.length === 0 && loading ? (
+                  <Loader titulo="Cargando estados..." />
                 ) : (
                   <>
                     {estadosPaginados?.length !== 0 ? (
                       estadosPaginados.map((estado, index) => {
                         return (
-                          <FichaEstado
+                          <FichaDetalles
                             key={estado.id}
-                            estado={estado}
+                            dato={estado}
                             index={index}
                           >
-                            <ButtonToggleDetallesEstado
+                            <ButtonToggleDetalles
                               expanded={expanded}
-                              estado={estado}
+                              dato={estado}
                               setExpanded={setExpanded}
                             />
 
                             {expanded === estado.id && (
                               <ListadoEstados estado={estado} />
                             )}
-                          </FichaEstado>
+                          </FichaDetalles>
                         );
                       })
                     ) : (
-                      <>
-                        {estados.length !== 0 && (
-                          <Div
-                            className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                          >
-                            No hay coincidencias...
-                          </Div>
-                        )}
-
-                        {!loading && estados.length === 0 && (
-                          <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay estados para este país...
-                          </Div>
-                        )}
-                      </>
+                      <EstadoMsjVacio dato={estados} loading={loading} />
                     )}
                   </>
                 )}
@@ -204,7 +187,7 @@ export default function EstadosView() {
                   setRows={setRows}
                   totalRecords={estadosFiltradosOrdenados.length}
                 />
-              </Div>{" "}
+              </Div>
             </>
           )}
         </SectionTertiary>

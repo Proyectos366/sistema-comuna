@@ -14,15 +14,16 @@ import validarEditarDepartamento from "@/services/departamentos/validarEditarDep
 Maneja las solicitudes HTTP POST para editar un departamento existente.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles del departamento a editar.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
-    const { nombre, descripcion, id_departamento } = await request.json();
+    const { nombre, descripcion, id_institucion, id_departamento } = await request.json();
 
     // 2. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarEditarDepartamento(
       nombre,
       descripcion,
+      id_institucion,
       id_departamento
     );
 
@@ -56,7 +57,7 @@ export async function POST(request) {
         },
       }),
 
-      prisma.departamento.findMany({
+      prisma.departamento.findFirst({
         where: {
           id: validaciones.id_departamento,
           borrado: false,
@@ -82,29 +83,29 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      await registrarEventoSeguro(request, {
-        tabla: "departamento",
-        accion: "UPDATE_DEPARTAMENTO",
-        id_objeto: departamentoActualizado[0]?.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Departamento actualizado con exito id: ${validaciones.id_departamento}`,
-        datosAntes: {
-          nombre: nombre,
-          descripcion: descripcion,
-          id_departamento: id_departamento,
-        },
-        datosDespues: departamentoActualizado,
-      });
-
-      // 6. Condición de éxito: el departamento fue actualizado correctamente
-      return generarRespuesta(
-        "ok",
-        "Departamento actualizado...",
-        { departamento: departamentoActualizado[0] },
-        201
-      );
     }
+    
+    await registrarEventoSeguro(request, {
+      tabla: "departamento",
+      accion: "UPDATE_DEPARTAMENTO",
+      id_objeto: departamentoActualizado.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Departamento actualizado con exito id: ${validaciones.id_departamento}`,
+      datosAntes: {
+        nombre: nombre,
+        descripcion: descripcion,
+        id_departamento: id_departamento,
+      },
+      datosDespues: departamentoActualizado,
+    });
+
+    // 6. Condición de éxito: el departamento fue actualizado correctamente
+    return generarRespuesta(
+      "ok",
+      "Departamento actualizado...",
+      { departamentos: departamentoActualizado },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (actualizar departamento): ` + error);

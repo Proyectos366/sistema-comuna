@@ -21,6 +21,7 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 export default async function validarEditarDepartamento(
   nombre,
   descripcion,
+  id_institucion,
   id_departamento
 ) {
   try {
@@ -39,6 +40,7 @@ export default async function validarEditarDepartamento(
     const validandoCampos = ValidarCampos.validarCamposEditarDepartamento(
       nombre,
       descripcion,
+      id_institucion,
       id_departamento
     );
 
@@ -57,6 +59,7 @@ export default async function validarEditarDepartamento(
     const existente = await prisma.departamento.findFirst({
       where: {
         nombre: validandoCampos.nombre,
+        id_institucion: validandoCampos.id_institucion,
         id: {
           not: validandoCampos.id_departamento,
         },
@@ -78,6 +81,7 @@ export default async function validarEditarDepartamento(
       nombre: validandoCampos.nombre,
       descripcion: validandoCampos.descripcion,
       id_usuario: validaciones.id_usuario,
+      id_institucion: validandoCampos.id_institucion,
       id_departamento: validandoCampos.id_departamento,
     });
   } catch (error) {

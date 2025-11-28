@@ -93,7 +93,7 @@ export async function POST(request) {
     return generarRespuesta(
       "ok",
       "Cargo creado...",
-      { cargo: nuevoCargo },
+      { cargos: nuevoCargo },
       201
     );
   } catch (error) {

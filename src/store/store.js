@@ -7,6 +7,7 @@ import municipiosReducer from "@/store/features/municipios/municipiosSlices";
 import parroquiasReducer from "@/store/features/parroquias/parroquiasSlices";
 import institucionesSlices from "@/store/features/instituciones/institucionesSlices";
 import departamentosReducer from "@/store/features/departamentos/departamentosSlices";
+import cargosReducer from "@/store/features/cargos/cargosSlices";
 import rolesReducer from "@/store/features/roles/rolesSlices";
 import modalReducer from "@/store/features/modal/slicesModal";
 import formsReducer from "@/store/features/formularios/formSlices";
@@ -24,6 +25,7 @@ const store = configureStore({
     parroquias: parroquiasReducer,
     instituciones: institucionesSlices,
     departamentos: departamentosReducer,
+    cargos: cargosReducer,
     // Aquí se agregarán los reducers de los "slices"
   },
 });

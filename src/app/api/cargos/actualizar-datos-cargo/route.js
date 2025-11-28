@@ -1,9 +1,9 @@
 /**
- * @fileoverview Controlador de API para la actualización de un cargo.
- * Este archivo maneja la lógica para editar un registro en la base de datos a través de una solicitud POST.
- * Utiliza Prisma para la interacción con la base de datos y un sistema de registro de eventos para seguridad.
- * @module
- */
+ @fileoverview Controlador de API para la actualización de un cargo. Este archivo maneja la lógica
+ para editar un registro en la base de datos a través de una solicitud PATCH. Utiliza Prisma para
+ la interacción con la base de datos y un sistema de registro de eventos para seguridad.
+ @module
+*/
 
 // Importaciones de módulos y librerías
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
@@ -12,14 +12,14 @@ import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar e
 import validarEditarCargo from "@/services/cargos/validarEditarCargo"; // Servicio para validar los datos de entrada del cargo.
 
 /**
- * Maneja las solicitudes HTTP POST para actualizar un cargo.
- * @async
- * @function POST
- * @param {object} request - El objeto de la solicitud HTTP.
- * @returns {Promise<object>} - Una respuesta HTTP en formato JSON.
- */
+ Maneja las solicitudes HTTP PATCH para actualizar un cargo.
+ @async
+ @function PATCH
+ @param {object} request - El objeto de la solicitud HTTP.
+ @returns {Promise<object>} - Una respuesta HTTP en formato JSON.
+*/
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Obtiene los datos del cuerpo de la solicitud (request)
     const { nombre, descripcion, id_cargo } = await request.json();
@@ -65,7 +65,7 @@ export async function POST(request) {
       }),
 
       // 4.2. Consulta el registro actualizado para confirmar la operación
-      prisma.cargo.findMany({
+      prisma.cargo.findFirst({
         where: {
           id: validaciones.id_cargo,
           borrado: false,
@@ -93,33 +93,32 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 6. Condición de éxito: el cargo se actualizó correctamente
-      // Registra un evento de actualización exitosa en la bitácora
-      await registrarEventoSeguro(request, {
-        tabla: "cargo",
-        accion: "UPDATE_CARGO",
-        id_objeto: cargoActualizado[0]?.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Cargo actualizado con exito id: ${validaciones.id_cargo}`,
-        datosAntes: {
-          nombre: nombre,
-          descripcion: descripcion,
-          id_cargo: id_cargo,
-        },
-        datosDespues: cargoActualizado,
-      });
-
-      // Retorna una respuesta de éxito con un código de estado 201 (Created)
-      return generarRespuesta(
-        "ok",
-        "Cargo actualizado...",
-        { cargo: cargoActualizado },
-        201
-      );
     }
+
+    // 6. Condición de éxito: el cargo se actualizó correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "cargo",
+      accion: "UPDATE_CARGO",
+      id_objeto: cargoActualizado[0]?.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Cargo actualizado con exito id: ${validaciones.id_cargo}`,
+      datosAntes: {
+        nombre: nombre,
+        descripcion: descripcion,
+        id_cargo: id_cargo,
+      },
+      datosDespues: cargoActualizado,
+    });
+
+    // 7. Retorna una respuesta de éxito con un código de estado 201 (Created)
+    return generarRespuesta(
+      "ok",
+      "Cargo actualizado...",
+      { cargos: cargoActualizado },
+      201
+    );
   } catch (error) {
-    // 7. Manejo de errores inesperados (bloque catch)
+    // 8. Manejo de errores inesperados (bloque catch)
     console.log(`Error interno (actualizar cargo): ` + error);
 
     // Registra un evento de error interno en la bitácora

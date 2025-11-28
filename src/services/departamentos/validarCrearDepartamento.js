@@ -69,15 +69,34 @@ export default async function validarCrearDepartamento(
       );
     }
 
-    // 7. Si todas las validaciones son correctas, se retorna la información consolidada.
+    // 7. Obtener el nombre de la institución para usar en la creación de la carpeta.
+    const nombreInstitucion = await prisma.institucion.findFirst({
+      where: {
+        id: validarCampos.id_institucion,
+      }, select: { nombre: true }
+    });
+
+    // 8. Si no se encuentra la institución, se retorna un error.
+    if (!nombreInstitucion) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, nombre institución...",
+        {
+          id_usuario: validarCampos.id_usuario,
+        }
+      );
+    }
+
+    // 9. Si todas las validaciones son correctas, se retorna la información consolidada.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       id_institucion: validarCampos.id_institucion,
+      nombreInstitucion: nombreInstitucion.nombre,
     });
   } catch (error) {
-    // 8. Manejo de errores inesperados.
+    // 10. Manejo de errores inesperados.
     console.log("Error interno validar crear departamento: " + error);
 
     // Retorna una respuesta del error inesperado

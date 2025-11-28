@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
 import SectionMain from "@/components/SectionMain";
 import SectionPrimary from "@/components/SectionPrimary";
 import Div from "@/components/padres/Div";
 import SectionTertiary from "@/components/SectionTertiary";
-
 import ListadoUsuarios from "@/components/dashboard/usuarios/components/ListadoUsuarios";
 import ButtonToggleDetallesUsuario from "@/components/dashboard/usuarios/components/ButtonToggleDetallesUsuario";
 import LeyendaUsuarios from "@/components/dashboard/usuarios/components/LeyendaUsuarios";
@@ -16,6 +14,8 @@ import FichaUsuario from "@/components/dashboard/usuarios/components/FichaUsuari
 import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
@@ -23,7 +23,7 @@ import { abrirModal } from "@/store/features/modal/slicesModal";
 
 export default function UsuariosView() {
   const dispatch = useDispatch();
-  const { usuarios } = useSelector((state) => state.usuarios);
+  const { usuarios, loading } = useSelector((state) => state.usuarios);
 
   useEffect(() => {
     dispatch(fetchUsuarios());
@@ -169,10 +169,8 @@ export default function UsuariosView() {
           />
 
           <Div className={`flex flex-col gap-2`}>
-            {usuarios?.length === 0 ? (
-              <Div className="flex items-center gap-4">
-                <BounceLoader color="#082158" size={50} /> Cargando usuarios...
-              </Div>
+            {usuarios?.length === 0 && loading ? (
+              <Loader titulo="Cargando usuarios..." />
             ) : (
               <>
                 {usuariosPaginados?.length !== 0 ? (
@@ -210,11 +208,7 @@ export default function UsuariosView() {
                     );
                   })
                 ) : (
-                  <Div
-                    className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                  >
-                    No hay coincidencias...
-                  </Div>
+                  <EstadoMsjVacio dato={usuarios} loading={loading} />
                 )}
               </>
             )}

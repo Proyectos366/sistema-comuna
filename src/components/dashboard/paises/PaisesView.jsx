@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
 import Div from "@/components/padres/Div";
@@ -9,10 +8,12 @@ import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-import FichaPais from "@/components/dashboard/paises/components/FichaPais";
-import ButtonToggleDetallesPais from "@/components/dashboard/paises/components/ButtonToggleDetallesPais";
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoPaises from "@/components/dashboard/paises/components/ListadoPaises";
 import ModalPaises from "@/components/dashboard/paises/components/ModalPaises";
+import FichaDetalles from "@/components/FichaDetalles";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
@@ -20,7 +21,7 @@ import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
 export default function PaisesView() {
   const dispatch = useDispatch();
-  const { paises } = useSelector((state) => state.paises);
+  const { paises, loading } = useSelector((state) => state.paises);
 
   useEffect(() => {
     dispatch(fetchPaises());
@@ -117,32 +118,26 @@ export default function PaisesView() {
           />
 
           <Div className={`flex flex-col gap-2`}>
-            {paises?.length === 0 ? (
-              <Div className="flex items-center gap-4">
-                <BounceLoader color="#082158" size={50} /> Cargando paises...
-              </Div>
+            {paises?.length === 0 && loading ? (
+              <Loader titulo="Cargando paises..." />
             ) : (
               <>
                 {paisesPaginados?.length !== 0 ? (
                   paisesPaginados.map((pais, index) => {
                     return (
-                      <FichaPais key={pais.id} pais={pais} index={index}>
-                        <ButtonToggleDetallesPais
+                      <FichaDetalles key={pais.id} dato={pais} index={index}>
+                        <ButtonToggleDetalles
                           expanded={expanded}
-                          pais={pais}
+                          dato={pais}
                           setExpanded={setExpanded}
                         />
 
                         {expanded === pais.id && <ListadoPaises pais={pais} />}
-                      </FichaPais>
+                      </FichaDetalles>
                     );
                   })
                 ) : (
-                  <Div
-                    className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                  >
-                    No hay coincidencias...
-                  </Div>
+                  <EstadoMsjVacio dato={paises} loading={loading} />
                 )}
               </>
             )}

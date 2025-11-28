@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
 import Div from "@/components/padres/Div";
@@ -9,12 +8,13 @@ import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-
-import FichaInstitucion from "@/components/dashboard/instituciones/components/FichaInstitucion";
-import ButtonToggleDetallesInstitucion from "@/components/dashboard/instituciones/components/ButtonToggleDetallesInstitucion";
+import FichaDetalles from "@/components/FichaDetalles";
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoInstituciones from "@/components/dashboard/instituciones/components/ListadoInstituciones";
 import ModalInstituciones from "@/components/dashboard/instituciones/components/ModalInstituciones";
 import SelectOpcion from "@/components/SelectOpcion";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
@@ -279,24 +279,21 @@ export default function InstitucionesView() {
           {idParroquia && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && instituciones?.length === 0 ? (
-                  <Div className="flex items-center gap-4">
-                    <BounceLoader color="#082158" size={50} /> Cargando
-                    instituciones...
-                  </Div>
+                {instituciones?.length === 0 && loading ? (
+                  <Loader titulo="Cargando instituciones..." />
                 ) : (
                   <>
                     {institucionesPaginadas?.length !== 0 ? (
                       institucionesPaginadas.map((institucion, index) => {
                         return (
-                          <FichaInstitucion
+                          <FichaDetalles
                             key={institucion.id}
-                            institucion={institucion}
+                            dato={institucion}
                             index={index}
                           >
-                            <ButtonToggleDetallesInstitucion
+                            <ButtonToggleDetalles
                               expanded={expanded}
-                              institucion={institucion}
+                              dato={institucion}
                               setExpanded={setExpanded}
                             />
 
@@ -306,25 +303,11 @@ export default function InstitucionesView() {
                                 editarInstitucion={editarInstitucion}
                               />
                             )}
-                          </FichaInstitucion>
+                          </FichaDetalles>
                         );
                       })
                     ) : (
-                      <>
-                        {instituciones.length !== 0 && (
-                          <Div
-                            className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                          >
-                            No hay coincidencias...
-                          </Div>
-                        )}
-
-                        {!loading && instituciones.length === 0 && (
-                          <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay instituciones para este municipio...
-                          </Div>
-                        )}
-                      </>
+                      <EstadoMsjVacio dato={instituciones} loading={loading} />
                     )}
                   </>
                 )}

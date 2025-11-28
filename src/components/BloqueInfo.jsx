@@ -1,4 +1,4 @@
-export default function BloqueInfoMunicipio({ nombre, valor, indice }) {
+export default function BloqueInfo({ nombre, valor, indice }) {
   let colorClase = "text-black";
 
   if (indice === 2) {

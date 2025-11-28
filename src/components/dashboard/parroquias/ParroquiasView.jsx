@@ -10,11 +10,13 @@ import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 
-import FichaParroquia from "@/components/dashboard/parroquias/components/FichaParroquia";
-import ButtonToggleDetallesParroquia from "@/components/dashboard/parroquias/components/ButtonToggleDetallesParroquia";
+import FichaDetalles from "@/components/FichaDetalles";
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
+
 import ListadoParroquias from "@/components/dashboard/parroquias/components/ListadoParroquias";
 import ModalParroquias from "@/components/dashboard/parroquias/components/ModalParroquias";
 import SelectOpcion from "@/components/SelectOpcion";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
@@ -209,7 +211,7 @@ export default function ParroquiasView() {
           {idMunicipio && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && parroquias?.length === 0 ? (
+                {parroquias?.length === 0 && loading ? (
                   <Div className="flex items-center gap-4">
                     <BounceLoader color="#082158" size={50} /> Cargando
                     parroquias...
@@ -219,39 +221,25 @@ export default function ParroquiasView() {
                     {parroquiasPaginados?.length !== 0 ? (
                       parroquiasPaginados.map((parroquia, index) => {
                         return (
-                          <FichaParroquia
+                          <FichaDetalles
                             key={parroquia.id}
-                            parroquia={parroquia}
+                            dato={parroquia}
                             index={index}
                           >
-                            <ButtonToggleDetallesParroquia
+                            <ButtonToggleDetalles
                               expanded={expanded}
-                              parroquia={parroquia}
+                              dato={parroquia}
                               setExpanded={setExpanded}
                             />
 
                             {expanded === parroquia.id && (
                               <ListadoParroquias parroquia={parroquia} />
                             )}
-                          </FichaParroquia>
+                          </FichaDetalles>
                         );
                       })
                     ) : (
-                      <>
-                        {parroquias.length !== 0 && (
-                          <Div
-                            className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                          >
-                            No hay coincidencias...
-                          </Div>
-                        )}
-
-                        {!loading && parroquias.length === 0 && (
-                          <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay parroquias para este municipio...
-                          </Div>
-                        )}
-                      </>
+                      <EstadoMsjVacio dato={parroquias} loading={loading} />
                     )}
                   </>
                 )}

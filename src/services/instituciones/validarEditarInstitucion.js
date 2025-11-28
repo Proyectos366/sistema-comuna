@@ -77,6 +77,7 @@ export default async function validarEditarInstitucion(
     const existente = await prisma.institucion.findFirst({
       where: {
         nombre: validandoCampos.nombre,
+        id_municipio: validandoCampos.id_municipio,
         id: {
           not: validandoCampos.id_institucion,
         },

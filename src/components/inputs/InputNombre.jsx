@@ -1,6 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-import { textRegex } from "@/utils/constantes";
+import { textRegex } from "@/utils/regex/textRegex";
 
 export default function InputNombre({
   type,

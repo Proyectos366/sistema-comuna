@@ -89,26 +89,7 @@ export async function PATCH(request) {
       }),
     ]);
 
-    // 5. Consultar paises, estados, municipios, parroquias e instituciones
-    const todosPaises = await prisma.pais.findMany({
-      where: {
-        borrado: false,
-      },
-      include: {
-        estados: {
-          include: {
-            municipios: {
-              include: {
-                parroquias: true,
-                instituciones: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    // 6. Condición de error si no se actualiza la institución
+    // 5. Condición de error si no se actualiza la institución
     if (!institucionActualizada) {
       await registrarEventoSeguro(request, {
         tabla: "institucion",
@@ -135,7 +116,7 @@ export async function PATCH(request) {
       );
     }
 
-    // 6. Condición de éxito: la institución fue actualizada correctamente
+    // 6. Registro del evento de actualización exitosa
     await registrarEventoSeguro(request, {
       tabla: "institucion",
       accion: "UPDATE_INSTITUCION",
@@ -153,14 +134,15 @@ export async function PATCH(request) {
       datosDespues: institucionActualizada,
     });
 
+    // 7. Condición de éxito: la institución fue actualizada correctamente
     return generarRespuesta(
       "ok",
       "Institución actualizada...",
-      { instituciones: institucionActualizada, paises: todosPaises },
+      { instituciones: institucionActualizada },
       201
     );
   } catch (error) {
-    // 7. Manejo de errores inesperados
+    // 8. Manejo de errores inesperados
     console.log(`Error interno (actualizar institucion): ` + error);
 
     await registrarEventoSeguro(request, {

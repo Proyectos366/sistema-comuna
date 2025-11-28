@@ -10,6 +10,7 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para e
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
 import validarCrearInstitucion from "@/services/instituciones/validarCrearInstitucion"; // Servicio para validar los datos de la nueva institución.
 import { CrearCarpetasStorage } from "@/utils/crearRutaCarpetasStorage";
+import path from "path";
 /**
 Maneja las solicitudes HTTP POST para crear una nueva institución.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles de la institución a crear.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
@@ -82,9 +83,11 @@ export async function POST(request) {
         },
       });
 
-      // 5. Intentar crear la carpeta
+      // 6. Intentar crear la carpeta
       try {
-        await crearRutasCarpetas.crearCarpeta(validaciones.nombre);
+        const storagePath = path.join(process.cwd(), `storage/instituciones`);
+
+        await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.nombre);
       } catch (error) {
         // Si falla la carpeta, lanzamos error para que se revierta la transacción
         throw new Error(
@@ -95,7 +98,7 @@ export async function POST(request) {
       return institucion;
     });
 
-    // 6. Condición de error si no se crea la institución
+    // 7. Condición de error si no se crea la institución
     if (!nuevaInstitucion) {
       await registrarEventoSeguro(request, {
         tabla: "institucion",
@@ -115,7 +118,7 @@ export async function POST(request) {
       );
     }
 
-    // 7. Condición de éxito: la institución fue creada correctamente
+    // 8. Registro del evento de creación exitosa
     await registrarEventoSeguro(request, {
       tabla: "institucion",
       accion: "CREAR_INSTITUCION",
@@ -126,6 +129,7 @@ export async function POST(request) {
       datosDespues: nuevaInstitucion,
     });
 
+    // 9. Condición de éxito: la institución fue creada correctamente
     return generarRespuesta(
       "ok",
       "Institución creada...",
@@ -135,7 +139,7 @@ export async function POST(request) {
       201
     );
   } catch (error) {
-    // 8. Manejo de errores inesperados
+    // 9. Manejo de errores inesperados
     console.log(`Error interno (institucion): ` + error);
 
     await registrarEventoSeguro(request, {

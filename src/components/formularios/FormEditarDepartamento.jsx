@@ -3,12 +3,16 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import InputDescripcion from "@/components/inputs/InputDescripcion";
 import DivScroll from "@/components/DivScroll";
+import LabelInput from "@/components/inputs/LabelInput";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormEditarDepartamento({
   acciones,
@@ -87,7 +91,7 @@ export default function FormEditarDepartamento({
 
           <BotonLimpiarCampos
             aceptar={() => {
-              dispatch(resetForm("institucionForm"));
+              dispatch(resetForm("departamentoForm"));
             }}
             campos={{
               nombre,

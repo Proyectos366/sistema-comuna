@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 
 import SwitchToggle from "@/components/SwitchToggle";
 import Div from "@/components/padres/Div";
-import BloqueInfoParroquia from "@/components/dashboard/parroquias/components/BloqueInfoParroquia";
+import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
@@ -13,14 +13,14 @@ export default function ListadoParroquias({ parroquia }) {
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
-      <BloqueInfoParroquia
+      <BloqueInfo
         indice={1}
         nombre={"Descripción"}
         valor={parroquia.descripcion}
       />
 
       <Div className="flex items-center justify-between">
-        <BloqueInfoParroquia
+        <BloqueInfo
           indice={!parroquia.borrado ? 3 : 2}
           nombre={"parroquia"}
           valor={!parroquia.borrado ? "Activo" : "Inactivo"}
@@ -39,7 +39,7 @@ export default function ListadoParroquias({ parroquia }) {
         />
       </Div>
 
-      <BloqueInfoParroquia
+      <BloqueInfo
         indice={1}
         nombre={"Creada"}
         valor={formatearFecha(parroquia.createdAt)}

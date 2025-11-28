@@ -1,13 +1,6 @@
 "use client";
 
-
-
-// Debemos crear el endpoint para consultar los departamentos por isntitución
-
-
-
 import { useState, useEffect, useMemo } from "react";
-import { BounceLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
 
 import Div from "@/components/padres/Div";
@@ -15,17 +8,18 @@ import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-
-import FichaDepartamento from "@/components/dashboard/departamentos/components/FichaDepartamento";
-import ButtonToggleDetallesDepartamento from "@/components/dashboard/departamentos/components/ButtonToggleDetallesDepartamento";
+import FichaDetalles from "@/components/FichaDetalles";
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoDepartamentos from "@/components/dashboard/departamentos/components/ListadoDepartamentos";
 import ModalDepartamentos from "@/components/dashboard/departamentos/components/ModalDepartamentos";
 import SelectOpcion from "@/components/SelectOpcion";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import Loader from "@/components/Loader";
+
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+import { cambiarSeleccionInstitucion } from "@/utils/dashboard/cambiarSeleccionInstitucion";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
-
-import { cambiarSeleccionInstitucion } from "@/utils/dashboard/cambiarSeleccionInstitucion";
 import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
 import { fetchDepartamentosIdInstitucion } from "@/store/features/departamentos/thunks/departamentosIdInstitucion";
 
@@ -46,6 +40,7 @@ export default function DepartamentosView() {
   const [descripcionDepartamento, setDescripcionDepartamento] = useState("");
 
   const [idInstitucion, setIdInstitucion] = useState("");
+  const [idDepartamento, setIdDepartamento] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
@@ -69,6 +64,7 @@ export default function DepartamentosView() {
 
   const acciones = {
     setIdInstitucion: setIdInstitucion,
+    setIdDepartamento: setIdDepartamento,
     setNombreInstitucion: setNombreInstitucion,
     setNombre: setNombreDepartamento,
     setDescripcion: setDescripcionDepartamento,
@@ -76,6 +72,7 @@ export default function DepartamentosView() {
 
   const datosDepartamento = {
     idInstitucion: idInstitucion,
+    idDepartamento: idDepartamento,
     nombreInstitucion: nombreInstitucion,
     nombre: nombreDepartamento,
     descripcion: descripcionDepartamento,
@@ -102,6 +99,9 @@ export default function DepartamentosView() {
 
   const resetearValores = () => {
     setIdInstitucion("");
+    setIdDepartamento("");
+    setNombreDepartamento("");
+    setDescripcionDepartamento("");
   };
 
   useEffect(() => {
@@ -109,7 +109,8 @@ export default function DepartamentosView() {
   }, [busqueda, ordenCampo, ordenDireccion]);
 
   const editarDepartamento = (departamento) => {
-    setIdInstitucion(departamento.id);
+    setIdInstitucion(departamento.id_institucion);
+    setIdDepartamento(departamento.id);
     setNombreDepartamento(departamento.nombre);
     setDescripcionDepartamento(departamento.descripcion);
 
@@ -157,24 +158,21 @@ export default function DepartamentosView() {
           {idInstitucion && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && departamentos?.length === 0 ? (
-                  <Div className="flex items-center gap-4">
-                    <BounceLoader color="#082158" size={50} /> Cargando
-                    departamentos...
-                  </Div>
+                {departamentos?.length === 0 && loading ? (
+                  <Loader titulo="Cargando departamentos..." />
                 ) : (
                   <>
                     {departamentosPaginados?.length !== 0 ? (
                       departamentosPaginados.map((departamento, index) => {
                         return (
-                          <FichaDepartamento
+                          <FichaDetalles
                             key={departamento.id}
-                            departamento={departamento}
+                            dato={departamento}
                             index={index}
                           >
-                            <ButtonToggleDetallesDepartamento
+                            <ButtonToggleDetalles
                               expanded={expanded}
-                              departamento={departamento}
+                              dato={departamento}
                               setExpanded={setExpanded}
                             />
 
@@ -184,25 +182,11 @@ export default function DepartamentosView() {
                                 editarDepartamento={editarDepartamento}
                               />
                             )}
-                          </FichaDepartamento>
+                          </FichaDetalles>
                         );
                       })
                     ) : (
-                      <>
-                        {departamentos.length !== 0 && (
-                          <Div
-                            className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                          >
-                            No hay coincidencias...
-                          </Div>
-                        )}
-
-                        {!loading && departamentos.length === 0 && (
-                          <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay departamentos para esta institución...
-                          </Div>
-                        )}
-                      </>
+                      <EstadoMsjVacio dato={departamentos} loading={loading} />
                     )}
                   </>
                 )}

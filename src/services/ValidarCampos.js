@@ -2072,16 +2072,18 @@ export default class ValidarCampos {
    @param {string} descripcion - La nueva descripción del departamento.
    @param {number} id_departamento - El ID del departamento a editar.
   */
-  static validarCamposEditarDepartamento(nombre, descripcion, id_departamento) {
+  static validarCamposEditarDepartamento(nombre, descripcion, id_institucion, id_departamento) {
     try {
       // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
-      const validarIdDepartamento = this.validarCampoId(id_departamento);
+      const validarIdInstitucion = this.validarCampoId(id_institucion, "institucion");
+      const validarIdDepartamento = this.validarCampoId(id_departamento, "departamento");
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarIdInstitucion.status === "error") return validarIdInstitucion;
       if (validarIdDepartamento.status === "error")
         return validarIdDepartamento;
 
@@ -2089,6 +2091,7 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
+        id_institucion: validarIdInstitucion.id,
         id_departamento: validarIdDepartamento.id,
       });
     } catch (error) {

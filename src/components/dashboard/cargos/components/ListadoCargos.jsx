@@ -9,12 +9,9 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-import { eliminarRestaurarDepartamento } from "@/store/features/departamentos/thunks/eliminarRestaurarDepartamento";
+import { eliminarRestaurarCargo } from "@/store/features/cargos/thunks/eliminarRestaurarCargo";
 
-export default function ListadoDepartamentos({
-  departamento,
-  editarDepartamento,
-}) {
+export default function ListadoCargos({ cargo, editarCargo }) {
   const dispatch = useDispatch();
 
   return (
@@ -23,13 +20,13 @@ export default function ListadoDepartamentos({
         <BloqueInfo
           indice={1}
           nombre={"Descripción"}
-          valor={departamento.descripcion}
+          valor={cargo.descripcion}
         />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarDepartamento(departamento);
+            editarCargo(cargo);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -47,18 +44,18 @@ export default function ListadoDepartamentos({
 
       <Div className="flex items-center justify-between">
         <BloqueInfo
-          indice={!departamento.borrado ? 3 : 2}
-          nombre={"Departamento"}
-          valor={!departamento.borrado ? "Activo" : "Inactivo"}
+          indice={!cargo.borrado ? 3 : 2}
+          nombre={"Cargo"}
+          valor={!cargo.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!departamento.borrado}
+          checked={!cargo.borrado}
           onToggle={() => {
             dispatch(
-              eliminarRestaurarDepartamento({
-                estado: departamento.borrado,
-                id_departamento: departamento.id,
+              eliminarRestaurarCargo({
+                estado: cargo.borrado,
+                id_cargo: cargo.id,
               })
             );
           }}
@@ -68,7 +65,7 @@ export default function ListadoDepartamentos({
       <BloqueInfo
         indice={1}
         nombre={"Creada"}
-        valor={formatearFecha(departamento.createdAt)}
+        valor={formatearFecha(cargo.createdAt)}
       />
     </Div>
   );

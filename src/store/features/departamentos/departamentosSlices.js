@@ -59,7 +59,7 @@ const departamentosSlice = createSlice({
       .addCase(actualizarDepartamento.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.departamentos.findIndex(
-          (inst) => inst.id === action.payload.id
+          (depa) => depa.id === action.payload.id
         );
         if (index !== -1) {
           state.departamentos[index] = action.payload;

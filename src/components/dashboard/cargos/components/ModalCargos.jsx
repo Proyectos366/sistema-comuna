@@ -5,25 +5,24 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearDepartamento from "@/components/formularios/FormCrearDepartamento";
-import FormEditarDepartamento from "@/components/formularios/FormEditarDepartamento";
+import FormCrearCargo from "@/components/formularios/FormCrearCargo";
+import FormEditarCargo from "@/components/formularios/FormEditarCargo";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearDepartamento } from "@/store/features/departamentos/thunks/crearDepartamento";
-import { actualizarDepartamento } from "@/store/features/departamentos/thunks/actualizarDepartamento";
+import { crearCargo } from "@/store/features/cargos/thunks/crearCargo";
+import { actualizarCargo } from "@/store/features/cargos/thunks/actualizarCargo";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
+import { fetchCargos } from "@/store/features/cargos/thunks/todosCargos";
 
-export default function ModalDepartamentos({
+export default function ModalCargos({
   acciones,
-  datosDepartamento,
+  datosCargo,
   validaciones,
 }) {
   const dispatch = useDispatch();
-  const { instituciones } = useSelector((state) => state.instituciones);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -35,30 +34,27 @@ export default function ModalDepartamentos({
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
   const {
-    idInstitucion,
-    idDepartamento,
+    idCargo,
     nombre,
     descripcion,
-    nombreInstitucion,
-  } = datosDepartamento;
+  } = datosCargo;
 
   useEffect(() => {
-    dispatch(fetchTodasInstituciones());
+    dispatch(fetchCargos());
   }, [dispatch]);
 
   const notify = (msj) => toast(msj);
 
-  const handleCrearDepartamento = async () => {
+  const handleCrearCargo = async () => {
     try {
-      const nuevoDepartamento = {
+      const nuevoCargo = {
         nombre: nombre,
         descripcion: descripcion,
-        id_institucion: idInstitucion,
       };
 
       await dispatch(
-        crearDepartamento({
-          nuevoDepartamento: nuevoDepartamento,
+        crearCargo({
+          nuevoCargo: nuevoCargo,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -68,18 +64,17 @@ export default function ModalDepartamentos({
     }
   };
 
-  const handleEditarDepartamento = async () => {
+  const handleEditarCargo = async () => {
     try {
-      const updateDepartamento = {
+      const updateCargo = {
         nombre: nombre,
         descripcion: descripcion,
-        id_institucion: idInstitucion,
-        id_departamento: idDepartamento,
+        id_cargo: idCargo,
       };
 
       await dispatch(
-        actualizarDepartamento({
-          updateDepartamento: updateDepartamento,
+        actualizarCargo({
+          updateCargo: updateCargo,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -98,16 +93,15 @@ export default function ModalDepartamentos({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear este departamento?"}
+        titulo={"¿Crear este cargo?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Institución" descripcion={nombreInstitucion} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearDepartamento}
+          aceptar={handleCrearCargo}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -119,8 +113,6 @@ export default function ModalDepartamentos({
           campos={{
             nombre,
             descripcion,
-            idInstitucion,
-            idDepartamento,
           }}
         />
       </Modal>
@@ -130,16 +122,15 @@ export default function ModalDepartamentos({
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Actualizar este departamento?"}
+        titulo={"¿Actualizar este cargo?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Institución" descripcion={nombreInstitucion} />
-          <ModalDatos titulo="Departamento" descripcion={nombre} />
+          <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleEditarDepartamento}
+          aceptar={handleEditarCargo}
           cancelar={() => {
             dispatch(cerrarModal("confirmarCambios"));
             dispatch(abrirModal("editar"));
@@ -151,8 +142,7 @@ export default function ModalDepartamentos({
           campos={{
             nombre,
             descripcion,
-            idInstitucion,
-            idDepartamento,
+            idCargo
           }}
         />
       </Modal>
@@ -162,12 +152,12 @@ export default function ModalDepartamentos({
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar este departamento?"}
+        titulo={"¿Actualizar este cargo?"}
       >
         <ModalDatosContenedor>
-          <FormEditarDepartamento
+          <FormEditarCargo
             acciones={acciones}
-            datosDepartamento={datosDepartamento}
+            datosCargo={datosCargo}
             validaciones={validaciones}
           />
         </ModalDatosContenedor>
@@ -178,14 +168,13 @@ export default function ModalDepartamentos({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear departamento?"}
+        titulo={"¿Crear cargo?"}
       >
         <ModalDatosContenedor>
-          <FormCrearDepartamento
+          <FormCrearCargo
             acciones={acciones}
-            datosDepartamento={datosDepartamento}
+            datosCargo={datosCargo}
             validaciones={validaciones}
-            instituciones={instituciones}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

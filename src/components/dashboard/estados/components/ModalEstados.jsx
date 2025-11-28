@@ -5,15 +5,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearEstado from "@/components/formularios/FormCrearEstado";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
+import FormCrearEstado from "@/components/formularios/FormCrearEstado";
+import FormEditarEstado from "@/components/formularios/FormEditarEstado";
 
 import { crearEstado } from "@/store/features/estados/thunks/crearEstado";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import FormEditarEstado from "@/components/formularios/FormEditarEstado";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
 export default function ModalEstados({ acciones, datosEstado, validaciones }) {

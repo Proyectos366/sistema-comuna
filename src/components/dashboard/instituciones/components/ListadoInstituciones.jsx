@@ -1,16 +1,15 @@
 import { useDispatch } from "react-redux";
+import Image from "next/image";
 
 import SwitchToggle from "@/components/SwitchToggle";
 import Div from "@/components/padres/Div";
-import BloqueInfoInstitucion from "@/components/dashboard/instituciones/components/BloqueInfoInstitucion";
-
-import { formatearFecha } from "@/utils/Fechas";
-import { eliminarRestaurarInstitucion } from "@/store/features/instituciones/thunks/eliminarRestaurarInstitucion";
 import Button from "@/components/padres/Button";
 import Span from "@/components/padres/Span";
-import Image from "next/image";
+import BloqueInfo from "@/components/BloqueInfo";
 
-import { abrirModal } from "@/store/features/modal/slicesModal";
+import { formatearFecha } from "@/utils/Fechas";
+
+import { eliminarRestaurarInstitucion } from "@/store/features/instituciones/thunks/eliminarRestaurarInstitucion";
 
 export default function ListadoInstituciones({
   institucion,
@@ -21,7 +20,7 @@ export default function ListadoInstituciones({
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
-        <BloqueInfoInstitucion
+        <BloqueInfo
           indice={1}
           nombre={"Descripción"}
           valor={institucion.descripcion}
@@ -46,25 +45,17 @@ export default function ListadoInstituciones({
         </Button>
       </Div>
 
-      <BloqueInfoInstitucion
-        indice={1}
-        nombre={"Rif"}
-        valor={institucion.rif}
-      />
+      <BloqueInfo indice={1} nombre={"Rif"} valor={institucion.rif} />
 
-      <BloqueInfoInstitucion
-        indice={1}
-        nombre={"Sector"}
-        valor={institucion.sector}
-      />
-      <BloqueInfoInstitucion
+      <BloqueInfo indice={1} nombre={"Sector"} valor={institucion.sector} />
+      <BloqueInfo
         indice={1}
         nombre={"Dirección"}
         valor={institucion.direccion}
       />
 
       <Div className="flex items-center justify-between">
-        <BloqueInfoInstitucion
+        <BloqueInfo
           indice={!institucion.borrado ? 3 : 2}
           nombre={"Institución"}
           valor={!institucion.borrado ? "Activo" : "Inactivo"}
@@ -83,7 +74,7 @@ export default function ListadoInstituciones({
         />
       </Div>
 
-      <BloqueInfoInstitucion
+      <BloqueInfo
         indice={1}
         nombre={"Creada"}
         valor={formatearFecha(institucion.createdAt)}

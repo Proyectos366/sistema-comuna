@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 
 import SwitchToggle from "@/components/SwitchToggle";
 import Div from "@/components/padres/Div";
-import BloqueInfoMunicipio from "@/components/dashboard/municipios/components/BloqueInfoMunicipio";
+import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
@@ -13,14 +13,14 @@ export default function ListadoMunicipios({ municipio }) {
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
-      <BloqueInfoMunicipio
+      <BloqueInfo
         indice={1}
         nombre={"Descripción"}
         valor={municipio.descripcion}
       />
 
       <Div className="flex items-center justify-between">
-        <BloqueInfoMunicipio
+        <BloqueInfo
           indice={!municipio.borrado ? 3 : 2}
           nombre={"municipio"}
           valor={!municipio.borrado ? "Activo" : "Inactivo"}
@@ -39,7 +39,7 @@ export default function ListadoMunicipios({ municipio }) {
         />
       </Div>
 
-      <BloqueInfoMunicipio
+      <BloqueInfo
         indice={1}
         nombre={"Creado"}
         valor={formatearFecha(municipio.createdAt)}

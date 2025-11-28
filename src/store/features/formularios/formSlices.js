@@ -11,6 +11,7 @@ const initialState = {
     parroquiaForm: 0,
     institucionForm: 0,
     departamentoForm: 0,
+    cargoForm: 0,
   },
 };
 

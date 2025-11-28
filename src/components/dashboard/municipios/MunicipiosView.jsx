@@ -10,8 +10,10 @@ import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 
-import FichaMunicipio from "@/components/dashboard/municipios/components/FichaMunicipio";
-import ButtonToggleDetallesMunicipio from "@/components/dashboard/municipios/components/ButtonToggleDetallesMunicipio";
+import FichaDetalles from "@/components/FichaDetalles";
+
+import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
+
 import ListadoMunicipios from "@/components/dashboard/municipios/components/ListadoMunicipios";
 import ModalMunicipios from "@/components/dashboard/municipios/components/ModalMunicipios";
 import SelectOpcion from "@/components/SelectOpcion";
@@ -24,6 +26,7 @@ import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/muni
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
+import EstadoMsjVacio from "@/components/EstadoMsjVacio";
 
 export default function MunicipiosView() {
   const dispatch = useDispatch();
@@ -163,7 +166,7 @@ export default function MunicipiosView() {
           {idEstado && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {loading && municipios?.length === 0 ? (
+                {municipios?.length === 0 && loading ? (
                   <Div className="flex items-center gap-4">
                     <BounceLoader color="#082158" size={50} /> Cargando
                     municipios...
@@ -173,39 +176,25 @@ export default function MunicipiosView() {
                     {municipiosPaginados?.length !== 0 ? (
                       municipiosPaginados.map((municipio, index) => {
                         return (
-                          <FichaMunicipio
+                          <FichaDetalles
                             key={municipio.id}
-                            municipio={municipio}
+                            dato={municipio}
                             index={index}
                           >
-                            <ButtonToggleDetallesMunicipio
+                            <ButtonToggleDetalles
                               expanded={expanded}
-                              municipio={municipio}
+                              dato={municipio}
                               setExpanded={setExpanded}
                             />
 
                             {expanded === municipio.id && (
                               <ListadoMunicipios municipio={municipio} />
                             )}
-                          </FichaMunicipio>
+                          </FichaDetalles>
                         );
                       })
                     ) : (
-                      <>
-                        {municipios.length !== 0 && (
-                          <Div
-                            className={`text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}
-                          >
-                            No hay coincidencias...
-                          </Div>
-                        )}
-
-                        {!loading && municipios.length === 0 && (
-                          <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
-                            No hay municipios para este estado...
-                          </Div>
-                        )}
-                      </>
+                      <EstadoMsjVacio dato={municipios} loading={loading} />
                     )}
                   </>
                 )}

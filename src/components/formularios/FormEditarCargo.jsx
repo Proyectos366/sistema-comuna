@@ -1,28 +1,67 @@
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
-import InputDescripcion from "../inputs/InputDescripcion";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { textRegex } from "@/utils/regex/textRegex";
+
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import LabelInput from "@/components/inputs/LabelInput";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { resetForm } from "@/store/features/formularios/formSlices";
 
 export default function FormEditarCargo({
-  nombre,
-  setNombre,
-  descripcion,
-  setDescripcion,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  acciones,
+  datosCargo,
+  validaciones,
 }) {
+  const dispatch = useDispatch();
+
+  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
+  const reiniciarForm = useSelector(
+    (state) => state.forms.reiniciarForm.cargoForm
+  );
+
+  const { setNombre, setDescripcion } = acciones;
+
+  const { nombre, descripcion } = datosCargo;
+
+  const { validarNombre, setValidarNombre } = validaciones;
+
+  useEffect(() => {
+    const validarYActualizar = (valor, setValidar) => {
+      if (valor) {
+        const limpio = String(valor).trim();
+        const esValido = textRegex.test(limpio);
+        if (typeof setValidar === "function") setValidar(esValido);
+      }
+    };
+
+    validarYActualizar(nombre, setValidarNombre);
+  }, [nombre]);
+
+  useEffect(() => {
+    if (!mostrarEditar) {
+      setNombre("");
+      setDescripcion("");
+    }
+  }, [reiniciarForm, mostrarEditar]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
+      <DivScroll>
         <LabelInput nombre={"Nombre"}>
-          <Input
-            type={"text"}
+          <InputNombre
+            type="text"
+            indice="nombre"
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            setValue={setNombre}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
           />
         </LabelInput>
 
@@ -36,14 +75,13 @@ export default function FormEditarCargo({
           />
         </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
+            aceptar={() => {
+              dispatch(cerrarModal("editar"));
+              dispatch(abrirModal("confirmarCambios"));
+            }}
             nombre={"Guardar cambios"}
             campos={{
               nombre,
@@ -51,22 +89,17 @@ export default function FormEditarCargo({
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-                setDescripcion,
-              });
+              dispatch(resetForm("cargoForm"));
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
               descripcion,
             }}
           />
         </div>
-      </div>
+      </DivScroll>
     </Formulario>
   );
 }

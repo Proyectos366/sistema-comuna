@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 
 import SwitchToggle from "@/components/SwitchToggle";
 import Div from "@/components/padres/Div";
-import BloqueInfoPais from "@/components/dashboard/paises/components/BloqueInfoPais";
+import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
@@ -13,10 +13,10 @@ export default function ListadoPaises({ pais }) {
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
-      <BloqueInfoPais indice={1} nombre={"Capital"} valor={pais.capital} />
+      <BloqueInfo indice={1} nombre={"Capital"} valor={pais.capital} />
 
       <Div className="flex items-center justify-between">
-        <BloqueInfoPais
+        <BloqueInfo
           indice={!pais.borrado ? 3 : 2}
           nombre={"Estado"}
           valor={!pais.borrado ? "Activo" : "Inactivo"}
@@ -35,7 +35,7 @@ export default function ListadoPaises({ pais }) {
         />
       </Div>
 
-      <BloqueInfoPais
+      <BloqueInfo
         indice={1}
         nombre={"Creado"}
         valor={formatearFecha(pais.createdAt)}

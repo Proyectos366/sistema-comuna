@@ -10,6 +10,8 @@ import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la 
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import validarCrearDepartamento from "@/services/departamentos/validarCrearDepartamento"; // Servicio para validar los datos del nuevo departamento.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
+import { CrearCarpetasStorage } from "@/utils/crearRutaCarpetasStorage";
+import path from "path";
 /**
   Maneja las solicitudes HTTP POST para crear un nuevo departamento.
   @async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles del departamento a crear.
@@ -64,7 +66,12 @@ export async function POST(request) {
 
       // 6. Intentar crear la carpeta
       try {
-        await crearRutasCarpetas.crearCarpeta(validaciones.nombre);
+        const storagePath = path.join(
+          process.cwd(),
+          `storage/instituciones/${validaciones.nombreInstitucion}`
+        );
+
+        await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.nombre);
       } catch (error) {
         // Si falla la carpeta, lanzamos error para que se revierta la transacción
         throw new Error(
@@ -75,7 +82,7 @@ export async function POST(request) {
       return departamento;
     });
 
-    // 5. Condición de error si no se crea el departamento
+    // 6. Condición de error si no se crea el departamento
     if (!nuevoDepartamento) {
       await registrarEventoSeguro(request, {
         tabla: "departamento",
@@ -95,7 +102,7 @@ export async function POST(request) {
       );
     }
 
-    // 7. Condición de éxito: el departamento fue creado correctamente
+    // 7. Registro exitoso del evento de creación del departamento
     await registrarEventoSeguro(request, {
       tabla: "departamento",
       accion: "CREAR_DEPARTAMENTO",
@@ -106,6 +113,7 @@ export async function POST(request) {
       datosDespues: nuevoDepartamento,
     });
 
+    // 8. Si todas las validaciones son correctas, se retorna la información consolidada.
     return generarRespuesta(
       "ok",
       "Departamento creado...",
@@ -115,7 +123,7 @@ export async function POST(request) {
       201
     );
   } catch (error) {
-    // 8. Manejo de errores inesperados
+    // 9. Manejo de errores inesperados
     console.log(`Error interno (departamento): ` + error);
 
     await registrarEventoSeguro(request, {
