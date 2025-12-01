@@ -62,8 +62,8 @@ export default function InstitucionesView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreInstitucion, setValidarNombreInstitucion] = useState("");
-  const [validarRifInstitucion, setValidarRifInstitucion] = useState("");
+  const [validarNombreInstitucion, setValidarNombreInstitucion] = useState(false);
+  const [validarRifInstitucion, setValidarRifInstitucion] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);

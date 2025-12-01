@@ -12,6 +12,7 @@ const initialState = {
     institucionForm: 0,
     departamentoForm: 0,
     cargoForm: 0,
+    formacionForm: 0,
   },
 };
 

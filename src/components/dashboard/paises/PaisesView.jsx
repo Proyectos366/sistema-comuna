@@ -34,9 +34,9 @@ export default function PaisesView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombrePais, setValidarNombrePais] = useState("");
-  const [validarCapitalPais, setValidarCapitalPais] = useState("");
-  const [validarSerialPais, setValidarSerialPais] = useState("");
+  const [validarNombrePais, setValidarNombrePais] = useState(false);
+  const [validarCapitalPais, setValidarCapitalPais] = useState(false);
+  const [validarSerialPais, setValidarSerialPais] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);

@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "@/store/features/auth/authSlice";
+
+import rolesReducer from "@/store/features/roles/rolesSlices";
 import usuariosReducer from "@/store/features/usuarios/usuariosSlices";
+import authReducer from "@/store/features/auth/authSlice";
+import modalReducer from "@/store/features/modal/slicesModal";
+import formsReducer from "@/store/features/formularios/formSlices";
 import paisesReducer from "@/store/features/paises/paisesSlices";
 import estadosReducer from "@/store/features/estados/estadosSlices";
 import municipiosReducer from "@/store/features/municipios/municipiosSlices";
@@ -8,17 +12,15 @@ import parroquiasReducer from "@/store/features/parroquias/parroquiasSlices";
 import institucionesSlices from "@/store/features/instituciones/institucionesSlices";
 import departamentosReducer from "@/store/features/departamentos/departamentosSlices";
 import cargosReducer from "@/store/features/cargos/cargosSlices";
-import rolesReducer from "@/store/features/roles/rolesSlices";
-import modalReducer from "@/store/features/modal/slicesModal";
-import formsReducer from "@/store/features/formularios/formSlices";
+import formacionesReducer from "@/store/features/formaciones/formacionesSlices";
 
 const store = configureStore({
   reducer: {
+    roles: rolesReducer,
+    usuarios: usuariosReducer,
     auth: authReducer,
     modal: modalReducer,
     forms: formsReducer,
-    roles: rolesReducer,
-    usuarios: usuariosReducer,
     paises: paisesReducer,
     estados: estadosReducer,
     municipios: municipiosReducer,
@@ -26,6 +28,7 @@ const store = configureStore({
     instituciones: institucionesSlices,
     departamentos: departamentosReducer,
     cargos: cargosReducer,
+    formaciones: formacionesReducer,
     // Aquí se agregarán los reducers de los "slices"
   },
 });

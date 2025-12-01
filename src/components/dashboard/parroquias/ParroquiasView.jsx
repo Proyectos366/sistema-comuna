@@ -53,7 +53,7 @@ export default function ParroquiasView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreParroquia, setValidarNombreParroquia] = useState("");
+  const [validarNombreParroquia, setValidarNombreParroquia] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);

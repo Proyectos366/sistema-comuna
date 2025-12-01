@@ -49,7 +49,7 @@ export default function MunicipiosView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreMunicipio, setValidarNombreMunicipio] = useState("");
+  const [validarNombreMunicipio, setValidarNombreMunicipio] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);

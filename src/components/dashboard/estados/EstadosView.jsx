@@ -41,10 +41,10 @@ export default function EstadosView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreEstado, setValidarNombreEstado] = useState("");
-  const [validarCapitalEstado, setValidarCapitalEstado] = useState("");
+  const [validarNombreEstado, setValidarNombreEstado] = useState(false);
+  const [validarCapitalEstado, setValidarCapitalEstado] = useState(false);
   const [validarCodigoPostalEstado, setValidarCodigoPostalEstado] =
-    useState("");
+    useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);

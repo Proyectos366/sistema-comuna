@@ -15,7 +15,6 @@ import Footer from "../Footer";
 // import ConsejoForm from "../opciones/ConsejoForm";
 // import VoceroForm from "../opciones/VoceroForm";
 // //import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
-// import FormacionesForm from "../opciones/FormacionesForm";
 // import ParticipantesForm from "../opciones/ParticipantesForm";
 // import DepartamentosForm from "../opciones/DepartamentosForm";
 // import EstadosForm from "../opciones/EstadoForm";
@@ -31,6 +30,7 @@ import ParroquiasView from "@/components/dashboard/parroquias/ParroquiasView";
 import InstitucionesView from "@/components/dashboard/instituciones/InstitucionesView";
 import DepartamentosView from "@/components/dashboard/departamentos/DepartamentosView";
 import CargosView from "@/components/dashboard/cargos/CargosView";
+import FormacionesView from "@/components/dashboard/formaciones/FormacionesView";
 
 export default function VistaUniversalUsuarios() {
   const { screenSize } = useUser();
@@ -233,21 +233,9 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "cargos" && <CargosView />}
 
-              {/*
-              {vista === "formaciones" && (
-                <FormacionesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              {vista === "formaciones" && <FormacionesView />}
 
+              {/*
               {vista === "participantes" && (
                 <ParticipantesForm
                   mostrar={mostrarModal}

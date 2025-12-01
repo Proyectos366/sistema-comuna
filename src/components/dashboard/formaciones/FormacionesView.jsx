@@ -10,32 +10,34 @@ import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
-import ListadoCargos from "@/components/dashboard/cargos/components/ListadoCargos";
-import ModalCargos from "@/components/dashboard/cargos/components/ModalCargos";
+import ListadoFormaciones from "@/components/dashboard/formaciones/components/ListadoFormaciones";
+import ModalFormaciones from "@/components/dashboard/formaciones/components/ModalFormaciones";
 import EstadoMsjVacio from "@/components/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { fetchCargos } from "@/store/features/cargos/thunks/todosCargos";
+import { fetchFormacionesInstitucion } from "@/store/features/formaciones/thunks/formacionesInstitucion";
 
-export default function CargosView() {
+export default function FormacionesView() {
   const dispatch = useDispatch();
-  const { cargos, loading } = useSelector((state) => state.cargos);
+  const { formaciones, loading } = useSelector((state) => state.formaciones);
 
   useEffect(() => {
-    dispatch(fetchCargos());
+    dispatch(fetchFormacionesInstitucion());
   }, [dispatch]);
 
-  const [nombreCargo, setNombreCargo] = useState("");
-  const [descripcionCargo, setDescripcionCargo] = useState("");
+  const [nombreCargo, setNombreFormacion] = useState("");
+  const [modulosFormacion, setModulosFormacion] = useState("");
+  const [descripcionCargo, setDescripcionFormacion] = useState("");
 
-  const [idCargo, setIdCargo] = useState("");
+  const [idFormacion, setIdFormacion] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreCargo, setValidarNombreCargo] = useState(false);
+  const [validarNombreFormacion, setValidarNombreFormacion] = useState(false);
+  const [validarModuloFormacion, setValidarModuloFormacion] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -48,63 +50,68 @@ export default function CargosView() {
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
 
   const acciones = {
-    setIdCargo: setIdCargo,
-    setNombre: setNombreCargo,
-    setDescripcion: setDescripcionCargo,
+    setIdFormacion: setIdFormacion,
+    setNombre: setNombreFormacion,
+    setModulos: setModulosFormacion,
+    setDescripcion: setDescripcionFormacion,
   };
 
-  const datosCargo = {
-    idCargo: idCargo,
+  const datosFormacion = {
+    idFormacion: idFormacion,
     nombre: nombreCargo,
+    modulos: modulosFormacion,
     descripcion: descripcionCargo,
   };
 
   const validaciones = {
-    validarNombre: validarNombreCargo,
-    setValidarNombre: setValidarNombreCargo,
+    validarNombre: validarNombreFormacion,
+    setValidarNombre: setValidarNombreFormacion,
+    validarModulo: validarModuloFormacion,
+    setValidarModulo: setValidarModuloFormacion,
   };
 
-  const cargosFiltradosOrdenados = useMemo(() => {
+  const formacionesFiltradasOrdenadas = useMemo(() => {
     return filtrarOrdenar(
-      cargos,
+      formaciones,
       busqueda,
       ordenCampo,
       ordenDireccion,
       camposBusqueda
     );
-  }, [cargos, busqueda, ordenCampo, ordenDireccion]);
+  }, [formaciones, busqueda, ordenCampo, ordenDireccion]);
 
-  const cargosPaginados = useMemo(() => {
-    return cargosFiltradosOrdenados.slice(first, first + rows);
-  }, [cargosFiltradosOrdenados, first, rows]);
+  const formacionesPaginadas = useMemo(() => {
+    return formacionesFiltradasOrdenadas.slice(first, first + rows);
+  }, [formacionesFiltradasOrdenadas, first, rows]);
 
   useEffect(() => {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  const editarCargo = (cargo) => {
-    setIdCargo(cargo.id);
-    setNombreCargo(cargo.nombre);
-    setDescripcionCargo(cargo.descripcion);
+  const editarFormacion = (formacion) => {
+    setIdFormacion(formacion.id);
+    setNombreFormacion(formacion.nombre);
+    setModulosFormacion(formacion.modulos);
+    setDescripcionFormacion(formacion.descripcion);
 
     dispatch(abrirModal("editar"));
   };
 
   return (
     <>
-      <ModalCargos
+      <ModalFormaciones
         acciones={acciones}
-        datosCargo={datosCargo}
+        datosFormacion={datosFormacion}
         validaciones={validaciones}
       />
       <SectionMain>
         <SectionTertiary
-          nombre={"Gestión Cargos"}
+          nombre={"Gestión formaciones"}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {cargos.length !== 0 && (
+          {formaciones.length !== 0 && (
             <BuscadorOrdenador
               busqueda={busqueda}
               setBusqueda={setBusqueda}
@@ -117,31 +124,35 @@ export default function CargosView() {
           )}
 
           <Div className={`flex flex-col gap-2`}>
-            {cargos?.length === 0 && loading ? (
-              <Loader titulo="Cargando cargos..." />
+            {formaciones?.length === 0 && loading ? (
+              <Loader titulo="Cargando formaciones..." />
             ) : (
               <>
-                {cargosPaginados?.length !== 0 ? (
-                  cargosPaginados.map((cargo, index) => {
+                {formacionesPaginadas?.length !== 0 ? (
+                  formacionesPaginadas.map((formacion, index) => {
                     return (
-                      <FichaDetalles key={cargo.id} dato={cargo} index={index}>
+                      <FichaDetalles
+                        key={formacion.id}
+                        dato={formacion}
+                        index={index}
+                      >
                         <ButtonToggleDetalles
                           expanded={expanded}
-                          dato={cargo}
+                          dato={formacion}
                           setExpanded={setExpanded}
                         />
 
-                        {expanded === cargo.id && (
-                          <ListadoCargos
-                            cargo={cargo}
-                            editarCargo={editarCargo}
+                        {expanded === formacion.id && (
+                          <ListadoFormaciones
+                            formacion={formacion}
+                            editarFormacion={editarFormacion}
                           />
                         )}
                       </FichaDetalles>
                     );
                   })
                 ) : (
-                  <EstadoMsjVacio dato={cargos} loading={loading} />
+                  <EstadoMsjVacio dato={formaciones} loading={loading} />
                 )}
               </>
             )}
@@ -153,7 +164,7 @@ export default function CargosView() {
               setFirst={setFirst}
               rows={rows}
               setRows={setRows}
-              totalRecords={cargosFiltradosOrdenados.length}
+              totalRecords={formacionesFiltradasOrdenadas.length}
             />
           </Div>
         </SectionTertiary>
