@@ -1,6 +1,6 @@
+import { moduloRegex } from "@/utils/regex/moduloRegex";
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-import { moduloRegex } from "@/utils/constantes";
 
 export default function InputModulo({
   type,
@@ -37,7 +37,7 @@ export default function InputModulo({
     }
 
     // Si el valor no es un número entre 1 y 9, no actualizar
-    if (!/^[1-9]?$/.test(valor)) {
+    if (!moduloRegex.test(valor)) {
       return;
     }
 

@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+
+import { textRegex } from "@/utils/regex/textRegex";
+import { moduloRegex } from "@/utils/regex/moduloRegex";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
@@ -12,10 +15,8 @@ import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
-import { resetForm } from "@/store/features/formularios/formSlices";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { textRegex } from "@/utils/regex/textRegex";
-import { moduloRegex } from "@/utils/regex/moduloRegex";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 export default function FormEditarFormacion({
   acciones,
@@ -24,50 +25,26 @@ export default function FormEditarFormacion({
 }) {
   const dispatch = useDispatch();
 
-  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
-  const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.formacionForm
-  );
-
   const { setNombre, setModulos, setDescripcion } = acciones;
 
   const { nombre, modulos, descripcion } = datosFormacion;
 
-  const { validarNombre, setValidarNombre, validarModulos, setValidarModulos } =
+  const { validarNombre, setValidarNombre, validarModulo, setValidarModulo } =
     validaciones;
 
   useEffect(() => {
-    if (modulos !== undefined && modulos !== null) {
-      const valorSinEspacios = String(modulos).trim();
-
-      // Validar que sea un número entre 1 y 9
-      const esValido = moduloRegex.test(valorSinEspacios);
-      setValidarModulos?.(esValido);
-
-      // Si deseas guardar el valor limpio (sin espacios, por ejemplo)
-      setModulos?.(valorSinEspacios);
-    }
-  }, [modulos]);
-
-  useEffect(() => {
-    const validarYActualizar = (valor, setValidar) => {
+    const validarYActualizar = (valor, setValidar, regex) => {
       if (valor) {
         const limpio = String(valor).trim();
-        const esValido = textRegex.test(limpio);
+        const esValido = regex.test(limpio);
         if (typeof setValidar === "function") setValidar(esValido);
       }
     };
 
-    validarYActualizar(nombre, setValidarNombre);
-  }, [nombre]);
+    validarYActualizar(nombre, setValidarNombre, textRegex);
 
-  useEffect(() => {
-    if (!mostrarEditar) {
-      setNombre("");
-      setModulos("");
-      setDescripcion("");
-    }
-  }, [reiniciarForm, mostrarEditar]);
+    validarYActualizar(modulos, setValidarModulo, moduloRegex);
+  }, [nombre, modulos]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
@@ -89,8 +66,8 @@ export default function FormEditarFormacion({
             indice="modulo"
             value={modulos}
             setValue={setModulos}
-            validarModulo={validarModulos}
-            setValidarModulo={setValidarModulos}
+            validarModulo={validarModulo}
+            setValidarModulo={setValidarModulo}
           />
         </LabelInput>
 
@@ -121,7 +98,7 @@ export default function FormEditarFormacion({
 
           <BotonLimpiarCampos
             aceptar={() => {
-              dispatch(resetForm("formacionForm"));
+              limpiarCampos({ setNombre, setModulos, setDescripcion });
             }}
             campos={{
               nombre,

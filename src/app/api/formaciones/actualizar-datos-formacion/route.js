@@ -1,7 +1,7 @@
 /**
   @fileoverview Controlador de API para la edición de una formación existente. Este archivo
   maneja la lógica para actualizar los detalles de una formación en la base de datos a través
-  de una solicitud POST. Utiliza Prisma para la interacción con la base de datos, un servicio
+  de una solicitud PATCH. Utiliza Prisma para la interacción con la base de datos, un servicio
   de validación para asegurar la validez de los datos, y un sistema de registro de eventos
   para la auditoría.@module
 */
@@ -11,13 +11,13 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para e
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
 import validarEditarFormacion from "@/services/formaciones/validarEditarFormacion"; // Servicio para validar los datos de edición de la formación.
 /**
-  Maneja las solicitudes HTTP POST para editar una formación existente.
-  @async@function POST
+  Maneja las solicitudes HTTP PATCH para editar una formación existente.
+  @async@function PATCH
   @param {Request} request - Objeto de la solicitud que contiene los detalles de la formación a editar.
   @returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
     const { nombre, descripcion, cantidadModulos, id_formacion } =

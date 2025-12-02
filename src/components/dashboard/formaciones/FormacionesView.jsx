@@ -91,7 +91,7 @@ export default function FormacionesView() {
   const editarFormacion = (formacion) => {
     setIdFormacion(formacion.id);
     setNombreFormacion(formacion.nombre);
-    setModulosFormacion(formacion.modulos);
+    setModulosFormacion(formacion.modulos.length);
     setDescripcionFormacion(formacion.descripcion);
 
     dispatch(abrirModal("editar"));

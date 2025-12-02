@@ -5,24 +5,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearFormacion from "@/components/formularios/FormCrearFormacion";
-import FormEditarFormacion from "@/components/formularios/FormEditarFormacion";
+import FormCrearInstitucion from "@/components/formularios/FormCrearInstitucion";
+import FormEditarInstitucion from "@/components/formularios/FormEditarInstitucion";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearFormacion } from "@/store/features/formaciones/thunks/crearFormacion";
-import { actualizarFormacion } from "@/store/features/formaciones/thunks/actualizarFormacion";
+import { crearInstitucion } from "@/store/features/instituciones/thunks/crearInstitucion";
+import { actualizarInstitucion } from "@/store/features/instituciones/thunks/actualizarInstitucion";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { fetchFormaciones } from "@/store/features/formaciones/thunks/todasFormaciones";
+import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
-export default function ModalFormaciones({
+export default function ModalInstituciones({
   acciones,
-  datosFormacion,
+  datosInstitucion,
   validaciones,
 }) {
   const dispatch = useDispatch();
+  const { estados } = useSelector((state) => state.estados);
+  const { municipios } = useSelector((state) => state.municipios);
+  const { parroquias } = useSelector((state) => state.parroquias);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -34,29 +37,45 @@ export default function ModalFormaciones({
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
   const {
-    idFormacion,
+    idPais,
+    idEstado,
+    idMunicipio,
+    idParroquia,
+    idInstitucion,
+    nombrePais,
+    nombreEstado,
+    nombreMunicipio,
+    nombreParroquia,
     nombre,
-    modulos,
     descripcion,
-  } = datosFormacion;
+    rif,
+    sector,
+    direccion,
+  } = datosInstitucion;
 
   useEffect(() => {
-    dispatch(fetchFormaciones());
+    dispatch(fetchPaises());
   }, [dispatch]);
 
   const notify = (msj) => toast(msj);
 
-  const handleCrearFormacion = async () => {
+  const handleCrearInstitucion = async () => {
     try {
-      const nuevaFormacion = {
+      const nuevaInstitucion = {
         nombre: nombre,
-        cantidadModulos: modulos,
         descripcion: descripcion,
+        rif: rif,
+        sector: sector,
+        direccion: direccion,
+        id_pais: idPais,
+        id_estado: idEstado,
+        id_municipio: idMunicipio,
+        id_parroquia: idParroquia,
       };
 
       await dispatch(
-        crearFormacion({
-          nuevaFormacion: nuevaFormacion,
+        crearInstitucion({
+          nuevaInstitucion: nuevaInstitucion,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -66,18 +85,24 @@ export default function ModalFormaciones({
     }
   };
 
-  const handleEditarFormacion = async () => {
+  const handleEditarInstitucion = async () => {
     try {
-      const updateFormacion = {
+      const updateInstitucion = {
         nombre: nombre,
-        cantidadModulos: modulos,
         descripcion: descripcion,
-        id_formacion: idFormacion,
+        rif: rif,
+        sector: sector,
+        direccion: direccion,
+        id_pais: idPais,
+        id_estado: idEstado,
+        id_municipio: idMunicipio,
+        id_parroquia: idParroquia,
+        id_institucion: idInstitucion,
       };
 
       await dispatch(
-        actualizarFormacion({
-          updateFormacion: updateFormacion,
+        actualizarInstitucion({
+          updateInstitucion: updateInstitucion,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -96,16 +121,22 @@ export default function ModalFormaciones({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear esta formación?"}
+        titulo={"¿Crear esta institución?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo="Pais" descripcion={nombrePais} />
+          <ModalDatos titulo="Estado" descripcion={nombreEstado} />
+          <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+          <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo={'Cant. Modulos'} descripcion={modulos} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
+          <ModalDatos titulo="Rif" descripcion={rif} />
+          <ModalDatos titulo="Sector" descripcion={sector} />
+          <ModalDatos titulo="Dirección" descripcion={direccion} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearFormacion}
+          aceptar={handleCrearInstitucion}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -116,8 +147,14 @@ export default function ModalFormaciones({
           nombreDos="Cancelar"
           campos={{
             nombre,
-            modulos,
             descripcion,
+            rif,
+            sector,
+            direccion,
+            idPais,
+            idEstado,
+            idMunicipio,
+            idParroquia,
           }}
         />
       </Modal>
@@ -127,16 +164,22 @@ export default function ModalFormaciones({
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Actualizar esta formación?"}
+        titulo={"¿Actualizar esta institución?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo={'Cant. Modulos'} descripcion={modulos} />
+          <ModalDatos titulo="Pais" descripcion={nombrePais} />
+          <ModalDatos titulo="Estado" descripcion={nombreEstado} />
+          <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+          <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
+          <ModalDatos titulo="Institución" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
+          <ModalDatos titulo="Rif" descripcion={rif} />
+          <ModalDatos titulo="Sector" descripcion={sector} />
+          <ModalDatos titulo="Dirección" descripcion={direccion} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleEditarFormacion}
+          aceptar={handleEditarInstitucion}
           cancelar={() => {
             dispatch(cerrarModal("confirmarCambios"));
             dispatch(abrirModal("editar"));
@@ -147,9 +190,14 @@ export default function ModalFormaciones({
           nombreDos="Cancelar"
           campos={{
             nombre,
-            modulos,
             descripcion,
-            idFormacion
+            rif,
+            sector,
+            direccion,
+            idPais,
+            idEstado,
+            idMunicipio,
+            idParroquia,
           }}
         />
       </Modal>
@@ -159,13 +207,14 @@ export default function ModalFormaciones({
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar esta formación?"}
+        titulo={"¿Actualizar esta institucón?"}
       >
         <ModalDatosContenedor>
-          <FormEditarFormacion
+          <FormEditarInstitucion
             acciones={acciones}
-            datosFormacion={datosFormacion}
+            datosInstitucion={datosInstitucion}
             validaciones={validaciones}
+            parroquias={parroquias}
           />
         </ModalDatosContenedor>
       </Modal>
@@ -175,13 +224,16 @@ export default function ModalFormaciones({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear formación?"}
+        titulo={"¿Crear institución?"}
       >
         <ModalDatosContenedor>
-          <FormCrearFormacion
+          <FormCrearInstitucion
             acciones={acciones}
-            datosFormacion={datosFormacion}
+            datosInstitucion={datosInstitucion}
             validaciones={validaciones}
+            estados={estados}
+            municipios={municipios}
+            parroquias={parroquias}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

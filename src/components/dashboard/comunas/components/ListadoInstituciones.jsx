@@ -9,30 +9,27 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-import { eliminarRestaurarFormacion } from "@/store/features/formaciones/thunks/eliminarRestaurarFormacion";
+import { eliminarRestaurarInstitucion } from "@/store/features/instituciones/thunks/eliminarRestaurarInstitucion";
 
-export default function ListadoFormaciones({ formacion, editarFormacion }) {
+export default function ListadoInstituciones({
+  institucion,
+  editarInstitucion,
+}) {
   const dispatch = useDispatch();
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
-      <BloqueInfo
-        indice={1}
-        nombre={"Cant. Modulos"}
-        valor={formacion.modulos?.length}
-      />
-
       <Div className="flex items-center justify-between gap-2">
         <BloqueInfo
           indice={1}
           nombre={"Descripción"}
-          valor={formacion.descripcion}
+          valor={institucion.descripcion}
         />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarFormacion(formacion);
+            editarInstitucion(institucion);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -48,20 +45,29 @@ export default function ListadoFormaciones({ formacion, editarFormacion }) {
         </Button>
       </Div>
 
+      <BloqueInfo indice={1} nombre={"Rif"} valor={institucion.rif} />
+
+      <BloqueInfo indice={1} nombre={"Sector"} valor={institucion.sector} />
+      <BloqueInfo
+        indice={1}
+        nombre={"Dirección"}
+        valor={institucion.direccion}
+      />
+
       <Div className="flex items-center justify-between">
         <BloqueInfo
-          indice={!formacion.borrado ? 3 : 2}
-          nombre={"formacion"}
-          valor={!formacion.borrado ? "Activo" : "Inactivo"}
+          indice={!institucion.borrado ? 3 : 2}
+          nombre={"Institución"}
+          valor={!institucion.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!formacion.borrado}
+          checked={!institucion.borrado}
           onToggle={() => {
             dispatch(
-              eliminarRestaurarFormacion({
-                estado: formacion.borrado,
-                id_formacion: formacion.id,
+              eliminarRestaurarInstitucion({
+                estado: institucion.borrado,
+                id_institucion: institucion.id,
               })
             );
           }}
@@ -71,7 +77,7 @@ export default function ListadoFormaciones({ formacion, editarFormacion }) {
       <BloqueInfo
         indice={1}
         nombre={"Creada"}
-        valor={formatearFecha(formacion.createdAt)}
+        valor={formatearFecha(institucion.createdAt)}
       />
     </Div>
   );

@@ -64,6 +64,7 @@ export async function PATCH(request) {
           where: {
             id: validaciones.id_formacion,
           },
+          include: { modulos: true },
         }),
       ]);
 
