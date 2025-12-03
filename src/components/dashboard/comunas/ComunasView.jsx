@@ -24,6 +24,7 @@ import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPai
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
+import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
@@ -32,17 +33,21 @@ import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionPar
 
 export default function ComunasView() {
   const dispatch = useDispatch();
+
+  const { usuarioActivo } = useSelector((state) => state.auth);
   const { paises } = useSelector((state) => state.paises);
   const { estados } = useSelector((state) => state.estados);
   const { municipios } = useSelector((state) => state.municipios);
   const { parroquias } = useSelector((state) => state.parroquias);
-  const { comunas, loading } = useSelector(
-    (state) => state.comunas
-  );
+  const { comunas, loading } = useSelector((state) => state.comunas);
 
   useEffect(() => {
-    dispatch(fetchPaises());
-  }, [dispatch]);
+    if (usuarioActivo.id_rol === 1) {
+      dispatch(fetchPaises());
+    } else {
+      dispatch(fetchParroquias());
+    }
+  }, [dispatch, usuarioActivo]);
 
   const [nombrePais, setNombrePais] = useState("");
   const [nombreEstado, setNombreEstado] = useState("");
@@ -58,18 +63,6 @@ export default function ComunasView() {
   const [puntoComuna, setPuntoComuna] = useState("");
   const [rifComuna, setRifComuna] = useState("");
   const [codigoComuna, setCodigoComuna] = useState("");
-  
-  
-
-
-
-
-
-
-
-
-
-  
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
@@ -81,6 +74,7 @@ export default function ComunasView() {
 
   const [validarNombreComuna, setValidarNombreComuna] = useState(false);
   const [validarRifComuna, setValidarRifComuna] = useState(false);
+  const [validarCodigoComuna, setValidarCodigoComuna] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -90,10 +84,10 @@ export default function ComunasView() {
   const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
 
   useEffect(() => {
-    if (idPais) {
+    if (idPais && usuarioActivo.id_rol === 1) {
       dispatch(fetchEstadosIdPais(idPais));
     }
-  }, [dispatch, idPais]);
+  }, [dispatch, idPais, usuarioActivo]);
 
   useEffect(() => {
     if (idEstado) {
@@ -104,15 +98,20 @@ export default function ComunasView() {
   useEffect(() => {
     if (idMunicipio) {
       dispatch(fetchParroquiasIdMunicipio(idMunicipio));
-      dispatch(fetchComunasIdParroquia(idMunicipio));
     }
   }, [dispatch, idMunicipio]);
 
-  const camposBusqueda = ["nombre"];
+  useEffect(() => {
+    if (idParroquia) {
+      dispatch(fetchComunasIdParroquia(idParroquia));
+    }
+  }, [dispatch, idParroquia]);
+
+  const camposBusqueda = ["nombre", "rif", "codigo"];
   const opcionesOrden = [
     { id: "nombre", nombre: "Nombre" },
-    { id: "sector", nombre: "Sector" },
     { id: "rif", nombre: "Rif" },
+    { id: "codigo", nombre: "Codigo" },
   ];
 
   const acciones = {
@@ -120,18 +119,23 @@ export default function ComunasView() {
     setIdEstado: setIdEstado,
     setIdMunicipio: setIdMunicipio,
     setIdParroquia: setIdParroquia,
+    setIdComuna: setIdComuna,
     setNombrePais: setNombrePais,
     setNombreEstado: setNombreEstado,
     setNombreMunicipio: setNombreMunicipio,
     setNombreParroquia: setNombreParroquia,
     setNombre: setNombreComuna,
-    setDescripcion: setDescripcionComuna,
-    setRif: setRifComuna,
-    setSector: setCodigoComuna,
+    setNorte: setNorteComuna,
+    setSur: setSurComuna,
+    setEste: setEsteComuna,
+    setOeste: setOesteComuna,
     setDireccion: setDireccionComuna,
+    setPunto: setPuntoComuna,
+    setRif: setRifComuna,
+    setCodigo: setCodigoComuna,
   };
 
-  const datosInstitucion = {
+  const datosComuna = {
     idPais: idPais,
     idEstado: idEstado,
     idMunicipio: idMunicipio,
@@ -142,10 +146,14 @@ export default function ComunasView() {
     nombreMunicipio: nombreMunicipio,
     nombreParroquia: nombreParroquia,
     nombre: nombreComuna,
-    descripcion: descripcionComuna,
-    rif: rifComuna,
-    sector: codigoComuna,
+    norte: norteComuna,
+    sur: surComuna,
+    este: esteComuna,
+    oeste: oesteComuna,
     direccion: direccionComuna,
+    punto: puntoComuna,
+    rif: rifComuna,
+    codigo: codigoComuna,
   };
 
   const validaciones = {
@@ -153,6 +161,8 @@ export default function ComunasView() {
     setValidarNombre: setValidarNombreComuna,
     validarRif: validarRifComuna,
     setValidarRif: setValidarRifComuna,
+    validarCodigo: validarCodigoComuna,
+    setValidarCodigo: setValidarCodigoComuna,
   };
 
   const comunasFiltradasOrdenadas = useMemo(() => {
@@ -180,17 +190,18 @@ export default function ComunasView() {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  const editarInstitucion = (institucion) => {
-    setIdPais(institucion.id_pais);
-    setIdEstado(institucion.id_estado);
-    setIdMunicipio(institucion.id_municipio);
-    setIdParroquia(institucion.id_parroquia);
-    setIdComuna(institucion.id);
-    setNombreComuna(institucion.nombre);
-    setDescripcionComuna(institucion.descripcion);
-    setRifComuna(institucion.rif);
-    setCodigoComuna(institucion.sector);
-    setDireccionComuna(institucion.direccion);
+  const editarComuna = (comuna) => {
+    setIdParroquia(comuna.id_parroquia);
+    setIdComuna(comuna.id);
+    setNombreComuna(comuna.nombre);
+    setNorteComuna(comuna.norte);
+    setSurComuna(comuna.sur);
+    setEsteComuna(comuna.este);
+    setOesteComuna(comuna.oeste);
+    setDireccionComuna(comuna.direccion);
+    setPuntoComuna(comuna.punto);
+    setRifComuna(comuna.rif);
+    setCodigoComuna(comuna.codigo);
 
     dispatch(abrirModal("editar"));
   };
@@ -199,7 +210,7 @@ export default function ComunasView() {
     <>
       <ModalComunas
         acciones={acciones}
-        datosInstitucion={datosInstitucion}
+        datosComuna={datosComuna}
         validaciones={validaciones}
       />
       <SectionMain>
@@ -207,7 +218,7 @@ export default function ComunasView() {
           nombre={"Gestión comunas"}
           funcion={() => {
             dispatch(abrirModal("crear"));
-            resetearValores();
+            //resetearValores();
           }}
         >
           {comunas.length !== 0 && (
@@ -222,27 +233,42 @@ export default function ComunasView() {
             />
           )}
 
-          <SelectOpcion
-            idOpcion={idPais}
-            nombre={"Paises"}
-            handleChange={(e) => {
-              cambiarSeleccionPais(e, setIdPais);
-              if (idEstado) {
-                setIdEstado("");
-              }
+          {usuarioActivo.id_rol === 1 ? (
+            <>
+              <SelectOpcion
+                idOpcion={idPais}
+                nombre={"Paises"}
+                handleChange={(e) => {
+                  cambiarSeleccionPais(e, setIdPais);
+                  if (idEstado) {
+                    setIdEstado("");
+                  }
 
-              if (idMunicipio) {
-                setIdMunicipio("");
-              }
+                  if (idMunicipio) {
+                    setIdMunicipio("");
+                  }
 
-              if (idParroquia) {
-                setIdParroquia("");
-              }
-            }}
-            opciones={paises}
-            seleccione={"Seleccione"}
-            setNombre={setNombrePais}
-          />
+                  if (idParroquia) {
+                    setIdParroquia("");
+                  }
+                }}
+                opciones={paises}
+                seleccione={"Seleccione"}
+                setNombre={setNombrePais}
+              />
+            </>
+          ) : (
+            <SelectOpcion
+              idOpcion={idParroquia}
+              nombre={"Parroquias"}
+              handleChange={(e) => {
+                cambiarSeleccionParroquia(e, setIdParroquia);
+              }}
+              opciones={parroquias}
+              seleccione={"Seleccione"}
+              setNombre={setNombreParroquia}
+            />
+          )}
 
           {idPais && (
             <SelectOpcion
@@ -301,23 +327,23 @@ export default function ComunasView() {
                 ) : (
                   <>
                     {comunasPaginadas?.length !== 0 ? (
-                      comunasPaginadas.map((institucion, index) => {
+                      comunasPaginadas.map((comuna, index) => {
                         return (
                           <FichaDetalles
-                            key={institucion.id}
-                            dato={institucion}
+                            key={comuna.id}
+                            dato={comuna}
                             index={index}
                           >
                             <ButtonToggleDetalles
                               expanded={expanded}
-                              dato={institucion}
+                              dato={comuna}
                               setExpanded={setExpanded}
                             />
 
-                            {expanded === institucion.id && (
+                            {expanded === comuna.id && (
                               <ListadoComunas
-                                institucion={institucion}
-                                editarInstitucion={editarInstitucion}
+                                comuna={comuna}
+                                editarComuna={editarComuna}
                               />
                             )}
                           </FichaDetalles>

@@ -5,24 +5,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearInstitucion from "@/components/formularios/FormCrearInstitucion";
-import FormEditarInstitucion from "@/components/formularios/FormEditarInstitucion";
+import FormCrearComuna from "@/components/formularios/FormCrearComuna";
+import FormEditarComuna from "@/components/formularios/FormEditarComuna";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearInstitucion } from "@/store/features/instituciones/thunks/crearInstitucion";
-import { actualizarInstitucion } from "@/store/features/instituciones/thunks/actualizarInstitucion";
+import { crearComuna } from "@/store/features/comunas/thunks/crearComuna";
+import { actualizarComuna } from "@/store/features/comunas/thunks/actualizarComuna";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
+import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
 
-export default function ModalInstituciones({
-  acciones,
-  datosInstitucion,
-  validaciones,
-}) {
+export default function ModalComunas({ acciones, datosComuna, validaciones }) {
   const dispatch = useDispatch();
+
+  const { usuarioActivo } = useSelector((state) => state.auth);
   const { estados } = useSelector((state) => state.estados);
   const { municipios } = useSelector((state) => state.municipios);
   const { parroquias } = useSelector((state) => state.parroquias);
@@ -41,41 +40,55 @@ export default function ModalInstituciones({
     idEstado,
     idMunicipio,
     idParroquia,
-    idInstitucion,
+    idComuna,
     nombrePais,
     nombreEstado,
     nombreMunicipio,
     nombreParroquia,
     nombre,
-    descripcion,
+    norte,
+    sur,
+    este,
+    oeste,
+    direccion,
+    punto,
     rif,
     sector,
-    direccion,
-  } = datosInstitucion;
+    codigo,
+  } = datosComuna;
 
   useEffect(() => {
-    dispatch(fetchPaises());
-  }, [dispatch]);
+    if (usuarioActivo.id_rol === 1) {
+      dispatch(fetchPaises());
+    }
+  }, [dispatch, usuarioActivo]);
+
+  useEffect(() => {
+    if (idParroquia && !mostrarConfirmarCambios) {
+      dispatch(fetchComunasIdParroquia(idParroquia));
+    }
+  }, [dispatch, idParroquia, mostrarConfirmarCambios]);
 
   const notify = (msj) => toast(msj);
 
-  const handleCrearInstitucion = async () => {
+  const handleCrearComuna = async () => {
     try {
-      const nuevaInstitucion = {
+      const nuevaComuna = {
         nombre: nombre,
-        descripcion: descripcion,
-        rif: rif,
-        sector: sector,
+        norte: norte,
+        sur: sur,
+        este: este,
+        oeste: oeste,
         direccion: direccion,
-        id_pais: idPais,
-        id_estado: idEstado,
-        id_municipio: idMunicipio,
+        punto: punto,
+        rif: rif,
+        codigo: codigo,
         id_parroquia: idParroquia,
       };
 
       await dispatch(
-        crearInstitucion({
-          nuevaInstitucion: nuevaInstitucion,
+        crearComuna({
+          nuevaComuna: nuevaComuna,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -85,24 +98,25 @@ export default function ModalInstituciones({
     }
   };
 
-  const handleEditarInstitucion = async () => {
+  const handleEditarComuna = async () => {
     try {
-      const updateInstitucion = {
+      const updateComuna = {
         nombre: nombre,
-        descripcion: descripcion,
-        rif: rif,
-        sector: sector,
+        norte: norte,
+        sur: sur,
+        este: este,
+        oeste: oeste,
         direccion: direccion,
-        id_pais: idPais,
-        id_estado: idEstado,
-        id_municipio: idMunicipio,
+        punto: punto,
+        rif: rif,
+        codigo: codigo,
         id_parroquia: idParroquia,
-        id_institucion: idInstitucion,
+        id_comuna: idComuna,
       };
 
       await dispatch(
-        actualizarInstitucion({
-          updateInstitucion: updateInstitucion,
+        actualizarComuna({
+          updateComuna: updateComuna,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -121,22 +135,40 @@ export default function ModalInstituciones({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear esta institución?"}
+        titulo={"¿Crear esta comuna?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Pais" descripcion={nombrePais} />
-          <ModalDatos titulo="Estado" descripcion={nombreEstado} />
-          <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+          {usuarioActivo.id_rol === 1 && (
+            <>
+              <ModalDatos titulo="Pais" descripcion={nombrePais} />
+              <ModalDatos titulo="Estado" descripcion={nombreEstado} />
+              <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+            </>
+          )}
           <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Rif" descripcion={rif} />
-          <ModalDatos titulo="Sector" descripcion={sector} />
-          <ModalDatos titulo="Dirección" descripcion={direccion} />
+
+          {norte ||
+            sur ||
+            este ||
+            oeste ||
+            rif ||
+            sector ||
+            (direccion && (
+              <>
+                <ModalDatos titulo="Norte" descripcion={norte} />
+                <ModalDatos titulo="Sur" descripcion={sur} />
+                <ModalDatos titulo="Este" descripcion={este} />
+                <ModalDatos titulo="Oeste" descripcion={oeste} />
+                <ModalDatos titulo="Rif" descripcion={rif} />
+                <ModalDatos titulo="Sector" descripcion={sector} />
+                <ModalDatos titulo="Dirección" descripcion={direccion} />
+              </>
+            ))}
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearInstitucion}
+          aceptar={handleCrearComuna}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -147,13 +179,6 @@ export default function ModalInstituciones({
           nombreDos="Cancelar"
           campos={{
             nombre,
-            descripcion,
-            rif,
-            sector,
-            direccion,
-            idPais,
-            idEstado,
-            idMunicipio,
             idParroquia,
           }}
         />
@@ -164,22 +189,34 @@ export default function ModalInstituciones({
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Actualizar esta institución?"}
+        titulo={"¿Actualizar esta comuna?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Pais" descripcion={nombrePais} />
-          <ModalDatos titulo="Estado" descripcion={nombreEstado} />
-          <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+          {usuarioActivo.id_rol === 1 && (
+            <>
+              <ModalDatos titulo="Pais" descripcion={nombrePais} />
+              <ModalDatos titulo="Estado" descripcion={nombreEstado} />
+              <ModalDatos titulo="Municipio" descripcion={nombreMunicipio} />
+            </>
+          )}
           <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
-          <ModalDatos titulo="Institución" descripcion={nombre} />
-          <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Rif" descripcion={rif} />
-          <ModalDatos titulo="Sector" descripcion={sector} />
-          <ModalDatos titulo="Dirección" descripcion={direccion} />
+          <ModalDatos titulo="Nombre" descripcion={nombre} />
+
+          {norte && sur && este && oeste && rif && sector && direccion && (
+            <>
+              <ModalDatos titulo="Norte" descripcion={norte} />
+              <ModalDatos titulo="Sur" descripcion={sur} />
+              <ModalDatos titulo="Este" descripcion={este} />
+              <ModalDatos titulo="Oeste" descripcion={oeste} />
+              <ModalDatos titulo="Rif" descripcion={rif} />
+              <ModalDatos titulo="Sector" descripcion={sector} />
+              <ModalDatos titulo="Dirección" descripcion={direccion} />
+            </>
+          )}
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleEditarInstitucion}
+          aceptar={handleEditarComuna}
           cancelar={() => {
             dispatch(cerrarModal("confirmarCambios"));
             dispatch(abrirModal("editar"));
@@ -190,14 +227,8 @@ export default function ModalInstituciones({
           nombreDos="Cancelar"
           campos={{
             nombre,
-            descripcion,
-            rif,
-            sector,
-            direccion,
-            idPais,
-            idEstado,
-            idMunicipio,
             idParroquia,
+            idComuna,
           }}
         />
       </Modal>
@@ -207,12 +238,12 @@ export default function ModalInstituciones({
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar esta institucón?"}
+        titulo={"¿Actualizar esta comuna?"}
       >
         <ModalDatosContenedor>
-          <FormEditarInstitucion
+          <FormEditarComuna
             acciones={acciones}
-            datosInstitucion={datosInstitucion}
+            datosComuna={datosComuna}
             validaciones={validaciones}
             parroquias={parroquias}
           />
@@ -224,12 +255,12 @@ export default function ModalInstituciones({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear institución?"}
+        titulo={"¿Crear comuna?"}
       >
         <ModalDatosContenedor>
-          <FormCrearInstitucion
+          <FormCrearComuna
             acciones={acciones}
-            datosInstitucion={datosInstitucion}
+            datosComuna={datosComuna}
             validaciones={validaciones}
             estados={estados}
             municipios={municipios}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
@@ -14,12 +14,15 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import SelectOpcion from "@/components/SelectOpcion";
 import DivScroll from "@/components/DivScroll";
 
-import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { resetForm } from "@/store/features/formularios/formSlices";
-
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 import { fetchInstitucionesIdMunicipio } from "@/store/features/instituciones/thunks/institucionesIdMunicipio";
+
+import { limpiarCampos } from "@/utils/limpiarForm";
+import { rifRegex } from "@/utils/regex/rifRegex";
+import { textRegex } from "@/utils/regex/textRegex";
 
 export default function FormEditarInstitucion({
   acciones,
@@ -28,11 +31,6 @@ export default function FormEditarInstitucion({
   parroquias,
 }) {
   const dispatch = useDispatch();
-
-  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
-  const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.institucionForm
-  );
 
   const {
     setIdPais,
@@ -73,7 +71,7 @@ export default function FormEditarInstitucion({
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
         const limpio = String(valor).trim();
-        const esValido = /^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/.test(limpio);
+        const esValido = textRegex.test(limpio);
         if (typeof setValidar === "function") setValidar(esValido);
       }
     };
@@ -81,7 +79,7 @@ export default function FormEditarInstitucion({
     const validarRif = (valor, setValidar) => {
       if (valor) {
         const limpio = String(valor).trim();
-        const esValido = /^[VEJPGCL]-\d{8}-\d$/.test(limpio);
+        const esValido = rifRegex.test(limpio);
         if (typeof setValidar === "function") setValidar(esValido);
       }
     };
@@ -89,16 +87,6 @@ export default function FormEditarInstitucion({
     validarYActualizar(nombre, setValidarNombre);
     validarRif(rif, setValidarRif);
   }, [nombre, rif]);
-
-  useEffect(() => {
-    if (!mostrarEditar) {
-      setNombre("");
-      setDescripcion("");
-      setRif("");
-      setSector("");
-      setDireccion("");
-    }
-  }, [reiniciarForm, mostrarEditar]);
 
   useEffect(() => {
     if (idMunicipio) {
@@ -190,7 +178,13 @@ export default function FormEditarInstitucion({
 
           <BotonLimpiarCampos
             aceptar={() => {
-              dispatch(resetForm("institucionForm"));
+              limpiarCampos({
+                setNombre,
+                setDescripcion,
+                setRif,
+                setSector,
+                setDireccion,
+              });
             }}
             campos={{
               nombre,

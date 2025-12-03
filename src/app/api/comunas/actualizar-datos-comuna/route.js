@@ -1,7 +1,7 @@
 /**
 @fileoverview Controlador de API para la edición de una comuna existente.
 Este archivo maneja la lógica para actualizar los detalles de una comuna en la base de datos
-a través de una solicitud POST. Utiliza Prisma para la interacción con la base de datos,
+a través de una solicitud PATCH. Utiliza Prisma para la interacción con la base de datos,
 un servicio de validaciónpara asegurar la validez de los datos, y un sistema de registro de 
 eventos para la auditoría.
 @module
@@ -12,10 +12,10 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para e
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
 import validarEditarComuna from "@/services/comunas/validarEditarComuna"; // Servicio para validar los datos de edición de la comuna.
 /**
-Maneja las solicitudes HTTP POST para editar una comuna existente.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles de la comuna a editar.@returns {Promise>} - Una respuesta HTTP en formato JSON con los resultados de la operación o un error.
+Maneja las solicitudes HTTP PATCH para editar una comuna existente.@async@function PATCH@param {Request} request - Objeto de la solicitud que contiene los detalles de la comuna a editar.@returns {Promise>} - Una respuesta HTTP en formato JSON con los resultados de la operación o un error.
 */
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
     const { nombre, id_parroquia, id_comuna } = await request.json();
@@ -57,7 +57,7 @@ export async function POST(request) {
         },
       }),
 
-      prisma.comuna.findMany({
+      prisma.comuna.findFirst({
         where: {
           id: validaciones.id_comuna,
           borrado: false,
@@ -83,29 +83,29 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 6. Condición de éxito: la comuna fue actualizada correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "comuna",
-        accion: "UPDATE_COMUNA",
-        id_objeto: comunaActualizada[0]?.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Comuna actualizada con exito id: ${validaciones.id_comuna}`,
-        datosAntes: {
-          nombre: nombre,
-          id_comuna: id_comuna,
-          id_parroquia: id_parroquia,
-        },
-        datosDespues: comunaActualizada,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Comuna actualizada...",
-        { comunas: comunaActualizada },
-        201
-      );
     }
+
+    // 6. Condición de éxito: la comuna fue actualizada correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "comuna",
+      accion: "UPDATE_COMUNA",
+      id_objeto: comunaActualizada[0]?.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Comuna actualizada con exito id: ${validaciones.id_comuna}`,
+      datosAntes: {
+        nombre: nombre,
+        id_comuna: id_comuna,
+        id_parroquia: id_parroquia,
+      },
+      datosDespues: comunaActualizada,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Comuna actualizada...",
+      { comunas: comunaActualizada },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (actualizar comuna): ` + error);

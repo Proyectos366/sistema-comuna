@@ -1,6 +1,6 @@
 import DivMensajeInput from "../mensaje/DivMensaje";
 import Input from "./Input";
-import { rifRegex } from "@/utils/constantes";
+import { rifRegex } from "@/utils/regex/rifRegex";
 
 export default function InputRif({
   type,

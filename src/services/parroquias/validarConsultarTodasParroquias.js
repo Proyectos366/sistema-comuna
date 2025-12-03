@@ -31,6 +31,7 @@ export default async function validarConsultarTodasParroquias() {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
       id_municipio: validaciones.id_municipio,
+      id_rol: validaciones.id_rol
     });
   } catch (error) {
     // 4. Manejo de errores inesperados.

@@ -1,26 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import Input from "@/components/inputs/Input";
-import InputDescripcion from "@/components/inputs/InputDescripcion";
-import InputNombre from "@/components/inputs/InputNombre";
-import InputRif from "@/components/inputs/InputRif";
+import DivScroll from "@/components/DivScroll";
 import LabelInput from "@/components/inputs/LabelInput";
 import SelectOpcion from "@/components/SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import InputRif from "@/components/inputs/InputRif";
+import Input from "@/components/inputs/Input";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { resetForm } from "@/store/features/formularios/formSlices";
-import DivScroll from "../DivScroll";
 
 export default function FormCrearInstitucion({
   acciones,
@@ -32,11 +31,6 @@ export default function FormCrearInstitucion({
 }) {
   const dispatch = useDispatch();
   const { paises } = useSelector((state) => state.paises);
-
-  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
-  const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.paisForm
-  );
 
   const {
     setIdPais,
@@ -72,16 +66,6 @@ export default function FormCrearInstitucion({
 
   const { validarNombre, setValidarNombre, validarRif, setValidarRif } =
     validaciones;
-
-  useEffect(() => {
-    if (mostrarCrear) {
-      setNombre("");
-      setDescripcion("");
-      setRif("");
-      setSector("");
-      setDireccion("");
-    }
-  }, [reiniciarForm, mostrarCrear]);
 
   return (
     <Formulario
@@ -236,7 +220,13 @@ export default function FormCrearInstitucion({
 
               <BotonLimpiarCampos
                 aceptar={() => {
-                  dispatch(resetForm("institucionForm"));
+                  limpiarCampos({
+                    setNombre,
+                    setDescripcion,
+                    setRif,
+                    setSector,
+                    setDireccion,
+                  });
                 }}
                 campos={{
                   nombre,

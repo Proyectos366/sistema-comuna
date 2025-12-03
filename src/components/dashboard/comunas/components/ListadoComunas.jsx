@@ -9,27 +9,20 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-import { eliminarRestaurarInstitucion } from "@/store/features/instituciones/thunks/eliminarRestaurarInstitucion";
+import { eliminarRestaurarComuna } from "@/store/features/comunas/thunks/eliminarRestaurarComuna";
 
-export default function ListadoInstituciones({
-  institucion,
-  editarInstitucion,
-}) {
+export default function ListadoComunas({ comuna, editarComuna }) {
   const dispatch = useDispatch();
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
-        <BloqueInfo
-          indice={1}
-          nombre={"Descripción"}
-          valor={institucion.descripcion}
-        />
+        <BloqueInfo indice={1} nombre={"Rif"} valor={comuna.rif} />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarInstitucion(institucion);
+            editarComuna(comuna);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -45,29 +38,31 @@ export default function ListadoInstituciones({
         </Button>
       </Div>
 
-      <BloqueInfo indice={1} nombre={"Rif"} valor={institucion.rif} />
-
-      <BloqueInfo indice={1} nombre={"Sector"} valor={institucion.sector} />
+      <BloqueInfo
+        indice={1}
+        nombre={"Sector"}
+        valor={comuna.sector ? comuna.sector : "Sin sector"}
+      />
       <BloqueInfo
         indice={1}
         nombre={"Dirección"}
-        valor={institucion.direccion}
+        valor={comuna.direccion ? comuna.direccion : "Sin dirección"}
       />
 
       <Div className="flex items-center justify-between">
         <BloqueInfo
-          indice={!institucion.borrado ? 3 : 2}
-          nombre={"Institución"}
-          valor={!institucion.borrado ? "Activo" : "Inactivo"}
+          indice={!comuna.borrado ? 3 : 2}
+          nombre={"Comuna"}
+          valor={!comuna.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!institucion.borrado}
+          checked={!comuna.borrado}
           onToggle={() => {
             dispatch(
-              eliminarRestaurarInstitucion({
-                estado: institucion.borrado,
-                id_institucion: institucion.id,
+              eliminarRestaurarComuna({
+                estado: comuna.borrado,
+                id_comuna: comuna.id,
               })
             );
           }}
@@ -77,7 +72,7 @@ export default function ListadoInstituciones({
       <BloqueInfo
         indice={1}
         nombre={"Creada"}
-        valor={formatearFecha(institucion.createdAt)}
+        valor={formatearFecha(comuna.createdAt)}
       />
     </Div>
   );

@@ -39,7 +39,7 @@ export async function PATCH(request) {
         accion: "INTENTO_FALLIDO_RESTAURAR",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "Validacion fallida al eliminar institucion",
+        descripcion: "Validacion fallida al restaurar institucion",
         datosAntes: null,
         datosDespues: validaciones,
       });
@@ -76,7 +76,7 @@ export async function PATCH(request) {
         accion: "ERROR_DELETE_INSTITUCION",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
-        descripcion: "No se pudo eliminar la institucion",
+        descripcion: "No se pudo restaurar la institucion",
         datosAntes: null,
         datosDespues: {
           restaurandoInstitucion,
@@ -86,7 +86,7 @@ export async function PATCH(request) {
 
       return generarRespuesta(
         "error",
-        "Error, al eliminar institucion...",
+        "Error, al restaurar institucion...",
         {},
         400
       );

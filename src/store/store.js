@@ -13,6 +13,7 @@ import institucionesSlices from "@/store/features/instituciones/institucionesSli
 import departamentosReducer from "@/store/features/departamentos/departamentosSlices";
 import cargosReducer from "@/store/features/cargos/cargosSlices";
 import formacionesReducer from "@/store/features/formaciones/formacionesSlices";
+import comunasReducer from "@/store/features/comunas/comunasSlices";
 
 const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ const store = configureStore({
     departamentos: departamentosReducer,
     cargos: cargosReducer,
     formaciones: formacionesReducer,
+    comunas: comunasReducer,
     // Aquí se agregarán los reducers de los "slices"
   },
 });
