@@ -1,46 +1,56 @@
 /**
-@fileoverview Controlador de API para la consulta de circuitos comunales no validados.
-Este archivo maneja la lógica para obtener todos los circuitos que no han sidovalidados y 
-que están activos en la base de datos a través de una solicitud GET.
-Utiliza Prisma para la interacción con la base de datos y un servicio de validación de tokens.
+  @fileoverview Controlador de API para la consulta de todos los circuitos existentes. Este archivo
+  maneja la lógica para obtener todos los circuitos de la base de datos a través de una solicitud GET.
+  Utiliza Prisma para la interacción con la base de datos y un servicio de validación para asegurar
+  la validez de la consulta.
 @module
 */
-// Importaciones de módulos y librerías
+
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
-import { cookies } from "next/headers"; // Módulo para gestionar cookies en las solicitudes.
-import AuthTokens from "@/libs/AuthTokens"; // Servicio para manejar la lógica de autenticación de tokens.
-import nombreToken from "@/utils/nombreToken"; // Función utilitaria para obtener el nombre del token de autenticación.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
+import validarConsultarTodosCircuitos from "@/services/circuitos/validarConsultarTodosCircuitos"; // Servicio para validar la consulta de todos las circuitos.
+
 /**
-Maneja las solicitudes HTTP GET para obtener todos los circuitos comunales no validados.@async@function GET@returns {Promise Una respuesta HTTP en formato JSON con los circuitos obtenidos o un error.
+  Maneja las solicitudes HTTP GET para obtener todos los circuitos.
+  @async@function GET@returns {Promise<object>} - Una respuesta HTTP en formato JSON con los
+  circuitos encontrados o un error.
 */
 
 export async function GET() {
   try {
-    // 1. Recupera las cookies y descifra el token de autenticación
-    const cookieStore = await cookies();
-    const token = cookieStore.get(nombreToken)?.value;
+    // 1. Valida la información de la solicitud utilizando el servicio correspondiente
+    const validaciones = await validarConsultarTodosCircuitos();
 
-    const descifrarToken = AuthTokens.descifrarToken(token);
-
-    // 2. Verifica si el token es válido
-    if (descifrarToken.status === "error") {
-      return retornarRespuestaFunciones(
-        descifrarToken.status,
-        descifrarToken.message
+    // 2. Condición de validación fallida
+    if (validaciones.status === "error") {
+      return generarRespuesta(
+        validaciones.status,
+        validaciones.message,
+        {},
+        400
       );
     }
 
-    // Se obtiene el correo del token descifrado
-    const correo = descifrarToken.correo;
+    // Variable para almacenar los circuitos consultados
+    let todosCircuitos;
 
-    // 3. Consulta todos los circuitos no borrados y no validados en la base de datos
-    const todosCircuitos = await prisma.circuito.findMany({
-      where: {
-        borrado: false,
-        validado: false,
-      },
-    });
+    // 3. Consulta de circuitos según el rol del usuario
+    if (validaciones.id_rol === 1) {
+      todosCircuitos = await prisma.circuito.findMany({
+        where: {
+          borrado: false,
+        },
+      });
+    } else {
+      todosCircuitos = await prisma.circuito.findMany({
+        where: {
+          id_parroquia: {
+            in: validaciones.id_parroquias,
+          },
+          borrado: false, // opcional, si quieres excluir circuitos marcados como borrados
+        },
+      });
+    }
 
     // 4. Condición de error si no se obtienen circuitos
     if (!todosCircuitos) {
@@ -50,17 +60,17 @@ export async function GET() {
         {},
         400
       );
-    } else {
-      // 5. Condición de éxito: se encontraron circuitos
-      return generarRespuesta(
-        "ok",
-        "Todas los circuitos...",
-        {
-          circuitos: todosCircuitos,
-        },
-        201
-      );
     }
+
+    // 5. Condición de éxito: se encontraron circuitos
+    return generarRespuesta(
+      "ok",
+      "Todos los circuitos...",
+      {
+        circuitos: todosCircuitos,
+      },
+      201
+    );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(`Error interno consultar (circuitos): ` + error);

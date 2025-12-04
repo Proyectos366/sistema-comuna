@@ -16,13 +16,13 @@ export default function EnlacesBarraLateral({
             id_rol
           );
         }}
-        className={`px-4 py-1 w-full rounded hover:bg-[#E61C45] hover:text-white cursor-pointer ${
+        className={`px-4 py-1 w-full rounded hover:bg-[#E61C45] hover:text-[#ffffff] cursor-pointer ${
           vista === vistaActual
             ? !indice
-              ? "bg-[#E61C45] text-white"
+              ? "bg-[#E61C45] text-[#ffffff]"
               : ""
             : !indice
-            ? "bg-white"
+            ? "bg-[#ffffff]"
             : ""
         }`}
       >

@@ -22,7 +22,7 @@ export async function POST(request) {
     // 1. Extrae datos de la solicitud JSON
     /**
      // Esto sera para el futuro cuando se envien estos datos del front-end
-     const {nombre, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
+     const {nombre, rif, codigo, direccion, norte, sur, este, oeste, punto, rif, id_parroquia } = await request.json();
      */
     const { nombre, rif, codigo, id_parroquia } = await request.json();
 
@@ -74,7 +74,6 @@ export async function POST(request) {
         punto: validaciones.punto,
         rif: `${new Date().getTime()}`,
         codigo: `${new Date().getTime()}`,
-        borrado: false,
         id_usuario: validaciones.id_usuario,
         id_parroquia: validaciones.id_parroquia,
       },
@@ -92,27 +91,27 @@ export async function POST(request) {
         datosDespues: nuevaComuna,
       });
       return generarRespuesta("error", "Error, no se creo la comuna", {}, 400);
-    } else {
-      // 6. Condición de éxito: la comuna fue creada correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "comuna",
-        accion: "CREAR_COMUNA",
-        id_objeto: nuevaComuna.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: "Comuna creada con exito",
-        datosAntes: null,
-        datosDespues: nuevaComuna,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Comuna creada...",
-        {
-          comunas: nuevaComuna,
-        },
-        201
-      );
     }
+
+    // 6. Condición de éxito: la comuna fue creada correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "comuna",
+      accion: "CREAR_COMUNA",
+      id_objeto: nuevaComuna.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: "Comuna creada con exito",
+      datosAntes: null,
+      datosDespues: nuevaComuna,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Comuna creada...",
+      {
+        comunas: nuevaComuna,
+      },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (comunas): ` + error);

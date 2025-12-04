@@ -36,5 +36,8 @@
   },
   "overrides": {
     "glob": "^10.3.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

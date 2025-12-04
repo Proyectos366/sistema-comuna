@@ -108,8 +108,8 @@ model pais {
   nombre      String   @unique
   capital     String
   descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
   serial      String   @unique
+  borrado     Boolean  @default(false)
   id_usuario  Int
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -127,8 +127,8 @@ model estado {
   capital     String
   cod_postal  String
   descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
   serial      String   @unique
+  borrado     Boolean  @default(false)
   id_usuario  Int
   id_pais     Int
   updatedAt   DateTime @default(now())
@@ -146,8 +146,8 @@ model municipio {
   id          Int      @id @default(autoincrement())
   nombre      String
   descripcion String?  @default("sin descripcion")
-  borrado     Boolean  @default(false)
   serial      String   @unique
+  borrado     Boolean  @default(false)
   id_usuario  Int
   id_estado   Int
   updatedAt   DateTime @default(now())
@@ -166,8 +166,8 @@ model parroquia {
   id           Int      @id @default(autoincrement())
   nombre       String
   descripcion  String?  @default("sin descripcion")
-  borrado      Boolean  @default(false)
   serial       String   @unique
+  borrado      Boolean  @default(false)
   id_usuario   Int
   id_municipio Int
   updatedAt    DateTime @default(now())
@@ -293,7 +293,7 @@ model archivo {
   size            Int
   path            String
   estado          Boolean
-  borrado         Boolean
+  borrado         Boolean  @default(false)
   id_usuario      Int // Clave foránea hacia usuario
   id_departamento Int // Clave foránea hacia departamento
   id_estante      Int // Clave foránea hacia estante
@@ -311,9 +311,9 @@ model archivo {
 model cargo {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
-  id_usuario  Int
   descripcion String?  @default("sin descripcion")
-  borrado     Boolean
+  borrado     Boolean  @default(false)
+  id_usuario  Int
   updatedAt   DateTime @default(now())
   createdAt   DateTime @default(now())
 
@@ -367,8 +367,8 @@ model circuito {
   oeste        String
   direccion    String
   punto        String
+  codigo       String   @unique
   borrado      Boolean  @default(false)
-  validado     Boolean
   id_usuario   Int // Clave foránea hacia usuario (administrador que crea el circuito)
   id_parroquia Int
   updatedAt    DateTime @default(now())
@@ -519,11 +519,11 @@ model formacion {
   id              Int      @id @default(autoincrement())
   nombre          String   @unique
   descripcion     String?  @default("sin descripcion")
+  culminada       Boolean  @default(false)
+  borrado         Boolean  @default(false)
   id_usuario      Int
   id_departamento Int?
   id_institucion  Int?
-  borrado         Boolean  @default(false)
-  culminada       Boolean  @default(false)
   updatedAt       DateTime @default(now()) @updatedAt
   createdAt       DateTime @default(now())
 
@@ -550,15 +550,15 @@ model modulo {
 
 model curso {
   id               Int       @id @default(autoincrement())
-  id_vocero        Int
-  id_formacion     Int
-  id_usuario       Int
   fecha_completado DateTime?
   verificado       Boolean   @default(false)
   certificado      Boolean   @default(false)
   culminado        Boolean   @default(false)
   descripcion      String?   @default("sin descripcion")
   borrado          Boolean   @default(false)
+  id_vocero        Int
+  id_formacion     Int
+  id_usuario       Int
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @default(now()) @updatedAt
 
@@ -570,15 +570,15 @@ model curso {
 
 model asistencia {
   id             Int      @id @default(autoincrement())
+  formador       String?  @default("")
+  presente       Boolean
+  fecha_registro DateTime @default(now())
+  descripcion    String?  @default("sin descripcion")
+  borrado        Boolean  @default(false)
   id_vocero      Int
   id_modulo      Int
   id_curso       Int
   id_usuario     Int
-  presente       Boolean
-  formador       String?  @default("")
-  fecha_registro DateTime @default(now())
-  descripcion    String?  @default("sin descripcion")
-  borrado        Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 
@@ -592,12 +592,13 @@ model eventos {
   id           Int      @id @default(autoincrement())
   tabla        String
   accion       String
-  id_objeto    Int
-  id_usuario   Int
   ip           String?  @default("") // Dirección IP del usuario
   descripcion  String?  @default("")
   datosAntes   Json? // Datos anteriores (UPDATE o DELETE)
   datosDespues Json? // Datos nuevos (INSERT o UPDATE)
+  borrado      Boolean  @default(false)
+  id_objeto    Int
+  id_usuario   Int
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -605,9 +606,10 @@ model eventos {
 model novedad {
   id              Int      @id @default(autoincrement())
   nombre          String
-  descripcion     String
+  descripcion     String   @default("sin descripción")
   fechaCreacion   DateTime @default(now())
   prioridad       String   @default("baja")
+  borrado         Boolean  @default(false)
   id_usuario      Int
   id_institucion  Int?
   id_departamento Int?
@@ -624,6 +626,7 @@ model novedadDepartamento {
   id              Int       @id @default(autoincrement())
   estatus         String    @default("pendiente")
   fechaRecepcion  DateTime?
+  borrado         Boolean   @default(false)
   id_novedad      Int
   id_departamento Int
 
@@ -635,9 +638,10 @@ model notificacion {
   id          Int      @id @default(autoincrement())
   mensaje     String
   fechaEnvio  DateTime @default(now())
+  estatus     String   @default("enviada")
+  borrado     Boolean  @default(false)
   id_emisor   Int?
   id_receptor Int
-  estatus     String   @default("enviada")
 
   emisor   departamento? @relation("Emisor", fields: [id_emisor], references: [id])
   receptor departamento  @relation("Receptor", fields: [id_receptor], references: [id])

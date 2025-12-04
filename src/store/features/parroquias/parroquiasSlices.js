@@ -1,8 +1,9 @@
-// features/users/usersSlice.ts
+// features/parroquias/parroquiasSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchParroquiasIdMunicipio } from "./thunks/parroquiasIdMunicipio";
-import { crearParroquia } from "./thunks/crearParroquia";
-import { eliminarRestaurarParroquia } from "./thunks/eliminarRestaurarParroquia";
+import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
+import { crearParroquia } from "@/store/features/parroquias/thunks/crearParroquia";
+import { eliminarRestaurarParroquia } from "@/store/features/parroquias/thunks/eliminarRestaurarParroquia";
+import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
 
 const parroquiasSlice = createSlice({
   name: "parroquias",
@@ -14,6 +15,20 @@ const parroquiasSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchParroquias.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.parroquias = [];
+      })
+      .addCase(fetchParroquias.fulfilled, (state, action) => {
+        state.loading = false;
+        state.parroquias = action.payload;
+      })
+      .addCase(fetchParroquias.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+        state.parroquias = [];
+      })
       .addCase(fetchParroquiasIdMunicipio.pending, (state) => {
         state.loading = true;
         state.error = null;

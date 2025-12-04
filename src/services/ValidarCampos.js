@@ -1274,6 +1274,64 @@ export default class ValidarCampos {
   }
 
   /**
+   Valida los campos necesarios para crear un circuito. @function validarCamposCrearCircuito
+  */
+  static validarCamposCrearCircuito(
+    nombre,
+    direccion,
+    norte,
+    sur,
+    este,
+    oeste,
+    punto,
+    codigo,
+    parroquiaId
+  ) {
+    try {
+      /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
+       segun sea el caso, por ahora solo estan de prueba
+      */
+      const direccionMinuscula = direccion ? direccion.toLowerCase() : "";
+      const norteMinuscula = norte ? norte.toLowerCase() : "";
+      const surMinuscula = sur ? sur.toLowerCase() : "";
+      const esteMinuscula = este ? este.toLowerCase() : "";
+      const oesteMinuscula = oeste ? oeste.toLowerCase() : "";
+      const puntoMinuscula = punto ? punto.toLowerCase() : "";
+      const codigoMinuscula = codigo ? codigo.toLowerCase() : "";
+
+      // 1. Validar cada campo individualmente
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarParroquiaId = this.validarCampoId(parroquiaId, "parroquia");
+
+      // 2. Verificar si alguna validación falló
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarParroquiaId.status === "error") return validarParroquiaId;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.texto,
+        direccion: direccionMinuscula,
+        norte: norteMinuscula,
+        sur: surMinuscula,
+        este: esteMinuscula,
+        oeste: oesteMinuscula,
+        punto: puntoMinuscula,
+        codigo: codigoMinuscula,
+        id_parroquia: validarParroquiaId.id,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos circuito: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos circuito..."
+      );
+    }
+  }
+
+  /**
    Valida los campos necesarios para crear un consejo comunal. @function validarCamposCrearConsejoComunal
   */
   static validarCamposCrearConsejoComunal(
@@ -2029,6 +2087,43 @@ export default class ValidarCampos {
   }
 
   /**
+   Valida los campos necesarios para editar un circuito.
+   @function validarCamposEditarCircuito
+   @param {string} nombre - El nuevo nombre del circuito.
+   @param {number} id_parroquia - El ID de la parroquia a la que pertenece el circuito.
+   @param {number} id_circuito - El ID del circuito a editar.
+  */
+  static validarCamposEditarCircuito(nombre, id_parroquia, id_circuito) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarParroquia = this.validarCampoId(id_parroquia, "parroquia");
+      const validarCircuito = this.validarCampoId(id_circuito, "circuito");
+
+      // 2. Verificar si alguna validación falló
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarParroquia.status === "error") return validarParroquia;
+      if (validarCircuito.status === "error") return validarCircuito;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados...", {
+        nombre: validarNombre.texto,
+        id_parroquia: validarParroquia.id,
+        id_circuito: validarCircuito.id,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos editar circuito: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos editar circuito..."
+      );
+    }
+  }
+
+  /**
    Valida los campos necesarios para editar un consejo comunal.
    @function validarCamposEditarConsejo
    @param {string} nombre - El nuevo nombre del consejo comunal.
@@ -2072,13 +2167,24 @@ export default class ValidarCampos {
    @param {string} descripcion - La nueva descripción del departamento.
    @param {number} id_departamento - El ID del departamento a editar.
   */
-  static validarCamposEditarDepartamento(nombre, descripcion, id_institucion, id_departamento) {
+  static validarCamposEditarDepartamento(
+    nombre,
+    descripcion,
+    id_institucion,
+    id_departamento
+  ) {
     try {
       // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
-      const validarIdInstitucion = this.validarCampoId(id_institucion, "institucion");
-      const validarIdDepartamento = this.validarCampoId(id_departamento, "departamento");
+      const validarIdInstitucion = this.validarCampoId(
+        id_institucion,
+        "institucion"
+      );
+      const validarIdDepartamento = this.validarCampoId(
+        id_departamento,
+        "departamento"
+      );
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;

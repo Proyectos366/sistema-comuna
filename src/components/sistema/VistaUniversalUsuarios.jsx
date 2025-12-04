@@ -10,7 +10,6 @@ import Footer from "../Footer";
 //import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
 //import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 
-// import CircuitoForm from "../opciones/CircuitosForm";
 // import ConsejoForm from "../opciones/ConsejoForm";
 // import VoceroForm from "../opciones/VoceroForm";
 // //import MostrarAlInicioUsuarios from "./MostrarInicioUsuarios";
@@ -31,6 +30,7 @@ import DepartamentosView from "@/components/dashboard/departamentos/Departamento
 import CargosView from "@/components/dashboard/cargos/CargosView";
 import FormacionesView from "@/components/dashboard/formaciones/FormacionesView";
 import ComunasView from "@/components/dashboard/comunas/ComunasView";
+import CircuitosView from "@/components/dashboard/circuitos/CircuitosView";
 
 export default function VistaUniversalUsuarios() {
   const { screenSize } = useUser();
@@ -237,6 +237,8 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "comunas" && <ComunasView />}
 
+              {vista === "circuitos-comunales" && <CircuitosView />}
+
               {/*
               {vista === "participantes" && (
                 <ParticipantesForm
@@ -254,19 +256,7 @@ export default function VistaUniversalUsuarios() {
 
               
 
-              {vista === "circuitos-comunales" && (
-                <CircuitoForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
+              
 
               {vista === "consejos-comunales" && (
                 <ConsejoForm
