@@ -1,53 +1,138 @@
-import SelectOpcion from "../SelectOpcion";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import MostarMsjEnModal from "../MostrarMsjEnModal";
-import Input from "../inputs/Input";
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import SelectOpcion from "@/components/SelectOpcion";
+import LabelInput from "@/components/inputs/LabelInput";
+import InputNombre from "@/components/inputs/InputNombre";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { textRegex } from "@/utils/regex/textRegex";
+import { rifRegex } from "@/utils/regex/rifRegex";
+import { limpiarCampos } from "@/utils/limpiarForm";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 
 export default function FormEditarConsejo({
-  idComuna,
-  cambiarSeleccionComuna,
-  nombre,
-  setNombre,
+  acciones,
+  datosConsejo,
+  validaciones,
   comunas,
-  limpiarCampos,
-  setNombreComuna,
-  mostrarMensaje,
-  editar,
-  mensaje,
 }) {
+  const dispatch = useDispatch();
+
+  const {
+    setIdPais,
+    setIdEstado,
+    setIdMunicipio,
+    setIdParroquia,
+    setIdComuna,
+    setNombrePais,
+    setNombreEstado,
+    setNombreMunicipio,
+    setNombreParroquia,
+    setNombreComuna,
+    setNombre,
+    setNorte,
+    setSur,
+    setEste,
+    setOeste,
+    setDireccion,
+    setPunto,
+    setRif,
+    setCodigo,
+  } = acciones;
+
+  const {
+    idPais,
+    idEstado,
+    idMunicipio,
+    idParroquia,
+    idComuna,
+    nombrePais,
+    nombreEstado,
+    nombreMunicipio,
+    nombreParroquia,
+    nombreComuna,
+    nombre,
+    norte,
+    sur,
+    este,
+    oeste,
+    direccion,
+    punto,
+    rif,
+    codigo,
+  } = datosConsejo;
+
+  const {
+    validarNombre,
+    setValidarNombre,
+    validarRif,
+    setValidarRif,
+    validarCodigo,
+    setValidarCodigo,
+  } = validaciones;
+
+  useEffect(() => {
+    const validarYActualizar = (valor, setValidar) => {
+      if (valor) {
+        const limpio = String(valor).trim();
+        const esValido = textRegex.test(limpio);
+        if (typeof setValidar === "function") setValidar(esValido);
+      }
+    };
+
+    const validarRif = (valor, setValidar) => {
+      if (valor) {
+        const limpio = String(valor).trim();
+        const esValido = rifRegex.test(limpio);
+        if (typeof setValidar === "function") setValidar(esValido);
+      }
+    };
+
+    validarYActualizar(nombre, setValidarNombre);
+    validarRif(rif, setValidarRif);
+  }, [nombre, rif]);
+
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
+      <DivScroll>
         <SelectOpcion
           idOpcion={idComuna}
-          nombre="Comunas"
-          handleChange={cambiarSeleccionComuna}
+          nombre={"Comunas"}
+          handleChange={(e) => {
+            cambiarSeleccionComuna(e, setIdComuna);
+          }}
           opciones={comunas}
-          seleccione="Seleccione"
+          seleccione={"Seleccione"}
           setNombre={setNombreComuna}
-          // indice={1}
+          indice={1}
         />
 
-        <div className="flex flex-col sm:flex-row gap-2 gap-x-4">
-          <LabelInput nombre={"Nombre"}>
-            <Input
-              type={"text"}
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-          </LabelInput>
-        </div>
+        <LabelInput nombre={"Nombre"}>
+          <InputNombre
+            type="text"
+            indice="nombre"
+            value={nombre}
+            setValue={setNombre}
+            validarNombre={validarNombre}
+            setValidarNombre={setValidarNombre}
+          />
+        </LabelInput>
 
-        <div className="">
-          <MostarMsjEnModal mostrarMensaje={mostrarMensaje} mensaje={mensaje} />
-        </div>
-
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <BotonAceptarCancelar
             indice={"aceptar"}
-            aceptar={editar}
+            aceptar={() => {
+              dispatch(cerrarModal("editar"));
+              dispatch(abrirModal("confirmarCambios"));
+            }}
             nombre={"Guardar cambios"}
             campos={{
               nombre,
@@ -55,20 +140,17 @@ export default function FormEditarConsejo({
             }}
           />
 
-          <BotonAceptarCancelar
-            indice={"limpiar"}
+          <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({
-                setNombre,
-              });
+              limpiarCampos({ setNombre });
             }}
-            nombre={"Limpiar"}
             campos={{
               nombre,
+              idComuna,
             }}
           />
         </div>
-      </div>
+      </DivScroll>
     </Formulario>
   );
 }
