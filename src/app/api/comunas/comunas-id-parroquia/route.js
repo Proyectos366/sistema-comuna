@@ -20,9 +20,11 @@ export async function GET(request) {
 
     // 2. Condición de validación fallida
     if (validaciones.status === "error") {
-      return retornarRespuestaFunciones(
+      return generarRespuesta(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
+        {},
+        400
       );
     }
 

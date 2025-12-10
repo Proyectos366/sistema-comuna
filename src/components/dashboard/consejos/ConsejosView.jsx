@@ -10,8 +10,8 @@ import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
-import ListadoComunas from "@/components/dashboard/comunas/components/ListadoComunas";
-import ModalComunas from "@/components/dashboard/comunas/components/ModalComunas";
+import ListadoConsejos from "@/components/dashboard/consejos/components/ListadoConsejos";
+import ModalConsejos from "@/components/dashboard/consejos/components/ModalConsejos";
 import SelectOpcion from "@/components/SelectOpcion";
 import EstadoMsjVacio from "@/components/EstadoMsjVacio";
 import Loader from "@/components/Loader";
@@ -24,14 +24,22 @@ import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPai
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
+
 import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
+import { fetchConsejosIdComuna } from "@/store/features/consejos/thunks/consejosIdComuna";
+import { fetchConsejosIdCircuito } from "@/store/features/consejos/thunks/consejosIdCircuito";
+import { fetchConsejosIdParroquia } from "@/store/features/consejos/thunks/consejosIdParroquia";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
 
-export default function ComunasView() {
+import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
+import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
+import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
+
+export default function ConsejosView() {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
@@ -39,7 +47,9 @@ export default function ComunasView() {
   const { estados } = useSelector((state) => state.estados);
   const { municipios } = useSelector((state) => state.municipios);
   const { parroquias } = useSelector((state) => state.parroquias);
-  const { comunas, loading } = useSelector((state) => state.comunas);
+  const { comunas } = useSelector((state) => state.comunas);
+  const { circuitos } = useSelector((state) => state.circuitos);
+  const { consejos, loading } = useSelector((state) => state.consejos);
 
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
@@ -53,28 +63,34 @@ export default function ComunasView() {
   const [nombreEstado, setNombreEstado] = useState("");
   const [nombreMunicipio, setNombreMunicipio] = useState("");
   const [nombreParroquia, setNombreParroquia] = useState("");
-
   const [nombreComuna, setNombreComuna] = useState("");
-  const [norteComuna, setNorteComuna] = useState("");
-  const [surComuna, setSurComuna] = useState("");
-  const [esteComuna, setEsteComuna] = useState("");
-  const [oesteComuna, setOesteComuna] = useState("");
-  const [direccionComuna, setDireccionComuna] = useState("");
-  const [puntoComuna, setPuntoComuna] = useState("");
-  const [rifComuna, setRifComuna] = useState("");
-  const [codigoComuna, setCodigoComuna] = useState("");
+  const [nombreCircuito, setNombreCircuito] = useState("");
+
+  const [nombreConsejo, setNombreConsejo] = useState("");
+  const [norteConsejo, setNorteConsejo] = useState("");
+  const [surConsejo, setSurConsejo] = useState("");
+  const [esteConsejo, setEsteConsejo] = useState("");
+  const [oesteConsejo, setOesteConsejo] = useState("");
+  const [direccionConsejo, setDireccionConsejo] = useState("");
+  const [puntoConsejo, setPuntoConsejo] = useState("");
+  const [rifConsejo, setRifConsejo] = useState("");
+  const [codigoConsejo, setCodigoConsejo] = useState("");
+  const [descripcionConsejo, setDescripcionConsejo] = useState("");
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
   const [idMunicipio, setIdMunicipio] = useState("");
   const [idParroquia, setIdParroquia] = useState("");
   const [idComuna, setIdComuna] = useState("");
+  const [idCircuito, setIdCircuito] = useState("");
+  const [idConsejo, setIdConsejo] = useState("");
 
   const [expanded, setExpanded] = useState("");
+  const [opcionComunaCircuito, setOpcionComunaCircuito] = useState("");
 
-  const [validarNombreComuna, setValidarNombreComuna] = useState(false);
-  const [validarRifComuna, setValidarRifComuna] = useState(false);
-  const [validarCodigoComuna, setValidarCodigoComuna] = useState(false);
+  const [validarNombreConsejo, setValidarNombreConsejo] = useState(false);
+  const [validarRifConsejo, setValidarRifConsejo] = useState(false);
+  const [validarCodigoConsejo, setValidarCodigoConsejo] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -107,6 +123,18 @@ export default function ComunasView() {
     }
   }, [dispatch, idParroquia]);
 
+  useEffect(() => {
+    if (idComuna && opcionComunaCircuito === "comuna") {
+      dispatch(fetchConsejosIdComuna(idComuna));
+    }
+  }, [dispatch, idComuna]);
+
+  useEffect(() => {
+    if (idCircuito && opcionComunaCircuito === "circuito") {
+      dispatch(fetchConsejosIdCircuito(idCircuito));
+    }
+  }, [dispatch, idCircuito]);
+
   const camposBusqueda = ["nombre", "rif", "codigo"];
   const opcionesOrden = [
     { id: "nombre", nombre: "Nombre" },
@@ -120,108 +148,114 @@ export default function ComunasView() {
     setIdMunicipio: setIdMunicipio,
     setIdParroquia: setIdParroquia,
     setIdComuna: setIdComuna,
+    setIdCircuito: setIdCircuito,
+    setIdConsejo: setIdConsejo,
     setNombrePais: setNombrePais,
     setNombreEstado: setNombreEstado,
     setNombreMunicipio: setNombreMunicipio,
     setNombreParroquia: setNombreParroquia,
-    setNombre: setNombreComuna,
-    setNorte: setNorteComuna,
-    setSur: setSurComuna,
-    setEste: setEsteComuna,
-    setOeste: setOesteComuna,
-    setDireccion: setDireccionComuna,
-    setPunto: setPuntoComuna,
-    setRif: setRifComuna,
-    setCodigo: setCodigoComuna,
+    setNombreComuna: setNombreComuna,
+    setNombreCircuito: setNombreCircuito,
+    setNombre: setNombreConsejo,
+    setNorte: setNorteConsejo,
+    setSur: setSurConsejo,
+    setEste: setEsteConsejo,
+    setOeste: setOesteConsejo,
+    setDireccion: setDireccionConsejo,
+    setPunto: setPuntoConsejo,
+    setRif: setRifConsejo,
+    setCodigo: setCodigoConsejo,
+    setDescripcion: setDescripcionConsejo,
+    setOpcionComunaCircuito: setOpcionComunaCircuito,
   };
 
-  const datosComuna = {
+  const datosConsejo = {
     idPais: idPais,
     idEstado: idEstado,
     idMunicipio: idMunicipio,
     idParroquia: idParroquia,
     idComuna: idComuna,
+    idCircuito: idCircuito,
+    idConsejo: idConsejo,
     nombrePais: nombrePais,
     nombreEstado: nombreEstado,
     nombreMunicipio: nombreMunicipio,
     nombreParroquia: nombreParroquia,
-    nombre: nombreComuna,
-    norte: norteComuna,
-    sur: surComuna,
-    este: esteComuna,
-    oeste: oesteComuna,
-    direccion: direccionComuna,
-    punto: puntoComuna,
-    rif: rifComuna,
-    codigo: codigoComuna,
+    nombreComuna: nombreComuna,
+    nombreCircuito: nombreCircuito,
+    nombre: nombreConsejo,
+    norte: norteConsejo,
+    sur: surConsejo,
+    este: esteConsejo,
+    oeste: oesteConsejo,
+    direccion: direccionConsejo,
+    punto: puntoConsejo,
+    rif: rifConsejo,
+    codigo: codigoConsejo,
+    descripcion: descripcionConsejo,
+    opcionComunaCircuito: opcionComunaCircuito,
   };
 
   const validaciones = {
-    validarNombre: validarNombreComuna,
-    setValidarNombre: setValidarNombreComuna,
-    validarRif: validarRifComuna,
-    setValidarRif: setValidarRifComuna,
-    validarCodigo: validarCodigoComuna,
-    setValidarCodigo: setValidarCodigoComuna,
+    validarNombre: validarNombreConsejo,
+    setValidarNombre: setValidarNombreConsejo,
+    validarRif: validarRifConsejo,
+    setValidarRif: setValidarRifConsejo,
+    validarCodigo: validarCodigoConsejo,
+    setValidarCodigo: setValidarCodigoConsejo,
   };
 
-  const comunasFiltradasOrdenadas = useMemo(() => {
+  const consejosFiltradosOrdenados = useMemo(() => {
     return filtrarOrdenar(
-      comunas,
+      consejos,
       busqueda,
       ordenCampo,
       ordenDireccion,
       camposBusqueda
     );
-  }, [comunas, busqueda, ordenCampo, ordenDireccion]);
+  }, [consejos, busqueda, ordenCampo, ordenDireccion]);
 
-  const comunasPaginadas = useMemo(() => {
-    return comunasFiltradasOrdenadas.slice(first, first + rows);
-  }, [comunasFiltradasOrdenadas, first, rows]);
-
-  const resetearValores = () => {
-    setIdPais("");
-    setIdEstado("");
-    setIdMunicipio("");
-    setIdParroquia("");
-  };
+  const consejosPaginados = useMemo(() => {
+    return consejosFiltradosOrdenados.slice(first, first + rows);
+  }, [consejosFiltradosOrdenados, first, rows]);
 
   useEffect(() => {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  const editarComuna = (comuna) => {
-    setIdParroquia(comuna.id_parroquia);
-    setIdComuna(comuna.id);
-    setNombreComuna(comuna.nombre);
-    setNorteComuna(comuna.norte);
-    setSurComuna(comuna.sur);
-    setEsteComuna(comuna.este);
-    setOesteComuna(comuna.oeste);
-    setDireccionComuna(comuna.direccion);
-    setPuntoComuna(comuna.punto);
-    setRifComuna(comuna.rif);
-    setCodigoComuna(comuna.codigo);
+  const editarConsejo = (consejo) => {
+    setIdParroquia(consejo.id_parroquia);
+    setIdComuna(consejo.id_comuna);
+    setIdCircuito(consejo.id_circuito);
+    setNombreConsejo(consejo.nombre);
+    setNorteConsejo(consejo.norte);
+    setSurConsejo(consejo.sur);
+    setEsteConsejo(consejo.este);
+    setOesteConsejo(consejo.oeste);
+    setDireccionConsejo(consejo.direccion);
+    setPuntoConsejo(consejo.punto);
+    setRifConsejo(consejo.rif);
+    setCodigoConsejo(consejo.codigo);
+    setDescripcionConsejo(consejo.descripcion);
 
     dispatch(abrirModal("editar"));
   };
 
   return (
     <>
-      <ModalComunas
+      <ModalConsejos
         acciones={acciones}
-        datosComuna={datosComuna}
+        datosConsejo={datosConsejo}
         validaciones={validaciones}
       />
       <SectionMain>
         <SectionTertiary
-          nombre={"Gestión comunas"}
+          nombre={"Gestión consejos comunales"}
           funcion={() => {
             dispatch(abrirModal("crear"));
-            //resetearValores();
           }}
         >
-          {comunas.length !== 0 && (
+          {consejos.length !== 0 && (
             <BuscadorOrdenador
               busqueda={busqueda}
               setBusqueda={setBusqueda}
@@ -250,6 +284,14 @@ export default function ComunasView() {
 
                   if (idParroquia) {
                     setIdParroquia("");
+                  }
+
+                  if (idComuna) {
+                    setIdComuna("");
+                  }
+
+                  if (idCircuito) {
+                    setIdCircuito("");
                   }
                 }}
                 opciones={paises}
@@ -283,6 +325,14 @@ export default function ComunasView() {
                 if (idParroquia) {
                   setIdParroquia("");
                 }
+
+                if (idComuna) {
+                  setIdComuna("");
+                }
+
+                if (idCircuito) {
+                  setIdCircuito("");
+                }
               }}
               opciones={estados}
               seleccione={"Seleccione"}
@@ -299,6 +349,14 @@ export default function ComunasView() {
                 if (idParroquia) {
                   setIdParroquia("");
                 }
+
+                if (idComuna) {
+                  setIdComuna("");
+                }
+
+                if (idCircuito) {
+                  setIdCircuito("");
+                }
               }}
               opciones={municipios}
               seleccione={"Seleccione"}
@@ -308,10 +366,34 @@ export default function ComunasView() {
 
           {idMunicipio && (
             <SelectOpcion
+              idOpcion={opcionComunaCircuito}
+              nombre={"Crear en"}
+              handleChange={(e) => {
+                cambiarSeleccionComunaCircuito(e, setOpcionComunaCircuito);
+              }}
+              opciones={[
+                { id: "comuna", nombre: "comuna" },
+                { id: "circuito", nombre: "circuito" },
+              ]}
+              seleccione={"Seleccione"}
+              indice={1}
+            />
+          )}
+
+          {idMunicipio && opcionComunaCircuito && (
+            <SelectOpcion
               idOpcion={idParroquia}
               nombre={"Parroquias"}
               handleChange={(e) => {
                 cambiarSeleccionParroquia(e, setIdParroquia);
+
+                if (idComuna) {
+                  setIdComuna("");
+                }
+
+                if (idCircuito) {
+                  setIdCircuito("");
+                }
               }}
               opciones={parroquias}
               seleccione={"Seleccione"}
@@ -320,37 +402,103 @@ export default function ComunasView() {
           )}
 
           {idParroquia && (
+            <SelectOpcion
+              idOpcion={
+                opcionComunaCircuito === "comuna" ? idComuna : idCircuito
+              }
+              nombre={
+                opcionComunaCircuito === "comuna"
+                  ? "Comunas"
+                  : "Circuitos comunales"
+              }
+              handleChange={(e) => {
+                opcionComunaCircuito === "comuna"
+                  ? cambiarSeleccionComuna(e, setIdComuna)
+                  : cambiarSeleccionCircuito(e, setIdCircuito);
+              }}
+              opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
+              seleccione={"Seleccione"}
+              setNombre={
+                opcionComunaCircuito === "comuna"
+                  ? setNombreComuna
+                  : setNombreCircuito
+              }
+            />
+          )}
+
+          {/* {idParroquia && (
+            <SelectOpcion
+              idOpcion={opcionComunaCircuito}
+              nombre={"Crear en"}
+              handleChange={(e) => {
+                cambiarSeleccionComunaCircuito(e, setIdParroquia);
+              }}
+              opciones={[
+                { id: "comuna", nombre: "comuna" },
+                { id: "circuito", nombre: "circuito" },
+              ]}
+              seleccione={"Seleccione"}
+              indice={1}
+            />
+          )} */}
+
+          {/* {idParroquia && (
+            <SelectOpcion
+              idOpcion={
+                opcionComunaCircuito === "comuna" ? idComuna : idCircuito
+              }
+              nombre={
+                opcionComunaCircuito === "comuna"
+                  ? "Comunas"
+                  : "Circuitos comunales"
+              }
+              handleChange={(e) => {
+                opcionComunaCircuito === "comuna"
+                  ? cambiarSeleccionComuna(e, setIdComuna)
+                  : cambiarSeleccionCircuito(e, setIdCircuito);
+              }}
+              opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
+              seleccione={"Seleccione"}
+              setNombre={
+                opcionComunaCircuito === "comuna"
+                  ? setNombreComuna
+                  : setNombreCircuito
+              }
+            />
+          )} */}
+
+          {(opcionComunaCircuito === "comuna" ? idComuna : idCircuito) && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {comunas?.length === 0 && loading ? (
-                  <Loader titulo="Cargando comunas..." />
+                {consejos?.length === 0 && loading ? (
+                  <Loader titulo="Cargando consejos comunales..." />
                 ) : (
                   <>
-                    {comunasPaginadas?.length !== 0 ? (
-                      comunasPaginadas.map((comuna, index) => {
+                    {consejosPaginados?.length !== 0 ? (
+                      consejosPaginados.map((consejo, index) => {
                         return (
                           <FichaDetalles
-                            key={comuna.id}
-                            dato={comuna}
+                            key={consejo.id}
+                            dato={consejo}
                             index={index}
                           >
                             <ButtonToggleDetalles
                               expanded={expanded}
-                              dato={comuna}
+                              dato={consejo}
                               setExpanded={setExpanded}
                             />
 
-                            {expanded === comuna.id && (
-                              <ListadoComunas
-                                comuna={comuna}
-                                editarComuna={editarComuna}
+                            {expanded === consejo.id && (
+                              <ListadoConsejos
+                                consejo={consejo}
+                                editarConsejo={editarConsejo}
                               />
                             )}
                           </FichaDetalles>
                         );
                       })
                     ) : (
-                      <EstadoMsjVacio dato={comunas} loading={loading} />
+                      <EstadoMsjVacio dato={consejos} loading={loading} />
                     )}
                   </>
                 )}
@@ -361,7 +509,7 @@ export default function ComunasView() {
                   setFirst={setFirst}
                   rows={rows}
                   setRows={setRows}
-                  totalRecords={comunasFiltradasOrdenadas.length}
+                  totalRecords={consejosFiltradosOrdenados.length}
                 />
               </Div>{" "}
             </>

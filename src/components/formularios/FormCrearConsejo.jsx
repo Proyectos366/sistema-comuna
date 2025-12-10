@@ -6,118 +6,284 @@ import Formulario from "../Formulario";
 import LabelInput from "../inputs/LabelInput";
 import Input from "../inputs/Input";
 import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function FormCrearConsejo({
-  setIdParroquia,
-  idParroquia,
-  idComuna,
-  idCircuito,
-  cambiarSeleccionComuna,
-  cambiarSeleccionCircuito,
-  cambiarDondeGuardar,
+  acciones,
+  datosConsejo,
+  validaciones,
+  estados,
+  municipios,
   parroquias,
-  comunas,
-  circuitos,
-  dondeGuardar,
-  nombreComuna,
-  nombreCircuito,
-  nombreConsejo,
-  setNombreParroquia,
-  setNombreComuna,
-  setNombreCircuito,
-  setNombreConsejo,
-  abrirModal,
-  limpiarCampos,
+  comunasCircuitos
 }) {
-  useEffect(() => {
-    if (idComuna || idCircuito) {
-      const resultComuna = comunas.find((c) => c.id === idComuna);
-      const resultParroquia = parroquias.find(
-        (c) => c.id === resultComuna.id_parroquia
-      );
+  const dispatch = useDispatch();
 
-      setNombreParroquia(resultParroquia?.nombre);
-      setIdParroquia(resultParroquia?.id);
-    }
-  }, [idComuna, idCircuito]);
+  const { usuarioActivo } = useSelector((state) => state.auth);
+  const { paises } = useSelector((state) => state.paises);
+
+  const {
+    setIdPais,
+    setIdEstado,
+    setIdMunicipio,
+    setIdParroquia,
+    setIdComuna,
+    setIdCircuito,
+    setIdConsejo,
+    setNombrePais,
+    setNombreEstado,
+    setNombreMunicipio,
+    setNombreParroquia,
+    setNombreComuna,
+    setNombreCircuito,
+    setNombre,
+    setNorte,
+    setSur,
+    setEste,
+    setOeste,
+    setDireccion,
+    setPunto,
+    setRif,
+    setCodigo,
+    setDescripcion,
+    setOpcionComunaCircuito,
+  } = acciones;
+
+  const {
+    idPais,
+    idEstado,
+    idMunicipio,
+    idParroquia,
+    idComuna,
+    idCircuito,
+    idConsejo,
+    nombrePais,
+    nombreEstado,
+    nombreMunicipio,
+    nombreParroquia,
+    nombreComuna,
+    nombreCircuito,
+    nombre,
+    norte,
+    sur,
+    este,
+    oeste,
+    direccion,
+    punto,
+    rif,
+    codigo,
+    descripcion,
+    opcionComunaCircuito,
+  } = datosConsejo;
+
+  const {
+    validarNombre,
+    setValidarNombre,
+    validarRif,
+    setValidarRif,
+    validarCodigo,
+    setValidarCodigo,
+  } = validaciones;
 
   return (
     <Formulario
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      className="flex flex-col"
     >
-      <SelectOpcion
-        idOpcion={dondeGuardar}
-        nombre={"Pertenece a"}
-        handleChange={cambiarDondeGuardar}
-        opciones={[
-          { id: 1, nombre: "COMUNA" },
-          { id: 2, nombre: "CIRCUITO COMUNAL" },
-        ]}
-        seleccione={"Seleccione"}
-        indice={1}
-      />
+      <DivScroll>
+        {usuarioActivo.id_rol === 1 ? (
+          <>
+            <SelectOpcion
+              idOpcion={idPais}
+              nombre={"Paises"}
+              handleChange={(e) => {
+                cambiarSeleccionPais(e, setIdPais);
+                if (idEstado) {
+                  setIdEstado("");
+                }
 
-      {dondeGuardar === 1 && (
-        <SelectOpcion
-          idOpcion={idComuna}
-          nombre={"Comunas"}
-          handleChange={cambiarSeleccionComuna}
-          opciones={comunas}
-          seleccione={"Seleccione"}
-          indice={1}
-          setNombre={setNombreComuna}
-        />
-      )}
+                if (idMunicipio) {
+                  setIdMunicipio("");
+                }
 
-      {dondeGuardar === 2 && (
-        <SelectOpcion
-          idOpcion={idCircuito}
-          nombre={"Circuitos"}
-          handleChange={cambiarSeleccionCircuito}
-          opciones={circuitos}
-          seleccione={"Seleccione"}
-          indice={1}
-          setNombre={setNombreCircuito}
-        />
-      )}
+                if (idParroquia) {
+                  setIdParroquia("");
+                }
 
-      {dondeGuardar !== 0 && (idComuna || idCircuito) && (
-        <>
-          <LabelInput nombre={"Nombre"}>
-            <Input
-              type={"text"}
-              value={nombreConsejo}
-              onChange={(e) => setNombreConsejo(e.target.value)}
-            />
-          </LabelInput>
+                if (idComuna) {
+                  setIdComuna("");
+                }
 
-          <div className="flex space-x-3">
-            <BotonAceptarCancelar
-              indice={"aceptar"}
-              aceptar={abrirModal}
-              nombre={"Crear"}
-              campos={{
-                nombreConsejo,
-                idComuna,
+                if (idCircuito) {
+                  setIdCircuito("");
+                }
               }}
+              opciones={paises}
+              seleccione={"Seleccione"}
+              setNombre={setNombrePais}
             />
+          </>
+        ) : (
+          <SelectOpcion
+            idOpcion={idParroquia}
+            nombre={"Parroquias"}
+            handleChange={(e) => {
+              cambiarSeleccionParroquia(e, setIdParroquia);
+            }}
+            opciones={parroquias}
+            seleccione={"Seleccione"}
+            setNombre={setNombreParroquia}
+          />
+        )}
 
-            <BotonAceptarCancelar
-              indice={"limpiar"}
-              aceptar={() => {
-                limpiarCampos({ setNombreConsejo });
-              }}
-              nombre={"Limpiar"}
-              campos={{
-                nombreConsejo,
-              }}
-            />
-          </div>
-        </>
-      )}
+        {idPais && (
+          <SelectOpcion
+            idOpcion={idEstado}
+            nombre={"Estados"}
+            handleChange={(e) => {
+              cambiarSeleccionEstado(e, setIdEstado);
+              if (idMunicipio) {
+                setIdMunicipio("");
+              }
+
+              if (idParroquia) {
+                setIdParroquia("");
+              }
+
+              if (idComuna) {
+                setIdComuna("");
+              }
+
+              if (idCircuito) {
+                setIdCircuito("");
+              }
+            }}
+            opciones={estados}
+            seleccione={"Seleccione"}
+            setNombre={setNombreEstado}
+          />
+        )}
+
+        {idEstado && (
+          <SelectOpcion
+            idOpcion={idMunicipio}
+            nombre={"Municipios"}
+            handleChange={(e) => {
+              cambiarSeleccionMunicipio(e, setIdMunicipio);
+              if (idParroquia) {
+                setIdParroquia("");
+              }
+
+              if (idComuna) {
+                setIdComuna("");
+              }
+
+              if (idCircuito) {
+                setIdCircuito("");
+              }
+            }}
+            opciones={municipios}
+            seleccione={"Seleccione"}
+            setNombre={setNombreMunicipio}
+          />
+        )}
+
+        {idMunicipio && (
+          <SelectOpcion
+            idOpcion={idParroquia}
+            nombre={"Parroquias"}
+            handleChange={(e) => {
+              cambiarSeleccionParroquia(e, setIdParroquia);
+
+              if (idComuna) {
+                setIdComuna("");
+              }
+
+              if (idCircuito) {
+                setIdCircuito("");
+              }
+            }}
+            opciones={parroquias}
+            seleccione={"Seleccione"}
+            setNombre={setNombreParroquia}
+          />
+        )}
+
+
+
+
+
+
+
+
+
+
+
+
+        {idParroquia && (
+          <SelectOpcion
+            idOpcion={opcionComunaCircuito === "comuna" ? idComuna : idCircuito}
+            nombre={
+              opcionComunaCircuito === "comuna"
+                ? "Comunas"
+                : "Circuitos comunales"
+            }
+            handleChange={(e) => {
+              opcionComunaCircuito === "comuna"
+                ? cambiarSeleccionComuna(e, setIdComuna)
+                : cambiarSeleccionCircuito(e, setIdCircuito);
+            }}
+            opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
+            seleccione={"Seleccione"}
+            setNombre={
+              opcionComunaCircuito === "comuna"
+                ? setNombreComuna
+                : setNombreCircuito
+            }
+          />
+        )}
+
+        {(opcionComunaCircuito === "comuna" ? idComuna : idCircuito) && (
+          <>
+            <LabelInput nombre={"Nombre"}>
+              <InputNombre
+                type="text"
+                indice="nombre"
+                value={nombre}
+                setValue={setNombre}
+                validarNombre={validarNombre}
+                setValidarNombre={setValidarNombre}
+              />
+            </LabelInput>
+
+            <div className="flex space-x-3">
+                          <BotonAceptarCancelar
+                            indice={"aceptar"}
+                            aceptar={() => {
+                              dispatch(cerrarModal("crear"));
+                              dispatch(abrirModal("confirmar"));
+                            }}
+                            nombre={"Crear"}
+                            campos={{
+                              nombre,
+                              idParroquia,
+                            }}
+                          />
+            
+                          <BotonLimpiarCampos
+                            aceptar={() => {
+                              limpiarCampos({ setNombre });
+                            }}
+                            campos={{
+                              nombre,
+                              idParroquia,
+                            }}
+                          />
+                        </div>
+          </>
+        )}
+      </DivScroll>
     </Formulario>
   );
 }

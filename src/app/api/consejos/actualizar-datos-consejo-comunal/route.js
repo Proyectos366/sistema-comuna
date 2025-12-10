@@ -1,31 +1,33 @@
 /**
-@fileoverview Controlador de API para la edición de un consejo comunal existente. Este archivo
-maneja la lógica para actualizar los detalles de un consejo comunal en la base de datosa través
-de una solicitud POST. Utiliza Prisma para la interacción con la base de datos, un servicio de
-validaciónpara asegurar la validez de los datos, y un sistema de registro de eventos para la auditoría.
-@module
+  @fileoverview Controlador de API para la edición de un consejo comunal existente. Este archivo
+  maneja la lógica para actualizar los detalles de un consejo comunal en la base de datosa través
+  de una solicitud PATCH. Utiliza Prisma para la interacción con la base de datos, un servicio de
+  validaciónpara asegurar la validez de los datos, y un sistema de registro de eventos para la
+  auditoría. @module
 */
-// Importaciones de módulos y librerías
+
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
 import validarEditarConsejoComunal from "@/services/consejos-comunales/validarEditarConsejoComunal"; // Servicio para validar los datos de edición del consejo comunal.
 /**
-  Maneja las solicitudes HTTP POST para editar un consejo comunal existente.
-  @async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles
+  Maneja las solicitudes HTTP PATCH para editar un consejo comunal existente.
+  @async@function PATCH
+  @param {Request} request - Objeto de la solicitud que contiene los detalles
   del consejo comunal a editar.
   @returns Promise - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
-    const { nombre, id_comuna, id_consejo } = await request.json();
+    const { nombre, id_comuna, id_circuito, id_consejo } = await request.json();
 
     // 2. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarEditarConsejoComunal(
       nombre,
       id_comuna,
+      id_circuito,
       id_consejo
     );
 
@@ -56,10 +58,11 @@ export async function POST(request) {
         data: {
           nombre: validaciones.nombre,
           id_comuna: validaciones.id_comuna,
+          id_circuito: validaciones.id_circuito,
         },
       }),
 
-      prisma.consejo.findMany({
+      prisma.consejo.findFirst({
         where: {
           id: validaciones.id_consejo,
           borrado: false,
@@ -85,29 +88,29 @@ export async function POST(request) {
         {},
         400
       );
-    } else {
-      // 6. Condición de éxito: el consejo comunal fue actualizado correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "consejo",
-        accion: "UPDATE_CONSEJO_COMUNAL",
-        id_objeto: consejoComunalActualizado[0]?.id,
-        id_usuario: validaciones.id_usuario,
-        descripcion: `Consejo comunal actualizado con exito id: ${validaciones.id_consejo}`,
-        datosAntes: {
-          nombre: nombre,
-          id_comuna: id_comuna,
-          id_consejo: id_consejo,
-        },
-        datosDespues: consejoComunalActualizado,
-      });
-
-      return generarRespuesta(
-        "ok",
-        "Consejo comunal actualizado...",
-        { consejo: consejoComunalActualizado[0] },
-        201
-      );
     }
+
+    // 6. Condición de éxito: el consejo comunal fue actualizado correctamente
+    await registrarEventoSeguro(request, {
+      tabla: "consejo",
+      accion: "UPDATE_CONSEJO_COMUNAL",
+      id_objeto: consejoComunalActualizado[0]?.id,
+      id_usuario: validaciones.id_usuario,
+      descripcion: `Consejo comunal actualizado con exito id: ${validaciones.id_consejo}`,
+      datosAntes: {
+        nombre: nombre,
+        id_comuna: id_comuna,
+        id_consejo: id_consejo,
+      },
+      datosDespues: consejoComunalActualizado,
+    });
+
+    return generarRespuesta(
+      "ok",
+      "Consejo comunal actualizado...",
+      { consejos: consejoComunalActualizado },
+      201
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
     console.log(`Error interno (actualizar consejo): ` + error);

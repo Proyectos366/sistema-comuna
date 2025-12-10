@@ -19,7 +19,11 @@ import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchConsejosIdComuna } from "@/store/features/consejos/thunks/consejosIdComuna";
 import { fetchConsejosIdCircuito } from "@/store/features/consejos/thunks/consejosIdCircuito";
 
-export default function ModalConsejos({ acciones, datosConsejo, validaciones, opcion }) {
+export default function ModalConsejos({
+  acciones,
+  datosConsejo,
+  validaciones,
+}) {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
@@ -27,6 +31,7 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
   const { municipios } = useSelector((state) => state.municipios);
   const { parroquias } = useSelector((state) => state.parroquias);
   const { comunas } = useSelector((state) => state.comunas);
+  const { circuitos } = useSelector((state) => state.circuitos);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -50,6 +55,7 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
     nombreMunicipio,
     nombreParroquia,
     nombreComuna,
+    nombreCircuito,
     nombre,
     norte,
     sur,
@@ -60,6 +66,8 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
     rif,
     sector,
     codigo,
+    descripcion,
+    opcionComunaCircuito,
   } = datosConsejo;
 
   useEffect(() => {
@@ -69,13 +77,13 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
   }, [dispatch, usuarioActivo]);
 
   useEffect(() => {
-    if (idComuna && !mostrarConfirmarCambios) {
+    if (idComuna && mostrarConfirmarCambios === "comuna") {
       dispatch(fetchConsejosIdComuna(idComuna));
     }
   }, [dispatch, idComuna, mostrarConfirmarCambios]);
 
   useEffect(() => {
-    if (idCircuito && !mostrarConfirmarCambios) {
+    if (idCircuito && mostrarConfirmarCambios === "circuito") {
       dispatch(fetchConsejosIdCircuito(idCircuito));
     }
   }, [dispatch, idCircuito, mostrarConfirmarCambios]);
@@ -160,28 +168,32 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
               <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
             </>
           )}
-          <ModalDatos titulo="Comuna" descripcion={nombreComuna} />
+          <ModalDatos
+            titulo={opcionComunaCircuito === "comuna" ? "Comuna" : "Circuito"}
+            descripcion={
+              opcionComunaCircuito === "comuna" ? nombreComuna : nombreCircuito
+            }
+          />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Descripción" descripcion={descripcion} />
 
-          {norte ||
-            sur ||
-            este ||
-            oeste ||
-            rif ||
-            codigo ||
-            sector ||
-            (direccion && (
-              <>
-                <ModalDatos titulo="Norte" descripcion={norte} />
-                <ModalDatos titulo="Sur" descripcion={sur} />
-                <ModalDatos titulo="Este" descripcion={este} />
-                <ModalDatos titulo="Oeste" descripcion={oeste} />
-                <ModalDatos titulo="Rif" descripcion={rif} />
-                <ModalDatos titulo="Codigo" descripcion={codigo} />
-                <ModalDatos titulo="Sector" descripcion={sector} />
-                <ModalDatos titulo="Dirección" descripcion={direccion} />
-              </>
-            ))}
+          {norte && <ModalDatos titulo="Norte" descripcion={norte} />}
+
+          {sur && <ModalDatos titulo="Sur" descripcion={sur} />}
+
+          {este && <ModalDatos titulo="Este" descripcion={este} />}
+
+          {oeste && <ModalDatos titulo="Oeste" descripcion={oeste} />}
+
+          {rif && <ModalDatos titulo="Rif" descripcion={rif} />}
+
+          {codigo && <ModalDatos titulo="Codigo" descripcion={codigo} />}
+
+          {sector && <ModalDatos titulo="Sector" descripcion={sector} />}
+
+          {direccion && (
+            <ModalDatos titulo="Dirección" descripcion={direccion} />
+          )}
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -197,7 +209,7 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
           campos={{
             nombre,
             idParroquia,
-            idComuna
+            id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
           }}
         />
       </Modal>
@@ -218,20 +230,31 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
               <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
             </>
           )}
-          <ModalDatos titulo="Comuna" descripcion={nombreComuna} />
+          <ModalDatos
+            titulo={opcionComunaCircuito === "comuna" ? "Comuna" : "Circuito"}
+            descripcion={
+              opcionComunaCircuito === "comuna" ? nombreComuna : nombreCircuito
+            }
+          />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Descripción" descripcion={descripcion} />
 
-          {norte && sur && este && oeste && rif && codigo && sector && direccion && (
-            <>
-              <ModalDatos titulo="Norte" descripcion={norte} />
-              <ModalDatos titulo="Sur" descripcion={sur} />
-              <ModalDatos titulo="Este" descripcion={este} />
-              <ModalDatos titulo="Oeste" descripcion={oeste} />
-              <ModalDatos titulo="Rif" descripcion={rif} />
-              <ModalDatos titulo="Código" descripcion={codigo} />              
-              <ModalDatos titulo="Sector" descripcion={sector} />
-              <ModalDatos titulo="Dirección" descripcion={direccion} />
-            </>
+          {norte && <ModalDatos titulo="Norte" descripcion={norte} />}
+
+          {sur && <ModalDatos titulo="Sur" descripcion={sur} />}
+
+          {este && <ModalDatos titulo="Este" descripcion={este} />}
+
+          {oeste && <ModalDatos titulo="Oeste" descripcion={oeste} />}
+
+          {rif && <ModalDatos titulo="Rif" descripcion={rif} />}
+
+          {codigo && <ModalDatos titulo="Codigo" descripcion={codigo} />}
+
+          {sector && <ModalDatos titulo="Sector" descripcion={sector} />}
+
+          {direccion && (
+            <ModalDatos titulo="Dirección" descripcion={direccion} />
           )}
         </ModalDatosContenedor>
 
@@ -248,7 +271,7 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
           campos={{
             nombre,
             idParroquia,
-            idComuna,
+            id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
             idConsejo,
           }}
         />
@@ -259,14 +282,16 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar este consejo?"}
+        titulo={"¿Actualizar este consejo comunal?"}
       >
         <ModalDatosContenedor>
           <FormEditarConsejo
             acciones={acciones}
             datosConsejo={datosConsejo}
             validaciones={validaciones}
-            comunas={comunas}
+            comunasCircuitos={
+              opcionComunaCircuito === "comuna" ? comunas : circuitos
+            }
           />
         </ModalDatosContenedor>
       </Modal>
@@ -276,7 +301,7 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear consejo?"}
+        titulo={"¿Crear consejo comunal?"}
       >
         <ModalDatosContenedor>
           <FormCrearConsejo
@@ -286,7 +311,9 @@ export default function ModalConsejos({ acciones, datosConsejo, validaciones, op
             estados={estados}
             municipios={municipios}
             parroquias={parroquias}
-            comunas={comunas}
+            comunasCircuitos={
+              opcionComunaCircuito === "comunas" ? comunas : circuitos
+            }
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

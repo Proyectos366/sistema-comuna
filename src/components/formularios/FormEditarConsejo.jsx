@@ -22,7 +22,7 @@ export default function FormEditarConsejo({
   acciones,
   datosConsejo,
   validaciones,
-  comunas,
+  comunasCircuitos,
 }) {
   const dispatch = useDispatch();
 
@@ -32,11 +32,13 @@ export default function FormEditarConsejo({
     setIdMunicipio,
     setIdParroquia,
     setIdComuna,
+    setIdCircuito,
     setNombrePais,
     setNombreEstado,
     setNombreMunicipio,
     setNombreParroquia,
     setNombreComuna,
+    setNombreCircuito,
     setNombre,
     setNorte,
     setSur,
@@ -54,6 +56,7 @@ export default function FormEditarConsejo({
     idMunicipio,
     idParroquia,
     idComuna,
+    idCircuito,
     nombrePais,
     nombreEstado,
     nombreMunicipio,
@@ -68,6 +71,7 @@ export default function FormEditarConsejo({
     punto,
     rif,
     codigo,
+    opcionComunaCircuito,
   } = datosConsejo;
 
   const {
@@ -104,14 +108,20 @@ export default function FormEditarConsejo({
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <DivScroll>
         <SelectOpcion
-          idOpcion={idComuna}
-          nombre={"Comunas"}
+          idOpcion={opcionComunaCircuito === "comuna" ? idComuna : idCircuito}
+          nombre={opcionComunaCircuito === "comuna" ? "Comunas" : "Circuitos"}
           handleChange={(e) => {
-            cambiarSeleccionComuna(e, setIdComuna);
+            opcionComunaCircuito === "comuna"
+              ? cambiarSeleccionComuna(e, setIdComuna)
+              : cambiarSeleccionCircuito(e, setIdCircuito);
           }}
-          opciones={comunas}
+          opciones={comunasCircuitos}
           seleccione={"Seleccione"}
-          setNombre={setNombreComuna}
+          setNombre={
+            opcionComunaCircuito === "comuna"
+              ? setNombreComuna
+              : setNombreCircuito
+          }
           indice={1}
         />
 
@@ -136,7 +146,7 @@ export default function FormEditarConsejo({
             nombre={"Guardar cambios"}
             campos={{
               nombre,
-              idComuna,
+              id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
             }}
           />
 
@@ -146,7 +156,7 @@ export default function FormEditarConsejo({
             }}
             campos={{
               nombre,
-              idComuna,
+              id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
             }}
           />
         </div>
