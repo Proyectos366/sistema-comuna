@@ -122,7 +122,6 @@ export default function FormEditarConsejo({
               ? setNombreComuna
               : setNombreCircuito
           }
-          indice={1}
         />
 
         <LabelInput nombre={"Nombre"}>

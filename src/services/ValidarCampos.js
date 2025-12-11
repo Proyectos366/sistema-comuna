@@ -1336,6 +1336,7 @@ export default class ValidarCampos {
   */
   static validarCamposCrearConsejoComunal(
     nombre,
+    descripcion,
     direccion,
     norte,
     sur,
@@ -1346,8 +1347,7 @@ export default class ValidarCampos {
     codigo,
     parroquiaId,
     comunaId,
-    circuitoId,
-    comunaCircuito
+    circuitoId
   ) {
     try {
       /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
@@ -1363,35 +1363,47 @@ export default class ValidarCampos {
       const codigoMinuscula = codigo ? codigo.toLowerCase() : "";
 
       const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdParroquia = this.validarCampoId(parroquiaId, "parroquia");
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarIdParroquia.status === "error") return validarIdParroquia;
+      if (validarDescripcion.status === "error") return validarDescripcion;
 
       // 3. Variables para la condicion si pertenece a comuna o circuito comunal
       let id_comuna = null;
       let id_circuito = null;
 
-      let circuitoComuna = comunaCircuito.toLowerCase();
-
-      // 4. Validar campo condicional (comuna o circuito)
-      if (circuitoComuna === "comuna") {
-        const result = this.validarCampoId(comunaId);
-        if (result.status === "error") return result;
-        id_comuna = result.id;
-      } else if (circuitoComuna === "circuito") {
-        const result = this.validarCampoId(circuitoId);
-        if (result.status === "error") return result;
-        id_circuito = result.id;
+      // 4. Se comprueba que comunaId y circuitoId no esten vacios los 2
+      if (!comunaId && !circuitoId) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Debe especificar un id comuna o un id circuito"
+        );
       }
 
-      // 5. Consolidar datos validados y retornar respuesta exitosa
+      // 5. Condicion para validad comunaId si no esta vacia
+      if (comunaId) {
+        const validarIdComuna = this.validarCampoId(comunaId, "comuna");
+        if (validarIdComuna.status === "error") return validarIdComuna;
+        id_comuna = validarIdComuna.id;
+      }
+
+      // 6. Condicion para validad circuitoId si no esta vacia
+      if (circuitoId) {
+        const validarIdCircuito = this.validarCampoId(circuitoId, "circuito");
+        if (validarIdCircuito.status === "error") return validarIdCircuito;
+        id_circuito = validarIdCircuito.id;
+      }
+
+      // 7. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones(
         "ok",
         "Campos validados correctamente...",
         {
           nombre: validarNombre.nombre,
+          descripcion: validarDescripcion.texto,
           direccion: direccionMinuscula,
           norte: norteMinuscula,
           sur: surMinuscula,
@@ -1403,11 +1415,10 @@ export default class ValidarCampos {
           id_parroquia: validarIdParroquia.id,
           id_comuna: id_comuna,
           id_circuito: id_circuito,
-          comunaCircuito: circuitoComuna,
         }
       );
     } catch (error) {
-      // 6. Manejo de errores inesperados
+      // 8. Manejo de errores inesperados
       console.error("Error interno campos consejo comunal:", error);
 
       // Retorna una respuesta del error inesperado
@@ -2060,8 +2071,8 @@ export default class ValidarCampos {
     try {
       // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoTexto(nombre);
-      const validarParroquia = this.validarCampoId(id_parroquia);
-      const validarComuna = this.validarCampoId(id_comuna);
+      const validarParroquia = this.validarCampoId(id_parroquia, "parroquia");
+      const validarComuna = this.validarCampoId(id_comuna, "comuna");
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
@@ -2128,31 +2139,61 @@ export default class ValidarCampos {
    @function validarCamposEditarConsejo
    @param {string} nombre - El nuevo nombre del consejo comunal.
    @param {number} id_comuna - El ID de la comuna a la que pertenece el consejo.
+   @param {number} id_circuito - El ID del circuito al que pertenece el consejo.
    @param {number} id_consejo - El ID del consejo comunal a editar.
   */
-  static validarCamposEditarConsejo(nombre, id_comuna, id_consejo) {
+  static validarCamposEditarConsejo(
+    nombre,
+    descripcion,
+    id_comuna,
+    id_circuito,
+    id_consejo
+  ) {
     try {
       // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoTexto(nombre);
-      const validarComuna = this.validarCampoId(id_comuna);
-      const validarConsejo = this.validarCampoId(id_consejo);
+      const validarConsejo = this.validarCampoId(id_consejo, "consejo comunal");
+      const validarDescripcion = this.validarCampoTexto(descripcion);
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
-      if (validarComuna.status === "error") return validarComuna;
       if (validarConsejo.status === "error") return validarConsejo;
+      if (validarDescripcion.status === "error") return validarDescripcion;
 
-      // 3. Consolidar datos validados y retornar respuesta exitosa
+      // 3. Validar comuna o circuito (al menos uno debe existir)
+      let idComuna = null;
+      let idCircuito = null;
+
+      if (!id_comuna && !id_circuito) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Debe especificar un id comuna o un id circuito"
+        );
+      }
+
+      if (id_comuna) {
+        const validarComuna = this.validarCampoId(id_comuna, "comuna");
+        if (validarComuna.status === "error") return validarComuna;
+        idComuna = validarComuna.id;
+      }
+
+      if (id_circuito) {
+        const validarCircuito = this.validarCampoId(id_circuito, "circuito");
+        if (validarCircuito.status === "error") return validarCircuito;
+        idCircuito = validarCircuito.id;
+      }
+
+      // 4. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.texto,
-        id_comuna: validarComuna.id,
+        id_comuna: idComuna,
+        id_circuito: idCircuito,
         id_consejo: validarConsejo.id,
       });
     } catch (error) {
-      // 4. Manejo de errores inesperados
+      // 5. Manejo de errores inesperados
       console.log(`Error interno campos editar consejo comunal: ` + error);
 
-      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar consejo comunal..."

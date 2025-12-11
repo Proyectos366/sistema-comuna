@@ -23,7 +23,9 @@ import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
+
 import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
+import { fetchCircuitosIdParroquia } from "@/store/features/circuitos/thunks/circuitosIdParroquia";
 
 import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
 import { fetchConsejosIdComuna } from "@/store/features/consejos/thunks/consejosIdComuna";
@@ -38,6 +40,7 @@ import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionPar
 import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 export default function ConsejosView() {
   const dispatch = useDispatch();
@@ -118,19 +121,23 @@ export default function ConsejosView() {
   }, [dispatch, idMunicipio]);
 
   useEffect(() => {
-    if (idParroquia) {
+    if (idParroquia && opcionComunaCircuito === "comuna") {
       dispatch(fetchComunasIdParroquia(idParroquia));
     }
-  }, [dispatch, idParroquia]);
+
+    if (idParroquia && opcionComunaCircuito === "circuito") {
+      dispatch(fetchCircuitosIdParroquia(idParroquia));
+    }
+  }, [dispatch, idParroquia, opcionComunaCircuito]);
 
   useEffect(() => {
-    if (idComuna && opcionComunaCircuito === "comuna") {
+    if (idComuna) {
       dispatch(fetchConsejosIdComuna(idComuna));
     }
   }, [dispatch, idComuna]);
 
   useEffect(() => {
-    if (idCircuito && opcionComunaCircuito === "circuito") {
+    if (idCircuito) {
       dispatch(fetchConsejosIdCircuito(idCircuito));
     }
   }, [dispatch, idCircuito]);
@@ -224,6 +231,7 @@ export default function ConsejosView() {
   }, [busqueda, ordenCampo, ordenDireccion]);
 
   const editarConsejo = (consejo) => {
+    setIdConsejo(consejo.id);
     setIdParroquia(consejo.id_parroquia);
     setIdComuna(consejo.id_comuna);
     setIdCircuito(consejo.id_circuito);
@@ -253,6 +261,7 @@ export default function ConsejosView() {
           nombre={"Gestión consejos comunales"}
           funcion={() => {
             dispatch(abrirModal("crear"));
+            limpiarCampos({ setNombreConsejo, setDescripcionConsejo });
           }}
         >
           {consejos.length !== 0 && (
@@ -298,76 +307,105 @@ export default function ConsejosView() {
                 seleccione={"Seleccione"}
                 setNombre={setNombrePais}
               />
+
+              {idPais && (
+                <SelectOpcion
+                  idOpcion={idEstado}
+                  nombre={"Estados"}
+                  handleChange={(e) => {
+                    cambiarSeleccionEstado(e, setIdEstado);
+                    if (idMunicipio) {
+                      setIdMunicipio("");
+                    }
+
+                    if (idParroquia) {
+                      setIdParroquia("");
+                    }
+
+                    if (idComuna) {
+                      setIdComuna("");
+                    }
+
+                    if (idCircuito) {
+                      setIdCircuito("");
+                    }
+                  }}
+                  opciones={estados}
+                  seleccione={"Seleccione"}
+                  setNombre={setNombreEstado}
+                />
+              )}
+
+              {idEstado && (
+                <SelectOpcion
+                  idOpcion={idMunicipio}
+                  nombre={"Municipios"}
+                  handleChange={(e) => {
+                    cambiarSeleccionMunicipio(e, setIdMunicipio);
+                    if (idParroquia) {
+                      setIdParroquia("");
+                    }
+
+                    if (idComuna) {
+                      setIdComuna("");
+                    }
+
+                    if (idCircuito) {
+                      setIdCircuito("");
+                    }
+                  }}
+                  opciones={municipios}
+                  seleccione={"Seleccione"}
+                  setNombre={setNombreMunicipio}
+                />
+              )}
             </>
           ) : (
-            <SelectOpcion
-              idOpcion={idParroquia}
-              nombre={"Parroquias"}
-              handleChange={(e) => {
-                cambiarSeleccionParroquia(e, setIdParroquia);
-              }}
-              opciones={parroquias}
-              seleccione={"Seleccione"}
-              setNombre={setNombreParroquia}
-            />
-          )}
+            <>
+              <SelectOpcion
+                idOpcion={opcionComunaCircuito}
+                nombre={"Mostrar en"}
+                handleChange={(e) => {
+                  cambiarSeleccionComunaCircuito(e, setOpcionComunaCircuito);
 
-          {idPais && (
-            <SelectOpcion
-              idOpcion={idEstado}
-              nombre={"Estados"}
-              handleChange={(e) => {
-                cambiarSeleccionEstado(e, setIdEstado);
-                if (idMunicipio) {
-                  setIdMunicipio("");
-                }
-
-                if (idParroquia) {
                   setIdParroquia("");
-                }
-
-                if (idComuna) {
                   setIdComuna("");
-                }
-
-                if (idCircuito) {
                   setIdCircuito("");
-                }
-              }}
-              opciones={estados}
-              seleccione={"Seleccione"}
-              setNombre={setNombreEstado}
-            />
-          )}
+                  setNombreConsejo("");
+                  setDescripcionConsejo("");
+                }}
+                opciones={[
+                  { id: "comuna", nombre: "comuna" },
+                  { id: "circuito", nombre: "circuito" },
+                ]}
+                seleccione={"Seleccione"}
+                indice={1}
+              />
 
-          {idEstado && (
-            <SelectOpcion
-              idOpcion={idMunicipio}
-              nombre={"Municipios"}
-              handleChange={(e) => {
-                cambiarSeleccionMunicipio(e, setIdMunicipio);
-                if (idParroquia) {
-                  setIdParroquia("");
-                }
+              {opcionComunaCircuito && (
+                <SelectOpcion
+                  idOpcion={idParroquia}
+                  nombre={"Parroquias"}
+                  handleChange={(e) => {
+                    cambiarSeleccionParroquia(e, setIdParroquia);
 
-                if (idComuna) {
-                  setIdComuna("");
-                }
-
-                if (idCircuito) {
-                  setIdCircuito("");
-                }
-              }}
-              opciones={municipios}
-              seleccione={"Seleccione"}
-              setNombre={setNombreMunicipio}
-            />
+                    setIdComuna("");
+                    setIdCircuito("");
+                    setNombreConsejo("");
+                    setDescripcionConsejo("");
+                  }}
+                  opciones={parroquias}
+                  seleccione={"Seleccione"}
+                  setNombre={setNombreParroquia}
+                />
+              )}
+            </>
           )}
 
           {idMunicipio && (
             <SelectOpcion
               idOpcion={opcionComunaCircuito}
-              nombre={"Crear en"}
+              nombre={"Mostrar en"}
               handleChange={(e) => {
                 cambiarSeleccionComunaCircuito(e, setOpcionComunaCircuito);
               }}
@@ -415,6 +453,9 @@ export default function ConsejosView() {
                 opcionComunaCircuito === "comuna"
                   ? cambiarSeleccionComuna(e, setIdComuna)
                   : cambiarSeleccionCircuito(e, setIdCircuito);
+
+                  setNombreConsejo("");
+                  setDescripcionConsejo("");
               }}
               opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
               seleccione={"Seleccione"}
@@ -425,47 +466,6 @@ export default function ConsejosView() {
               }
             />
           )}
-
-          {/* {idParroquia && (
-            <SelectOpcion
-              idOpcion={opcionComunaCircuito}
-              nombre={"Crear en"}
-              handleChange={(e) => {
-                cambiarSeleccionComunaCircuito(e, setIdParroquia);
-              }}
-              opciones={[
-                { id: "comuna", nombre: "comuna" },
-                { id: "circuito", nombre: "circuito" },
-              ]}
-              seleccione={"Seleccione"}
-              indice={1}
-            />
-          )} */}
-
-          {/* {idParroquia && (
-            <SelectOpcion
-              idOpcion={
-                opcionComunaCircuito === "comuna" ? idComuna : idCircuito
-              }
-              nombre={
-                opcionComunaCircuito === "comuna"
-                  ? "Comunas"
-                  : "Circuitos comunales"
-              }
-              handleChange={(e) => {
-                opcionComunaCircuito === "comuna"
-                  ? cambiarSeleccionComuna(e, setIdComuna)
-                  : cambiarSeleccionCircuito(e, setIdCircuito);
-              }}
-              opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
-              seleccione={"Seleccione"}
-              setNombre={
-                opcionComunaCircuito === "comuna"
-                  ? setNombreComuna
-                  : setNombreCircuito
-              }
-            />
-          )} */}
 
           {(opcionComunaCircuito === "comuna" ? idComuna : idCircuito) && (
             <>

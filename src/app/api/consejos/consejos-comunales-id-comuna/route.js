@@ -41,10 +41,10 @@ export async function GET(request) {
         "ok",
         "No hay consejos comunales en esta comuna.",
         { consejos: [] },
-        200
+        404
       );
     }
-    
+
     // 5. Condición de éxito: se encontraron consejos comunales
     return generarRespuesta(
       "ok",

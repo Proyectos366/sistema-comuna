@@ -7,6 +7,20 @@ import LabelInput from "../inputs/LabelInput";
 import Input from "../inputs/Input";
 import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import { useDispatch, useSelector } from "react-redux";
+import DivScroll from "../DivScroll";
+import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
+import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
+import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
+import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
+import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
+import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
+import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
+import InputNombre from "../inputs/InputNombre";
+import InputDescripcion from "../inputs/InputDescripcion";
+
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { limpiarCampos } from "@/utils/limpiarForm";
+import BotonLimpiarCampos from "../botones/BotonLimpiarCampos";
 
 export default function FormCrearConsejo({
   acciones,
@@ -15,7 +29,7 @@ export default function FormCrearConsejo({
   estados,
   municipios,
   parroquias,
-  comunasCircuitos
+  comunasCircuitos,
 }) {
   const dispatch = useDispatch();
 
@@ -85,6 +99,14 @@ export default function FormCrearConsejo({
     setValidarCodigo,
   } = validaciones;
 
+  const resetOpcion = () => {
+    setIdParroquia("");
+    setIdComuna("");
+    setIdCircuito("");
+    setNombre("");
+    setDescripcion("");
+  };
+
   return (
     <Formulario
       onSubmit={(e) => {
@@ -123,18 +145,95 @@ export default function FormCrearConsejo({
               seleccione={"Seleccione"}
               setNombre={setNombrePais}
             />
+
+            {idPais && (
+              <SelectOpcion
+                idOpcion={idEstado}
+                nombre={"Estados"}
+                handleChange={(e) => {
+                  cambiarSeleccionEstado(e, setIdEstado);
+                  if (idMunicipio) {
+                    setIdMunicipio("");
+                  }
+
+                  if (idParroquia) {
+                    setIdParroquia("");
+                  }
+
+                  if (idComuna) {
+                    setIdComuna("");
+                  }
+
+                  if (idCircuito) {
+                    setIdCircuito("");
+                  }
+                }}
+                opciones={estados}
+                seleccione={"Seleccione"}
+                setNombre={setNombreEstado}
+              />
+            )}
+
+            {idEstado && (
+              <SelectOpcion
+                idOpcion={idMunicipio}
+                nombre={"Municipios"}
+                handleChange={(e) => {
+                  cambiarSeleccionMunicipio(e, setIdMunicipio);
+                  if (idParroquia) {
+                    setIdParroquia("");
+                  }
+
+                  if (idComuna) {
+                    setIdComuna("");
+                  }
+
+                  if (idCircuito) {
+                    setIdCircuito("");
+                  }
+                }}
+                opciones={municipios}
+                seleccione={"Seleccione"}
+                setNombre={setNombreMunicipio}
+              />
+            )}
           </>
         ) : (
-          <SelectOpcion
-            idOpcion={idParroquia}
-            nombre={"Parroquias"}
-            handleChange={(e) => {
-              cambiarSeleccionParroquia(e, setIdParroquia);
-            }}
-            opciones={parroquias}
-            seleccione={"Seleccione"}
-            setNombre={setNombreParroquia}
-          />
+          <>
+            <SelectOpcion
+              idOpcion={opcionComunaCircuito}
+              nombre={"Crear en"}
+              handleChange={(e) => {
+                cambiarSeleccionComunaCircuito(e, setOpcionComunaCircuito);
+              }}
+              opciones={[
+                { id: "comuna", nombre: "comuna" },
+                { id: "circuito", nombre: "circuito" },
+              ]}
+              seleccione={"Seleccione"}
+            />
+
+            {opcionComunaCircuito && (
+              <SelectOpcion
+                idOpcion={idParroquia}
+                nombre={"Parroquias"}
+                handleChange={(e) => {
+                  cambiarSeleccionParroquia(e, setIdParroquia);
+
+                  if (idComuna) {
+                    setIdComuna("");
+                  }
+
+                  if (idCircuito) {
+                    setIdCircuito("");
+                  }
+                }}
+                opciones={parroquias}
+                seleccione={"Seleccione"}
+                setNombre={setNombreParroquia}
+              />
+            )}
+          </>
         )}
 
         {idPais && (
@@ -191,35 +290,37 @@ export default function FormCrearConsejo({
 
         {idMunicipio && (
           <SelectOpcion
+            idOpcion={opcionComunaCircuito}
+            nombre={"Crear en"}
+            handleChange={(e) => {
+              cambiarSeleccionComunaCircuito(e, setOpcionComunaCircuito);
+              resetOpcion();
+            }}
+            opciones={[
+              { id: "comuna", nombre: "comuna" },
+              { id: "circuito", nombre: "circuito" },
+            ]}
+            seleccione={"Seleccione"}
+          />
+        )}
+
+        {idMunicipio && opcionComunaCircuito && (
+          <SelectOpcion
             idOpcion={idParroquia}
             nombre={"Parroquias"}
             handleChange={(e) => {
               cambiarSeleccionParroquia(e, setIdParroquia);
 
-              if (idComuna) {
-                setIdComuna("");
-              }
-
-              if (idCircuito) {
-                setIdCircuito("");
-              }
+              setIdComuna("");
+              setIdCircuito("");
+              setNombre("");
+              setDescripcion("");
             }}
             opciones={parroquias}
             seleccione={"Seleccione"}
             setNombre={setNombreParroquia}
           />
         )}
-
-
-
-
-
-
-
-
-
-
-
 
         {idParroquia && (
           <SelectOpcion
@@ -233,8 +334,11 @@ export default function FormCrearConsejo({
               opcionComunaCircuito === "comuna"
                 ? cambiarSeleccionComuna(e, setIdComuna)
                 : cambiarSeleccionCircuito(e, setIdCircuito);
+
+              setNombre("");
+              setDescripcion("");
             }}
-            opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
+            opciones={comunasCircuitos}
             seleccione={"Seleccione"}
             setNombre={
               opcionComunaCircuito === "comuna"
@@ -257,30 +361,42 @@ export default function FormCrearConsejo({
               />
             </LabelInput>
 
+            <LabelInput nombre={"Descripción"}>
+              <InputDescripcion
+                value={descripcion}
+                setValue={setDescripcion}
+                rows={6}
+                max={500}
+                autoComplete="off"
+              />
+            </LabelInput>
+
             <div className="flex space-x-3">
-                          <BotonAceptarCancelar
-                            indice={"aceptar"}
-                            aceptar={() => {
-                              dispatch(cerrarModal("crear"));
-                              dispatch(abrirModal("confirmar"));
-                            }}
-                            nombre={"Crear"}
-                            campos={{
-                              nombre,
-                              idParroquia,
-                            }}
-                          />
-            
-                          <BotonLimpiarCampos
-                            aceptar={() => {
-                              limpiarCampos({ setNombre });
-                            }}
-                            campos={{
-                              nombre,
-                              idParroquia,
-                            }}
-                          />
-                        </div>
+              <BotonAceptarCancelar
+                indice={"aceptar"}
+                aceptar={() => {
+                  dispatch(cerrarModal("crear"));
+                  dispatch(abrirModal("confirmar"));
+                }}
+                nombre={"Crear"}
+                campos={{
+                  nombre,
+                  descripcion,
+                  id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
+                }}
+              />
+
+              <BotonLimpiarCampos
+                aceptar={() => {
+                  limpiarCampos({ setNombre });
+                }}
+                campos={{
+                  nombre,
+                  descripcion,
+                  id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
+                }}
+              />
+            </div>
           </>
         )}
       </DivScroll>

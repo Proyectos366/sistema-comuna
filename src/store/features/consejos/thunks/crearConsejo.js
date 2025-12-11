@@ -7,7 +7,7 @@ export const crearConsejo = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/consejos/crear-consejo",
+        "/api/consejos/crear-consejo-comunal",
         data.nuevoConsejo
       );
 

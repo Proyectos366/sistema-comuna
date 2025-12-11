@@ -8,7 +8,7 @@
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
-import validarRestaurarConsejoComunal from "@/services/consejos/validarRestaurarConsejoComunal"; // Servicio para validar la restauración del consejo comunal
+import validarRestaurarConsejoComunal from "@/services/consejos-comunales/validarRestaurarConsejoComunal"; // Servicio para validar la restauración del consejo comunal
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**

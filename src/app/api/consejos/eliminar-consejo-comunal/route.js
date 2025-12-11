@@ -3,12 +3,12 @@
  sistema. Este endpoint valida los datos recibidos, actualiza el estado de eliminación en la base
  de datos, registra eventos de auditoría y retorna el perfil actualizado del consejo comunal.
  Utiliza Prisma como ORM y servicios personalizados para validación y respuesta estandarizada.
- @module api/consejos/eliminarConsejoComunal
+ @module api/consejos-comunales/eliminarConsejoComunal
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
-import validarEliminarConsejoComunal from "@/services/consejos/validarEliminarConsejoComunal"; // Servicio para validar la eliminación de consejo comunal
+import validarEliminarConsejoComunal from "@/services/consejos-comunales/validarEliminarConsejoComunal"; // Servicio para validar la eliminación de consejo comunal
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**

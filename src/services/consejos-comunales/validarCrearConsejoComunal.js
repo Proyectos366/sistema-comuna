@@ -29,6 +29,7 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 */
 export default async function validarCrearConsejoComunal(
   nombre,
+  descripcion,
   direccion,
   norte,
   sur,
@@ -39,8 +40,7 @@ export default async function validarCrearConsejoComunal(
   codigo,
   id_parroquia,
   id_comuna,
-  id_circuito,
-  comunaCircuito
+  id_circuito
 ) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
@@ -57,6 +57,7 @@ export default async function validarCrearConsejoComunal(
     // 3. Validar los campos de entrada utilizando la clase ValidarCampos.
     const validandoCampos = ValidarCampos.validarCamposCrearConsejoComunal(
       nombre,
+      descripcion,
       direccion,
       norte,
       sur,
@@ -67,8 +68,7 @@ export default async function validarCrearConsejoComunal(
       codigo,
       id_parroquia,
       id_comuna,
-      id_circuito,
-      comunaCircuito
+      id_circuito
     );
 
     // 4. Si los campos no son válidos, se retorna un error.
@@ -76,18 +76,6 @@ export default async function validarCrearConsejoComunal(
       return retornarRespuestaFunciones(
         validandoCampos.status,
         validandoCampos.message
-      );
-    }
-
-    // 5. Validar que el tipo de entidad sea 'comuna' o 'circuito'.
-    if (!["comuna", "circuito"].includes(validandoCampos.comunaCircuito)) {
-      return generarRespuesta(
-        "error",
-        `Tipo de ${
-          validandoCampos.comunaCircuito === "comuna"
-            ? "comuna inválida"
-            : "circuito inválido"
-        }`
       );
     }
 
@@ -119,6 +107,7 @@ export default async function validarCrearConsejoComunal(
       id_comuna: validandoCampos.id_comuna,
       id_circuito: validandoCampos.id_circuito,
       nombre: validandoCampos.nombre,
+      descripcion: validandoCampos.descripcion,
       direccion: validandoCampos.direccion,
       norte: validandoCampos.norte,
       sur: validandoCampos.sur,

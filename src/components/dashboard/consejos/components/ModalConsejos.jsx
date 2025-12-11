@@ -94,6 +94,7 @@ export default function ModalConsejos({
     try {
       const nuevoConsejo = {
         nombre: nombre,
+        descripcion: descripcion,
         norte: norte,
         sur: sur,
         este: este,
@@ -123,6 +124,7 @@ export default function ModalConsejos({
     try {
       const updateConsejo = {
         nombre: nombre,
+        descripcion: descripcion,
         norte: norte,
         sur: sur,
         este: este,
@@ -312,7 +314,7 @@ export default function ModalConsejos({
             municipios={municipios}
             parroquias={parroquias}
             comunasCircuitos={
-              opcionComunaCircuito === "comunas" ? comunas : circuitos
+              opcionComunaCircuito === "comuna" ? comunas : circuitos
             }
           />
         </ModalDatosContenedor>

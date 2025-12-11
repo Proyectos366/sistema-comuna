@@ -21,11 +21,16 @@ import validarEditarConsejoComunal from "@/services/consejos-comunales/validarEd
 export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
-    const { nombre, id_comuna, id_circuito, id_consejo } = await request.json();
+    const { nombre, descripcion, id_comuna, id_circuito, id_consejo } =
+      await request.json();
+
+    // Inicializa propiedades adicionales que no se utilizan.
+    const { direccion, norte, sur, este, oeste, punto, rif, codigo } = "";
 
     // 2. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarEditarConsejoComunal(
       nombre,
+      descripcion,
       id_comuna,
       id_circuito,
       id_consejo
@@ -57,6 +62,7 @@ export async function PATCH(request) {
         where: { id: validaciones.id_consejo },
         data: {
           nombre: validaciones.nombre,
+          descripcion: validaciones.descripcion,
           id_comuna: validaciones.id_comuna,
           id_circuito: validaciones.id_circuito,
         },

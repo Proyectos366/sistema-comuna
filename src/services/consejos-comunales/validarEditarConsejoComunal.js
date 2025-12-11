@@ -13,13 +13,16 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
  @function validarEditarConsejoComunal
  @param {string} nombre - El nuevo nombre del consejo comunal.
  @param {number} id_comuna - El ID de la comuna a la que pertenece el consejo.
+ @param {number} id_circuito - El ID del circuito al que pertenece el consejo.
  @param {number} id_consejo - El ID del consejo comunal a editar.
  @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación.
 */
 
 export default async function validarEditarConsejoComunal(
   nombre,
+  descripcion,
   id_comuna,
+  id_circuito,
   id_consejo
 ) {
   try {
@@ -37,7 +40,9 @@ export default async function validarEditarConsejoComunal(
     // 3. Validar los campos de entrada utilizando la clase ValidarCampos.
     const validandoCampos = ValidarCampos.validarCamposEditarConsejo(
       nombre,
+      descripcion,
       id_comuna,
+      id_circuito,
       id_consejo
     );
 
@@ -56,7 +61,9 @@ export default async function validarEditarConsejoComunal(
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       id_usuario: validaciones.id_usuario,
       nombre: validandoCampos.nombre,
+      descripcion: validandoCampos.descripcion,
       id_comuna: validandoCampos.id_comuna,
+      id_circuito: validandoCampos.id_circuito,
       id_consejo: validandoCampos.id_consejo,
     });
   } catch (error) {
