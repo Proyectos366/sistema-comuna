@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
-import SelectOpcion from "../SelectOpcion";
-import Formulario from "../Formulario";
-import LabelInput from "../inputs/LabelInput";
-import Input from "../inputs/Input";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
 import { useDispatch, useSelector } from "react-redux";
-import DivScroll from "../DivScroll";
+
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import LabelInput from "@/components/inputs/LabelInput";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import SelectOpcion from "@/components/SelectOpcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
@@ -15,12 +18,9 @@ import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionPar
 import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
-import InputNombre from "../inputs/InputNombre";
-import InputDescripcion from "../inputs/InputDescripcion";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { limpiarCampos } from "@/utils/limpiarForm";
-import BotonLimpiarCampos from "../botones/BotonLimpiarCampos";
 
 export default function FormCrearConsejo({
   acciones,

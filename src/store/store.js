@@ -16,6 +16,7 @@ import formacionesReducer from "@/store/features/formaciones/formacionesSlices";
 import comunasReducer from "@/store/features/comunas/comunasSlices";
 import circuitosReducer from "@/store/features/circuitos/circuitosSlices";
 import consejosReducer from "@/store/features/consejos/consejosSlices";
+import vocerosReducer from "@/store/features/voceros/vocerosSlices";
 
 const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ const store = configureStore({
     comunas: comunasReducer,
     circuitos: circuitosReducer,
     consejos: consejosReducer,
+    voceros: vocerosReducer,
     // Aquí se agregarán los reducers de los "slices"
   },
 });

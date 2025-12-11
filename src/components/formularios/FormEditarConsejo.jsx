@@ -14,9 +14,9 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import { textRegex } from "@/utils/regex/textRegex";
 import { rifRegex } from "@/utils/regex/rifRegex";
 import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 
 export default function FormEditarConsejo({
   acciones,
