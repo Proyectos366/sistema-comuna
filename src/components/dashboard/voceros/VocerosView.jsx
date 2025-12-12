@@ -78,6 +78,14 @@ export default function VocerosView() {
 
   const [cedulaVocero, setCedulaVocero] = useState("");
   const [nombreVocero, setNombreVocero] = useState("");
+  const [nombreDosVocero, setNombreDosVocero] = useState("");
+  const [apellidoVocero, setApellidoVocero] = useState("");
+  const [apellidoDosVocero, setApellidoDosVocero] = useState("");
+  const [generoVocero, setGeneroVocero] = useState("");
+  const [edadVocero, setEdadVocero] = useState("");
+  const [telefonoVocero, setTelefonoVocero] = useState("");
+  const [correoVocero, setCorreoVocero] = useState("");
+  const [laboralVocero, setLaboralVocero] = useState("");
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
@@ -91,8 +99,15 @@ export default function VocerosView() {
   const [expanded, setExpanded] = useState("");
   const [opcion, setOpcion] = useState("");
 
-  const [validarCedulaVocero, setValidarCedulaVocero] = useState(false);
-  const [validarNombreVocero, setValidarNombreVocero] = useState(false);
+  const [validarCedula, setValidarCedula] = useState(false);
+  const [validarNombre, setValidarNombre] = useState(false);
+  const [validarNombreDos, setValidarNombreDos] = useState(false);
+  const [validarApellido, setValidarApellido] = useState(false);
+  const [validarApellidoDos, setValidarApellidoDos] = useState(false);
+  const [validarEdad, setValidarEdad] = useState(false);
+  const [validarTelefono, setValidarTelefono] = useState(false);
+  const [validarCorreo, setValidarCorreo] = useState(false);
+  const [validarLaboral, setValidarLaboral] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -131,18 +146,6 @@ export default function VocerosView() {
 
   useEffect(() => {
     if (idComuna) {
-      dispatch(fetchConsejosIdComuna(idComuna));
-    }
-  }, [dispatch, idComuna]);
-
-  useEffect(() => {
-    if (idCircuito) {
-      dispatch(fetchConsejosIdCircuito(idCircuito));
-    }
-  }, [dispatch, idCircuito]);
-
-  useEffect(() => {
-    if (idComuna) {
       dispatch(fetchVocerosIdComuna(idComuna));
     }
   }, [dispatch, idComuna]);
@@ -159,7 +162,7 @@ export default function VocerosView() {
     }
   }, [dispatch, idConsejo]);
 
-  const camposBusqueda = ["cedula", "nombre", "apellido", "correo", "telefono", ];
+  const camposBusqueda = ["cedula", "nombre", "apellido", "correo", "telefono"];
   const opcionesOrden = [
     { id: "cedula", nombre: "Cédula" },
     { id: "nombre", nombre: "Nombre" },
@@ -186,12 +189,20 @@ export default function VocerosView() {
     setNombreCircuito: setNombreCircuito,
     setNombreConsejo: setNombreConsejo,
 
+    setCedula: setCedulaVocero,
     setNombre: setNombreVocero,
-    
+    setNombreDos: setNombreDosVocero,
+    setApellido: setApellidoVocero,
+    setApellidoDos: setApellidoDosVocero,
+    setGenero: setGeneroVocero,
+    setEdad: setEdadVocero,
+    setTelefono: setTelefonoVocero,
+    setCorreo: setCorreoVocero,
+    setLaboral: setLaboralVocero,
     setOpcion: setOpcion,
   };
 
-  const datosConsejo = {
+  const datosVocero = {
     idPais: idPais,
     idEstado: idEstado,
     idMunicipio: idMunicipio,
@@ -209,16 +220,38 @@ export default function VocerosView() {
     nombreCircuito: nombreCircuito,
     nombreConsejo: nombreConsejo,
 
+    cedula: cedulaVocero,
     nombre: nombreVocero,
-    
+    nombreDos: nombreDosVocero,
+    apellido: apellidoVocero,
+    apellido: apellidoDosVocero,
+    genero: generoVocero,
+    edad: edadVocero,
+    telefono: telefonoVocero,
+    correo: correoVocero,
+    laboral: laboralVocero,
     opcion: opcion,
   };
 
   const validaciones = {
-    validarCedula: validarCedulaVocero,
-    setValidarCedula: setValidarCedulaVocero,
-    validarNombre: validarNombreVocero,
-    setValidarNombre: setValidarNombreVocero,
+    validarCedula: validarCedula,
+    setValidarCedula: setValidarCedula,
+    validarNombre: validarNombre,
+    setValidarNombre: setValidarNombre,
+    validarNombreDos: validarNombreDos,
+    setValidarNombreDos: setValidarNombreDos,
+    validarApellido: validarApellido,
+    setValidarApellido: setValidarApellido,
+    validarApellidoDos: validarApellidoDos,
+    setValidarApellidoDos: setValidarApellidoDos,
+    validarEdad: validarEdad,
+    setValidarEdad: setValidarEdad,
+    validarTelefono: validarTelefono,
+    setValidarTelefono: setValidarTelefono,
+    validarCorreo: validarCorreo,
+    setValidarCorreo: setValidarCorreo,
+    validarLaboral: validarLaboral,
+    setValidarLaboral: setValidarLaboral,
   };
 
   const vocerosFiltradosOrdenados = useMemo(() => {
@@ -239,21 +272,15 @@ export default function VocerosView() {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  const editarConsejo = (consejo) => {
-    setIdConsejo(consejo.id);
-    setIdParroquia(consejo.id_parroquia);
-    setIdComuna(consejo.id_comuna);
-    setIdCircuito(consejo.id_circuito);
-    setNombreVocero(consejo.nombre);
-    setNorteConsejo(consejo.norte);
-    setSurConsejo(consejo.sur);
-    setEsteConsejo(consejo.este);
-    setOesteConsejo(consejo.oeste);
-    setDireccionConsejo(consejo.direccion);
-    setPuntoConsejo(consejo.punto);
-    setRifConsejo(consejo.rif);
-    setCodigoConsejo(consejo.codigo);
-    setDescripcionConsejo(consejo.descripcion);
+  const editarVocero = (vocero) => {
+    setIdVocero(vocero.id);
+    setIdParroquia(vocero.id_parroquia);
+    setIdComuna(vocero.id_comuna);
+    setIdCircuito(vocero.id_circuito);
+    setIdConsejo(vocero.id_consejo);
+
+    setNombreVocero(vocero.nombre);
+    setCedulaVocero(vocero.descripcion);
 
     dispatch(abrirModal("editar"));
   };
@@ -262,15 +289,15 @@ export default function VocerosView() {
     <>
       <ModalVoceros
         acciones={acciones}
-        datosConsejo={datosConsejo}
+        datosVocero={datosVocero}
         validaciones={validaciones}
       />
       <SectionMain>
         <SectionTertiary
-          nombre={"Gestión consejos comunales"}
+          nombre={"Gestión voceros"}
           funcion={() => {
             dispatch(abrirModal("crear"));
-            limpiarCampos({ setNombreVocero, setDescripcionConsejo });
+            limpiarCampos({ setNombreVocero, setCedulaVocero });
           }}
         >
           {consejos.length !== 0 && (
@@ -292,25 +319,13 @@ export default function VocerosView() {
                 nombre={"Paises"}
                 handleChange={(e) => {
                   cambiarSeleccionPais(e, setIdPais);
-                  if (idEstado) {
-                    setIdEstado("");
-                  }
 
-                  if (idMunicipio) {
-                    setIdMunicipio("");
-                  }
-
-                  if (idParroquia) {
-                    setIdParroquia("");
-                  }
-
-                  if (idComuna) {
-                    setIdComuna("");
-                  }
-
-                  if (idCircuito) {
-                    setIdCircuito("");
-                  }
+                  setIdEstado("");
+                  setIdMunicipio("");
+                  setIdParroquia("");
+                  setIdComuna("");
+                  setIdCircuito("");
+                  setIdConsejo("");
                 }}
                 opciones={paises}
                 seleccione={"Seleccione"}
@@ -380,12 +395,14 @@ export default function VocerosView() {
                   setIdParroquia("");
                   setIdComuna("");
                   setIdCircuito("");
+                  setIdConsejo("");
                   setNombreVocero("");
-                  setDescripcionConsejo("");
+                  setCedulaVocero("");
                 }}
                 opciones={[
                   { id: "comuna", nombre: "comuna" },
                   { id: "circuito", nombre: "circuito" },
+                  { id: "consejo", nombre: "Consejo comunal" },
                 ]}
                 seleccione={"Seleccione"}
                 indice={1}
@@ -400,8 +417,9 @@ export default function VocerosView() {
 
                     setIdComuna("");
                     setIdCircuito("");
+                    setIdConsejo("");
                     setNombreVocero("");
-                    setDescripcionConsejo("");
+                    setCedulaVocero("");
                   }}
                   opciones={parroquias}
                   seleccione={"Seleccione"}
@@ -421,6 +439,7 @@ export default function VocerosView() {
               opciones={[
                 { id: "comuna", nombre: "comuna" },
                 { id: "circuito", nombre: "circuito" },
+                { id: "consejo", nombre: "consejo" },
               ]}
               seleccione={"Seleccione"}
               indice={1}
@@ -434,13 +453,9 @@ export default function VocerosView() {
               handleChange={(e) => {
                 cambiarSeleccionParroquia(e, setIdParroquia);
 
-                if (idComuna) {
-                  setIdComuna("");
-                }
-
-                if (idCircuito) {
-                  setIdCircuito("");
-                }
+                setIdComuna("");
+                setIdCircuito("");
+                setIdConsejo("");
               }}
               opciones={parroquias}
               seleccione={"Seleccione"}
@@ -450,56 +465,86 @@ export default function VocerosView() {
 
           {idParroquia && (
             <SelectOpcion
-              idOpcion={opcion === "comuna" ? idComuna : idCircuito}
-              nombre={opcion === "comuna" ? "Comunas" : "Circuitos comunales"}
-              handleChange={(e) => {
+              idOpcion={
                 opcion === "comuna"
-                  ? cambiarSeleccionComuna(e, setIdComuna)
-                  : cambiarSeleccionCircuito(e, setIdCircuito);
+                  ? idComuna
+                  : opcion === "circuito"
+                  ? idCircuito
+                  : idConsejo
+              }
+              nombre={
+                opcion === "comuna"
+                  ? "Comunas"
+                  : opcion === "circuito"
+                  ? "Circuitos comunales"
+                  : "Consejos comunales"
+              }
+              handleChange={(e) => {
+                if (opcion === "comuna") {
+                  cambiarSeleccionComuna(e, setIdComuna);
+                } else if (opcion === "circuito") {
+                  cambiarSeleccionCircuito(e, setIdCircuito);
+                } else {
+                  cambiarSeleccionConsejo(e, setIdConsejo);
+                }
 
                 setNombreVocero("");
-                setDescripcionConsejo("");
+                setCedulaVocero("");
               }}
-              opciones={opcion === "comuna" ? comunas : circuitos}
+              opciones={
+                opcion === "comuna"
+                  ? comunas
+                  : opcion === "circuito"
+                  ? circuitos
+                  : consejos
+              }
               seleccione={"Seleccione"}
               setNombre={
-                opcion === "comuna" ? setNombreComuna : setNombreCircuito
+                opcion === "comuna"
+                  ? setNombreComuna
+                  : opcion === "circuito"
+                  ? setNombreCircuito
+                  : setNombreConsejo
               }
             />
           )}
 
-          {(opcion === "comuna" ? idComuna : idCircuito) && (
+          {(opcion === "comuna"
+            ? idComuna
+            : opcion === "circuito"
+            ? idCircuito
+            : idConsejo) && (
             <>
               <Div className={`flex flex-col gap-2`}>
-                {consejos?.length === 0 && loading ? (
-                  <Loader titulo="Cargando consejos comunales..." />
+                {voceros?.length === 0 && loading ? (
+                  <Loader titulo="Cargando voceros..." />
                 ) : (
                   <>
                     {vocerosPaginados?.length !== 0 ? (
-                      vocerosPaginados.map((consejo, index) => {
+                      vocerosPaginados.map((vocero, index) => {
                         return (
                           <FichaDetalles
-                            key={consejo.id}
-                            dato={consejo}
+                            key={vocero.id}
+                            dato={vocero}
                             index={index}
                           >
                             <ButtonToggleDetalles
                               expanded={expanded}
-                              dato={consejo}
+                              dato={vocero}
                               setExpanded={setExpanded}
                             />
 
-                            {expanded === consejo.id && (
+                            {expanded === vocero.id && (
                               <ListadoVoceros
-                                consejo={consejo}
-                                editarConsejo={editarConsejo}
+                                vocero={vocero}
+                                editarVocero={editarVocero}
                               />
                             )}
                           </FichaDetalles>
                         );
                       })
                     ) : (
-                      <EstadoMsjVacio dato={consejos} loading={loading} />
+                      <EstadoMsjVacio dato={voceros} loading={loading} />
                     )}
                   </>
                 )}
@@ -512,7 +557,7 @@ export default function VocerosView() {
                   setRows={setRows}
                   totalRecords={vocerosFiltradosOrdenados.length}
                 />
-              </Div>{" "}
+              </Div>
             </>
           )}
         </SectionTertiary>

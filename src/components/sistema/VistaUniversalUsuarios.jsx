@@ -32,6 +32,7 @@ import FormacionesView from "@/components/dashboard/formaciones/FormacionesView"
 import ComunasView from "@/components/dashboard/comunas/ComunasView";
 import CircuitosView from "@/components/dashboard/circuitos/CircuitosView";
 import ConsejosView from "@/components/dashboard/consejos/ConsejosView";
+import VocerosView from "@/components/dashboard/voceros/VocerosView";
 
 export default function VistaUniversalUsuarios() {
   const { screenSize } = useUser();
@@ -242,6 +243,8 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "consejos-comunales" && <ConsejosView />}
 
+              {vista === "voceros" && <VocerosView />}
+
               {/*
               {vista === "participantes" && (
                 <ParticipantesForm
@@ -258,19 +261,7 @@ export default function VistaUniversalUsuarios() {
               )}
 
 
-              {vista === "voceros" && (
-                <VoceroForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )} 
+               
 
               {vista === "perfil" && (
                 <MostrarPerfilUsuario

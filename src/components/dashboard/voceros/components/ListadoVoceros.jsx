@@ -9,20 +9,20 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-import { eliminarRestaurarConsejo } from "@/store/features/consejos/thunks/eliminarRestaurarConsejo";
+import { eliminarRestaurarVocero } from "@/store/features/voceros/thunks/eliminarRestaurarVocero";
 
-export default function ListadoConsejos({ consejo, editarConsejo }) {
+export default function ListadoVoceros({ vocero, editarVocero }) {
   const dispatch = useDispatch();
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
-        <BloqueInfo indice={1} nombre={"Rif"} valor={consejo.rif} />
+        <BloqueInfo indice={1} nombre={"Cédula"} valor={vocero.cedula} />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarConsejo(consejo);
+            editarVocero(vocero);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -40,29 +40,30 @@ export default function ListadoConsejos({ consejo, editarConsejo }) {
 
       <BloqueInfo
         indice={1}
-        nombre={"Sector"}
-        valor={consejo.sector ? consejo.sector : "Sin sector"}
+        nombre={"Genero"}
+        valor={vocero.genero ? "Masculino" : "Femenino"}
       />
-      <BloqueInfo
-        indice={1}
-        nombre={"Dirección"}
-        valor={consejo.direccion ? consejo.direccion : "Sin dirección"}
-      />
+
+      <BloqueInfo indice={1} nombre={"Correo"} valor={vocero.correo} />
+
+      <BloqueInfo indice={1} nombre={"Edad"} valor={vocero.edad} />
+
+      <BloqueInfo indice={1} nombre={"Teléfono"} valor={vocero.telefono} />
 
       <Div className="flex items-center justify-between">
         <BloqueInfo
-          indice={!consejo.borrado ? 3 : 2}
-          nombre={"Consejo"}
-          valor={!consejo.borrado ? "Activo" : "Inactivo"}
+          indice={!vocero.borrado ? 3 : 2}
+          nombre={"vocero"}
+          valor={!vocero.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!consejo.borrado}
+          checked={!vocero.borrado}
           onToggle={() => {
             dispatch(
-              eliminarRestaurarConsejo({
-                estado: consejo.borrado,
-                id_consejo: consejo.id,
+              eliminarRestaurarVocero({
+                estado: vocero.borrado,
+                id_vocero: vocero.id,
               })
             );
           }}
@@ -71,8 +72,8 @@ export default function ListadoConsejos({ consejo, editarConsejo }) {
 
       <BloqueInfo
         indice={1}
-        nombre={"Creada"}
-        valor={formatearFecha(consejo.createdAt)}
+        nombre={"Creado"}
+        valor={formatearFecha(vocero.createdAt)}
       />
     </Div>
   );

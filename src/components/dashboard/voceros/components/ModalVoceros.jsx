@@ -5,25 +5,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearConsejo from "@/components/formularios/FormCrearConsejo";
-import FormEditarConsejo from "@/components/formularios/FormEditarConsejo";
+import FormCrearVocero from "@/components/formularios/FormCrearVocero";
+import FormEditarVocero from "@/components/formularios/FormEditarVocero";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearConsejo } from "@/store/features/consejos/thunks/crearConsejo";
-import { actualizarConsejo } from "@/store/features/consejos/thunks/actualizarConsejo";
+import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
+import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
-import { fetchConsejosIdComuna } from "@/store/features/consejos/thunks/consejosIdComuna";
-import { fetchConsejosIdCircuito } from "@/store/features/consejos/thunks/consejosIdCircuito";
 
-export default function ModalConsejos({
-  acciones,
-  datosConsejo,
-  validaciones,
-}) {
+import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
+import { fetchCircuitosIdParroquia } from "@/store/features/circuitos/thunks/circuitosIdParroquia";
+import { fetchConsejosIdParroquia } from "@/store/features/consejos/thunks/consejosIdParroquia";
+
+export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
@@ -32,6 +30,7 @@ export default function ModalConsejos({
   const { parroquias } = useSelector((state) => state.parroquias);
   const { comunas } = useSelector((state) => state.comunas);
   const { circuitos } = useSelector((state) => state.circuitos);
+  const { consejos } = useSelector((state) => state.consejos);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -50,25 +49,28 @@ export default function ModalConsejos({
     idComuna,
     idCircuito,
     idConsejo,
+    idVocero,
+
     nombrePais,
     nombreEstado,
     nombreMunicipio,
     nombreParroquia,
     nombreComuna,
     nombreCircuito,
+    nombreConsejo,
+
+    cedula,
     nombre,
-    norte,
-    sur,
-    este,
-    oeste,
-    direccion,
-    punto,
-    rif,
-    sector,
-    codigo,
-    descripcion,
-    opcionComunaCircuito,
-  } = datosConsejo;
+    nombreDos,
+    apellido,
+    apellidoDos,
+    genero,
+    edad,
+    telefono,
+    correo,
+    laboral,
+    opcion,
+  } = datosVocero;
 
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
@@ -77,40 +79,47 @@ export default function ModalConsejos({
   }, [dispatch, usuarioActivo]);
 
   useEffect(() => {
-    if (idComuna && mostrarConfirmarCambios === "comuna") {
-      dispatch(fetchConsejosIdComuna(idComuna));
+    if (idComuna && opcion === "comuna") {
+      dispatch(fetchComunasIdParroquia(idComuna));
     }
-  }, [dispatch, idComuna, mostrarConfirmarCambios]);
+  }, [dispatch, idComuna, opcion]);
 
   useEffect(() => {
-    if (idCircuito && mostrarConfirmarCambios === "circuito") {
-      dispatch(fetchConsejosIdCircuito(idCircuito));
+    if (idCircuito && opcion === "circuito") {
+      dispatch(fetchCircuitosIdParroquia(idCircuito));
     }
-  }, [dispatch, idCircuito, mostrarConfirmarCambios]);
+  }, [dispatch, idCircuito, opcion]);
+
+  useEffect(() => {
+    if (idConsejo && opcion === "consejo") {
+      dispatch(fetchConsejosIdParroquia(idConsejo));
+    }
+  }, [dispatch, idConsejo, opcion]);
 
   const notify = (msj) => toast(msj);
 
-  const handleCrearConsejo = async () => {
+  const handleCrearVocero = async () => {
     try {
-      const nuevoConsejo = {
+      const nuevoVocero = {
+        cedula: cedula,
         nombre: nombre,
-        descripcion: descripcion,
-        norte: norte,
-        sur: sur,
-        este: este,
-        oeste: oeste,
-        direccion: direccion,
-        punto: punto,
-        rif: rif,
-        codigo: codigo,
+        nombreDos: nombreDos,
+        apellido: apellido,
+        apellidoDos: apellidoDos,
+        genero: genero,
+        edad: edad,
+        telefono: telefono,
+        correo: correo,
+        laboral: laboral,
+        id_parroquia: idParroquia,
         id_comuna: idComuna,
         id_circuito: idCircuito,
-        id_parroquia: idParroquia,
+        id_consejo: idConsejo,
       };
 
       await dispatch(
-        crearConsejo({
-          nuevoConsejo: nuevoConsejo,
+        crearVocero({
+          nuevoVocero: nuevoVocero,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -120,27 +129,19 @@ export default function ModalConsejos({
     }
   };
 
-  const handleEditarConsejo = async () => {
+  const handleEditarVocero = async () => {
     try {
-      const updateConsejo = {
+      const updateVocero = {
         nombre: nombre,
-        descripcion: descripcion,
-        norte: norte,
-        sur: sur,
-        este: este,
-        oeste: oeste,
-        direccion: direccion,
-        punto: punto,
-        rif: rif,
-        codigo: codigo,
         id_parroquia: idParroquia,
         id_comuna: idComuna,
+        id_circuito: idCircuito,
         id_consejo: idConsejo,
       };
 
       await dispatch(
-        actualizarConsejo({
-          updateConsejo: updateConsejo,
+        actualizarVocero({
+          updateVocero: updateVocero,
           notify: notify,
           cerrarModal: cerrarModal,
         })
@@ -159,7 +160,7 @@ export default function ModalConsejos({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear este consejo comunal?"}
+        titulo={"¿Crear este Vocero?"}
       >
         <ModalDatosContenedor>
           {usuarioActivo.id_rol === 1 && (
@@ -171,35 +172,26 @@ export default function ModalConsejos({
             </>
           )}
           <ModalDatos
-            titulo={opcionComunaCircuito === "comuna" ? "Comuna" : "Circuito"}
+            titulo={
+              opcion === "comuna"
+                ? "Comuna"
+                : opcion === "circuito"
+                ? "Circuito comunal"
+                : "Consejo comunal"
+            }
             descripcion={
-              opcionComunaCircuito === "comuna" ? nombreComuna : nombreCircuito
+              opcion === "comuna"
+                ? nombreComuna
+                : opcion === "circuito"
+                ? nombreCircuito
+                : nombreConsejo
             }
           />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo="Descripción" descripcion={descripcion} />
-
-          {norte && <ModalDatos titulo="Norte" descripcion={norte} />}
-
-          {sur && <ModalDatos titulo="Sur" descripcion={sur} />}
-
-          {este && <ModalDatos titulo="Este" descripcion={este} />}
-
-          {oeste && <ModalDatos titulo="Oeste" descripcion={oeste} />}
-
-          {rif && <ModalDatos titulo="Rif" descripcion={rif} />}
-
-          {codigo && <ModalDatos titulo="Codigo" descripcion={codigo} />}
-
-          {sector && <ModalDatos titulo="Sector" descripcion={sector} />}
-
-          {direccion && (
-            <ModalDatos titulo="Dirección" descripcion={direccion} />
-          )}
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearConsejo}
+          aceptar={handleCrearVocero}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -211,7 +203,12 @@ export default function ModalConsejos({
           campos={{
             nombre,
             idParroquia,
-            id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
+            id:
+              opcion === "comuna"
+                ? idComuna
+                : opcion === "circuito"
+                ? idCircuito
+                : idConsejo,
           }}
         />
       </Modal>
@@ -221,7 +218,7 @@ export default function ModalConsejos({
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Actualizar este consejo comunal?"}
+        titulo={"¿Actualizar este vocero?"}
       >
         <ModalDatosContenedor>
           {usuarioActivo.id_rol === 1 && (
@@ -233,35 +230,26 @@ export default function ModalConsejos({
             </>
           )}
           <ModalDatos
-            titulo={opcionComunaCircuito === "comuna" ? "Comuna" : "Circuito"}
+            titulo={
+              opcion === "comuna"
+                ? "Comuna"
+                : opcion === "circuito"
+                ? "Circuito comunal"
+                : "Consejo comunal"
+            }
             descripcion={
-              opcionComunaCircuito === "comuna" ? nombreComuna : nombreCircuito
+              opcion === "comuna"
+                ? nombreComuna
+                : opcion === "circuito"
+                ? nombreCircuito
+                : nombreConsejo
             }
           />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo="Descripción" descripcion={descripcion} />
-
-          {norte && <ModalDatos titulo="Norte" descripcion={norte} />}
-
-          {sur && <ModalDatos titulo="Sur" descripcion={sur} />}
-
-          {este && <ModalDatos titulo="Este" descripcion={este} />}
-
-          {oeste && <ModalDatos titulo="Oeste" descripcion={oeste} />}
-
-          {rif && <ModalDatos titulo="Rif" descripcion={rif} />}
-
-          {codigo && <ModalDatos titulo="Codigo" descripcion={codigo} />}
-
-          {sector && <ModalDatos titulo="Sector" descripcion={sector} />}
-
-          {direccion && (
-            <ModalDatos titulo="Dirección" descripcion={direccion} />
-          )}
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleEditarConsejo}
+          aceptar={handleEditarVocero}
           cancelar={() => {
             dispatch(cerrarModal("confirmarCambios"));
             dispatch(abrirModal("editar"));
@@ -273,8 +261,13 @@ export default function ModalConsejos({
           campos={{
             nombre,
             idParroquia,
-            id: opcionComunaCircuito === "comuna" ? idComuna : idCircuito,
-            idConsejo,
+            id:
+              opcion === "comuna"
+                ? idComuna
+                : opcion === "circuito"
+                ? idCircuito
+                : idConsejo,
+            idVocero,
           }}
         />
       </Modal>
@@ -284,15 +277,19 @@ export default function ModalConsejos({
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar este consejo comunal?"}
+        titulo={"¿Actualizar este Vocero?"}
       >
         <ModalDatosContenedor>
-          <FormEditarConsejo
+          <FormEditarVocero
             acciones={acciones}
-            datosConsejo={datosConsejo}
+            datosVocero={datosVocero}
             validaciones={validaciones}
-            comunasCircuitos={
-              opcionComunaCircuito === "comuna" ? comunas : circuitos
+            comunasCircuitosConsejos={
+              opcion === "comuna"
+                ? comunas
+                : opcion === "circuito"
+                ? circuitos
+                : consejos
             }
           />
         </ModalDatosContenedor>
@@ -303,18 +300,22 @@ export default function ModalConsejos({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear consejo comunal?"}
+        titulo={"¿Crear vocero?"}
       >
         <ModalDatosContenedor>
-          <FormCrearConsejo
+          <FormCrearVocero
             acciones={acciones}
-            datosConsejo={datosConsejo}
+            datosVocero={datosVocero}
             validaciones={validaciones}
             estados={estados}
             municipios={municipios}
             parroquias={parroquias}
-            comunasCircuitos={
-              opcionComunaCircuito === "comuna" ? comunas : circuitos
+            comunasCircuitosConsejos={
+              opcion === "comuna"
+                ? comunas
+                : opcion === "circuito"
+                ? circuitos
+                : consejos
             }
           />
         </ModalDatosContenedor>

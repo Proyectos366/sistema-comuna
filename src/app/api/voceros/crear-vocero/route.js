@@ -2,7 +2,8 @@
  @fileoverview Controlador de API para crear un nuevo vocero en el sistema. Este endpoint recibe los
  datos del vocero, valida la información, registra el vocero en la base de datos y crea los cursos y
  asistencias correspondientes. También registra eventos de auditoría para cada acción. Utiliza Prisma
- como ORM y servicios personalizados para validación y trazabilidad. @module api/voceros/crearVocero
+ como ORM y servicios personalizados para validación y trazabilidad.
+ @module api/voceros/crearVocero
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -11,14 +12,13 @@ import validarCrearVocero from "@/services/voceros/validarCrearVocero"; // Servi
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP POST para crear un nuevo vocero.
- * Valida los datos recibidos, crea el vocero, cursos y asistencias, y retorna una respuesta estructurada.
- *
- * @async
- * @function POST
- * @param {Request} request - Solicitud HTTP con los datos del vocero a registrar.
- * @returns {Promise<Response>} Respuesta HTTP con el vocero creado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP POST para crear un nuevo vocero.
+ Valida los datos recibidos, crea el vocero, cursos y asistencias, y retorna una respuesta estructurada.
+ @async
+ @function POST
+ @param {Request} request - Solicitud HTTP con los datos del vocero a registrar.
+ @returns {Promise<Response>} Respuesta HTTP con el vocero creado o un mensaje de error.
+*/
 
 export async function POST(request) {
   try {
