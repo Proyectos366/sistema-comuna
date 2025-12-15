@@ -1,29 +1,27 @@
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
-import { edadRegex } from "@/utils/constantes";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+import Input from "@/components/inputs/Input";
+import LabelInput from "@/components/inputs/LabelInput";
+
+import { edadRegex } from "@/utils/regex/edadRegex";
+import { sinCeroInicioRegex } from "@/utils/regex/sinCeroInicioRegex";
+import { soloDosDigitosRegex } from "@/utils/regex/soloDosDigitosRegex";
 
 export default function InputEdad({
-  type,
-  indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
-  onChange,
   value,
   autoComplete,
   readOnly,
-  ref,
-  max,
   validarEdad,
   setValidarEdad,
   setValue,
+  name,
+  htmlFor,
+  nombre,
 }) {
   const validandoCampos = (campo) => {
-    if (indice === "edad") {
-      return edadRegex.test(campo);
-    }
+    return edadRegex.test(campo);
   };
 
   const leyendoInput = (e) => {
@@ -37,40 +35,38 @@ export default function InputEdad({
     }
 
     // No permitir que comience con cero
-    if (/^0/.test(valor)) return;
+    if (sinCeroInicioRegex.test(valor)) return;
 
     // Solo permitir hasta dos dígitos numéricos
-    if (!/^\d{1,2}$/.test(valor)) return;
+    if (!soloDosDigitosRegex.test(valor)) return;
 
     setValue(valor);
 
-    if (indice === "edad") {
-      const esValido = validandoCampos(valor);
-      setValidarEdad(esValido);
-    }
+    const esValido = validandoCampos(valor);
+    setValidarEdad(esValido);
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "edad"}
+      nombre={nombre ? nombre : "Edad"}
+    >
       <Input
-        type={type}
-        id={id}
+        type="text"
+        id={htmlFor ? htmlFor : "edad"}
         value={value}
-        name={name}
+        name={name ? name : "edad"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder}
+        placeholder={placeholder ? placeholder : "Entre 18 y 99 años"}
         autoComplete={autoComplete}
         readOnly={readOnly}
-        ref={ref}
-        max={max}
-        indice={indice}
       />
 
-      {indice === "edad" && value && !validarEdad && (
-        <DivMensajeInput mensaje={"Debe ser entre 18 y 99..."} />
+      {value && !validarEdad && (
+        <DivMensajeInput mensaje={"Debe ser entre 18 y 99 años..."} />
       )}
-    </div>
+    </LabelInput>
   );
 }

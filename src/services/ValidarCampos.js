@@ -1470,15 +1470,15 @@ export default class ValidarCampos {
       const validarDireccion = this.validarCampoTexto(
         direccion ? direccion : "sin direccion"
       );
-      const validarParroquia = this.validarCampoId(id_parroquia);
+      const validarParroquia = this.validarCampoId(id_parroquia, "parroquia");
       const validarComuna = id_comuna
-        ? this.validarCampoId(id_comuna)
+        ? this.validarCampoId(id_comuna, "comuna")
         : { id: null };
       const validarCircuito = id_circuito
-        ? this.validarCampoId(id_circuito)
+        ? this.validarCampoId(id_circuito, "circuito comunal")
         : { id: null };
       const validarConsejo = id_consejo
-        ? this.validarCampoId(id_consejo)
+        ? this.validarCampoId(id_consejo, "consejo comunal")
         : { id: null };
 
       // 2. Verificar si alguna validación falló

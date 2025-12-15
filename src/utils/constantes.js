@@ -19,12 +19,6 @@ export const rutaAlProyecto = path.resolve(process.cwd(), "src");
 export const phoneRegex = /^0[0-9]{10}$/;
 
 /**
- Expresión regular para validar cédulas venezolanas. Deben comenzar con un número distinto de cero
- y tener entre 7 y 8 dígitos. Ejemplo válido: 12345678
-*/
-export const cedulaRegex = /^[1-9][0-9]{6,7}$/;
-
-/**
  Expresión regular para validar contraseñas seguras. Requiere al menos una minúscula, una mayúscula,
  un número y un carácter especial. Longitud permitida: entre 8 y 16 caracteres.
 */
@@ -38,17 +32,6 @@ export const claveRegex =
 export const emailRegex =
   /^(([^<>()\[\]\\.,;:\s@\"]+(\.[^<>()\[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-/**
- Expresión regular para validar edad entre 18 y 99 años. Útil para formularios de registro o
- verificación de mayoría de edad.
-*/
-export const edadRegex = /^(1[89]|[2-9][0-9])$/;
-
-/**
- Expresión regular para validar números de módulo entre 1 y 9. Puede usarse para identificar secciones
- o niveles.
-*/
-export const moduloRegex = /^[1-9]$/;
 
 /**
  Expresión regular para validar textos que solo contengan letras (mayúsculas y minúsculas), espacios

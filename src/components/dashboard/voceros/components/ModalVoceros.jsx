@@ -17,10 +17,6 @@ import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVoce
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
-import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
-import { fetchCircuitosIdParroquia } from "@/store/features/circuitos/thunks/circuitosIdParroquia";
-import { fetchConsejosIdParroquia } from "@/store/features/consejos/thunks/consejosIdParroquia";
-
 export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
   const dispatch = useDispatch();
 
@@ -77,24 +73,6 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
       dispatch(fetchPaises());
     }
   }, [dispatch, usuarioActivo]);
-
-  useEffect(() => {
-    if (idComuna && opcion === "comuna") {
-      dispatch(fetchComunasIdParroquia(idComuna));
-    }
-  }, [dispatch, idComuna, opcion]);
-
-  useEffect(() => {
-    if (idCircuito && opcion === "circuito") {
-      dispatch(fetchCircuitosIdParroquia(idCircuito));
-    }
-  }, [dispatch, idCircuito, opcion]);
-
-  useEffect(() => {
-    if (idConsejo && opcion === "consejo") {
-      dispatch(fetchConsejosIdParroquia(idConsejo));
-    }
-  }, [dispatch, idConsejo, opcion]);
 
   const notify = (msj) => toast(msj);
 
@@ -310,13 +288,6 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
             estados={estados}
             municipios={municipios}
             parroquias={parroquias}
-            comunasCircuitosConsejos={
-              opcion === "comuna"
-                ? comunas
-                : opcion === "circuito"
-                ? circuitos
-                : consejos
-            }
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

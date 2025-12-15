@@ -22,6 +22,9 @@ import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionConsejo } from "@/utils/dashboard/cambiarSeleccionConsejo";
 import InputCedula from "../inputs/InputCedula";
+import InputEdad from "../inputs/InputEdad";
+import OpcionesCrearVocero from "../dashboard/voceros/components/OpcionesCrearVocero";
+import AgruparCamposForm from "../AgruparCamposForm";
 
 export default function FormCrearVocero({
   acciones,
@@ -30,9 +33,12 @@ export default function FormCrearVocero({
   estados,
   municipios,
   parroquias,
-  comunasCircuitosConsejos,
 }) {
   const dispatch = useDispatch();
+
+  const { comunas } = useSelector((state) => state.comunas);
+  const { circuitos } = useSelector((state) => state.circuitos);
+  const { consejos } = useSelector((state) => state.consejos);
 
   const { usuarioActivo } = useSelector((state) => state.auth);
   const { paises } = useSelector((state) => state.paises);
@@ -55,8 +61,16 @@ export default function FormCrearVocero({
     setNombreCircuito,
     setNombreConsejo,
 
-    setNombre,
     setCedula,
+    setNombre,
+    setNombreDos,
+    setApellido,
+    setApellidoDos,
+    setGenero,
+    setEdad,
+    setTelefono,
+    setCorreo,
+    setLaboral,
     setOpcion,
   } = acciones;
 
@@ -78,13 +92,39 @@ export default function FormCrearVocero({
     nombreCircuito,
     nombreConsejo,
 
-    nombre,
     cedula,
+    nombre,
+    nombreDos,
+    apellido,
+    apellidoDos,
+    genero,
+    edad,
+    telefono,
+    correo,
+    laboral,
     opcion,
   } = datosVocero;
 
-  const { validarNombre, setValidarNombre, validarCedula, setValidarCedula } =
-    validaciones;
+  const {
+    validarCedula,
+    setValidarCedula,
+    validarNombre,
+    setValidarNombre,
+    validarNombreDos,
+    setValidarNombreDos,
+    validarApellido,
+    setValidarApellido,
+    validarApellidoDos,
+    setValidarApellidoDos,
+    validarEdad,
+    setValidarEdad,
+    validarTelefono,
+    setValidarTelefono,
+    validarCorreo,
+    setValidarCorreo,
+    validarLaboral,
+    setValidarLaboral,
+  } = validaciones;
 
   const resetOpcion = () => {
     setIdParroquia("");
@@ -101,166 +141,11 @@ export default function FormCrearVocero({
       }}
     >
       <DivScroll>
-        {usuarioActivo.id_rol === 1 ? (
-          <>
-            <SelectOpcion
-              idOpcion={idPais}
-              nombre={"Paises"}
-              handleChange={(e) => {
-                cambiarSeleccionPais(e, setIdPais);
-
-                setIdEstado("");
-                setIdMunicipio("");
-                setIdParroquia("");
-                setIdComuna("");
-                setIdCircuito("");
-              }}
-              opciones={paises}
-              seleccione={"Seleccione"}
-              setNombre={setNombrePais}
-            />
-
-            {idPais && (
-              <SelectOpcion
-                idOpcion={idEstado}
-                nombre={"Estados"}
-                handleChange={(e) => {
-                  cambiarSeleccionEstado(e, setIdEstado);
-
-                  setIdMunicipio("");
-                  setIdParroquia("");
-                  setIdComuna("");
-                  setIdCircuito("");
-                }}
-                opciones={estados}
-                seleccione={"Seleccione"}
-                setNombre={setNombreEstado}
-              />
-            )}
-
-            {idEstado && (
-              <SelectOpcion
-                idOpcion={idMunicipio}
-                nombre={"Municipios"}
-                handleChange={(e) => {
-                  cambiarSeleccionMunicipio(e, setIdMunicipio);
-
-                  setIdParroquia("");
-                  setIdComuna("");
-                  setIdCircuito("");
-                }}
-                opciones={municipios}
-                seleccione={"Seleccione"}
-                setNombre={setNombreMunicipio}
-              />
-            )}
-
-            {idMunicipio && (
-              <SelectOpcion
-                idOpcion={opcion}
-                nombre={"Crear en"}
-                handleChange={(e) => {
-                  cambiarSeleccionComunaCircuitoConsejo(e, setOpcion);
-                  resetOpcion();
-                }}
-                opciones={[
-                  { id: "comuna", nombre: "comuna" },
-                  { id: "circuito", nombre: "circuito" },
-                  { id: "consejo", nombre: "consejo" },
-                ]}
-                seleccione={"Seleccione"}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            <SelectOpcion
-              idOpcion={opcion}
-              nombre={"Crear en"}
-              handleChange={(e) => {
-                cambiarSeleccionComunaCircuitoConsejo(e, setOpcion);
-              }}
-              opciones={[
-                { id: "comuna", nombre: "comuna" },
-                { id: "circuito", nombre: "circuito" },
-                { id: "consejo", nombre: "consejo" },
-              ]}
-              seleccione={"Seleccione"}
-            />
-
-            {opcion && (
-              <SelectOpcion
-                idOpcion={idParroquia}
-                nombre={"Parroquias"}
-                handleChange={(e) => {
-                  cambiarSeleccionParroquia(e, setIdParroquia);
-
-                  setIdComuna("");
-                  setIdCircuito("");
-                }}
-                opciones={parroquias}
-                seleccione={"Seleccione"}
-                setNombre={setNombreParroquia}
-              />
-            )}
-          </>
-        )}
-
-        {idMunicipio && opcion && (
-          <SelectOpcion
-            idOpcion={idParroquia}
-            nombre={"Parroquias"}
-            handleChange={(e) => {
-              cambiarSeleccionParroquia(e, setIdParroquia);
-
-              setIdComuna("");
-              setIdCircuito("");
-              setNombre("");
-              setCedula("");
-            }}
-            opciones={parroquias}
-            seleccione={"Seleccione"}
-            setNombre={setNombreParroquia}
-          />
-        )}
-
-        {idParroquia && (
-          <SelectOpcion
-            idOpcion={
-              opcion === "comuna"
-                ? idComuna
-                : opcion === "circuito"
-                ? idCircuito
-                : idConsejo
-            }
-            nombre={
-              opcion === "comuna"
-                ? "Comunas"
-                : opcion === "circuito"
-                ? "Circuitos comunales"
-                : "Consejos comunales"
-            }
-            handleChange={(e) => {
-              opcion === "comuna"
-                ? cambiarSeleccionComuna(e, setIdComuna)
-                : opcion === "circuito"
-                ? cambiarSeleccionCircuito(e, setIdCircuito)
-                : cambiarSeleccionConsejo(e, setIdConsejo);
-
-              setNombre("");
-              setCedula("");
-            }}
-            opciones={comunasCircuitosConsejos}
-            seleccione={"Seleccione"}
-            setNombre={
-              opcion === "comuna"
-                ? setNombreComuna
-                : opcion === "circuito"
-                ? setNombreCircuito
-                : setNombreConsejo
-            }
-          />
-        )}
+        <OpcionesCrearVocero
+          acciones={acciones}
+          datosVocero={datosVocero}
+          indice={0}
+        />
 
         {(opcion === "comuna"
           ? idComuna
@@ -268,6 +153,22 @@ export default function FormCrearVocero({
           ? idCircuito
           : idConsejo) && (
           <>
+            <AgruparCamposForm>
+              <InputCedula
+                value={cedula}
+                setValue={setCedula}
+                validarCedula={validarCedula}
+                setValidarCedula={setValidarCedula}
+              />
+
+              <InputEdad
+                value={edad}
+                setValue={setEdad}
+                validarEdad={validarEdad}
+                setValidarEdad={setValidarEdad}
+              />
+            </AgruparCamposForm>
+
             <LabelInput nombre={"Nombre"}>
               <InputNombre
                 type="text"
@@ -276,17 +177,6 @@ export default function FormCrearVocero({
                 setValue={setNombre}
                 validarNombre={validarNombre}
                 setValidarNombre={setValidarNombre}
-              />
-            </LabelInput>
-
-            <LabelInput nombre={"Cédula"}>
-              <InputCedula
-                type={"text"}
-                indice={"cedula"}
-                value={cedula}
-                setValue={setCedula}
-                validarCedula={validarCedula}
-                setValidarCedula={setValidarCedula}
               />
             </LabelInput>
 

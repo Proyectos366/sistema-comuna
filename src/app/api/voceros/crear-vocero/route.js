@@ -258,7 +258,7 @@ export async function POST(request) {
       "ok",
       "Vocero creado...",
       {
-        vocero: nuevoVoceroCreado,
+        voceros: nuevoVoceroCreado,
       },
       201
     );

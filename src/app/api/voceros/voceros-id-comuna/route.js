@@ -113,7 +113,7 @@ export async function GET(request) {
         "error",
         "No hay voceros en esta comuna...",
         { voceros: [] },
-        400
+        404
       );
     }
 
