@@ -21,6 +21,7 @@ export default function InputCedula({
   setValidarCedula,
   setValue,
   name,
+  indice,
   htmlFor,
   nombre,
 }) {
@@ -51,10 +52,9 @@ export default function InputCedula({
 
     // Validación previa
     if (
-      indice === "cedula" &&
-      (cedulaSinFormato.startsWith("0") ||
-        caracteresInvalidosRegex.test(cedulaSinFormato) ||
-        cedulaSinFormato.length > 8)
+      cedulaSinFormato.startsWith("0") ||
+      caracteresInvalidosRegex.test(cedulaSinFormato) ||
+      cedulaSinFormato.length > 8
     ) {
       return;
     }
@@ -62,10 +62,8 @@ export default function InputCedula({
     const cedulaFormateada = formatearCedula(cedulaSinFormato);
     setValue?.(cedulaFormateada);
 
-    if (indice === "cedula") {
-      const esValida = cedulaRegex.test(cedulaSinFormato);
-      setValidarCedula?.(esValida);
-    }
+    const esValida = cedulaRegex.test(cedulaSinFormato);
+    setValidarCedula?.(esValida);
 
     onChange?.(e);
   };
@@ -83,7 +81,7 @@ export default function InputCedula({
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder ? placeholder : "inserte cédula"}
+        placeholder={placeholder ? placeholder : "V-0.000.000"}
         autoComplete={autoComplete}
         readOnly={readOnly}
         indice={"cedula"}

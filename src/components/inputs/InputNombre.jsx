@@ -1,29 +1,26 @@
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+import LabelInput from "@/components/inputs/LabelInput";
+import Input from "@/components/inputs/Input";
+
 import { textRegex } from "@/utils/regex/textRegex";
 
 export default function InputNombre({
-  type,
   indice,
   name,
   disabled,
   className,
   placeholder,
-  id,
-  onChange,
   value,
   setValue,
   autoComplete,
   readOnly,
-  ref,
-  max,
   validarNombre,
   setValidarNombre,
+  htmlFor,
+  nombre,
 }) {
   const validandoCampos = (campo) => {
-    if (indice === "nombre") {
-      return textRegex.test(campo);
-    }
+    return textRegex.test(campo);
   };
 
   const leyendoInput = (e) => {
@@ -31,37 +28,35 @@ export default function InputNombre({
 
     setValue?.(valor);
 
-    if (indice === "nombre") {
-      const esValido = validandoCampos(valor);
-      if (esValido) {
-        setValidarNombre(true);
-      } else {
-        setValidarNombre(false);
-      }
+    const esValido = validandoCampos(valor);
+
+    if (esValido) {
+      setValidarNombre(true);
+    } else {
+      setValidarNombre(false);
     }
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "nombre"}
+      nombre={nombre ? nombre : "Nombre"}
+    >
       <Input
-        type={type}
-        id={id}
+        type={"text"}
+        id={htmlFor ? htmlFor : "nombre"}
         value={value}
         name={name}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder}
+        placeholder={placeholder ? placeholder : "Daniela"}
         autoComplete={autoComplete}
         readOnly={readOnly}
-        ref={ref}
-        max={max}
         indice={indice}
       />
 
-      {indice === "nombre" && value && !validarNombre && (
-        <DivMensajeInput mensaje={"Solo letras"} />
-      )}
-    </div>
+      {value && !validarNombre && <DivMensajeInput mensaje={"Solo letras"} />}
+    </LabelInput>
   );
 }

@@ -23,6 +23,9 @@ import { limpiarCampos } from "@/utils/limpiarForm";
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
+import { fetchFormaciones } from "@/store/features/formaciones/thunks/todasFormaciones";
+import { fetchFormacionesInstitucion } from "@/store/features/formaciones/thunks/formacionesInstitucion";
+import { fetchCargos } from "@/store/features/cargos/thunks/todosCargos";
 
 export default function VocerosView() {
   const dispatch = useDispatch();
@@ -33,9 +36,13 @@ export default function VocerosView() {
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
       dispatch(fetchPaises());
+      dispatch(fetchFormaciones());
     } else {
       dispatch(fetchParroquias());
+      dispatch(fetchFormacionesInstitucion());
     }
+
+    dispatch(fetchCargos());
   }, [dispatch, usuarioActivo]);
 
   const [nombrePais, setNombrePais] = useState("");
@@ -45,6 +52,8 @@ export default function VocerosView() {
   const [nombreComuna, setNombreComuna] = useState("");
   const [nombreCircuito, setNombreCircuito] = useState("");
   const [nombreConsejo, setNombreConsejo] = useState("");
+  const [nombreCargo, setNombreCargo] = useState("");
+  const [nombreFormacion, setNombreFormacion] = useState("");
 
   const [cedulaVocero, setCedulaVocero] = useState("");
   const [nombreVocero, setNombreVocero] = useState("");
@@ -64,6 +73,8 @@ export default function VocerosView() {
   const [idComuna, setIdComuna] = useState("");
   const [idCircuito, setIdCircuito] = useState("");
   const [idConsejo, setIdConsejo] = useState("");
+  const [idCargo, setIdCargo] = useState("");
+  const [idFormacion, setIdFormacion] = useState("");
   const [idVocero, setIdVocero] = useState("");
 
   const [expanded, setExpanded] = useState("");
@@ -115,6 +126,8 @@ export default function VocerosView() {
     setIdComuna: setIdComuna,
     setIdCircuito: setIdCircuito,
     setIdConsejo: setIdConsejo,
+    setIdCargo: setIdCargo,
+    setIdFormacion: setIdFormacion,
     setIdVocero: setIdVocero,
 
     setNombrePais: setNombrePais,
@@ -124,6 +137,8 @@ export default function VocerosView() {
     setNombreComuna: setNombreComuna,
     setNombreCircuito: setNombreCircuito,
     setNombreConsejo: setNombreConsejo,
+    setNombreCargo: setNombreCargo,
+    setNombreFormacion: setNombreFormacion,
 
     setCedula: setCedulaVocero,
     setNombre: setNombreVocero,
@@ -146,6 +161,8 @@ export default function VocerosView() {
     idComuna: idComuna,
     idCircuito: idCircuito,
     idConsejo: idConsejo,
+    idCargo: idCargo,
+    idFormacion: idFormacion,
     idVocero: idVocero,
 
     nombrePais: nombrePais,
@@ -155,6 +172,8 @@ export default function VocerosView() {
     nombreComuna: nombreComuna,
     nombreCircuito: nombreCircuito,
     nombreConsejo: nombreConsejo,
+    nombreCargo: nombreCargo,
+    nombreFormacion: nombreFormacion,
 
     cedula: cedulaVocero,
     nombre: nombreVocero,
@@ -259,7 +278,11 @@ export default function VocerosView() {
             />
           )}
 
-          <OpcionesCrearVocero acciones={acciones} datosVocero={datosVocero} indice={1}/>
+          <OpcionesCrearVocero
+            acciones={acciones}
+            datosVocero={datosVocero}
+            indice={1}
+          />
 
           {(opcion === "comuna"
             ? idComuna

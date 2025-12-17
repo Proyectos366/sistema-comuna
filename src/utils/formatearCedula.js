@@ -4,7 +4,7 @@
  estandarizada en interfaces de usuario. @module utils/formatearCedula
 */
 
-import { soloNumerosRegex } from "./constantes"; // Expresión regular para eliminar caracteres no numéricos
+import { soloNumerosRegex } from "@/utils/regex/soloNumerosRegex"; // Expresión regular para eliminar caracteres no numéricos
 
 /**
  Formatea una cédula venezolana en formato legible. Ejemplo: "20202202" → "V-20.202.202"

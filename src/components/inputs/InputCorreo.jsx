@@ -1,61 +1,58 @@
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
-import { emailRegex } from "@/utils/constantes";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+import LabelInput from "@/components/inputs/LabelInput";
+import Input from "@/components/inputs/Input";
+
+import { emailRegex } from "@/utils/regex/correoRegex";
 
 export default function InputCorreo({
-  type,
   indice,
   name,
   disabled,
   className,
   placeholder,
-  id,
   value,
-  setValue, // <- nuevo
+  setValue,
   autoComplete,
   readOnly,
-  ref,
-  max,
   validarCorreo,
   setValidarCorreo,
+  htmlFor,
+  nombre,
 }) {
   const validandoCampos = (campo) => {
-    if (indice === "email") {
-      return emailRegex.test(campo);
-    }
+    return emailRegex.test(campo);
   };
 
   const leyendoInput = (e) => {
     const valor = e.target.value;
 
-    setValue?.(valor); // <- actualiza el estado desde fuera, si setValue existe
+    setValue?.(valor);
 
-    if (indice === "email") {
-      const esValido = validandoCampos(valor);
-      setValidarCorreo?.(esValido);
-    }
+    const esValido = validandoCampos(valor);
+    setValidarCorreo?.(esValido);
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "correo"}
+      nombre={nombre ? nombre : "correo"}
+    >
       <Input
-        type={type}
-        id={id}
+        type={"email"}
+        id={htmlFor ? htmlFor : "correo"}
         value={value}
         name={name}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder}
+        placeholder={placeholder ? placeholder : "ejemplo@ejemplo.com"}
         autoComplete={autoComplete}
         readOnly={readOnly}
-        ref={ref}
-        max={max}
         indice={indice}
       />
-      {indice === "email" && value && !validarCorreo && (
-        <DivMensajeInput mensaje={"Formato invalido"} />
+      {value && !validarCorreo && (
+        <DivMensajeInput mensaje={"Formato de correo invalido"} />
       )}
-    </div>
+    </LabelInput>
   );
 }

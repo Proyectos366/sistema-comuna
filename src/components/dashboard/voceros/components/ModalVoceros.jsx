@@ -45,6 +45,7 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     idComuna,
     idCircuito,
     idConsejo,
+    idCargo,
     idVocero,
 
     nombrePais,
@@ -68,11 +69,11 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     opcion,
   } = datosVocero;
 
-  useEffect(() => {
-    if (usuarioActivo.id_rol === 1) {
-      dispatch(fetchPaises());
-    }
-  }, [dispatch, usuarioActivo]);
+  // useEffect(() => {
+  //   if (usuarioActivo.id_rol === 1) {
+  //     dispatch(fetchPaises());
+  //   }
+  // }, [dispatch, usuarioActivo]);
 
   const notify = (msj) => toast(msj);
 
@@ -84,7 +85,7 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
         nombreDos: nombreDos,
         apellido: apellido,
         apellidoDos: apellidoDos,
-        genero: genero,
+        genero: genero === true ? true : false,
         edad: edad,
         telefono: telefono,
         correo: correo,
@@ -93,6 +94,7 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
         id_comuna: idComuna,
         id_circuito: idCircuito,
         id_consejo: idConsejo,
+        id_cargo: idCargo,
       };
 
       await dispatch(
@@ -165,7 +167,11 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
                 : nombreConsejo
             }
           />
+          <ModalDatos titulo="Cedúla" descripcion={cedula} />
+          <ModalDatos titulo="Edad" descripcion={edad} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Apellido" descripcion={apellido} />
+          <ModalDatos titulo="Segundo apellido" descripcion={apellidoDos} />
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -285,9 +291,6 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
             acciones={acciones}
             datosVocero={datosVocero}
             validaciones={validaciones}
-            estados={estados}
-            municipios={municipios}
-            parroquias={parroquias}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>

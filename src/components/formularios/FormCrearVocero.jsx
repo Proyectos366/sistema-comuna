@@ -4,44 +4,34 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import LabelInput from "@/components/inputs/LabelInput";
+import OpcionesCrearVocero from "@/components/dashboard/voceros/components/OpcionesCrearVocero";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import InputCedula from "@/components/inputs/InputCedula";
+import InputEdad from "@/components/inputs/InputEdad";
 import InputNombre from "@/components/inputs/InputNombre";
+import InputTelefono from "@/components/inputs/InputTelefono";
+import InputCorreo from "@/components/inputs/InputCorreo";
 import SelectOpcion from "@/components/SelectOpcion";
+
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
-import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
-import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
-import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
-import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
-import { cambiarSeleccionComunaCircuitoConsejo } from "@/utils/dashboard/cambiarSeleccionComunaCircuitoConsejo";
-import { limpiarCampos } from "@/utils/limpiarForm";
-
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
-import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
-import { cambiarSeleccionConsejo } from "@/utils/dashboard/cambiarSeleccionConsejo";
-import InputCedula from "../inputs/InputCedula";
-import InputEdad from "../inputs/InputEdad";
-import OpcionesCrearVocero from "../dashboard/voceros/components/OpcionesCrearVocero";
-import AgruparCamposForm from "../AgruparCamposForm";
+
+import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionGenero } from "@/utils/dashboard/cambiarSeleccionGenero";
+import { cambiarSeleccionCargo } from "@/utils/dashboard/cambiarSeleccionCargo";
+import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
 
 export default function FormCrearVocero({
   acciones,
   datosVocero,
   validaciones,
-  estados,
-  municipios,
-  parroquias,
 }) {
   const dispatch = useDispatch();
 
-  const { comunas } = useSelector((state) => state.comunas);
-  const { circuitos } = useSelector((state) => state.circuitos);
-  const { consejos } = useSelector((state) => state.consejos);
-
-  const { usuarioActivo } = useSelector((state) => state.auth);
-  const { paises } = useSelector((state) => state.paises);
+  const { cargos } = useSelector((state) => state.cargos);
+  const { formaciones } = useSelector((state) => state.formaciones);
 
   const {
     setIdPais,
@@ -51,6 +41,8 @@ export default function FormCrearVocero({
     setIdComuna,
     setIdCircuito,
     setIdConsejo,
+    setIdCargo,
+    setIdFormacion,
     setIdVocero,
 
     setNombrePais,
@@ -60,6 +52,8 @@ export default function FormCrearVocero({
     setNombreComuna,
     setNombreCircuito,
     setNombreConsejo,
+    setNombreCargo,
+    setNombreFormacion,
 
     setCedula,
     setNombre,
@@ -82,6 +76,8 @@ export default function FormCrearVocero({
     idComuna,
     idCircuito,
     idConsejo,
+    idCargo,
+    idFormacion,
     idVocero,
 
     nombrePais,
@@ -91,6 +87,8 @@ export default function FormCrearVocero({
     nombreComuna,
     nombreCircuito,
     nombreConsejo,
+    nombreCargo,
+    nombreFormacion,
 
     cedula,
     nombre,
@@ -169,16 +167,114 @@ export default function FormCrearVocero({
               />
             </AgruparCamposForm>
 
-            <LabelInput nombre={"Nombre"}>
+            <AgruparCamposForm>
               <InputNombre
-                type="text"
                 indice="nombre"
+                nombre={"Nombre"}
                 value={nombre}
                 setValue={setNombre}
                 validarNombre={validarNombre}
                 setValidarNombre={setValidarNombre}
+                placeholder={"Daniela"}
               />
-            </LabelInput>
+
+              <InputNombre
+                indice="nombre"
+                nombre={"Segundo nombre"}
+                value={nombreDos}
+                setValue={setNombreDos}
+                validarNombre={validarNombreDos}
+                setValidarNombre={setValidarNombreDos}
+                placeholder={"Estefania"}
+              />
+            </AgruparCamposForm>
+
+            <AgruparCamposForm>
+              <InputNombre
+                indice="nombre"
+                nombre={"Apellido"}
+                value={apellido}
+                setValue={setApellido}
+                validarNombre={validarApellido}
+                setValidarNombre={setValidarApellido}
+                placeholder={"Morgado"}
+              />
+
+              <InputNombre
+                indice="nombre"
+                nombre={"Segundo apellido"}
+                value={apellidoDos}
+                setValue={setApellidoDos}
+                validarNombre={validarApellidoDos}
+                setValidarNombre={setValidarApellidoDos}
+                placeholder={"Peraza"}
+              />
+            </AgruparCamposForm>
+
+            <AgruparCamposForm>
+              <SelectOpcion
+                idOpcion={genero}
+                nombre={"Genero"}
+                handleChange={(e) => {
+                  cambiarSeleccionGenero(e, setGenero);
+                }}
+                opciones={[
+                  { id: "true", nombre: "Masculino" },
+                  { id: "false", nombre: "Femenino" },
+                ]}
+                seleccione={"Seleccione"}
+              />
+
+              <InputTelefono
+                value={telefono}
+                setValue={setTelefono}
+                validarTelefono={validarTelefono}
+                setValidarTelefono={setValidarTelefono}
+              />
+            </AgruparCamposForm>
+
+            <AgruparCamposForm>
+              <InputCorreo
+                value={correo}
+                setValue={setCorreo}
+                validarNombre={validarCorreo}
+                setValidarNombre={setValidarCorreo}
+              />
+
+              <InputNombre
+                indice="nombre"
+                nombre={"Actividad laboral"}
+                value={laboral}
+                setValue={setLaboral}
+                validarNombre={validarLaboral}
+                setValidarNombre={setValidarLaboral}
+                placeholder={"Ejemplo: contraloria social"}
+              />
+            </AgruparCamposForm>
+
+            <AgruparCamposForm>
+              <SelectOpcion
+                idOpcion={idCargo}
+                nombre={"Cargos"}
+                handleChange={(e) => {
+                  cambiarSeleccionCargo(e, setIdCargo);
+                }}
+                opciones={cargos}
+                seleccione={"Seleccione"}
+                setNombre={setNombreCargo}
+              />
+
+              <SelectOpcion
+                idOpcion={idFormacion}
+                nombre={"Formaciones"}
+                handleChange={(e) => {
+                  cambiarSeleccionFormacion(e, setIdFormacion);
+                }}
+                opciones={formaciones}
+                seleccione={"Seleccione"}
+                setNombre={setNombreFormacion}
+              />
+            </AgruparCamposForm>
 
             <div className="flex space-x-3">
               <BotonAceptarCancelar

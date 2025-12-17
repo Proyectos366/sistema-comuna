@@ -7,15 +7,14 @@
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para estructurar respuestas internas
 import { quitarCaracteres } from "@/utils/quitarCaracteres"; // Función para limpiar caracteres no deseados
-import {
-  phoneRegex,
-  emailRegex,
-  claveRegex,
-  cedulaRegex,
-  textRegex,
-  rifRegex,
-  fechaFormatoIsoRegex,
-} from "@/utils/constantes"; // Expresiones regulares para validaciones específicas
+
+import { cedulaRegex } from "@/utils/regex/cedulaRegex";
+import { phoneRegex } from "@/utils/regex/telefonoRegex";
+import { emailRegex } from "@/utils/regex/correoRegex";
+import { claveRegex } from "@/utils/regex/claveRegex";
+import { rifRegex } from "@/utils/regex/rifRegex";
+import { textRegex } from "@/utils/regex/textRegex";
+import { fechaFormatoIsoRegex } from "@/utils/regex/fechaFormatoIsoRegex";
 
 /**
  Clase que agrupa métodos estáticos para validar campos individuales. Cada método retorna una

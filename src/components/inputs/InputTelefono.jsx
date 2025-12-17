@@ -1,29 +1,28 @@
-import Input from "./Input";
-import DivMensajeInput from "../mensaje/DivMensaje";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+import LabelInput from "@/components/inputs/LabelInput";
+import Input from "@/components/inputs/Input";
+
+import { soloNumerosRegex } from "@/utils/regex/soloNumerosRegex";
+import { validarSoloNumerosRegex } from "@/utils/regex/validarSoloNumerosRegex";
 import {
-  soloNumerosRegex,
-  validarSoloNumerosRegex,
-  phoneVenezuelaRegex,
   digitoDosPhoneVenezuelaRegex,
-} from "@/utils/constantes";
+  phoneVenezuelaRegex,
+} from "@/utils/regex/telefonoRegex";
 
 export default function InputTelefono({
-  type,
   indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
   onChange,
   value,
   autoComplete,
   readOnly,
-  ref,
-  max,
   validarTelefono,
   setValidarTelefono,
   setValue,
+  htmlFor,
+  nombre,
 }) {
   // Prefijos válidos: móviles y fijos
   const prefijosValidos = ["0412", "0414", "0416", "0424", "0426"];
@@ -78,35 +77,34 @@ export default function InputTelefono({
     const formateado = formatoTelefono(soloNumeros);
     setValue(formateado);
 
-    if (indice === "telefono") {
-      const esValido = validandoCampos(formateado);
-      setValidarTelefono(esValido);
-    }
+    const esValido = validandoCampos(formateado);
+    setValidarTelefono(esValido);
 
     onChange?.(e);
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "telefono"}
+      nombre={nombre ? nombre : "Teléfono"}
+    >
       <Input
-        type={type}
-        id={id}
+        type={"text"}
+        id={htmlFor ? htmlFor : "telfono"}
         value={value}
-        name={name}
+        name={htmlFor ? htmlFor : "telefono"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
-        placeholder={placeholder}
+        placeholder={placeholder ? placeholder : "0000-000.00.00"}
         autoComplete={autoComplete}
         readOnly={readOnly}
-        ref={ref}
-        max={max}
         indice={indice}
       />
 
-      {indice === "telefono" && value && !validarTelefono && (
+      {value && !validarTelefono && (
         <DivMensajeInput mensaje="Debe tener 11 dígitos válidos (ej: 0414-123.45.67)" />
       )}
-    </div>
+    </LabelInput>
   );
 }

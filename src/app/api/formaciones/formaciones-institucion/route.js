@@ -53,6 +53,7 @@ export async function GET() {
         400
       );
     }
+    
     // 5. Condición de éxito: se encontraron formaciones
     return generarRespuesta(
       "ok",

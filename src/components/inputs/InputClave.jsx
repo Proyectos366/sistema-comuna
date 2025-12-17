@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Input from "./Input";
 import ModalPequena from "../modales/ModalPeque";
-import { claveRegex } from "@/utils/constantes";
+import { claveRegex } from "@/utils/regex/claveRegex";
 
 export default function InputClave({
   name,

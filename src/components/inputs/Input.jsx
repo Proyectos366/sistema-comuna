@@ -17,7 +17,7 @@ export default function Input({
 }) {
   const clasePorDefecto = `${
     indice === "clave" || indice === "clave2" ? "" : "uppercase"
-  } block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-[#082158] focus:border-0 hover:border hover:border-[#082158] focus:outline-none transition-all`;
+  } block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-[#082158] focus:border-0 hover:border hover:border-[#082158] focus:outline-none placeholder:text-xs transition-all`;
   const nuevaClase = className
     ? `${clasePorDefecto} ${className}`
     : clasePorDefecto;
