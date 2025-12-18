@@ -514,7 +514,18 @@ export default class ValidarCampos {
       }
 
       // 5. Verifica si el valor es 1 o 2
-      if (!(genero === 1 || genero === 2 || genero === "1" || genero === "2")) {
+      if (
+        !(
+          genero === 1 ||
+          genero === 2 ||
+          genero === "1" ||
+          genero === "2" ||
+          genero === "true" ||
+          genero === "false" ||
+          genero === true ||
+          genero === false
+        )
+      ) {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo debe ser hombre o mujer..."

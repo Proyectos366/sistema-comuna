@@ -24,15 +24,15 @@ export async function POST(request) {
   try {
     // 1. Extrae los datos del cuerpo de la solicitud
     const {
+      cedula,
       nombre,
       nombre_dos,
       apellido,
       apellido_dos,
-      cedula,
-      correo,
       genero,
       edad,
       telefono,
+      correo,
       direccion,
       laboral,
       cargos,
@@ -42,25 +42,6 @@ export async function POST(request) {
       id_consejo,
       id_circuito,
     } = await request.json();
-
-    console.log(nombre,
-      nombre_dos,
-      apellido,
-      apellido_dos,
-      cedula,
-      correo,
-      genero,
-      edad,
-      telefono,
-      direccion,
-      laboral,
-      cargos,
-      formaciones,
-      id_parroquia,
-      id_comuna,
-      id_consejo,
-      id_circuito,);
-    
 
     // 2. Valida los datos recibidos
     const validaciones = await validarCrearVocero(
@@ -213,6 +194,7 @@ export async function POST(request) {
         edad: true,
         genero: true,
         laboral: true,
+        createdAt: true,
         comunas: { select: { nombre: true, id: true, id_parroquia: true } },
         circuitos: { select: { nombre: true, id: true } },
         parroquias: { select: { nombre: true } },

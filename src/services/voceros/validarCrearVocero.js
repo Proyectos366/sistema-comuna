@@ -6,10 +6,10 @@
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import AuthTokens from "@/libs/AuthTokens"; // Utilidad para generar tokens únicos
-import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
+import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar campos individuales
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo mediante token
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas"; // Función para calcular fecha de nacimiento a partir de la edad
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo mediante token
 
 /**
  Valida los datos del usuario activo, los campos del vocero y la unicidad del registro

@@ -10,6 +10,7 @@ import { fetchConsejosIdParroquia } from "@/store/features/consejos/thunks/conse
 import { fetchVocerosIdComuna } from "@/store/features/voceros/thunks/vocerosIdComuna";
 import { fetchVocerosIdCircuito } from "@/store/features/voceros/thunks/vocerosIdCircuito";
 import { fetchVocerosIdConsejo } from "@/store/features/voceros/thunks/vocerosIdConsejo";
+import { fetchVocerosIdParroquia } from "@/store/features/voceros/thunks/vocerosIdParroquia";
 
 export const useEffectVocerosViews = ({
   idPais,
@@ -48,6 +49,8 @@ export const useEffectVocerosViews = ({
       if (opcion === "circuito")
         dispatch(fetchCircuitosIdParroquia(idParroquia));
       if (opcion === "consejo") dispatch(fetchConsejosIdParroquia(idParroquia));
+
+      if (opcion === "parroquia") dispatch(fetchVocerosIdParroquia(idParroquia));
     }
   }, [dispatch, idParroquia, opcion]);
 

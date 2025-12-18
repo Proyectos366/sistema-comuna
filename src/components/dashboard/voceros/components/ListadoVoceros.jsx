@@ -10,6 +10,7 @@ import BloqueInfo from "@/components/BloqueInfo";
 import { formatearFecha } from "@/utils/Fechas";
 
 import { eliminarRestaurarVocero } from "@/store/features/voceros/thunks/eliminarRestaurarVocero";
+import { formatearCedula } from "@/utils/formatearCedula";
 
 export default function ListadoVoceros({ vocero, editarVocero }) {
   const dispatch = useDispatch();
@@ -17,7 +18,11 @@ export default function ListadoVoceros({ vocero, editarVocero }) {
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
-        <BloqueInfo indice={1} nombre={"Cédula"} valor={vocero.cedula} />
+        <BloqueInfo
+          indice={1}
+          nombre={"Cédula"}
+          valor={formatearCedula(vocero.cedula)}
+        />
 
         <Button
           title="Editar"
@@ -37,18 +42,53 @@ export default function ListadoVoceros({ vocero, editarVocero }) {
           </Div>
         </Button>
       </Div>
-
+      <BloqueInfo indice={1} nombre={"Edad"} valor={vocero.edad} />
       <BloqueInfo
         indice={1}
         nombre={"Genero"}
         valor={vocero.genero ? "Masculino" : "Femenino"}
       />
+      <BloqueInfo indice={1} nombre={"Teléfono"} valor={vocero.telefono} />
 
       <BloqueInfo indice={1} nombre={"Correo"} valor={vocero.correo} />
 
-      <BloqueInfo indice={1} nombre={"Edad"} valor={vocero.edad} />
+      <BloqueInfo
+        indice={1}
+        nombre={"Actividad laboral"}
+        valor={vocero.laboral}
+      />
 
-      <BloqueInfo indice={1} nombre={"Teléfono"} valor={vocero.telefono} />
+      {vocero.comunas?.nombre && (
+        <BloqueInfo indice={1} nombre="Comuna" valor={vocero.comunas.nombre} />
+      )}
+
+      {!vocero.comunas?.nombre && vocero.circuitos?.nombre && (
+        <BloqueInfo
+          indice={1}
+          nombre="Circuito comunal"
+          valor={vocero.circuitos.nombre}
+        />
+      )}
+
+      <BloqueInfo
+        indice={1}
+        nombre={"Consejo comunal"}
+        valor={
+          vocero.consejos?.nombre ? vocero.consejos?.nombre : "Sin asignar"
+        }
+      />
+
+      <BloqueInfo
+        indice={1}
+        nombre={"Cargo"}
+        valor={vocero.cargos?.[0]?.nombre}
+      />
+
+      <BloqueInfo
+        indice={1}
+        nombre={"Formación"}
+        valor={vocero.cursos?.[0]?.formaciones?.nombre}
+      />
 
       <Div className="flex items-center justify-between">
         <BloqueInfo

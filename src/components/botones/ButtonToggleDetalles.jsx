@@ -16,7 +16,7 @@ export default function ButtonToggleDetalles({ expanded, setExpanded, dato }) {
                       : "border-[#082158] hover:bg-[#082158] hover:text-[white]"
                   } cursor-pointer transition-colors duration-200`}
     >
-      👤 {dato.nombre}
+      👤 {dato.nombre} {dato.nombre_dos} {dato.apellido} {dato.apellido_dos}
     </Button>
   );
 }

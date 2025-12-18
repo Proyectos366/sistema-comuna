@@ -124,14 +124,6 @@ export default function FormCrearVocero({
     setValidarLaboral,
   } = validaciones;
 
-  const resetOpcion = () => {
-    setIdParroquia("");
-    setIdComuna("");
-    setIdCircuito("");
-    setIdConsejo("");
-    setNombre("");
-  };
-
   return (
     <Formulario
       onSubmit={(e) => {
@@ -219,8 +211,8 @@ export default function FormCrearVocero({
                   cambiarSeleccionGenero(e, setGenero);
                 }}
                 opciones={[
-                  { id: "true", nombre: "Masculino" },
-                  { id: "false", nombre: "Femenino" },
+                  { id: "1", nombre: "Masculino" },
+                  { id: "2", nombre: "Femenino" },
                 ]}
                 seleccione={"Seleccione"}
               />
@@ -237,8 +229,8 @@ export default function FormCrearVocero({
               <InputCorreo
                 value={correo}
                 setValue={setCorreo}
-                validarNombre={validarCorreo}
-                setValidarNombre={setValidarCorreo}
+                validarCorreo={validarCorreo}
+                setValidarCorreo={setValidarCorreo}
               />
 
               <InputNombre
@@ -276,7 +268,7 @@ export default function FormCrearVocero({
               />
             </AgruparCamposForm>
 
-            <div className="flex space-x-3">
+            <AgruparCamposForm>
               <BotonAceptarCancelar
                 indice={"aceptar"}
                 aceptar={() => {
@@ -309,7 +301,7 @@ export default function FormCrearVocero({
                       : idConsejo,
                 }}
               />
-            </div>
+            </AgruparCamposForm>
           </>
         )}
       </DivScroll>

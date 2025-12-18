@@ -26,6 +26,7 @@ import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroqu
 import { fetchFormaciones } from "@/store/features/formaciones/thunks/todasFormaciones";
 import { fetchFormacionesInstitucion } from "@/store/features/formaciones/thunks/formacionesInstitucion";
 import { fetchCargos } from "@/store/features/cargos/thunks/todosCargos";
+import OpcionesVocero from "./components/OpcionesVocero";
 
 export default function VocerosView() {
   const dispatch = useDispatch();
@@ -73,8 +74,8 @@ export default function VocerosView() {
   const [idComuna, setIdComuna] = useState("");
   const [idCircuito, setIdCircuito] = useState("");
   const [idConsejo, setIdConsejo] = useState("");
-  const [idCargo, setIdCargo] = useState("");
-  const [idFormacion, setIdFormacion] = useState("");
+  const [idCargo, setIdCargo] = useState([]);
+  const [idFormacion, setIdFormacion] = useState([]);
   const [idVocero, setIdVocero] = useState("");
 
   const [expanded, setExpanded] = useState("");
@@ -89,6 +90,8 @@ export default function VocerosView() {
   const [validarTelefono, setValidarTelefono] = useState(false);
   const [validarCorreo, setValidarCorreo] = useState(false);
   const [validarLaboral, setValidarLaboral] = useState(false);
+
+  const [seleccionado, setSeleccionado] = useState(null);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -247,11 +250,11 @@ export default function VocerosView() {
         datosVocero={datosVocero}
         validaciones={validaciones}
       />
+
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión voceros"}
           funcion={() => {
-            dispatch(abrirModal("crear"));
             limpiarCampos({
               setCedulaVocero,
               setNombreVocero,
@@ -263,9 +266,17 @@ export default function VocerosView() {
               setTelefonoVocero,
               setCorreoVocero,
               setLaboralVocero,
+              setOpcion,
+              setIdParroquia,
             });
           }}
         >
+          <OpcionesVocero
+            seleccionado={seleccionado}
+            setSeleccionado={setSeleccionado}
+            setOpcion={setOpcion}
+          />
+
           {voceros.length !== 0 && (
             <BuscadorOrdenador
               busqueda={busqueda}
@@ -281,6 +292,8 @@ export default function VocerosView() {
           <OpcionesCrearVocero
             acciones={acciones}
             datosVocero={datosVocero}
+            validaciones={validaciones}
+            opcion={opcion}
             indice={1}
           />
 

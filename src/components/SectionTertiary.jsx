@@ -8,6 +8,7 @@ export default function SectionTertiary({
   nombre,
   funcion,
   className,
+  indice,
 }) {
   const clasePorDefecto = `flex flex-col ${
     nombre ? "gap-4" : ""
@@ -18,11 +19,13 @@ export default function SectionTertiary({
 
   return (
     <Section className={nuevaClase}>
-      {nombre && (
+      {nombre && !indice ? (
         <Div className="w-full flex justify-between items-center">
           <Titulos indice={2} titulo={nombre} />
           <ButtonAdd onClick={funcion} />
         </Div>
+      ) : (
+        <Titulos indice={2} titulo={nombre} />
       )}
 
       {children}

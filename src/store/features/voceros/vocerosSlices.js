@@ -5,6 +5,7 @@ import { fetchVocerosIdParroquia } from "@/store/features/voceros/thunks/voceros
 import { fetchVocerosIdComuna } from "@/store/features/voceros/thunks/vocerosIdComuna";
 import { fetchVocerosIdCircuito } from "@/store/features/voceros/thunks/vocerosIdCircuito";
 import { fetchVocerosIdConsejo } from "@/store/features/voceros/thunks/vocerosIdConsejo";
+import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
 
 import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
@@ -128,6 +129,18 @@ const vocerosSlice = createSlice({
       .addCase(eliminarRestaurarVocero.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchVoceroCedula.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchVoceroCedula.fulfilled, (state, action) => {
+        state.loading = false;
+        state.voceros = action.payload;
+      })
+      .addCase(fetchVoceroCedula.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

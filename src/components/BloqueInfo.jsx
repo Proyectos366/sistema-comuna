@@ -1,3 +1,5 @@
+import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
+
 export default function BloqueInfo({ nombre, valor, indice }) {
   let colorClase = "text-black";
 
@@ -9,7 +11,9 @@ export default function BloqueInfo({ nombre, valor, indice }) {
 
   return (
     <div className="flex flex-row gap-2">
-      <span className="font-semibold text-sm sm:text-md">{nombre}:</span>
+      <span className="font-semibold text-sm sm:text-md">
+        {formatoTituloSimple(nombre)}:
+      </span>
       <span className={`text-sm sm:text-md uppercase ${colorClase}`}>
         {valor}
       </span>

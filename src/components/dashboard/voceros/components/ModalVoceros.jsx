@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -15,15 +14,11 @@ import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 
 export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
-  const { estados } = useSelector((state) => state.estados);
-  const { municipios } = useSelector((state) => state.municipios);
-  const { parroquias } = useSelector((state) => state.parroquias);
   const { comunas } = useSelector((state) => state.comunas);
   const { circuitos } = useSelector((state) => state.circuitos);
   const { consejos } = useSelector((state) => state.consejos);
@@ -46,6 +41,7 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     idCircuito,
     idConsejo,
     idCargo,
+    idFormacion,
     idVocero,
 
     nombrePais,
@@ -55,6 +51,8 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     nombreComuna,
     nombreCircuito,
     nombreConsejo,
+    nombreCargo,
+    nombreFormacion,
 
     cedula,
     nombre,
@@ -69,12 +67,6 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     opcion,
   } = datosVocero;
 
-  // useEffect(() => {
-  //   if (usuarioActivo.id_rol === 1) {
-  //     dispatch(fetchPaises());
-  //   }
-  // }, [dispatch, usuarioActivo]);
-
   const notify = (msj) => toast(msj);
 
   const handleCrearVocero = async () => {
@@ -82,19 +74,25 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
       const nuevoVocero = {
         cedula: cedula,
         nombre: nombre,
-        nombreDos: nombreDos,
+        nombre_dos: nombreDos,
         apellido: apellido,
-        apellidoDos: apellidoDos,
-        genero: genero === true ? true : false,
+        apellido_dos: apellidoDos,
+        genero: genero === "1" ? true : false,
         edad: edad,
         telefono: telefono,
         correo: correo,
+        direccion: "",
         laboral: laboral,
+        cargos: Array.isArray(idCargo)
+          ? idCargo.map((id) => ({ id }))
+          : [{ id: idCargo }],
+        formaciones: Array.isArray(idFormacion)
+          ? idFormacion.map((id) => ({ id }))
+          : [{ id: idFormacion }],
         id_parroquia: idParroquia,
         id_comuna: idComuna,
         id_circuito: idCircuito,
         id_consejo: idConsejo,
-        id_cargo: idCargo,
       };
 
       await dispatch(
@@ -170,8 +168,18 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
           <ModalDatos titulo="Cedúla" descripcion={cedula} />
           <ModalDatos titulo="Edad" descripcion={edad} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Segundo nombre" descripcion={nombreDos} />
           <ModalDatos titulo="Apellido" descripcion={apellido} />
           <ModalDatos titulo="Segundo apellido" descripcion={apellidoDos} />
+          <ModalDatos
+            titulo="Genero"
+            descripcion={genero === "1" ? "Masculino" : "Femenino"}
+          />
+          <ModalDatos titulo="Teléfono" descripcion={telefono} />
+          <ModalDatos titulo="Correo" descripcion={correo} />
+          <ModalDatos titulo="Actividad laboral" descripcion={laboral} />
+          <ModalDatos titulo="Cargo" descripcion={nombreCargo} />
+          <ModalDatos titulo="Formación" descripcion={nombreFormacion} />
         </ModalDatosContenedor>
 
         <BotonesModal
