@@ -118,7 +118,7 @@ export async function POST(request) {
         id_usuario: validaciones.id_usuario,
         descripcion: "No se pudo consultar el vocero por cedula",
         datosAntes: validaciones,
-        datosDespues: actualizado,
+        datosDespues: voceroPorCedula,
       });
 
       return generarRespuesta(
@@ -144,7 +144,7 @@ export async function POST(request) {
     return generarRespuesta(
       "ok",
       "Vocero encontrado...",
-      { vocero: voceroPorCedula },
+      { voceros: [voceroPorCedula] },
       200
     );
   } catch (error) {

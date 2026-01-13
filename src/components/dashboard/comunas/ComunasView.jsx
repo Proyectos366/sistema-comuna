@@ -13,7 +13,7 @@ import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoComunas from "@/components/dashboard/comunas/components/ListadoComunas";
 import ModalComunas from "@/components/dashboard/comunas/components/ModalComunas";
 import SelectOpcion from "@/components/SelectOpcion";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";

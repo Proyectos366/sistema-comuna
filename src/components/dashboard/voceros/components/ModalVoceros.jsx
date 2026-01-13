@@ -14,8 +14,16 @@ import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
+import ConsultarCedula from "@/components/sistema/opciones_inicio/ConsultarCedula";
+import ModalConsultar from "@/components/modales/ModalConsultar";
 
-export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
+export default function ModalVoceros({
+  acciones,
+  datosVocero,
+  validaciones,
+  seleccionado,
+}) {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
@@ -31,6 +39,10 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+
+  const mostrarConsultarCedula = useSelector(
+    (state) => state.modal.modales.consultar
+  );
 
   const {
     idPais,
@@ -127,6 +139,28 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const consultarVoceroCedula = () => {
+    dispatch(fetchVoceroCedula(cedula))
+      .unwrap()
+      .then((respuesta) => {
+        if (respuesta) {
+          dispatch(cerrarModal("consultar"));
+        }
+      })
+      .catch((error) => {
+        console.error("Error consultando vocero:", error);
+        notify(error);
+      });
+  };
+
+  const titulos = {
+    1: "Buscar vocero",
+    2: "Consultar por parroquia",
+    3: "Consultar por comuna",
+    4: "Consultar por circuito",
+    5: "Consultar por consejo",
   };
 
   return (
@@ -299,9 +333,32 @@ export default function ModalVoceros({ acciones, datosVocero, validaciones }) {
             acciones={acciones}
             datosVocero={datosVocero}
             validaciones={validaciones}
+            seleccionado={seleccionado}
           />
         </ModalDatosContenedor>
       </ModalPrincipal>
+
+      <ModalConsultar
+        isVisible={mostrarConsultarCedula}
+        onClose={() => {
+          dispatch(cerrarModal("consultar"));
+          acciones.setCedula("");
+        }}
+        titulo={titulos[seleccionado] || "Consultar"}
+      >
+        <ModalDatosContenedor>
+          {seleccionado === 1 && (
+            <ConsultarCedula
+              cedula={cedula}
+              setCedula={acciones.setCedula}
+              validarCedula={validaciones.validarCedula}
+              setValidarCedula={validaciones.setValidarCedula}
+              consultarVocero={consultarVoceroCedula}
+              seleccionado={seleccionado}
+            />
+          )}
+        </ModalDatosContenedor>
+      </ModalConsultar>
     </>
   );
 }

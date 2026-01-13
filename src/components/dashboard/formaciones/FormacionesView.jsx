@@ -12,7 +12,7 @@ import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoFormaciones from "@/components/dashboard/formaciones/components/ListadoFormaciones";
 import ModalFormaciones from "@/components/dashboard/formaciones/components/ModalFormaciones";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";

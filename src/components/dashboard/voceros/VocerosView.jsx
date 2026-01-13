@@ -14,7 +14,7 @@ import ListadoVoceros from "@/components/dashboard/voceros/components/ListadoVoc
 import ModalVoceros from "@/components/dashboard/voceros/components/ModalVoceros";
 import OpcionesCrearVocero from "@/components/dashboard/voceros/components/OpcionesCrearVocero";
 import { useEffectVocerosViews } from "@/components/dashboard/voceros/functions/useEffectVocerosViews";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacioVocero from "@/components/mensaje/EstadoMsjVacioVocero";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
@@ -249,6 +249,7 @@ export default function VocerosView() {
         acciones={acciones}
         datosVocero={datosVocero}
         validaciones={validaciones}
+        seleccionado={seleccionado}
       />
 
       <SectionMain>
@@ -269,6 +270,9 @@ export default function VocerosView() {
               setOpcion,
               setIdParroquia,
             });
+
+            dispatch(abrirModal("crear"));
+            setSeleccionado(10);
           }}
         >
           <OpcionesVocero
@@ -295,13 +299,10 @@ export default function VocerosView() {
             validaciones={validaciones}
             opcion={opcion}
             indice={1}
+            seleccionado={seleccionado}
           />
 
-          {(opcion === "comuna"
-            ? idComuna
-            : opcion === "circuito"
-            ? idCircuito
-            : idConsejo) && (
+          {voceros && (
             <>
               <Div className={`flex flex-col gap-2`}>
                 {voceros?.length === 0 && loading ? (
@@ -332,7 +333,11 @@ export default function VocerosView() {
                         );
                       })
                     ) : (
-                      <EstadoMsjVacio dato={voceros} loading={loading} />
+                      <EstadoMsjVacioVocero
+                        dato={voceros}
+                        loading={loading}
+                        seleccionado={seleccionado}
+                      />
                     )}
                   </>
                 )}

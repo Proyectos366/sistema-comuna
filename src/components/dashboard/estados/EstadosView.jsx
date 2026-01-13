@@ -13,7 +13,7 @@ import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoEstados from "@/components/dashboard/estados/components/ListadoEstados";
 import ModalEstados from "@/components/dashboard/estados/components/ModalEstados";
 import SelectOpcion from "@/components/SelectOpcion";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";

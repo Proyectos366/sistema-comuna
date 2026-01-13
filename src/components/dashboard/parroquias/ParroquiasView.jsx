@@ -16,7 +16,7 @@ import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoParroquias from "@/components/dashboard/parroquias/components/ListadoParroquias";
 import ModalParroquias from "@/components/dashboard/parroquias/components/ModalParroquias";
 import SelectOpcion from "@/components/SelectOpcion";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";

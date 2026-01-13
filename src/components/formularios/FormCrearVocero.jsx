@@ -27,6 +27,7 @@ export default function FormCrearVocero({
   acciones,
   datosVocero,
   validaciones,
+  seleccionado,
 }) {
   const dispatch = useDispatch();
 
@@ -134,6 +135,8 @@ export default function FormCrearVocero({
         <OpcionesCrearVocero
           acciones={acciones}
           datosVocero={datosVocero}
+          validaciones={validaciones}
+          seleccionado={seleccionado}
           indice={0}
         />
 

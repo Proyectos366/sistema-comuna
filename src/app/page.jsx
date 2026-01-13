@@ -125,46 +125,23 @@ export default function Home() {
             <Formulario
               onSubmit={(e) => {
                 e.preventDefault();
-                iniciarSesion(correo, clave, setCorreo, setClave, setMensaje);
+                iniciarSesion();
               }}
             >
-              <LabelInput nombre={"Correo"}>
-                <InputCorreo
-                  type="text"
-                  indice="email"
-                  value={correo}
-                  setValue={setCorreo}
-                  validarCorreo={validarCorreo}
-                  setValidarCorreo={setValidarCorreo}
-                />
-              </LabelInput>
-
-              <LabelInput nombre={"Clave"}>
-                <InputClave
-                  type={"password"}
-                  nombre={"Clave"}
-                  value={clave}
-                  onChange={leyendoClave}
-                  indice={"clave"}
-                />
-              </LabelInput>
-
-              {/* <div className="flex items-center justify-between">
-              <LinkPaginas
-                href="/registro-usuario"
-                nombre={"Registro usuario"}
+              <InputCorreo
+                value={correo}
+                setValue={setCorreo}
+                validarCorreo={validarCorreo}
+                setValidarCorreo={setValidarCorreo}
               />
-              <LinkPaginas
-                href="/recuperar-clave-correo"
-                nombre={"Olvido su clave?"}
-              />
-            </div> */}
 
-              {mensaje && (
-                <div className="w-full mb-3">
-                  <MostrarMsj mensaje={mensaje} />
-                </div>
-              )}
+              <InputClave
+                nombre={"Clave"}
+                value={clave}
+                onChange={leyendoClave}
+              />
+
+              {mensaje && <MostrarMsj mensaje={mensaje} />}
 
               <div className="flex space-x-4">
                 <BotonAceptarCancelar

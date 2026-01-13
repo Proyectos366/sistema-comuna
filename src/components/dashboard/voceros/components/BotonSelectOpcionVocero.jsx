@@ -9,7 +9,7 @@ export default function BotonSelectOpcionVocero({
   return (
     <Button
       onClick={() => consultar()}
-      className={`px-4 py-2 m-1 rounded-md ${
+      className={`px-4 py-2 m-1 rounded-md capitalize ${
         seleccionar == indice ? "border-2" : "border"
       } ${seleccionar == indice ? "#007bff" : "#f5f5f5"} cursor-pointer`}
     >

@@ -140,49 +140,35 @@ export default function FormCrearUsuario({
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <Div className="overflow-y-auto h-[390px] no-scrollbar flex flex-col w-full gap-2 px-1">
-        <LabelInput nombre={"Cedula"}>
-          <InputCedula
-            type="text"
-            indice={"cedula"}
-            value={cedula}
-            setValue={setCedula}
-            validarCedula={validarCedula}
-            setValidarCedula={setValidarCedula}
-          />
-        </LabelInput>
+        <InputCedula
+          value={cedula}
+          setValue={setCedula}
+          validarCedula={validarCedula}
+          setValidarCedula={setValidarCedula}
+        />
 
-        <LabelInput nombre={"Correo"}>
-          <InputCorreo
-            type="text"
-            indice="email"
-            value={correo}
-            setValue={setCorreo}
-            validarCorreo={validarCorreo}
-            setValidarCorreo={setValidarCorreo}
-          />
-        </LabelInput>
+        <InputCorreo
+          value={correo}
+          setValue={setCorreo}
+          validarCorreo={validarCorreo}
+          setValidarCorreo={setValidarCorreo}
+        />
 
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+        <InputNombre
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
 
-        <LabelInput nombre={"Apellido"}>
-          <InputNombre
-            type={"text"}
-            indice={"nombre"}
-            value={apellido}
-            setValue={setApellido}
-            validarNombre={validarApellido}
-            setValidarNombre={setValidarApellido}
-          />
-        </LabelInput>
+        <InputNombre
+          nombre={"Apellido"}
+          value={apellido}
+          setValue={setApellido}
+          validarNombre={validarApellido}
+          setValidarNombre={setValidarApellido}
+          placeholder={"Estefania"}
+        />
 
         <SelectOpcion
           idOpcion={idRol}
@@ -217,25 +203,20 @@ export default function FormCrearUsuario({
           setNombre={setNombreDepartamento}
         />
 
-        <LabelInput nombre={"Clave"}>
-          <InputClave
-            type={"password"}
-            value={claveUno}
-            onChange={leyendoClave1}
-            indice={"clave"}
-            validarClave={validarClave}
-            setValidarClave={setValidarClave}
-          />
-        </LabelInput>
+        <InputClave
+          value={claveUno}
+          onChange={leyendoClave1}
+          indice={"clave"}
+          validarClave={validarClave}
+          setValidarClave={setValidarClave}
+        />
 
-        <LabelInput nombre={"Clave confirmar"}>
-          <InputClave
-            type={"password"}
-            value={claveDos}
-            onChange={leyendoClave2}
-            indice={"clave2"}
-          />
-        </LabelInput>
+        <InputClave
+          nombre={"Clave confirmar"}
+          value={claveDos}
+          onChange={leyendoClave2}
+          indice={"clave2"}
+        />
 
         <div className="flex flex-col w-full">
           <span className="text-gray-700 font-medium">Autorizar</span>

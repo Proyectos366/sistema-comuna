@@ -1,6 +1,7 @@
 // features/Voceros/vocerosSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
+import { fetchVocerosMunicipio } from "@/store/features/voceros/thunks/todosVocerosMunicipio";
 import { fetchVocerosIdParroquia } from "@/store/features/voceros/thunks/vocerosIdParroquia";
 import { fetchVocerosIdComuna } from "@/store/features/voceros/thunks/vocerosIdComuna";
 import { fetchVocerosIdCircuito } from "@/store/features/voceros/thunks/vocerosIdCircuito";
@@ -19,7 +20,13 @@ const vocerosSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetVoceros: (state) => {
+      state.loading = false;
+      state.voceros = [];
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodosVoceros.pending, (state) => {
@@ -31,6 +38,18 @@ const vocerosSlice = createSlice({
         state.voceros = action.payload;
       })
       .addCase(fetchTodosVoceros.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchVocerosMunicipio.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchVocerosMunicipio.fulfilled, (state, action) => {
+        state.loading = false;
+        state.voceros = action.payload;
+      })
+      .addCase(fetchVocerosMunicipio.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
@@ -145,4 +164,5 @@ const vocerosSlice = createSlice({
   },
 });
 
+export const { resetVoceros } = vocerosSlice.actions;
 export default vocerosSlice.reducer;

@@ -127,7 +127,7 @@ export async function GET(request) {
     await registrarEventoSeguro(request, {
       tabla: "vocero",
       accion: "CONSULTAR_VOCERO",
-      id_objeto: null,
+      id_objeto: 0,
       id_usuario: validaciones.id_usuario,
       descripcion: `Voceros todos por municipio con exito`,
       datosAntes: validaciones,

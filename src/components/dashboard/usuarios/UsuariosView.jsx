@@ -14,7 +14,7 @@ import FichaUsuario from "@/components/dashboard/usuarios/components/FichaUsuari
 import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";

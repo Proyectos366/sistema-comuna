@@ -12,7 +12,7 @@ import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoPaises from "@/components/dashboard/paises/components/ListadoPaises";
 import ModalPaises from "@/components/dashboard/paises/components/ModalPaises";
 import FichaDetalles from "@/components/FichaDetalles";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";

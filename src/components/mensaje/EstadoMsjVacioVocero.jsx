@@ -1,6 +1,6 @@
 import Div from "@/components/padres/Div";
 
-export default function EstadoMsjVacio({ dato, loading, titulo }) {
+export default function EstadoMsjVacioVocero({ dato, loading, titulo, seleccionado }) {
   return (
     <>
       {dato.length !== 0 && (
@@ -12,7 +12,7 @@ export default function EstadoMsjVacio({ dato, loading, titulo }) {
       )}
 
       {!loading && dato.length === 0 && (
-        <Div className="text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold">
+        <Div className={`${seleccionado ? "block" : "hidden"} text-[#E61C45] text-lg border border-[#E61C45] rounded-md shadow-lg px-5 py-1 font-semibold`}>
           {titulo ? titulo : "No hay registros..."}
         </Div>
       )}

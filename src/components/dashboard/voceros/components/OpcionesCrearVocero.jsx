@@ -1,6 +1,4 @@
-"use cliente";
-
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import SelectOpcion from "@/components/SelectOpcion";
 
@@ -12,17 +10,14 @@ import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionConsejo } from "@/utils/dashboard/cambiarSeleccionConsejo";
 import { cambiarSeleccionComunaCircuitoConsejo } from "@/utils/dashboard/cambiarSeleccionComunaCircuitoConsejo";
-import ConsultarCedula from "@/components/sistema/opciones_inicio/ConsultarCedula";
-import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
 
 export default function OpcionesCrearVocero({
   acciones,
   datosVocero,
   validaciones,
   indice,
+  seleccionado,
 }) {
-  const dispatch = useDispatch();
-
   const { usuarioActivo } = useSelector((state) => state.auth);
   const { paises } = useSelector((state) => state.paises);
   const { estados } = useSelector((state) => state.estados);
@@ -75,11 +70,26 @@ export default function OpcionesCrearVocero({
     opcion,
   } = datosVocero;
 
-  const { validarCedula, setValidarCedula } = validaciones;
-
-  const consultarVoceroCedula = () => {
-    dispatch(fetchVoceroCedula(cedula));
-  };
+  const {
+    validarCedula,
+    setValidarCedula,
+    validarNombre,
+    setValidarNombre,
+    validarNombreDos,
+    setValidarNombreDos,
+    validarApellido,
+    setValidarApellido,
+    validarApellidoDos,
+    setValidarApellidoDos,
+    validarEdad,
+    setValidarEdad,
+    validarTelefono,
+    setValidarTelefono,
+    validarCorreo,
+    setValidarCorreo,
+    validarLaboral,
+    setValidarLaboral,
+  } = validaciones;
 
   return (
     <>
@@ -220,69 +230,70 @@ export default function OpcionesCrearVocero({
         </>
       ) : (
         <>
-          {opcion === "comuna" &&
-            opcion === "circuito" &&
-            opcion === "consejo" && (
-              <SelectOpcion
-                idOpcion={opcion}
-                nombre={indice ? "Mostrar en" : "Crear en"}
-                handleChange={(e) => {
-                  cambiarSeleccionComunaCircuitoConsejo(e, setOpcion);
+          {seleccionado === 3 ||
+          seleccionado === 4 ||
+          seleccionado === 5 ||
+          seleccionado === 10 ? (
+            <SelectOpcion
+              idOpcion={opcion}
+              nombre={indice ? "Mostrar en" : "Crear en"}
+              handleChange={(e) => {
+                cambiarSeleccionComunaCircuitoConsejo(e, setOpcion);
 
-                  setIdParroquia("");
-                  setIdComuna("");
-                  setIdCircuito("");
-                  setIdConsejo("");
-                  setCedula("");
-                  setNombre("");
-                  setNombreDos("");
-                  setApellido("");
-                  setApellidoDos("");
-                  setGenero("");
-                  setEdad("");
-                  setTelefono("");
-                  setCorreo("");
-                  setLaboral("");
-                }}
-                opciones={[
-                  { id: "comuna", nombre: "comuna" },
-                  { id: "circuito", nombre: "circuito" },
-                  { id: "consejo", nombre: "Consejo comunal" },
-                ]}
-                seleccione={"Seleccione"}
-                indice={indice}
-              />
-            )}
+                setIdParroquia("");
+                setIdComuna("");
+                setIdCircuito("");
+                setIdConsejo("");
+                setCedula("");
+                setNombre("");
+                setNombreDos("");
+                setApellido("");
+                setApellidoDos("");
+                setGenero("");
+                setEdad("");
+                setTelefono("");
+                setCorreo("");
+                setLaboral("");
+              }}
+              opciones={[
+                { id: "comuna", nombre: "comuna" },
+                { id: "circuito", nombre: "circuito" },
+                { id: "consejo", nombre: "Consejo comunal" },
+              ]}
+              seleccione={"Seleccione"}
+              indice={indice}
+            />
+          ) : null}
 
-          {opcion === "comuna" &&
-            opcion === "circuito" &&
-            opcion === "consejo" && (
-              <SelectOpcion
-                idOpcion={idParroquia}
-                nombre={"Parroquias"}
-                handleChange={(e) => {
-                  cambiarSeleccionParroquia(e, setIdParroquia);
+          {(opcion === "comuna" ||
+            opcion === "circuito" ||
+            opcion === "consejo") && (
+            <SelectOpcion
+              idOpcion={idParroquia}
+              nombre={"Parroquias"}
+              handleChange={(e) => {
+                cambiarSeleccionParroquia(e, setIdParroquia);
 
-                  setIdComuna("");
-                  setIdCircuito("");
-                  setIdConsejo("");
-                  setCedula("");
-                  setNombre("");
-                  setNombreDos("");
-                  setApellido("");
-                  setApellidoDos("");
-                  setGenero("");
-                  setEdad("");
-                  setTelefono("");
-                  setCorreo("");
-                  setLaboral("");
-                }}
-                opciones={parroquias}
-                seleccione={"Seleccione"}
-                setNombre={setNombreParroquia}
-                indice={indice}
-              />
-            )}
+                setIdComuna("");
+                setIdCircuito("");
+                setIdConsejo("");
+                setCedula("");
+                setNombre("");
+                setNombreDos("");
+                setApellido("");
+                setApellidoDos("");
+                setGenero("");
+                setEdad("");
+                setTelefono("");
+                setCorreo("");
+                setLaboral("");
+              }}
+              opciones={parroquias}
+              seleccione={"Seleccione"}
+              setNombre={setNombreParroquia}
+              indice={indice}
+            />
+          )}
         </>
       )}
 
@@ -341,7 +352,7 @@ export default function OpcionesCrearVocero({
         />
       )}
 
-      {opcion === "cedula" && (
+      {/* {opcion === "cedula" && (
         <ConsultarCedula
           cedula={cedula}
           setCedula={setCedula}
@@ -350,7 +361,7 @@ export default function OpcionesCrearVocero({
           consultarVocero={consultarVoceroCedula}
           seleccionado={seleccionado}
         />
-      )}
+      )} */}
     </>
   );
 }

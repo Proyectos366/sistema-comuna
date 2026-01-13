@@ -26,7 +26,7 @@ import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/muni
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
-import EstadoMsjVacio from "@/components/EstadoMsjVacio";
+import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 
 export default function MunicipiosView() {
   const dispatch = useDispatch();

@@ -35,7 +35,7 @@ export default function InputCorreo({
   return (
     <LabelInput
       htmlFor={htmlFor ? htmlFor : "correo"}
-      nombre={nombre ? nombre : "correo"}
+      nombre={nombre ? nombre : "Correo"}
     >
       <Input
         type={"email"}
