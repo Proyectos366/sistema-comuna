@@ -1,28 +1,21 @@
-import { useEffect } from "react";
+import SelectOpcion from "@/components/SelectOpcion";
+import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
+import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
 import { useSelector } from "react-redux";
 
-import SelectOpcion from "@/components/SelectOpcion";
-
-import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
-import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
-
-export default function ConsultarVocerosComuna({
+export default function ConsultarVocerosCircuito({
   idParroquia,
   setIdParroquia,
-  idComuna,
-  setIdComuna,
+  idCircuito,
+  setIdCircuito,
   seleccionado,
 }) {
-  const { comunas } = useSelector((state) => state.comunas);
+  const { circuitos } = useSelector((state) => state.circuitos);
   const { parroquias } = useSelector((state) => state.parroquias);
-
-  useEffect(() => {
-    setIdComuna("");
-  }, [idParroquia]);
 
   return (
     <div className="w-full max-w-md flex flex-col p-2 bg-[#f1f1f1] shadow-lg rounded-md border border-[#918f8f] ">
-      {seleccionado === 3 && (
+      {seleccionado === 4 && (
         <>
           <SelectOpcion
             idOpcion={idParroquia}
@@ -30,15 +23,14 @@ export default function ConsultarVocerosComuna({
             handleChange={(e) => cambiarSeleccionParroquia(e, setIdParroquia)}
             opciones={parroquias}
             seleccione={"Seleccione"}
-            indice={1}
           />
 
           {idParroquia && (
             <SelectOpcion
-              idOpcion={idComuna}
-              nombre={"Comunas"}
-              handleChange={(e) => cambiarSeleccionComuna(e, setIdComuna)}
-              opciones={comunas}
+              idOpcion={idCircuito}
+              nombre={"Circuitos"}
+              handleChange={(e) => cambiarSeleccionCircuito(e, setIdCircuito)}
+              opciones={circuitos}
               seleccione={"Seleccione"}
             />
           )}

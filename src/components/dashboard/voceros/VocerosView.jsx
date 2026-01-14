@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import { useEffectVocerosViews } from "@/components/dashboard/voceros/functions/useEffectVocerosViews";
+
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
@@ -12,10 +14,9 @@ import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoVoceros from "@/components/dashboard/voceros/components/ListadoVoceros";
 import ModalVoceros from "@/components/dashboard/voceros/components/ModalVoceros";
-import OpcionesCrearVocero from "@/components/dashboard/voceros/components/OpcionesCrearVocero";
-import { useEffectVocerosViews } from "@/components/dashboard/voceros/functions/useEffectVocerosViews";
 import EstadoMsjVacioVocero from "@/components/mensaje/EstadoMsjVacioVocero";
 import Loader from "@/components/Loader";
+import OpcionesVocero from "@/components/dashboard/voceros/components/OpcionesVocero";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { limpiarCampos } from "@/utils/limpiarForm";
@@ -26,7 +27,6 @@ import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroqu
 import { fetchFormaciones } from "@/store/features/formaciones/thunks/todasFormaciones";
 import { fetchFormacionesInstitucion } from "@/store/features/formaciones/thunks/formacionesInstitucion";
 import { fetchCargos } from "@/store/features/cargos/thunks/todosCargos";
-import OpcionesVocero from "./components/OpcionesVocero";
 
 export default function VocerosView() {
   const dispatch = useDispatch();
@@ -233,13 +233,20 @@ export default function VocerosView() {
   const editarVocero = (vocero) => {
     setIdVocero(vocero.id);
     setIdParroquia(vocero.id_parroquia);
-    setIdComuna(vocero.id_comuna);
-    setIdCircuito(vocero.id_circuito);
-    setIdConsejo(vocero.id_consejo);
+    setIdComuna(vocero?.comunas?.id);
+    setIdCircuito(vocero?.circuitos?.id);
+    setIdConsejo(vocero?.consejos?.id);
 
+    setCedulaVocero(vocero.cedula);
+    setEdadVocero(vocero.edad);
     setNombreVocero(vocero.nombre);
-    setCedulaVocero(vocero.descripcion);
-
+    setNombreDosVocero(vocero.nombre_dos);
+    setApellidoVocero(vocero.apellido);
+    setApellidoDosVocero(vocero.apellido_dos);
+    setGeneroVocero(vocero.genero);
+    setTelefonoVocero(vocero.telefono);
+    setCorreoVocero(vocero.correo);
+    setLaboralVocero(vocero.laboral);
     dispatch(abrirModal("editar"));
   };
 
@@ -269,6 +276,9 @@ export default function VocerosView() {
               setLaboralVocero,
               setOpcion,
               setIdParroquia,
+              setIdComuna,
+              setIdCircuito,
+              setIdConsejo,
             });
 
             dispatch(abrirModal("crear"));
@@ -279,6 +289,7 @@ export default function VocerosView() {
             seleccionado={seleccionado}
             setSeleccionado={setSeleccionado}
             setOpcion={setOpcion}
+            setIdParroquia={setIdParroquia}
           />
 
           {voceros.length !== 0 && (
@@ -292,15 +303,6 @@ export default function VocerosView() {
               opcionesOrden={opcionesOrden}
             />
           )}
-
-          <OpcionesCrearVocero
-            acciones={acciones}
-            datosVocero={datosVocero}
-            validaciones={validaciones}
-            opcion={opcion}
-            indice={1}
-            seleccionado={seleccionado}
-          />
 
           {voceros && (
             <>

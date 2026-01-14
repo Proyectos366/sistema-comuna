@@ -10,6 +10,7 @@ export default function OpcionesVocero({
   seleccionado,
   setSeleccionado,
   setOpcion,
+  setIdParroquia,
 }) {
   const dispatch = useDispatch();
 
@@ -23,6 +24,7 @@ export default function OpcionesVocero({
             dispatch(abrirModal("consultar"));
             setOpcion("cedula");
             dispatch(resetVoceros());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={1}
@@ -35,6 +37,7 @@ export default function OpcionesVocero({
             dispatch(abrirModal("consultar"));
             setOpcion("parroquia");
             dispatch(resetVoceros());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={2}
@@ -47,6 +50,7 @@ export default function OpcionesVocero({
             dispatch(abrirModal("consultar"));
             setOpcion("comuna");
             dispatch(resetVoceros());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={3}
@@ -59,6 +63,7 @@ export default function OpcionesVocero({
             dispatch(abrirModal("consultar"));
             setOpcion("circuito");
             dispatch(resetVoceros());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={4}
@@ -71,6 +76,7 @@ export default function OpcionesVocero({
             dispatch(abrirModal("consultar"));
             setOpcion("consejo");
             dispatch(resetVoceros());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={5}
@@ -83,6 +89,7 @@ export default function OpcionesVocero({
             setOpcion("todos");
             dispatch(resetVoceros());
             dispatch(fetchVocerosMunicipio());
+            setIdParroquia("");
           }}
           seleccionar={seleccionado}
           indice={6}

@@ -1,6 +1,4 @@
-import Button from "@/components/padres/Button";
 import InputCedula from "@/components/inputs/InputCedula";
-import { cerrarModal } from "@/store/features/modal/slicesModal";
 import BotonConsultarCedula from "@/components/botones/BotonConsultarCedula";
 
 export default function ConsultarCedula({
@@ -15,7 +13,7 @@ export default function ConsultarCedula({
     <>
       {seleccionado === 1 && (
         <>
-          <div className="w-full max-w-md flex flex-col sm:flex-row items-end justify-center space-x-0 sm:space-x-4 p-2 bg-white shadow-lg rounded-md border border-gray-200 ">
+          <div className="w-full max-w-md flex flex-col sm:flex-row items-end justify-center space-x-0 sm:space-x-4 p-2 bg-[#f1f1f1] shadow-lg rounded-md border border-[#918f8f] ">
             <InputCedula
               value={cedula}
               setValue={setCedula}

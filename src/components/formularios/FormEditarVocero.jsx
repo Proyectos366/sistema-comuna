@@ -1,183 +1,190 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import SelectOpcion from "@/components/SelectOpcion";
-import LabelInput from "@/components/inputs/LabelInput";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import InputCedula from "@/components/inputs/InputCedula";
+import InputEdad from "@/components/inputs/InputEdad";
 import InputNombre from "@/components/inputs/InputNombre";
+import InputTelefono from "@/components/inputs/InputTelefono";
+import InputCorreo from "@/components/inputs/InputCorreo";
+import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
-import { textRegex } from "@/utils/regex/textRegex";
-import { rifRegex } from "@/utils/regex/rifRegex";
+import { validarEditarVocero } from "@/components/dashboard/voceros/functions/validarEditarVocero";
+
 import { limpiarCampos } from "@/utils/limpiarForm";
-import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { cambiarSeleccionConsejo } from "@/utils/dashboard/cambiarSeleccionConsejo";
 
 export default function FormEditarConsejo({
   acciones,
   datosVocero,
   validaciones,
-  comunasCircuitos,
 }) {
   const dispatch = useDispatch();
 
-  const {
-    setIdPais,
-    setIdEstado,
-    setIdMunicipio,
-    setIdParroquia,
-    setIdComuna,
-    setIdCircuito,
-    setIdConsejo,
-    setIdVocero,
-
-    setNombrePais,
-    setNombreEstado,
-    setNombreMunicipio,
-    setNombreParroquia,
-    setNombreComuna,
-    setNombreCircuito,
-    setNombreConsejo,
-
-    setNombre,
-
-    setOpcion,
-  } = acciones;
-
-  const {
-    idPais,
-    idEstado,
-    idMunicipio,
-    idParroquia,
-    idComuna,
-    idCircuito,
-    idConsejo,
-    idVocero,
-
-    nombrePais,
-    nombreEstado,
-    nombreMunicipio,
-    nombreParroquia,
-    nombreComuna,
-    nombreCircuito,
-    nombreConsejo,
-
-    nombre,
-
-    opcion,
-  } = datosVocero;
-
-  const { validarNombre, setValidarNombre, validarCedula, setValidarCedula } =
-    validaciones;
+  const { cargos } = useSelector((state) => state.cargos);
+  const { formaciones } = useSelector((state) => state.formaciones);
 
   useEffect(() => {
-    const validarYActualizar = (valor, setValidar) => {
-      if (valor) {
-        const limpio = String(valor).trim();
-        const esValido = textRegex.test(limpio);
-        if (typeof setValidar === "function") setValidar(esValido);
-      }
-    };
-
-    const validarRif = (valor, setValidar) => {
-      if (valor) {
-        const limpio = String(valor).trim();
-        const esValido = rifRegex.test(limpio);
-        if (typeof setValidar === "function") setValidar(esValido);
-      }
-    };
-
-    validarYActualizar(nombre, setValidarNombre);
-    validarRif(rif, setValidarRif);
-  }, [nombre, rif]);
+    validarEditarVocero(datosVocero, validaciones, acciones);
+  }, [datosVocero]);
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <DivScroll>
-        <SelectOpcion
-          idOpcion={
-            opcion === "comuna"
-              ? idComuna
-              : opcion === "circuito"
-              ? idCircuito
-              : idConsejo
-          }
-          nombre={
-            opcion === "comuna"
-              ? "Comunas"
-              : opcion === "circuito"
-              ? "Circuitos comunales"
-              : "Consejos comunales"
-          }
-          handleChange={(e) => {
-            opcion === "comuna"
-              ? cambiarSeleccionComuna(e, setIdComuna)
-              : opcion === "circuito"
-              ? cambiarSeleccionCircuito(e, setIdCircuito)
-              : cambiarSeleccionConsejo(e, setIdConsejo);
-          }}
-          opciones={comunasCircuitos}
-          seleccione={"Seleccione"}
-          setNombre={
-            opcion === "comuna"
-              ? setNombreComuna
-              : opcion === "circuito"
-              ? setNombreCircuito
-              : setNombreConsejo
-          }
-        />
-
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
+        <AgruparCamposForm>
+          <InputCedula
+            value={datosVocero.cedula}
+            setValue={acciones.setCedula}
+            validarCedula={validaciones.validarCedula}
+            setValidarCedula={validaciones.setValidarCedula}
           />
-        </LabelInput>
 
-        <div className="flex space-x-3">
+          <InputEdad
+            value={datosVocero.edad}
+            setValue={acciones.setEdad}
+            validarEdad={validaciones.validarEdad}
+            setValidarEdad={validaciones.setValidarEdad}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
+          <InputNombre
+            indice="nombre"
+            nombre={"Nombre"}
+            value={datosVocero.nombre}
+            setValue={acciones.setNombre}
+            validarNombre={validaciones.validarNombre}
+            setValidarNombre={validaciones.setValidarNombre}
+            placeholder={"Daniela"}
+          />
+
+          <InputNombre
+            indice="nombre"
+            nombre={"Segundo nombre"}
+            value={datosVocero.nombreDos}
+            setValue={acciones.setNombreDos}
+            validarNombre={validaciones.validarNombreDos}
+            setValidarNombre={validaciones.setValidarNombreDos}
+            placeholder={"Estefania"}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
+          <InputNombre
+            indice="nombre"
+            nombre={"Apellido"}
+            value={datosVocero.apellido}
+            setValue={acciones.setApellido}
+            validarNombre={validaciones.validarApellido}
+            setValidarNombre={validaciones.setValidarApellido}
+            placeholder={"Morgado"}
+          />
+
+          <InputNombre
+            indice="nombre"
+            nombre={"Segundo apellido"}
+            value={datosVocero.apellidoDos}
+            setValue={acciones.setApellidoDos}
+            validarNombre={validaciones.validarApellidoDos}
+            setValidarNombre={validaciones.setValidarApellidoDos}
+            placeholder={"Peraza"}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
+          <SelectOpcion
+            idOpcion={datosVocero.genero}
+            nombre={"Genero"}
+            handleChange={(e) => {
+              cambiarSeleccionGenero(e, acciones.setGenero);
+            }}
+            opciones={[
+              { id: "1", nombre: "Masculino" },
+              { id: "2", nombre: "Femenino" },
+            ]}
+            seleccione={"Seleccione"}
+          />
+
+          <InputTelefono
+            value={datosVocero.telefono}
+            setValue={acciones.setTelefono}
+            validarTelefono={validaciones.validarTelefono}
+            setValidarTelefono={validaciones.setValidarTelefono}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
+          <InputCorreo
+            value={datosVocero.correo}
+            setValue={acciones.setCorreo}
+            validarCorreo={validaciones.validarCorreo}
+            setValidarCorreo={validaciones.setValidarCorreo}
+          />
+
+          <InputNombre
+            indice="nombre"
+            nombre={"Actividad laboral"}
+            value={datosVocero.laboral}
+            setValue={acciones.setLaboral}
+            validarNombre={validaciones.validarLaboral}
+            setValidarNombre={validaciones.setValidarLaboral}
+            placeholder={"Ejemplo: contraloria social"}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
+          <SelectOpcion
+            idOpcion={datosVocero.idCargo}
+            nombre={"Cargos"}
+            handleChange={(e) => {
+              cambiarSeleccionCargo(e, acciones.setIdCargo);
+            }}
+            opciones={cargos}
+            seleccione={"Seleccione"}
+            setNombre={acciones.setNombreCargo}
+          />
+
+          <SelectOpcion
+            idOpcion={datosVocero.idFormacion}
+            nombre={"Formaciones"}
+            handleChange={(e) => {
+              cambiarSeleccionFormacion(e, acciones.setIdFormacion);
+            }}
+            opciones={formaciones}
+            seleccione={"Seleccione"}
+            setNombre={acciones.setNombreFormacion}
+          />
+        </AgruparCamposForm>
+
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
-              dispatch(cerrarModal("editar"));
-              dispatch(abrirModal("confirmarCambios"));
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
             }}
-            nombre={"Guardar cambios"}
+            nombre={"Crear"}
             campos={{
-              nombre,
-              id:
-                opcion === "comuna"
-                  ? idComuna
-                  : opcion === "circuito"
-                  ? idCircuito
-                  : idConsejo,
+              nombre: datosVocero.nombre,
             }}
           />
 
           <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({ setNombre });
+              limpiarCampos({ setNombre: acciones.setNombre });
             }}
             campos={{
-              nombre,
-              id:
-                opcion === "comuna"
-                  ? idComuna
-                  : opcion === "circuito"
-                  ? idCircuito
-                  : idConsejo,
+              nombre: datosVocero.nombre,
             }}
           />
-        </div>
+        </AgruparCamposForm>
       </DivScroll>
     </Formulario>
   );

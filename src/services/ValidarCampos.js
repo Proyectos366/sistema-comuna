@@ -487,60 +487,38 @@ export default class ValidarCampos {
   static validarCampoGenero(genero) {
     try {
       // 1. Verifica si el campo está vacío
-      if (!genero) {
+      if (genero === null || genero === undefined || genero === "") {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo genero vacio..."
+          "Error, campo genero vacío..."
         );
       }
 
-      // 2. Convierte el valor a número
-      const generoNumero = Number(genero);
+      // 2. Normaliza el valor a string en minúsculas
+      const valor = String(genero).toLowerCase().trim();
 
-      // 3. Verifica si es un número válido
-      if (isNaN(generoNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo genero invalido..."
-        );
-      }
-
-      // 4. Verifica si es un número entero
-      if (!Number.isInteger(generoNumero)) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo genero invalido..."
-        );
-      }
-
-      // 5. Verifica si el valor es 1 o 2
-      if (
-        !(
-          genero === 1 ||
-          genero === 2 ||
-          genero === "1" ||
-          genero === "2" ||
-          genero === "true" ||
-          genero === "false" ||
-          genero === true ||
-          genero === false
-        )
-      ) {
+      // 3. Acepta valores válidos: "1", "2", "true", "false"
+      if (!["1", "2", "true", "false"].includes(valor)) {
         return retornarRespuestaFunciones(
           "error",
           "Error, campo debe ser hombre o mujer..."
         );
       }
 
-      // 6. Retorna respuesta exitosa con el género convertido a booleano
+      // 4. Convierte a booleano (ejemplo: 1/hombre = true, 2/mujer = false)
+      let generoBooleano;
+      if (valor === "1" || valor === "true") {
+        generoBooleano = true;
+      } else {
+        generoBooleano = false;
+      }
+
+      // 5. Retorna respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campo genero validado...", {
-        genero: generoNumero === 1 ? true : false,
+        genero: generoBooleano,
       });
     } catch (error) {
-      // 7. Manejo de errores inesperados
       console.log(`Error interno campo genero: ` + error);
-
-      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
         "Error interno campo genero..."

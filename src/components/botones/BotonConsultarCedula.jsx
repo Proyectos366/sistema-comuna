@@ -17,7 +17,7 @@ export default function BotonConsultarCedula({ campos, aceptar }) {
       className={`${
         hayDatos
           ? "cursor-pointer bg-[#082158] hover:scale-105"
-          : "cursor-not-allowed bg-gray-400"
+          : "cursor-not-allowed bg-[#918f8f]"
       } w-full text-white font-semibold py-2 px-4 rounded-md shadow-md transition-transform transform hover:scale-105 flex items-center justify-center gap-2`}
     >
       <svg

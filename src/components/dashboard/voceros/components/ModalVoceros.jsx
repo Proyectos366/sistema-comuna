@@ -10,13 +10,17 @@ import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
+import ConsultarCedula from "@/components/sistema/opciones_inicio/ConsultarCedula";
+import ModalConsultar from "@/components/modales/ModalConsultar";
+import ConsultarVocerosComuna from "@/components/sistema/opciones_inicio/ConsultarComunas";
+import ConsultarVocerosCircuito from "@/components/sistema/opciones_inicio/ConsultarCircuitos";
+import ConsultarVocerosConsejo from "@/components/sistema/opciones_inicio/ConsultarConsejosComunales";
+import ConsultarVocerosParroquia from "@/components/sistema/opciones_inicio/ConsultarParroquias";
 
 import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
-import ConsultarCedula from "@/components/sistema/opciones_inicio/ConsultarCedula";
-import ModalConsultar from "@/components/modales/ModalConsultar";
 
 export default function ModalVoceros({
   acciones,
@@ -310,13 +314,6 @@ export default function ModalVoceros({
             acciones={acciones}
             datosVocero={datosVocero}
             validaciones={validaciones}
-            comunasCircuitosConsejos={
-              opcion === "comuna"
-                ? comunas
-                : opcion === "circuito"
-                ? circuitos
-                : consejos
-            }
           />
         </ModalDatosContenedor>
       </Modal>
@@ -354,6 +351,44 @@ export default function ModalVoceros({
               validarCedula={validaciones.validarCedula}
               setValidarCedula={validaciones.setValidarCedula}
               consultarVocero={consultarVoceroCedula}
+              seleccionado={seleccionado}
+            />
+          )}
+
+          {seleccionado === 2 && (
+            <ConsultarVocerosParroquia
+              idParroquia={idParroquia}
+              setIdParroquia={acciones.setIdParroquia}
+              seleccionado={seleccionado}
+            />
+          )}
+
+          {seleccionado === 3 && (
+            <ConsultarVocerosComuna
+              idParroquia={idParroquia}
+              setIdParroquia={acciones.setIdParroquia}
+              idComuna={idComuna}
+              setIdComuna={acciones.setIdComuna}
+              seleccionado={seleccionado}
+            />
+          )}
+
+          {seleccionado === 4 && (
+            <ConsultarVocerosCircuito
+              idParroquia={idParroquia}
+              setIdParroquia={acciones.setIdParroquia}
+              idCircuito={idCircuito}
+              setIdCircuito={acciones.setIdCircuito}
+              seleccionado={seleccionado}
+            />
+          )}
+
+          {seleccionado === 5 && (
+            <ConsultarVocerosConsejo
+              idParroquia={idParroquia}
+              setIdParroquia={acciones.setIdParroquia}
+              idConsejo={idConsejo}
+              setIdConsejo={acciones.setIdConsejo}
               seleccionado={seleccionado}
             />
           )}

@@ -66,6 +66,7 @@ export async function POST(request) {
         edad: true,
         genero: true,
         laboral: true,
+        createdAt: true,
         comunas: {
           select: { nombre: true, id: true, id_parroquia: true },
         },

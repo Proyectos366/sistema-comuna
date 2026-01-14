@@ -11,6 +11,7 @@ import { fetchVocerosIdComuna } from "@/store/features/voceros/thunks/vocerosIdC
 import { fetchVocerosIdCircuito } from "@/store/features/voceros/thunks/vocerosIdCircuito";
 import { fetchVocerosIdConsejo } from "@/store/features/voceros/thunks/vocerosIdConsejo";
 import { fetchVocerosIdParroquia } from "@/store/features/voceros/thunks/vocerosIdParroquia";
+import { cerrarModal } from "@/store/features/modal/slicesModal";
 
 export const useEffectVocerosViews = ({
   idPais,
@@ -50,25 +51,31 @@ export const useEffectVocerosViews = ({
         dispatch(fetchCircuitosIdParroquia(idParroquia));
       if (opcion === "consejo") dispatch(fetchConsejosIdParroquia(idParroquia));
 
-      if (opcion === "parroquia") dispatch(fetchVocerosIdParroquia(idParroquia));
+      if (opcion === "parroquia") {
+        dispatch(fetchVocerosIdParroquia(idParroquia));
+        dispatch(cerrarModal("consultar"));
+      }
     }
   }, [dispatch, idParroquia, opcion]);
 
   useEffect(() => {
     if (idComuna) {
       dispatch(fetchVocerosIdComuna(idComuna));
+      dispatch(cerrarModal("consultar"));
     }
   }, [dispatch, idComuna]);
 
   useEffect(() => {
     if (idCircuito) {
       dispatch(fetchVocerosIdCircuito(idCircuito));
+      dispatch(cerrarModal("consultar"));
     }
   }, [dispatch, idCircuito]);
 
   useEffect(() => {
     if (idConsejo) {
       dispatch(fetchVocerosIdConsejo(idConsejo));
+      dispatch(cerrarModal("consultar"));
     }
   }, [dispatch, idConsejo]);
 };
