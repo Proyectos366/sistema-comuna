@@ -31,9 +31,6 @@ export default function ModalVoceros({
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
-  const { comunas } = useSelector((state) => state.comunas);
-  const { circuitos } = useSelector((state) => state.circuitos);
-  const { consejos } = useSelector((state) => state.consejos);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -126,11 +123,17 @@ export default function ModalVoceros({
   const handleEditarVocero = async () => {
     try {
       const updateVocero = {
+        cedula: cedula,
+        edad: edad,
         nombre: nombre,
-        id_parroquia: idParroquia,
-        id_comuna: idComuna,
-        id_circuito: idCircuito,
-        id_consejo: idConsejo,
+        nombre_dos: nombreDos,
+        apellido: apellido,
+        apellido_dos: apellidoDos,
+        genero: genero,
+        telefono: telefono,
+        correo: correo,
+        laboral: laboral,
+        id_cargo: idCargo,
       };
 
       await dispatch(
@@ -259,23 +262,41 @@ export default function ModalVoceros({
               <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
             </>
           )}
-          <ModalDatos
-            titulo={
-              opcion === "comuna"
-                ? "Comuna"
-                : opcion === "circuito"
-                ? "Circuito comunal"
-                : "Consejo comunal"
-            }
-            descripcion={
-              opcion === "comuna"
-                ? nombreComuna
-                : opcion === "circuito"
-                ? nombreCircuito
-                : nombreConsejo
-            }
-          />
+
+          <ModalDatos titulo="Parroquia" descripcion={nombreParroquia} />
+          {nombreComuna && (
+            <ModalDatos titulo="Comuna" descripcion={nombreComuna} />
+          )}
+          {nombreCircuito && (
+            <ModalDatos
+              titulo="Circuito comunal"
+              descripcion={nombreCircuito}
+            />
+          )}
+          {nombreConsejo && (
+            <ModalDatos titulo="Consejo comunal" descripcion={nombreConsejo} />
+          )}
+
+          <ModalDatos titulo="Cédula" descripcion={cedula} />
+          <ModalDatos titulo="Edad" descripcion={edad} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
+          {nombreDos && (
+            <ModalDatos titulo="Segundo nombre" descripcion={nombreDos} />
+          )}
+          <ModalDatos titulo="Apellido" descripcion={apellido} />
+          {nombreDos && (
+            <ModalDatos titulo="Segundo apellido" descripcion={apellidoDos} />
+          )}
+          <ModalDatos
+            titulo="Genero"
+            descripcion={genero ? "Masculino" : "Femenino"}
+          />
+          <ModalDatos titulo="Teléfono" descripcion={telefono} />
+
+          <ModalDatos titulo="Correo" descripcion={correo} />
+          <ModalDatos titulo="Actividad laboral" descripcion={laboral} />
+
+          <ModalDatos titulo="Cargo" descripcion={nombreCargo} />
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -290,14 +311,6 @@ export default function ModalVoceros({
           nombreDos="Cancelar"
           campos={{
             nombre,
-            idParroquia,
-            id:
-              opcion === "comuna"
-                ? idComuna
-                : opcion === "circuito"
-                ? idCircuito
-                : idConsejo,
-            idVocero,
           }}
         />
       </Modal>

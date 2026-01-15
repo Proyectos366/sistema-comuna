@@ -1949,25 +1949,22 @@ export default class ValidarCampos {
    @param {number} id_circuito - El ID del circuito del vocero.
   */
   static validarCamposEditarVocero(
+    cedula,
+    edad,
     nombre,
     nombre_dos,
     apellido,
     apellido_dos,
-    cedula,
-    correo,
     genero,
-    edad,
     telefono,
-    direccion,
+    correo,
     laboral,
-    id_parroquia,
-    id_comuna,
-    id_consejo,
-    id_circuito
+    id_cargo
   ) {
     try {
       // 1. Validar cada campo individualmente.
-      const validarCorreo = this.validarCampoCorreo(correo);
+      const validarCedula = this.validarCampoCedula(cedula);
+      const validarEdad = this.validarCampoEdad(edad);
       const validarNombre = this.validarCampoNombre(nombre);
       const validarNombreDos = this.validarCampoNombreApellidoDos(
         nombre_dos,
@@ -1978,45 +1975,26 @@ export default class ValidarCampos {
         apellido_dos,
         "apellido"
       );
-      const validarCedula = this.validarCampoCedula(cedula);
       const validarGenero = this.validarCampoGenero(genero);
-      const validarEdad = this.validarCampoEdad(edad);
       const validarTelefono = this.validarCampoTelefono(telefono);
+      const validarCorreo = this.validarCampoCorreo(correo);
       const validarActividadLaboral = this.validarCampoNombre(laboral);
-      const validarDireccion = this.validarCampoTexto(
-        direccion ? direccion : "sin direccion"
-      );
-      const validarParroquia = this.validarCampoId(id_parroquia);
-      const validarComuna = id_comuna
-        ? this.validarCampoId(id_comuna)
-        : { id: null };
-      const validarCircuito = id_circuito
-        ? this.validarCampoId(id_circuito)
-        : { id: null };
-      const validarConsejo = id_consejo
-        ? this.validarCampoId(id_consejo)
-        : { id: null };
+
+      const validarIdCargo = this.validarCampoId(id_cargo, "cargo");
 
       // 2. Verificar si alguna validación falló
-      if (validarCorreo.status === "error") return validarCorreo;
+      if (validarCedula.status === "error") return validarCedula;
+      if (validarEdad.status === "error") return validarEdad;
       if (validarNombre.status === "error") return validarNombre;
       if (validarNombreDos.status === "error") return validarNombreDos;
       if (validarApellido.status === "error") return validarApellido;
       if (validarApellidoDos.status === "error") return validarApellidoDos;
-      if (validarCedula.status === "error") return validarCedula;
       if (validarGenero.status === "error") return validarGenero;
-      if (validarEdad.status === "error") return validarEdad;
       if (validarTelefono.status === "error") return validarTelefono;
+      if (validarCorreo.status === "error") return validarCorreo;
       if (validarActividadLaboral.status === "error")
         return validarActividadLaboral;
-      if (validarDireccion.status === "error") return validarDireccion;
-      if (validarParroquia.status === "error") return validarParroquia;
-      if (validarComuna && validarComuna.status === "error")
-        return validarComuna;
-      if (validarCircuito && validarCircuito.status === "error")
-        return validarCircuito;
-      if (validarConsejo && validarConsejo.status === "error")
-        return validarConsejo;
+      if (validarIdCargo.status === "error") return validarIdCargo;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
@@ -2030,11 +2008,7 @@ export default class ValidarCampos {
         telefono: validarTelefono.telefono,
         correo: validarCorreo.correo,
         laboral: validarActividadLaboral.nombre,
-        direccion: validarDireccion.texto,
-        id_parroquia: validarParroquia.id,
-        id_comuna: validarComuna.id,
-        id_circuito: validarCircuito.id,
-        id_consejo: validarConsejo.id,
+        id_cargo: validarIdCargo.id,
       });
     } catch (error) {
       // 4. Manejo de errores inesperados

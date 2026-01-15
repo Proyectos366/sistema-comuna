@@ -62,6 +62,7 @@ export async function GET(request) {
         edad: true,
         genero: true,
         laboral: true,
+        createdAt: true,
         comunas: {
           select: { nombre: true, id: true, id_parroquia: true },
         },
@@ -80,7 +81,7 @@ export async function GET(request) {
             verificado: true,
             certificado: true,
             formaciones: {
-              select: { nombre: true },
+              select: { id: true, nombre: true },
             },
             asistencias: {
               select: {

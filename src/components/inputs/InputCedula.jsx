@@ -21,7 +21,6 @@ export default function InputCedula({
   setValidarCedula,
   setValue,
   name,
-  indice,
   htmlFor,
   nombre,
 }) {

@@ -11,55 +11,44 @@ import validarEditarVocero from "@/services/voceros/validarEditarVocero"; // Ser
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP POST para editar un vocero.
- * Valida los datos recibidos, actualiza el vocero en la base de datos y retorna una respuesta estructurada.
- *
- * @async
- * @function POST
- * @param {Request} request - Solicitud HTTP con los datos del vocero a editar.
- * @returns {Promise<Response>} Respuesta HTTP con el vocero actualizado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP POST para editar un vocero.
+ Valida los datos recibidos, actualiza el vocero en la base de datos y retorna una respuesta estructurada.
+ @async
+ @function POST
+ @param {Request} request - Solicitud HTTP con los datos del vocero a editar.
+ @returns {Promise<Response>} Respuesta HTTP con el vocero actualizado o un mensaje de error.
+*/
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae los datos del cuerpo de la solicitud
     const {
+      cedula,
+      edad,
       nombre,
       nombre_dos,
       apellido,
       apellido_dos,
-      cedula,
-      correo,
       genero,
-      edad,
       telefono,
-      direccion,
+      correo,
       laboral,
-      cargos,
-      formaciones,
-      id_parroquia,
-      id_comuna,
-      id_consejo,
-      id_circuito,
+      id_cargo,
     } = await request.json();
 
     // 2. Valida los datos recibidos
     const validaciones = await validarEditarVocero(
+      cedula,
+      edad,
       nombre,
       nombre_dos,
       apellido,
       apellido_dos,
-      cedula,
-      correo,
       genero,
-      edad,
       telefono,
-      direccion,
+      correo,
       laboral,
-      id_parroquia,
-      id_comuna,
-      id_consejo,
-      id_circuito
+      id_cargo
     );
 
     // 3. Si la validación falla, registra el intento y retorna error
@@ -87,22 +76,17 @@ export async function POST(request) {
       prisma.vocero.update({
         where: { cedula: validaciones.cedula },
         data: {
-          nombre: validaciones.nombre,
-          nombre_dos: validaciones.nombreDos,
-          apellido: validaciones.apellido,
-          apellido_dos: validaciones.apellidoDos,
-          correo: validaciones.correo,
-          genero: validaciones.genero,
           edad: validaciones.edad,
+          nombre: validaciones.nombre,
+          nombre_dos: validaciones.nombre_dos,
+          apellido: validaciones.apellido,
+          apellido_dos: validaciones.apellido_dos,
+          genero: validaciones.genero,
           telefono: validaciones.telefono,
-          direccion: validaciones.direccion,
+          correo: validaciones.correo,
           laboral: validaciones.laboral,
-          id_parroquia: validaciones.id_parroquia,
-          id_comuna: validaciones.id_comuna,
-          id_consejo: validaciones.id_consejo,
-          id_circuito: validaciones.id_circuito,
           cargos: {
-            set: cargos.map(({ id }) => ({ id })),
+            set: validaciones.id_cargo.map(({ id }) => ({ id })),
           },
         },
       }),
@@ -121,16 +105,17 @@ export async function POST(request) {
           edad: true,
           genero: true,
           laboral: true,
+          createdAt: true,
           comunas: { select: { nombre: true, id: true, id_parroquia: true } },
           circuitos: { select: { nombre: true, id: true } },
-          parroquias: { select: { nombre: true } },
+          parroquias: { select: { id: true, nombre: true } },
           consejos: { select: { nombre: true } },
           cursos: {
             where: { borrado: false },
             select: {
               verificado: true,
               certificado: true,
-              formaciones: { select: { nombre: true } },
+              formaciones: { select: { id: true, nombre: true } },
               asistencias: {
                 select: {
                   id: true,
@@ -185,7 +170,7 @@ export async function POST(request) {
     return generarRespuesta(
       "ok",
       "Vocero actualizado...",
-      { vocero: voceroActualizado },
+      { voceros: voceroActualizado },
       201
     );
   } catch (error) {

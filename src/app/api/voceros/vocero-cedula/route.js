@@ -11,14 +11,13 @@ import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar e
 import validarConsultarVoceroCedula from "@/services/voceros/ValidarConsultarUsuarioCedula";
 
 /**
- * Maneja las solicitudes HTTP POST para consultar un vocero por cédula.
- * Valida la cédula, consulta la base de datos y retorna una respuesta estructurada.
- *
- * @async
- * @function POST
- * @param {Request} request - Solicitud HTTP con la cédula del vocero a consultar.
- * @returns {Promise<Response>} Respuesta HTTP con los datos del vocero o un mensaje de error.
- */
+ Maneja las solicitudes HTTP POST para consultar un vocero por cédula.
+ Valida la cédula, consulta la base de datos y retorna una respuesta estructurada.
+ @async
+ @function POST
+ @param {Request} request - Solicitud HTTP con la cédula del vocero a consultar.
+ @returns {Promise<Response>} Respuesta HTTP con los datos del vocero o un mensaje de error.
+*/
 
 export async function POST(request) {
   try {
@@ -85,7 +84,7 @@ export async function POST(request) {
             verificado: true,
             certificado: true,
             formaciones: {
-              select: { nombre: true },
+              select: { id: true, nombre: true },
             },
             asistencias: {
               select: {

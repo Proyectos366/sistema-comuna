@@ -75,7 +75,7 @@ export async function GET(request) {
           select: {
             verificado: true,
             certificado: true,
-            formaciones: { select: { nombre: true } },
+            formaciones: { select: { id: true, nombre: true } },
             asistencias: {
               select: {
                 id: true,

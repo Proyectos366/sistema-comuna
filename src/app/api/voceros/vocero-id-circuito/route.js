@@ -12,14 +12,13 @@ import registrarEventoSeguro from "@/libs/trigget";
 import validarConsultarVoceroIdCircuito from "@/services/voceros/validarConsultarVoceroIdCircuito";
 
 /**
- * Maneja las solicitudes HTTP GET para consultar voceros por ID de circuito.
- * Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
- *
- * @async
- * @function GET
- * @param {Request} request - Solicitud HTTP con el ID de la circuito.
- * @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
- */
+ Maneja las solicitudes HTTP GET para consultar voceros por ID de circuito.
+ Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
+ @async
+ @function GET
+ @param {Request} request - Solicitud HTTP con el ID de la circuito.
+ @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
+*/
 
 export async function GET(req) {
   try {
@@ -62,6 +61,7 @@ export async function GET(req) {
         edad: true,
         genero: true,
         laboral: true,
+        createdAt: true,
         comunas: {
           select: { nombre: true, id: true, id_parroquia: true },
         },
@@ -77,7 +77,7 @@ export async function GET(req) {
           select: {
             verificado: true,
             certificado: true,
-            formaciones: { select: { nombre: true } },
+            formaciones: { select: { id: true, nombre: true } },
             asistencias: {
               select: {
                 id: true,
@@ -112,7 +112,7 @@ export async function GET(req) {
         "ok",
         "No hay voceros en este circuito comunal.",
         { voceros: [] },
-        200
+        404
       );
     }
 
@@ -131,7 +131,7 @@ export async function GET(req) {
     return generarRespuesta(
       "ok",
       "Voceros encontrados.",
-      { voceros: vocerosPorCircuitoComunal },
+      { voceros: vocerosPorCircuito },
       200
     );
   } catch (error) {

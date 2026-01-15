@@ -236,6 +236,8 @@ export default function VocerosView() {
     setIdComuna(vocero?.comunas?.id);
     setIdCircuito(vocero?.circuitos?.id);
     setIdConsejo(vocero?.consejos?.id);
+    setIdCargo(vocero?.cargos?.[0]?.id);
+    setIdFormacion(vocero?.cursos?.[0]?.formaciones?.id);
 
     setCedulaVocero(vocero.cedula);
     setEdadVocero(vocero.edad);
@@ -247,6 +249,14 @@ export default function VocerosView() {
     setTelefonoVocero(vocero.telefono);
     setCorreoVocero(vocero.correo);
     setLaboralVocero(vocero.laboral);
+
+    setNombreParroquia(vocero?.parroquias?.nombre);
+    setNombreComuna(vocero?.comunas?.nombre);
+    setNombreCircuito(vocero?.circuitos?.nombre);
+    setNombreConsejo(vocero?.consejos?.nombre);
+    setNombreCargo(vocero?.cargos?.[0]?.nombre);
+    setNombreFormacion(vocero?.cursos?.[0]?.formaciones?.nombre);
+
     dispatch(abrirModal("editar"));
   };
 

@@ -67,15 +67,15 @@ export async function GET(request) {
           select: { nombre: true, id: true },
         },
         parroquias: {
-          select: { nombre: true },
+          select: { id: true, nombre: true },
         },
-        consejos: { select: { nombre: true } },
+        consejos: { select: { nombre: true, id: true } },
         cursos: {
           where: { borrado: false },
           select: {
             verificado: true,
             certificado: true,
-            formaciones: { select: { nombre: true } },
+            formaciones: { select: { id: true, nombre: true } },
             asistencias: {
               select: {
                 id: true,

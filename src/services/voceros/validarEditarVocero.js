@@ -5,10 +5,9 @@
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
-import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar campos individuales
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
-import { calcularFechaNacimientoPorEdad } from "@/utils/Fechas"; // Función para calcular fecha de nacimiento a partir de la edad
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
  Valida los datos del usuario activo, los campos del vocero y la existencia del registro
@@ -34,21 +33,17 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 */
 
 export default async function validarEditarVocero(
+  cedula,
+  edad,
   nombre,
   nombre_dos,
   apellido,
   apellido_dos,
-  cedula,
-  correo,
   genero,
-  edad,
   telefono,
-  direccion,
+  correo,
   laboral,
-  id_parroquia,
-  id_comuna,
-  id_consejo,
-  id_circuito
+  id_cargo
 ) {
   try {
     // 1. Validar identidad del usuario activo mediante el token.
@@ -64,21 +59,17 @@ export default async function validarEditarVocero(
 
     // 3. Validar los campos del vocero.
     const validandoCampos = ValidarCampos.validarCamposEditarVocero(
+      cedula,
+      edad,
       nombre,
       nombre_dos,
       apellido,
       apellido_dos,
-      cedula,
-      correo,
       genero,
-      edad,
       telefono,
-      direccion,
+      correo,
       laboral,
-      id_parroquia,
-      id_comuna,
-      id_consejo,
-      id_circuito
+      id_cargo
     );
 
     // 4. Si los campos son inválidos, retornar error.
@@ -92,17 +83,12 @@ export default async function validarEditarVocero(
       );
     }
 
-    // 5. Calcular la fecha de nacimiento a partir de la edad.
-    const fechaNacimiento = calcularFechaNacimientoPorEdad(
-      validandoCampos.edad
-    );
-
-    // 6. Verificar si el vocero existe en la base de datos.
+    // 5. Verificar si el vocero existe en la base de datos.
     const existente = await prisma.vocero.findUnique({
       where: { cedula: validandoCampos.cedula },
     });
 
-    // 7. Si el vocero no existe, retornar error.
+    // 6. Si el vocero no existe, retornar error.
     if (!existente) {
       return retornarRespuestaFunciones(
         "error",
@@ -112,28 +98,23 @@ export default async function validarEditarVocero(
       );
     }
 
-    // 8. Si todas las validaciones son correctas, retornar los datos consolidados.
+    // 7. Si todas las validaciones son correctas, retornar los datos consolidados.
     return retornarRespuestaFunciones("ok", "Validaciones correctas...", {
       id_usuario: validaciones.id_usuario,
-      nombre: validandoCampos.nombre,
-      nombreDos: validandoCampos.nombre_dos,
-      apellido: validandoCampos.apellido,
-      apellidoDos: validandoCampos.apellido_dos,
       cedula: validandoCampos.cedula,
-      genero: validandoCampos.genero,
       edad: validandoCampos.edad,
+      nombre: validandoCampos.nombre,
+      nombre_dos: validandoCampos.nombre_dos,
+      apellido: validandoCampos.apellido,
+      apellido_dos: validandoCampos.apellido_dos,
+      genero: validandoCampos.genero,
       telefono: validandoCampos.telefono,
-      direccion: validandoCampos.direccion,
       correo: validandoCampos.correo,
       laboral: validandoCampos.laboral,
-      fechaNacimiento: fechaNacimiento,
-      id_parroquia: validandoCampos.id_parroquia,
-      id_comuna: validandoCampos.id_comuna,
-      id_circuito: validandoCampos.id_circuito,
-      id_consejo: validandoCampos.id_consejo,
+      id_cargo: [{ id: validandoCampos.id_cargo }],
     });
   } catch (error) {
-    // 9. Manejo de errores inesperados.
+    // 8. Manejo de errores inesperados.
     console.log("Error interno validar editar vocero: " + error);
 
     // Retorna una respuesta del error inesperado

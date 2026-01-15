@@ -18,6 +18,8 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import { validarEditarVocero } from "@/components/dashboard/voceros/functions/validarEditarVocero";
 
 import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionGenero } from "@/utils/dashboard/cambiarSeleccionGenero";
+import { cambiarSeleccionCargo } from "@/utils/dashboard/cambiarSeleccionCargo";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
@@ -29,7 +31,6 @@ export default function FormEditarConsejo({
   const dispatch = useDispatch();
 
   const { cargos } = useSelector((state) => state.cargos);
-  const { formaciones } = useSelector((state) => state.formaciones);
 
   useEffect(() => {
     validarEditarVocero(datosVocero, validaciones, acciones);
@@ -44,6 +45,8 @@ export default function FormEditarConsejo({
             setValue={acciones.setCedula}
             validarCedula={validaciones.validarCedula}
             setValidarCedula={validaciones.setValidarCedula}
+            readOnly={true}
+            disabled={true}
           />
 
           <InputEdad
@@ -100,7 +103,7 @@ export default function FormEditarConsejo({
 
         <AgruparCamposForm>
           <SelectOpcion
-            idOpcion={datosVocero.genero}
+            idOpcion={datosVocero.genero ? 1 : 2}
             nombre={"Genero"}
             handleChange={(e) => {
               cambiarSeleccionGenero(e, acciones.setGenero);
@@ -150,27 +153,16 @@ export default function FormEditarConsejo({
             seleccione={"Seleccione"}
             setNombre={acciones.setNombreCargo}
           />
-
-          <SelectOpcion
-            idOpcion={datosVocero.idFormacion}
-            nombre={"Formaciones"}
-            handleChange={(e) => {
-              cambiarSeleccionFormacion(e, acciones.setIdFormacion);
-            }}
-            opciones={formaciones}
-            seleccione={"Seleccione"}
-            setNombre={acciones.setNombreFormacion}
-          />
         </AgruparCamposForm>
 
         <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
-              dispatch(cerrarModal("crear"));
-              dispatch(abrirModal("confirmar"));
+              dispatch(cerrarModal("editar"));
+              dispatch(abrirModal("confirmarCambios"));
             }}
-            nombre={"Crear"}
+            nombre={"Actualizar"}
             campos={{
               nombre: datosVocero.nombre,
             }}
