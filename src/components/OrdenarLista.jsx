@@ -41,7 +41,6 @@ export default function OrdenarLista({
                 : "border-[#E61C45] text-[#E61C45]"
             }`}
           onClick={() => {
-            console.log("aosjdhoajshd");
             setAbierto(!abierto);
           }}
         >

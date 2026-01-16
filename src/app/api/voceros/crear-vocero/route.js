@@ -135,7 +135,7 @@ export async function POST(request) {
           datosDespues: curso,
         });
 
-        const formacionConModulos = await prisma.formacion.findUnique({
+        const formacionConModulos = await prisma.formacion.findFirst({
           where: { id: id_formacion },
           include: { modulos: true },
         });

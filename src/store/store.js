@@ -17,6 +17,7 @@ import comunasReducer from "@/store/features/comunas/comunasSlices";
 import circuitosReducer from "@/store/features/circuitos/circuitosSlices";
 import consejosReducer from "@/store/features/consejos/consejosSlices";
 import vocerosReducer from "@/store/features/voceros/vocerosSlices";
+import participantesReducer from "@/store/features/participantes/participantesSlices";
 
 const store = configureStore({
   reducer: {
@@ -37,7 +38,7 @@ const store = configureStore({
     circuitos: circuitosReducer,
     consejos: consejosReducer,
     voceros: vocerosReducer,
-    // Aquí se agregarán los reducers de los "slices"
+    participantes: participantesReducer,
   },
 });
 
