@@ -4,7 +4,9 @@
  de forma estandarizada. @module utils/formatearTelefono
 */
 
-import { soloNumerosRegex } from "./constantes"; // Expresión regular para eliminar caracteres no numéricos
+import { soloNumerosRegex } from "@/utils/regex/soloNumerosRegex";
+
+ // Expresión regular para eliminar caracteres no numéricos
 
 /**
  Formatea un número de teléfono venezolano en formato legible. Ejemplo: "04121234567" → "0412-123.45.67"

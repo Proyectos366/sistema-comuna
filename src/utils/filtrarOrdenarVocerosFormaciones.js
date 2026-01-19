@@ -1,14 +1,25 @@
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar"; // si ya tienes la función en otro archivo
+import { filtrarOrdenarParticipantes } from "@/utils/filtrarOrdenarParticipantes";
 
 // Configuración de búsqueda y orden
-export const camposBusqueda = ["cedula", "nombre", "correo"];
+export const camposBusqueda = [
+  "cedula",
+  "nombre",
+  "apellido",
+  "correo",
+  "edad",
+];
 
 export const opcionesOrden = [
   { id: "cedula", nombre: "Cédula" },
   { id: "nombre", nombre: "Nombre" },
+  { id: "apellido", nombre: "Apellido" },
   { id: "correo", nombre: "Correo" },
   { id: "edad", nombre: "Edad" },
   { id: "createdAt", nombre: "Fecha de registro" },
+  { id: "parroquia", nombre: "Parroquia" },
+  { id: "comuna", nombre: "Comuna" },
+  { id: "circuito", nombre: "Circuito comunal" },
+  { id: "consejo", nombre: "Consejo comunal" },
   { id: "formacion", nombre: "Formación" },
   { id: "modulo1", nombre: "Modulo I" },
   { id: "modulo2", nombre: "Modulo II" },
@@ -63,8 +74,66 @@ export function prepararVocerosConCurso(todosParticipantes) {
       puedeCertificar: !tieneAsistenciasPendientes && estaVerificado,
       estaVerificado,
       estaCertificado,
+      fechaCompletado: curso?.fecha_completado,
     };
   });
+}
+
+export function agruparParticipantes(voceros, campo) {
+  return voceros.reduce((acc, item) => {
+    let clave;
+
+    switch (campo) {
+      case "comuna":
+        clave = item?.comunas?.nombre || "Sin comuna";
+        break;
+
+      case "consejo":
+        clave = item?.consejos?.nombre || "Sin consejo";
+        break;
+
+      case "parroquia":
+        clave = item?.parroquias?.nombre || "Sin parroquia";
+        break;
+
+      case "circuito":
+        clave = item?.circuitos?.nombre || "Sin circuito";
+        break;
+
+      case "certificado":
+        clave = item.estaCertificado ? "Certificado" : "No Certificado";
+        break;
+
+      case "validado":
+        clave = item.estaVerificado ? "Validado" : "No Validado";
+        break;
+
+      default:
+        // Para módulos: modulo1, modulo2, etc.
+        const matchModulo = campo.match(/^modulo(\d+)$/);
+        if (matchModulo) {
+          const index = parseInt(matchModulo[1], 10) - 1;
+          clave = item.asistencias?.[index]?.presente
+            ? `Módulo ${index + 1} aprobado`
+            : `Falta Módulo ${index + 1}`;
+        } else {
+          clave = item[campo] || "Sin información";
+        }
+        break;
+    }
+
+    if (!acc[clave]) acc[clave] = [];
+    acc[clave].push(item);
+    return acc;
+  }, {});
+}
+
+export function obtenerParticipantesAgrupados(
+  todosParticipantes,
+  campoAgrupacion
+) {
+  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
+  return agruparParticipantes(vocerosConCurso, campoAgrupacion);
 }
 
 // Función que aplica filtrado y ordenamiento
@@ -76,13 +145,35 @@ export function obtenerParticipantesFiltradosOrdenados(
 ) {
   const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
 
-  return filtrarOrdenar(
+  return filtrarOrdenarParticipantes(
     vocerosConCurso,
     busqueda,
     ordenCampo,
     ordenDireccion,
     camposBusqueda
   );
+}
+
+export function obtenerParticipantesFiltradosAgrupados(
+  todosParticipantes,
+  busqueda,
+  ordenCampo,
+  ordenDireccion,
+  campoAgrupacion
+) {
+  // 1. Preparar, filtrar y ordenar primero
+  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
+
+  const filtradosOrdenados = filtrarOrdenarParticipantes(
+    vocerosConCurso,
+    busqueda,
+    ordenCampo,
+    ordenDireccion,
+    camposBusqueda
+  );
+
+  // 2. Agrupar sobre la lista ya filtrada y ordenada
+  return agruparParticipantes(filtradosOrdenados, campoAgrupacion);
 }
 
 /**

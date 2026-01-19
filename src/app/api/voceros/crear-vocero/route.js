@@ -195,10 +195,18 @@ export async function POST(request) {
         genero: true,
         laboral: true,
         createdAt: true,
-        comunas: { select: { nombre: true, id: true, id_parroquia: true } },
-        circuitos: { select: { nombre: true, id: true } },
-        parroquias: { select: { nombre: true } },
-        consejos: { select: { nombre: true } },
+        comunas: { select: { id: true, nombre: true, id_parroquia: true } },
+        circuitos: { select: { id: true, nombre: true, id_parroquia: true } },
+        parroquias: { select: { id: true, nombre: true } },
+        consejos: {
+          select: {
+            id: true,
+            nombre: true,
+            id_parroquia: true,
+            id_circuito: true,
+            id_comuna: true,
+          },
+        },
         cursos: {
           where: { borrado: false },
           select: {

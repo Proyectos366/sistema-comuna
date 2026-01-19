@@ -31,6 +31,7 @@ export default function ModalVoceros({
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
+  const { consejos } = useSelector((state) => state.consejos);
 
   const mostrarConfirmar = useSelector(
     (state) => state.modal.modales.confirmar
@@ -82,6 +83,10 @@ export default function ModalVoceros({
 
   const notify = (msj) => toast(msj);
 
+  const buscarIdComuna = consejos?.filter(
+    (consejo) => consejo.id === idConsejo
+  );
+
   const handleCrearVocero = async () => {
     try {
       const nuevoVocero = {
@@ -103,8 +108,14 @@ export default function ModalVoceros({
           ? idFormacion.map((id) => ({ id }))
           : [{ id: idFormacion }],
         id_parroquia: idParroquia,
-        id_comuna: idComuna,
-        id_circuito: idCircuito,
+        id_comuna:
+          buscarIdComuna[0]?.id_comuna && opcion === "consejo"
+            ? buscarIdComuna[0]?.id_comuna
+            : idComuna,
+        id_circuito:
+          buscarIdComuna[0]?.id_circuito && opcion === "consejo"
+            ? buscarIdComuna[0]?.id_circuito
+            : idCircuito,
         id_consejo: idConsejo,
       };
 

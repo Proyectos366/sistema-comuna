@@ -22,9 +22,19 @@ import SelectOpcion from "@/components/SelectOpcion";
 import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
 
 import { fetchParticipantes } from "@/store/features/participantes/thunks/todosParticipantes";
-import { obtenerParticipantesFiltradosOrdenados, opcionesOrden } from "@/utils/filtrarOrdenarVocerosFormaciones";
+import {
+  obtenerParticipantesAgrupados,
+  obtenerParticipantesFiltradosAgrupados,
+  obtenerParticipantesFiltradosOrdenados,
+  opcionesOrden,
+} from "@/utils/filtrarOrdenarVocerosFormaciones";
 import FichaDetallesVocero from "@/components/dashboard/participantes/components/FichaDetallesVocero";
 import ButtonToggleDetallesVocero from "./components/ButtonToggleDetallesVocero";
+import { fetchParticipantesIdFormacion } from "@/store/features/participantes/thunks/participantesIdFormacion";
+import Titulos from "@/components/Titulos";
+import DivOrdenVoceros from "./components/DivOrdenVoceros";
+import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
+import { opcionOrden } from "@/components/dashboard/participantes/function/opcionOrden";
 
 //import { fetchParticipantesIdFormacion } from "@/store/features/participantes/thunks/participantesIdFormacion";
 
@@ -39,6 +49,7 @@ export default function ParticipantesView() {
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
       dispatch(fetchFormaciones());
+      dispatch(fetchParticipantes());
     } else {
       dispatch(fetchFormacionesInstitucion());
     }
@@ -56,35 +67,10 @@ export default function ParticipantesView() {
   const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
 
   useEffect(() => {
-    if (usuarioActivo.id_rol === 1) {
-      dispatch(fetchParticipantes());
-    } else {
-      dispatch(fetchFormacionesInstitucion());
+    if (usuarioActivo.id_rol !== 1 && idFormacion) {
+      dispatch(fetchParticipantesIdFormacion(idFormacion));
     }
-  }, [idFormacion]);
-
-  /** 
-  const camposBusqueda = ["cedula", "nombre", "correo"];
-    const opcionesOrden = [
-      { id: "cedula", nombre: "Cédula" },
-      { id: "nombre", nombre: "Nombre" },
-      { id: "correo", nombre: "Correo" },
-    ];
-
-    const participantesFiltradosOrdenados = useMemo(() => {
-      return filtrarOrdenar(
-        participantes,
-        busqueda,
-        ordenCampo,
-        ordenDireccion,
-        camposBusqueda
-      );
-    }, [participantes, busqueda, ordenCampo, ordenDireccion]);
-
-    const participantesPaginados = useMemo(() => {
-      return participantesFiltradosOrdenados.slice(first, first + rows);
-    }, [participantesFiltradosOrdenados, first, rows]);
-  */
+  }, [idFormacion, dispatch]);
 
   const participantesFiltradosOrdenados = useMemo(() => {
     return obtenerParticipantesFiltradosOrdenados(
@@ -95,17 +81,38 @@ export default function ParticipantesView() {
     );
   }, [participantes, busqueda, ordenCampo, ordenDireccion]);
 
-  const participantesPaginados = useMemo(() => {
-    return participantesFiltradosOrdenados.slice(first, first + rows);
-  }, [participantesFiltradosOrdenados, first, rows]);
+  const participantesFinales = useMemo(() => {
+    if (ordenCampo) {
+      return obtenerParticipantesFiltradosAgrupados(
+        participantes,
+        busqueda,
+        ordenCampo,
+        ordenDireccion,
+        ordenCampo
+      );
+    }
+
+    const filtradosOrdenados = obtenerParticipantesFiltradosOrdenados(
+      participantes,
+      busqueda,
+      ordenCampo,
+      ordenDireccion
+    );
+
+    return filtradosOrdenados.slice(first, first + rows);
+  }, [
+    participantes,
+    busqueda,
+    ordenCampo,
+    ordenDireccion,
+    ordenCampo,
+    first,
+    rows,
+  ]);
 
   useEffect(() => {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
-
-
-  //console.log(participantesPaginados);
-  
 
   return (
     <>
@@ -139,32 +146,50 @@ export default function ParticipantesView() {
             opcionesOrden={opcionesOrden}
           />
 
-          <Div className={`flex flex-col gap-2`}>
+          <Div className="flex flex-col gap-2">
             {participantes?.length === 0 && loading ? (
               <Loader titulo="Cargando participantes..." />
             ) : (
               <>
-                {participantesPaginados?.length !== 0 ? (
-                  participantesPaginados.map((participante, index) => {
-                    
-                    return (
-                      <FichaDetallesVocero
-                        key={participante.id}
-                        dato={participante}
-                        index={index}
-                      >
-                        <ButtonToggleDetallesVocero
+                {ordenCampo && participantesFinales ? (
+                  Object.entries(participantesFinales).map(
+                    ([titulo, lista]) => {
+                      return (
+                        <DivOrdenVoceros
+                          dato={lista}
                           expanded={expanded}
-                          dato={participante}
-                          setExpanded={setExpanded}
-                        />
+                          opcionOrden={opcionOrden(ordenCampo)}
+                          key={titulo}
+                        >
+                          {opcionOrden(ordenCampo) && (
+                            <Titulos
+                              indice={4}
+                              titulo={formatoTituloSimple(titulo)}
+                            />
+                          )}
 
-                        {expanded === participante.id && (
-                          <ListadoParticipantes participante={participante} />
-                        )}
-                      </FichaDetallesVocero>
-                    );
-                  })
+                          {lista.map((participante, index) => (
+                            <FichaDetallesVocero
+                              key={participante.id}
+                              dato={participante}
+                              index={index}
+                            >
+                              <ButtonToggleDetallesVocero
+                                expanded={expanded}
+                                dato={participante}
+                                setExpanded={setExpanded}
+                              />
+                              {expanded === participante.id && (
+                                <ListadoParticipantes
+                                  participante={participante}
+                                />
+                              )}
+                            </FichaDetallesVocero>
+                          ))}
+                        </DivOrdenVoceros>
+                      );
+                    }
+                  )
                 ) : (
                   <EstadoMsjVacio dato={participantes} loading={loading} />
                 )}
