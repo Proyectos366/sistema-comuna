@@ -40,7 +40,7 @@ export async function GET(req) {
 
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -82,7 +82,7 @@ export async function GET(req) {
               select: {
                 id: true,
                 presente: true,
-                formador: true,
+                id_formador: true,
                 descripcion: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
@@ -112,7 +112,7 @@ export async function GET(req) {
         "ok",
         "No hay voceros en este circuito comunal.",
         { voceros: [] },
-        404
+        404,
       );
     }
 
@@ -132,7 +132,7 @@ export async function GET(req) {
       "ok",
       "Voceros encontrados.",
       { voceros: vocerosPorCircuito },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
@@ -153,7 +153,7 @@ export async function GET(req) {
       "error",
       "Error, interno al consultar voceros circuito...",
       {},
-      500
+      500,
     );
   }
 }

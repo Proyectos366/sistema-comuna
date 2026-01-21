@@ -48,7 +48,7 @@ export async function PATCH(request) {
       telefono,
       correo,
       laboral,
-      id_cargo
+      id_cargo,
     );
 
     // 3. Si la validación falla, registra el intento y retorna error
@@ -67,7 +67,7 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -106,10 +106,18 @@ export async function PATCH(request) {
           genero: true,
           laboral: true,
           createdAt: true,
-          comunas: { select: { nombre: true, id: true, id_parroquia: true } },
-          circuitos: { select: { nombre: true, id: true } },
-          parroquias: { select: { id: true, nombre: true } },
-          consejos: { select: { nombre: true } },
+          comunas: {
+            select: { id: true, nombre: true, id_parroquia: true },
+          },
+          circuitos: {
+            select: { id: true, nombre: true },
+          },
+          parroquias: {
+            select: { id: true, nombre: true },
+          },
+          consejos: {
+            select: { id: true, nombre: true },
+          },
           cursos: {
             where: { borrado: false },
             select: {
@@ -120,7 +128,7 @@ export async function PATCH(request) {
                 select: {
                   id: true,
                   presente: true,
-                  formador: true,
+                  id_formador: true,
                   descripcion: true,
                   fecha_registro: true,
                   modulos: { select: { id: true, nombre: true } },
@@ -151,7 +159,7 @@ export async function PATCH(request) {
         "error",
         "Error, al consultar vocero actualizado",
         {},
-        400
+        400,
       );
     }
 
@@ -171,7 +179,7 @@ export async function PATCH(request) {
       "ok",
       "Vocero actualizado...",
       { voceros: voceroActualizado },
-      201
+      201,
     );
   } catch (error) {
     // 8. Manejo de errores inesperados
@@ -192,7 +200,7 @@ export async function PATCH(request) {
       "error",
       "Error, interno (actualizar vocero)",
       {},
-      500
+      500,
     );
   }
 }

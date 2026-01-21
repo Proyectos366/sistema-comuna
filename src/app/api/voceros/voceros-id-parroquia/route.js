@@ -80,7 +80,7 @@ export async function GET(request) {
               select: {
                 id: true,
                 presente: true,
-                formador: true,
+                id_formador: true,
                 descripcion: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
@@ -110,7 +110,7 @@ export async function GET(request) {
         "error",
         "No hay voceros en esta comuna...",
         { voceros: [] },
-        404
+        404,
       );
     }
 
@@ -130,7 +130,7 @@ export async function GET(request) {
       "ok",
       "Voceros encontrados.",
       { voceros: voceroPorParroquia },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
@@ -152,7 +152,7 @@ export async function GET(request) {
       "error",
       "Error, interno al consultar voceros id parroquia...",
       {},
-      500
+      500,
     );
   }
 }

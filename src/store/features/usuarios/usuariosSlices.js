@@ -1,11 +1,12 @@
-// features/users/usersSlice.ts
+// features/users/usersSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchUsuarios } from "./thunks/todosUsuarios";
-import { crearUsuario } from "./thunks/crearUsuario";
-import { cambiarAccesoUsuario } from "./thunks/cambiarAccesoUsuario";
-import { eliminarRestaurarUsuario } from "./thunks/eliminarRestaurarUsuario";
-import { cambiarDepartamentoUsuario } from "./thunks/cambiarDepartamentoUsuario";
-import { cambiarRolUsuario } from "./thunks/cambiarRolUsuario";
+import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
+import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario";
+import { cambiarAccesoUsuario } from "@/store/features/usuarios/thunks/cambiarAccesoUsuario";
+import { eliminarRestaurarUsuario } from "@/store/features/usuarios/thunks/eliminarRestaurarUsuario";
+import { cambiarDepartamentoUsuario } from "@/store/features/usuarios/thunks/cambiarDepartamentoUsuario";
+import { cambiarRolUsuario } from "@/store/features/usuarios/thunks/cambiarRolUsuario";
+import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
 
 const usersSlice = createSlice({
   name: "users",
@@ -26,6 +27,18 @@ const usersSlice = createSlice({
         state.usuarios = action.payload;
       })
       .addCase(fetchUsuarios.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchUsuariosNombres.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsuariosNombres.fulfilled, (state, action) => {
+        state.loading = false;
+        state.usuarios = action.payload;
+      })
+      .addCase(fetchUsuariosNombres.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
@@ -50,7 +63,7 @@ const usersSlice = createSlice({
         const usuarioActualizado = action.payload;
 
         const index = state.usuarios.findIndex(
-          (u) => u.id === usuarioActualizado.id
+          (u) => u.id === usuarioActualizado.id,
         );
         if (index !== -1) {
           state.usuarios[index] = usuarioActualizado;
@@ -69,7 +82,7 @@ const usersSlice = createSlice({
         const usuarioActualizado = action.payload;
 
         const index = state.usuarios.findIndex(
-          (u) => u.id === usuarioActualizado.id
+          (u) => u.id === usuarioActualizado.id,
         );
         if (index !== -1) {
           state.usuarios[index] = usuarioActualizado;
@@ -88,7 +101,7 @@ const usersSlice = createSlice({
         const usuarioActualizado = action.payload;
 
         const index = state.usuarios.findIndex(
-          (u) => u.id === usuarioActualizado.id
+          (u) => u.id === usuarioActualizado.id,
         );
         if (index !== -1) {
           state.usuarios[index] = usuarioActualizado;
@@ -107,7 +120,7 @@ const usersSlice = createSlice({
         const usuarioActualizado = action.payload;
 
         const index = state.usuarios.findIndex(
-          (u) => u.id === usuarioActualizado.id
+          (u) => u.id === usuarioActualizado.id,
         );
         if (index !== -1) {
           state.usuarios[index] = usuarioActualizado;

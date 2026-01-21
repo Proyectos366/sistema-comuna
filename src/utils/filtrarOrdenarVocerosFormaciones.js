@@ -26,6 +26,7 @@ export const opcionesOrden = [
   { id: "modulo3", nombre: "Modulo III" },
 ];
 
+/** 
 export function prepararVocerosConCurso(todosParticipantes) {
   return todosParticipantes?.map((curso) => {
     const vocero = curso.voceros;
@@ -78,7 +79,85 @@ export function prepararVocerosConCurso(todosParticipantes) {
     };
   });
 }
+*/
 
+export function prepararVocerosConCurso(todosParticipantes, usuarios) {
+  return todosParticipantes?.map((curso) => {
+    const vocero = curso.voceros;
+
+    const totalAsistencias = curso.asistencias?.length || 0;
+    const tieneAsistenciasPendientes = curso.asistencias?.some(
+      (asistencia) => !asistencia.presente,
+    );
+
+    const tieneAsistenciasAprobada = curso.asistencias?.some(
+      (asistencia) => asistencia.presente,
+    );
+
+    const estaVerificado = curso.verificado;
+    const estaCertificado = curso.certificado;
+
+    // Extraer nombres de formaciones
+    let nombresFormaciones = "";
+
+    if (Array.isArray(curso.formaciones)) {
+      nombresFormaciones = curso.formaciones.map((f) => f.nombre).join(", ");
+    } else if (curso.formaciones) {
+      nombresFormaciones = curso.formaciones.nombre;
+    }
+
+    // Procesar asistencias con información del validador
+    let asistenciasConValidador = [];
+    let nombresModulos = "";
+
+    if (Array.isArray(curso.asistencias)) {
+      // Procesar cada asistencia para agregar info del validador
+      asistenciasConValidador = curso.asistencias.map((asistencia) => {
+        let nombreValidador = "No validado";
+
+        // Buscar el validador por id_validador en el array de usuarios
+        if (asistencia.id_validador && usuarios) {
+          const validador = usuarios.find(
+            (user) => user.id === asistencia.id_validador,
+          );
+          if (validador) {
+            nombreValidador = validador.nombre;
+          }
+        }
+
+        return {
+          ...asistencia,
+          nombreValidador: nombreValidador,
+          moduloNombre: asistencia.modulos?.nombre || "Sin módulo",
+        };
+      });
+
+      // Crear string de módulos con validadores
+      nombresModulos = asistenciasConValidador
+        .map((a) => `${a.moduloNombre} (Validado por: ${a.nombreValidador})`)
+        .join(", ");
+    } else if (curso.asistencias) {
+      nombresModulos = curso.asistencias.modulos?.nombre || "";
+    }
+
+    return {
+      ...vocero,
+      cursoId: curso.id,
+      cursoNombre: curso.nombre,
+      asistencias: asistenciasConValidador, // Asistencias con info de validador
+      modulos: nombresModulos, // Módulos con nombres de validadores
+      formaciones: curso.formaciones,
+      formacion: nombresFormaciones,
+      totalAsistencias,
+      asistenciaAprobada: tieneAsistenciasAprobada,
+      puedeVerificar: !tieneAsistenciasPendientes,
+      puedeCertificar: !tieneAsistenciasPendientes && estaVerificado,
+      estaVerificado,
+      estaCertificado,
+      fechaCompletado: curso?.fecha_completado,
+    };
+  });
+}
 export function agruparParticipantes(voceros, campo) {
   return voceros.reduce((acc, item) => {
     let clave;
@@ -130,7 +209,7 @@ export function agruparParticipantes(voceros, campo) {
 
 export function obtenerParticipantesAgrupados(
   todosParticipantes,
-  campoAgrupacion
+  campoAgrupacion,
 ) {
   const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
   return agruparParticipantes(vocerosConCurso, campoAgrupacion);
@@ -139,37 +218,41 @@ export function obtenerParticipantesAgrupados(
 // Función que aplica filtrado y ordenamiento
 export function obtenerParticipantesFiltradosOrdenados(
   todosParticipantes,
+  usuarios,
   busqueda,
   ordenCampo,
-  ordenDireccion
+  ordenDireccion,
 ) {
-  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
+  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes, usuarios);
 
   return filtrarOrdenarParticipantes(
     vocerosConCurso,
+    usuarios,
     busqueda,
     ordenCampo,
     ordenDireccion,
-    camposBusqueda
+    camposBusqueda,
   );
 }
 
 export function obtenerParticipantesFiltradosAgrupados(
   todosParticipantes,
+  usuarios,
   busqueda,
   ordenCampo,
   ordenDireccion,
-  campoAgrupacion
+  campoAgrupacion,
 ) {
   // 1. Preparar, filtrar y ordenar primero
-  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes);
+  const vocerosConCurso = prepararVocerosConCurso(todosParticipantes, usuarios);
 
   const filtradosOrdenados = filtrarOrdenarParticipantes(
     vocerosConCurso,
+    usuarios,
     busqueda,
     ordenCampo,
     ordenDireccion,
-    camposBusqueda
+    camposBusqueda,
   );
 
   // 2. Agrupar sobre la lista ya filtrada y ordenada

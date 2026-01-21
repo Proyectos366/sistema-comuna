@@ -4,6 +4,8 @@
  fecha dada. También define una constante con la fecha actual. @module utils/fechas
 */
 
+import { formatoFechaIsoRegex } from "./regex/formatoFechaIsoRegex";
+
 /**
  Fecha límite en formato ISO (YYYY-MM-DD) correspondiente al día actual. Útil para establecer
  restricciones en formularios o filtros por fecha.
@@ -110,4 +112,49 @@ export function calcularEdadPorFechaNacimiento(fechaNacimiento) {
   }
 
   return edad;
+}
+
+/**
+ * Convierte una fecha en formato simple (YYYY-MM-DD) a formato ISO con hora actual.
+ * @function convertirFechaAISO
+ * @param {string} fechaSimple - Fecha en formato YYYY-MM-DD (ej. "2026-01-07").
+ * @returns {string} Fecha en formato ISO 8601 con hora actual o null si la entrada es inválida.
+ */
+export function convertirFechaAISO(fechaSimple) {
+  try {
+    // Validar formato básico
+    if (!formatoFechaIsoRegex.test(fechaSimple)) {
+      throw new Error("Formato de fecha inválido. Debe ser YYYY-MM-DD");
+    }
+
+    // Crear objeto Date a partir de la fecha simple
+    const [year, month, day] = fechaSimple.split("-").map(Number);
+
+    // Validar rangos de fecha
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      throw new Error("Valores de fecha fuera de rango");
+    }
+
+    // Crear fecha con hora actual
+    const now = new Date();
+    const fechaCompleta = new Date(
+      year,
+      month - 1,
+      day,
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds(),
+      now.getMilliseconds(),
+    );
+
+    // Validar que la fecha creada sea válida
+    if (isNaN(fechaCompleta.getTime())) {
+      throw new Error("Fecha inválida");
+    }
+
+    return fechaCompleta.toISOString(); // Retorna: "2026-01-07T15:11:01.862Z"
+  } catch (error) {
+    console.error(`Error al convertir la fecha: ${error.message}`);
+    return null; // O puedes retornar "" dependiendo de tu preferencia
+  }
 }

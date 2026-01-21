@@ -3,8 +3,8 @@ import Span from "../padres/Span";
 
 export default function LabelInput({ children, nombre, htmlFor }) {
   return (
-    <Label className="block w-full" htmlFor={htmlFor}>
-      <Span className="text-gray-700 font-medium">{nombre}: </Span>
+    <Label className="flex flex-col gap-1 w-full" htmlFor={htmlFor}>
+      <Span className="text-[#364153] font-medium -mb-1">{nombre}: </Span>
       {children}
     </Label>
   );

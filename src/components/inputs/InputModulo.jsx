@@ -1,16 +1,14 @@
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+import Input from "@/components/inputs/Input";
+import LabelInput from "@/components/inputs/LabelInput";
+
 import { moduloRegex } from "@/utils/regex/moduloRegex";
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
 
 export default function InputModulo({
-  type,
   indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
-  onChange,
   value,
   autoComplete,
   readOnly,
@@ -19,6 +17,8 @@ export default function InputModulo({
   validarModulo,
   setValidarModulo,
   setValue,
+  htmlFor,
+  nombre,
 }) {
   const validandoCampos = (campo) => {
     if (indice === "modulo") {
@@ -50,12 +50,15 @@ export default function InputModulo({
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "modulo"}
+      nombre={nombre ? nombre : "Modulo"}
+    >
       <Input
-        type={type}
-        id={id}
+        type={"text"}
+        id={htmlFor ? htmlFor : "modulo"}
         value={value}
-        name={name}
+        name={htmlFor ? htmlFor : "modulo"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
@@ -70,6 +73,6 @@ export default function InputModulo({
       {indice === "modulo" && value && !validarModulo && (
         <DivMensajeInput mensaje={"Debe ser un número entero..."} />
       )}
-    </div>
+    </LabelInput>
   );
 }

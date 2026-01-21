@@ -23,7 +23,7 @@ export default async function validarConsultarTodosUsuariosNombres() {
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -31,6 +31,7 @@ export default async function validarConsultarTodosUsuariosNombres() {
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
+      id_institucion: validaciones.id_institucion,
     });
   } catch (error) {
     // 4. Manejo de errores inesperados.
@@ -39,7 +40,7 @@ export default async function validarConsultarTodosUsuariosNombres() {
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar consultar todos usuarios"
+      "Error interno validar consultar todos usuarios",
     );
   }
 }

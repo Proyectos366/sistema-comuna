@@ -1,10 +1,10 @@
+import LabelInput from "@/components/inputs/LabelInput";
+
 export default function InputDescripcion({
   indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
   onChange,
   value,
   setValue,
@@ -13,6 +13,8 @@ export default function InputDescripcion({
   readOnly,
   ref,
   max,
+  htmlFor,
+  nombre,
 }) {
   const leyendoInput = (e) => {
     const textarea = e.target;
@@ -30,10 +32,13 @@ export default function InputDescripcion({
     : clasePorDefecto;
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "descripcion"}
+      nombre={nombre ? nombre : "Descripción"}
+    >
       <textarea
-        id={id}
-        name={name}
+        id={htmlFor ? htmlFor : "descripcion"}
+        name={htmlFor ? htmlFor : "descripcion"}
         value={value}
         onChange={leyendoInput}
         disabled={disabled}
@@ -47,9 +52,8 @@ export default function InputDescripcion({
         maxLength={max}
         rows={row}
         indice={indice}
-        style={{ height: "auto" }}
       />
-    </div>
+    </LabelInput>
   );
 }
 

@@ -74,7 +74,7 @@ export default function InputCedula({
     >
       <Input
         type={"text"}
-        id={htmlFor}
+        id={htmlFor ? htmlFor : "cedula"}
         value={value}
         name={name}
         disabled={disabled}

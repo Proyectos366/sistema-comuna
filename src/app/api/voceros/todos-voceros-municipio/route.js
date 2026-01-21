@@ -42,7 +42,7 @@ export async function GET(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -67,16 +67,16 @@ export async function GET(request) {
         laboral: true,
         createdAt: true,
         comunas: {
-          select: { nombre: true, id: true, id_parroquia: true },
+          select: { id: true, nombre: true, id_parroquia: true },
         },
         circuitos: {
-          select: { nombre: true, id: true },
+          select: { id: true, nombre: true },
         },
         parroquias: {
-          select: { nombre: true },
+          select: { id: true, nombre: true },
         },
         consejos: {
-          select: { nombre: true, id: true },
+          select: { id: true, nombre: true },
         },
         cursos: {
           where: { borrado: false },
@@ -90,7 +90,7 @@ export async function GET(request) {
               select: {
                 id: true,
                 presente: true,
-                formador: true,
+                id_formador: true,
                 descripcion: true,
                 fecha_registro: true,
                 modulos: {
@@ -140,7 +140,7 @@ export async function GET(request) {
       "ok",
       "Voceros encontrados...",
       { voceros: todosVocerosMunicipio },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
@@ -161,7 +161,7 @@ export async function GET(request) {
       "error",
       "Error interno al consultar voceros municipio...",
       {},
-      500
+      500,
     );
   }
 }

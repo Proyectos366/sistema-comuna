@@ -22,8 +22,8 @@ export default async function validarAsistenciaPorModulo(
   modulo,
   fecha,
   id_asistencia,
-  nombreFormador,
-  descripcion
+  id_formador,
+  descripcion,
 ) {
   try {
     // 1. Ejecuta la validación previa antes de consultar
@@ -33,78 +33,44 @@ export default async function validarAsistenciaPorModulo(
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
-    // 3. Validar los campos de entrada.
-    const idAsistencia = ValidarCampos.validarCampoId(id_asistencia);
-    const moduloNumero = ValidarCampos.validarCampoId(modulo);
-    const validarNombre = ValidarCampos.validarCampoNombre(nombreFormador);
-    const validarFecha = ValidarCampos.validarCampoFechaISO(fecha);
-    const validarDescr = ValidarCampos.validarCampoTexto(descripcion);
+    // 3. Validar los campos de entrada utilizando la clase ValidarCampos.
+    const validarCampos = ValidarCampos.validarCamposAsistenciaModulo(
+      modulo,
+      fecha,
+      id_asistencia,
+      id_formador,
+      descripcion,
+    );
 
-    // 4. Verificar si el idAsistencia es invalido se retorna un error.
-    if (idAsistencia.status === "error") {
+    // 4. Si los campos no son válidos, se retorna un error.
+    if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
-        idAsistencia.status,
-        idAsistencia.message,
-        {
-          id_usuario: validaciones.id_usuario,
-        }
-      );
-    }
-
-    // 5. Si el modulo es invalido se retorna un error.
-    if (moduloNumero.status === "error") {
-      return retornarRespuestaFunciones(
-        moduloNumero.status,
-        moduloNumero.message,
-        {
-          id_usuario: validaciones.id_usuario,
-        }
-      );
-    }
-
-    // 6. Si el nombre del formador es invalido se retorna un error.
-    if (validarNombre.status === "error") {
-      return retornarRespuestaFunciones(
-        validarNombre.status,
-        validarNombre.message,
-        {
-          id_usuario: validaciones.id_usuario,
-        }
-      );
-    }
-
-    // 7. Si la fecha es invalida se retorna un error.
-    if (validarFecha.status === "error") {
-      return retornarRespuestaFunciones(
-        validarFecha.status,
-        validarFecha.message,
-        {
-          id_usuario: validaciones.id_usuario,
-        }
+        validarCampos.status,
+        validarCampos.message,
       );
     }
 
     // 8. Consolidar datos validados y retornar respuesta exitosa
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
-      modulo: moduloNumero.id,
-      id_asistencia: idAsistencia.id,
-      nombreFormador: validarNombre.nombre,
-      fecha: validarFecha.fecha,
-      descripcion: validarDescr.texto,
+      modulo: validarCampos.modulo,
+      fecha: validarCampos.fecha,
+      id_asistencia: validarCampos.id_asistencia,
+      id_formador: validarCampos.id_formador,
+      descripcion: validarCampos.descripcion,
     });
   } catch (error) {
     // 9. Manejo de errores inesperados.
-    console.log(`Error, interno al validar asistencia: ` + error);
+    console.log(`Error, interno al validar asistencia modulo: ` + error);
 
     // Retorna una respuesta del error inesperado.
     return retornarRespuestaFunciones(
       "error",
-      "Error, interno al validar asistencia"
+      "Error, interno al validar asistencia modulo",
     );
   }
 }

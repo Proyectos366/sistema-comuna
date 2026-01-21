@@ -521,10 +521,11 @@ async function main() {
   // Crear una formacion inicial para todas las instituciones
   await prisma.formacion.create({
     data: {
-      nombre: "participación popular y contraloria social",
+      nombre: "participación ciudadana y contraloria social",
       descripcion:
         "primera formacion enviada por la cgr caracas, con el objetivo de certificar a las comunas",
       id_usuario: 1,
+      modulos: 3,
     },
   });
 

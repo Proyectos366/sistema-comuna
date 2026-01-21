@@ -79,6 +79,8 @@ model usuario {
   cargos                 cargo[]                 @relation(name: "CreadorCargo")
   modulos                modulo[]                @relation(name: "CreadorModulo")
   formaciones            formacion[]             @relation(name: "CreadorFormacion")
+  formadores             asistencia[]            @relation(name: "FormadorAsistencia")
+  validadores            asistencia[]            @relation(name: "ValidadorAsistencia")
   cursos                 curso[]                 @relation(name: "CreadorCurso")
   asistencias            asistencia[]            @relation(name: "CreadorAsistencia")
   entidades              entidad[]               @relation(name: "CreadorEntidad")
@@ -570,22 +572,25 @@ model curso {
 
 model asistencia {
   id             Int      @id @default(autoincrement())
-  formador       String?  @default("")
   presente       Boolean
   fecha_registro DateTime @default(now())
   descripcion    String?  @default("sin descripcion")
   borrado        Boolean  @default(false)
+  id_formador    Int?
   id_vocero      Int
   id_modulo      Int
   id_curso       Int
   id_usuario     Int
+  id_validador   Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
 
-  usuarios usuario @relation(name: "CreadorAsistencia", fields: [id_usuario], references: [id])
-  voceros  vocero  @relation(fields: [id_vocero], references: [id])
-  modulos  modulo  @relation(fields: [id_modulo], references: [id])
-  cursos   curso   @relation(fields: [id_curso], references: [id])
+  usuarios    usuario  @relation(name: "CreadorAsistencia", fields: [id_usuario], references: [id])
+  voceros     vocero   @relation(fields: [id_vocero], references: [id])
+  modulos     modulo   @relation(fields: [id_modulo], references: [id])
+  cursos      curso    @relation(fields: [id_curso], references: [id])
+  formadores  usuario? @relation(name: "FormadorAsistencia", fields: [id_formador], references: [id])
+  validadores usuario? @relation(name: "ValidadorAsistencia", fields: [id_validador], references: [id])
 }
 
 model eventos {

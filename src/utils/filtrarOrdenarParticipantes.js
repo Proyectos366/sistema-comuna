@@ -2,6 +2,7 @@ import { logicaEspecialModulosRegex } from "@/utils/regex/logicaEspecialModulosR
 
 export function filtrarOrdenarParticipantes(
   lista,
+  usuarios,
   busqueda,
   ordenCampo,
   ordenDireccion,

@@ -59,7 +59,7 @@ export async function POST(request) {
       id_parroquia,
       id_comuna,
       id_consejo,
-      id_circuito
+      id_circuito,
     );
 
     // 3. Si la validación falla, registra el intento y retorna error
@@ -78,7 +78,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -195,9 +195,15 @@ export async function POST(request) {
         genero: true,
         laboral: true,
         createdAt: true,
-        comunas: { select: { id: true, nombre: true, id_parroquia: true } },
-        circuitos: { select: { id: true, nombre: true, id_parroquia: true } },
-        parroquias: { select: { id: true, nombre: true } },
+        comunas: {
+          select: { id: true, nombre: true, id_parroquia: true },
+        },
+        circuitos: {
+          select: { id: true, nombre: true, id_parroquia: true },
+        },
+        parroquias: {
+          select: { id: true, nombre: true },
+        },
         consejos: {
           select: {
             id: true,
@@ -217,7 +223,7 @@ export async function POST(request) {
               select: {
                 id: true,
                 presente: true,
-                formador: true,
+                id_formador: true,
                 descripcion: true,
                 fecha_registro: true,
                 modulos: { select: { id: true, nombre: true } },
@@ -247,7 +253,7 @@ export async function POST(request) {
         "error",
         "Error, no se creo el vocero...",
         {},
-        400
+        400,
       );
     }
 
@@ -269,7 +275,7 @@ export async function POST(request) {
       {
         voceros: nuevoVoceroCreado,
       },
-      201
+      201,
     );
   } catch (error) {
     // 10. Manejo de errores inesperados

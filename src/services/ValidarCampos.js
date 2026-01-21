@@ -40,7 +40,7 @@ export default class ValidarCampos {
       if (!emailRegex.test(correo)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato de correo invalido..."
+          "Error, formato de correo invalido...",
         );
       }
 
@@ -73,7 +73,7 @@ export default class ValidarCampos {
       if (!nombre) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo nombre vacio..."
+          "Error, campo nombre vacio...",
         );
       }
 
@@ -81,7 +81,7 @@ export default class ValidarCampos {
       if (!textRegex.test(nombre)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato de nombre invalido..."
+          "Error, formato de nombre invalido...",
         );
       }
 
@@ -114,7 +114,7 @@ export default class ValidarCampos {
       if (!texto) {
         return retornarRespuestaFunciones(
           "error",
-          "Error campo texto vacio..."
+          "Error campo texto vacio...",
         );
       }
 
@@ -132,7 +132,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno campo texto..."
+        "Error, interno campo texto...",
       );
     }
   }
@@ -150,7 +150,7 @@ export default class ValidarCampos {
       if (!codigoPostal) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo codigo postal vacio..."
+          "Error, campo codigo postal vacio...",
         );
       }
 
@@ -168,7 +168,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campo codigo postal..."
+        "Error interno campo codigo postal...",
       );
     }
   }
@@ -190,7 +190,7 @@ export default class ValidarCampos {
           "error",
           `Error, segundo ${
             opcion === "apellido" ? "apellido" : "nombre"
-          } solo letras`
+          } solo letras`,
         );
       }
 
@@ -206,14 +206,14 @@ export default class ValidarCampos {
         `Campo segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
         } valido...`,
-        campo
+        campo,
       );
     } catch (error) {
       // 4. Manejo de errores inesperados
       console.log(
         `Error interno validando segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
-        }: ` + error
+        }: ` + error,
       );
 
       // Retorna una respuesta del error inesperado
@@ -221,7 +221,7 @@ export default class ValidarCampos {
         "error",
         `Error interno validando segundo ${
           opcion === "apellido" ? "apellido" : "nombre"
-        }...`
+        }...`,
       );
     }
   }
@@ -255,7 +255,7 @@ export default class ValidarCampos {
       if (cedulaNumero.length < 7 || cedulaNumero.length > 8) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, cedula incorrecta...."
+          "Error, cedula incorrecta....",
         );
       }
 
@@ -263,7 +263,7 @@ export default class ValidarCampos {
       if (!cedulaRegex.test(cedulaNumero)) {
         return retornarRespuestaFunciones(
           "error",
-          "Formato de cédula invalido..."
+          "Formato de cédula invalido...",
         );
       }
 
@@ -301,7 +301,7 @@ export default class ValidarCampos {
       if (!phoneRegex.test(telefonoLimpio)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato teléfono invalido..."
+          "Error, formato teléfono invalido...",
         );
       }
 
@@ -316,7 +316,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno, campo teléfono"
+        "Error interno, campo teléfono",
       );
     }
   }
@@ -352,7 +352,7 @@ export default class ValidarCampos {
       if (edadNumero < 18) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, es un menor de edad...."
+          "Error, es un menor de edad....",
         );
       }
 
@@ -383,7 +383,7 @@ export default class ValidarCampos {
       if (!id) {
         return retornarRespuestaFunciones(
           "error",
-          `Campo id ${detalles} vacio...`
+          `Campo id ${detalles} vacio...`,
         );
       }
 
@@ -394,7 +394,7 @@ export default class ValidarCampos {
       if (isNaN(idNumero) || idNumero <= 0) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, id ${detalles} inválido...`
+          `Error, id ${detalles} inválido...`,
         );
       }
 
@@ -404,7 +404,7 @@ export default class ValidarCampos {
         `Campo id ${detalles} valido...`,
         {
           id: idNumero,
-        }
+        },
       );
     } catch (error) {
       // 5. Manejo de errores inesperados
@@ -413,7 +413,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        `Error, interno al (validar id ${detalles})`
+        `Error, interno al (validar id ${detalles})`,
       );
     }
   }
@@ -432,7 +432,7 @@ export default class ValidarCampos {
       if (!claveUno) {
         return retornarRespuestaFunciones(
           "error",
-          "Error campo clave vacio..."
+          "Error campo clave vacio...",
         );
       }
 
@@ -440,7 +440,7 @@ export default class ValidarCampos {
       if (!claveDos) {
         return retornarRespuestaFunciones(
           "error",
-          "Error campo confirmar clave vacio..."
+          "Error campo confirmar clave vacio...",
         );
       }
 
@@ -448,7 +448,7 @@ export default class ValidarCampos {
       if (claveUno !== claveDos) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, claves no coinciden..."
+          "Error, claves no coinciden...",
         );
       }
 
@@ -456,7 +456,7 @@ export default class ValidarCampos {
       if (!claveRegex.test(claveUno)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato de clave invalido..."
+          "Error, formato de clave invalido...",
         );
       }
 
@@ -472,7 +472,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno, campos claves"
+        "Error interno, campos claves",
       );
     }
   }
@@ -490,7 +490,7 @@ export default class ValidarCampos {
       if (genero === null || genero === undefined || genero === "") {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo genero vacío..."
+          "Error, campo genero vacío...",
         );
       }
 
@@ -501,7 +501,7 @@ export default class ValidarCampos {
       if (!["1", "2", "true", "false"].includes(valor)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo debe ser hombre o mujer..."
+          "Error, campo debe ser hombre o mujer...",
         );
       }
 
@@ -521,7 +521,7 @@ export default class ValidarCampos {
       console.log(`Error interno campo genero: ` + error);
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campo genero..."
+        "Error interno campo genero...",
       );
     }
   }
@@ -540,7 +540,7 @@ export default class ValidarCampos {
       if (!numero) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, campo ${opcion} vacio...`
+          `Error, campo ${opcion} vacio...`,
         );
       }
 
@@ -551,7 +551,7 @@ export default class ValidarCampos {
       if (isNaN(numeroPasarBoolean)) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, campo ${opcion} invalido...`
+          `Error, campo ${opcion} invalido...`,
         );
       }
 
@@ -559,7 +559,7 @@ export default class ValidarCampos {
       if (!Number.isInteger(numeroPasarBoolean)) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, campo ${opcion} debe ser entero...`
+          `Error, campo ${opcion} debe ser entero...`,
         );
       }
 
@@ -567,7 +567,7 @@ export default class ValidarCampos {
       if (!(numero === 1 || numero === 2 || numero === "1" || numero === "2")) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, campo ${opcion} deber ser 1 o 2...`
+          `Error, campo ${opcion} deber ser 1 o 2...`,
         );
       }
 
@@ -582,7 +582,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        `Error, interno validando ${opcion}`
+        `Error, interno validando ${opcion}`,
       );
     }
   }
@@ -605,7 +605,7 @@ export default class ValidarCampos {
       if (!fechaFormatoIsoRegex.test(fecha)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error formato de fecha invalido..."
+          "Error formato de fecha invalido...",
         );
       }
 
@@ -616,7 +616,7 @@ export default class ValidarCampos {
       if (isNaN(fechaConvertida.getTime())) {
         return retornarRespuestaFunciones(
           "error",
-          "Error no se puede interpretar la fecha..."
+          "Error no se puede interpretar la fecha...",
         );
       }
 
@@ -628,7 +628,7 @@ export default class ValidarCampos {
       if (fechaConvertida > ahora) {
         return retornarRespuestaFunciones(
           "error",
-          "Error fecha no puede pasar el dia actual..."
+          "Error fecha no puede pasar el dia actual...",
         );
       }
 
@@ -636,7 +636,7 @@ export default class ValidarCampos {
       if (fechaConvertida < fechaMinima) {
         return retornarRespuestaFunciones(
           "error",
-          "Error fecha muy antigua..."
+          "Error fecha muy antigua...",
         );
       }
 
@@ -651,7 +651,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno campo fecha..."
+        "Error, interno campo fecha...",
       );
     }
   }
@@ -682,7 +682,7 @@ export default class ValidarCampos {
       if (!Number.isInteger(moduloNumero)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, modulo debe ser un número entero..."
+          "Error, modulo debe ser un número entero...",
         );
       }
 
@@ -697,7 +697,7 @@ export default class ValidarCampos {
       if (moduloNumero > MAX_MODULOS) {
         return retornarRespuestaFunciones(
           "error",
-          `Error, maximo ${MAX_MODULOS} módulos`
+          `Error, maximo ${MAX_MODULOS} módulos`,
         );
       }
 
@@ -735,7 +735,7 @@ export default class ValidarCampos {
       if (!rifRegex.test(rifLimpio)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error formato de RIF inválido..."
+          "Error formato de RIF inválido...",
         );
       }
 
@@ -761,7 +761,7 @@ export default class ValidarCampos {
       if (!valoresLetra[letra]) {
         return retornarRespuestaFunciones(
           "error",
-          "Error letra de RIF inválida..."
+          "Error letra de RIF inválida...",
         );
       }
 
@@ -778,7 +778,7 @@ export default class ValidarCampos {
       if (digitoCalculado !== digitoOriginal) {
         return retornarRespuestaFunciones(
           "error",
-          "Error dígito verificador incorrecto según SENIAT..."
+          "Error dígito verificador incorrecto según SENIAT...",
         );
       }
 
@@ -809,7 +809,7 @@ export default class ValidarCampos {
       if (!rango) {
         return retornarRespuestaFunciones(
           "error",
-          `Campo ${detalles} vacio...`
+          `Campo ${detalles} vacio...`,
         );
       }
 
@@ -820,7 +820,7 @@ export default class ValidarCampos {
       if (isNaN(numero) || numero <= 0) {
         return retornarRespuestaFunciones(
           "error",
-          `Error ${detalles} inválido...`
+          `Error ${detalles} inválido...`,
         );
       }
 
@@ -859,7 +859,7 @@ export default class ValidarCampos {
     claveUno,
     claveDos,
     id_rol,
-    autorizar
+    autorizar,
   ) {
     try {
       // 1. Validaciones individuales
@@ -871,7 +871,7 @@ export default class ValidarCampos {
       const validarIdRol = this.validarCampoId(id_rol);
       const validarAutorizar = this.validarCampoNumeroPasarBoolean(
         autorizar,
-        "autorizar"
+        "autorizar",
       );
 
       // 2. Retorna el primer error encontrado
@@ -901,7 +901,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error, interno campos resgistro usuario"
+        "Error, interno campos resgistro usuario",
       );
     }
   }
@@ -949,7 +949,7 @@ export default class ValidarCampos {
     capital,
     codigoPostal,
     descripcion,
-    id_pais
+    id_pais,
   ) {
     try {
       // 1. Validar cada campo individualmente
@@ -1015,7 +1015,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos municipio..."
+        "Error interno campos municipio...",
       );
     }
   }
@@ -1029,7 +1029,7 @@ export default class ValidarCampos {
     descripcion,
     id_pais,
     id_estado,
-    id_municipio
+    id_municipio,
   ) {
     try {
       // 1. Validar cada campo individualmente
@@ -1061,7 +1061,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos parroquia..."
+        "Error interno campos parroquia...",
       );
     }
   }
@@ -1079,7 +1079,7 @@ export default class ValidarCampos {
     id_pais,
     id_estado,
     id_municipio,
-    id_parroquia
+    id_parroquia,
   ) {
     try {
       // 1. Validar cada campo individualmente
@@ -1123,7 +1123,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos institución..."
+        "Error interno campos institución...",
       );
     }
   }
@@ -1139,7 +1139,7 @@ export default class ValidarCampos {
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdInstitucion = this.validarCampoId(
         id_institucion,
-        "institución"
+        "institución",
       );
 
       // 2. Verificar si alguna validación falló
@@ -1160,7 +1160,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos departamento..."
+        "Error interno campos departamento...",
       );
     }
   }
@@ -1179,7 +1179,7 @@ export default class ValidarCampos {
       if (!clave) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, campo clave vacio..."
+          "Error, campo clave vacio...",
         );
       }
 
@@ -1195,7 +1195,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos del login"
+        "Error interno campos del login",
       );
     }
   }
@@ -1213,7 +1213,7 @@ export default class ValidarCampos {
     punto,
     rif,
     codigo,
-    parroquiaId
+    parroquiaId,
   ) {
     try {
       /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
@@ -1256,7 +1256,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos comuna..."
+        "Error interno campos comuna...",
       );
     }
   }
@@ -1273,7 +1273,7 @@ export default class ValidarCampos {
     oeste,
     punto,
     codigo,
-    parroquiaId
+    parroquiaId,
   ) {
     try {
       /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
@@ -1314,7 +1314,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos circuito..."
+        "Error interno campos circuito...",
       );
     }
   }
@@ -1335,7 +1335,7 @@ export default class ValidarCampos {
     codigo,
     parroquiaId,
     comunaId,
-    circuitoId
+    circuitoId,
   ) {
     try {
       /** Estas constantes que tienen minusculas se usaran asi de momento luego si se validaran
@@ -1349,13 +1349,13 @@ export default class ValidarCampos {
       const puntoMinuscula = punto ? punto.toLowerCase() : "";
       const rifMinuscula = rif ? rif.toLowerCase() : "";
       const codigoMinuscula = codigo ? codigo.toLowerCase() : "";
+      const nombreMinuscula = nombre ? nombre.toLowerCase() : "";
 
-      const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdParroquia = this.validarCampoId(parroquiaId, "parroquia");
 
       // 2. Verificar si alguna validación falló
-      if (validarNombre.status === "error") return validarNombre;
+
       if (validarIdParroquia.status === "error") return validarIdParroquia;
       if (validarDescripcion.status === "error") return validarDescripcion;
 
@@ -1367,7 +1367,7 @@ export default class ValidarCampos {
       if (!comunaId && !circuitoId) {
         return retornarRespuestaFunciones(
           "error",
-          "Debe especificar un id comuna o un id circuito"
+          "Debe especificar un id comuna o un id circuito",
         );
       }
 
@@ -1390,7 +1390,7 @@ export default class ValidarCampos {
         "ok",
         "Campos validados correctamente...",
         {
-          nombre: validarNombre.nombre,
+          nombre: nombreMinuscula,
           descripcion: validarDescripcion.texto,
           direccion: direccionMinuscula,
           norte: norteMinuscula,
@@ -1403,7 +1403,7 @@ export default class ValidarCampos {
           id_parroquia: validarIdParroquia.id,
           id_comuna: id_comuna,
           id_circuito: id_circuito,
-        }
+        },
       );
     } catch (error) {
       // 8. Manejo de errores inesperados
@@ -1412,7 +1412,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos consejo comunal..."
+        "Error interno campos consejo comunal...",
       );
     }
   }
@@ -1435,7 +1435,7 @@ export default class ValidarCampos {
     id_parroquia,
     id_comuna,
     id_consejo,
-    id_circuito
+    id_circuito,
   ) {
     try {
       // 1. Validar cada campo individualmente
@@ -1443,12 +1443,12 @@ export default class ValidarCampos {
       const validarNombre = this.validarCampoNombre(nombre);
       const validarNombreDos = this.validarCampoNombreApellidoDos(
         nombre_dos,
-        "nombre"
+        "nombre",
       );
       const validarApellido = this.validarCampoNombre(apellido);
       const validarApellidoDos = this.validarCampoNombreApellidoDos(
         apellido_dos,
-        "apellido"
+        "apellido",
       );
       const validarCedula = this.validarCampoCedula(cedula);
       const validarGenero = this.validarCampoGenero(genero);
@@ -1456,7 +1456,7 @@ export default class ValidarCampos {
       const validarTelefono = this.validarCampoTelefono(telefono);
       const validarActividadLaboral = this.validarCampoNombre(laboral);
       const validarDireccion = this.validarCampoTexto(
-        direccion ? direccion : "sin direccion"
+        direccion ? direccion : "sin direccion",
       );
       const validarParroquia = this.validarCampoId(id_parroquia, "parroquia");
       const validarComuna = id_comuna
@@ -1515,7 +1515,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos vocero..."
+        "Error interno campos vocero...",
       );
     }
   }
@@ -1552,7 +1552,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos formación..."
+        "Error interno campos formación...",
       );
     }
   }
@@ -1603,7 +1603,7 @@ export default class ValidarCampos {
     id_institucion,
     id_departamento,
     rango,
-    prioridad
+    prioridad,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1642,7 +1642,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos novedad"
+        "Error interno campos novedad",
       );
     }
   }
@@ -1683,7 +1683,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar pais..."
+        "Error interno campos editar pais...",
       );
     }
   }
@@ -1704,7 +1704,7 @@ export default class ValidarCampos {
     codigoPostal,
     descripcion,
     id_pais,
-    id_estado
+    id_estado,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1739,7 +1739,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar estado..."
+        "Error interno campos editar estado...",
       );
     }
   }
@@ -1758,7 +1758,7 @@ export default class ValidarCampos {
     descripcion,
     id_pais,
     id_estado,
-    id_municipio
+    id_municipio,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1790,7 +1790,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar municipio..."
+        "Error interno campos editar municipio...",
       );
     }
   }
@@ -1811,7 +1811,7 @@ export default class ValidarCampos {
     id_pais,
     id_estado,
     id_municipio,
-    id_parroquia
+    id_parroquia,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1846,7 +1846,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar parroquia..."
+        "Error interno campos editar parroquia...",
       );
     }
   }
@@ -1874,7 +1874,7 @@ export default class ValidarCampos {
     id_estado,
     id_municipio,
     id_parroquia,
-    id_institucion
+    id_institucion,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1889,7 +1889,7 @@ export default class ValidarCampos {
       const validarIdParroquia = this.validarCampoId(id_parroquia, "parroquia");
       const validarIdInstitucion = this.validarCampoId(
         id_institucion,
-        "institucion"
+        "institucion",
       );
 
       // 2. Verificar si alguna validación falló
@@ -1924,7 +1924,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar institución..."
+        "Error interno campos editar institución...",
       );
     }
   }
@@ -1959,7 +1959,7 @@ export default class ValidarCampos {
     telefono,
     correo,
     laboral,
-    id_cargo
+    id_cargo,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -1968,12 +1968,12 @@ export default class ValidarCampos {
       const validarNombre = this.validarCampoNombre(nombre);
       const validarNombreDos = this.validarCampoNombreApellidoDos(
         nombre_dos,
-        "nombre"
+        "nombre",
       );
       const validarApellido = this.validarCampoNombre(apellido);
       const validarApellidoDos = this.validarCampoNombreApellidoDos(
         apellido_dos,
-        "apellido"
+        "apellido",
       );
       const validarGenero = this.validarCampoGenero(genero);
       const validarTelefono = this.validarCampoTelefono(telefono);
@@ -2017,7 +2017,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar vocero..."
+        "Error interno campos editar vocero...",
       );
     }
   }
@@ -2054,7 +2054,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar comuna..."
+        "Error interno campos editar comuna...",
       );
     }
   }
@@ -2091,7 +2091,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar circuito..."
+        "Error interno campos editar circuito...",
       );
     }
   }
@@ -2109,7 +2109,7 @@ export default class ValidarCampos {
     descripcion,
     id_comuna,
     id_circuito,
-    id_consejo
+    id_consejo,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -2129,7 +2129,7 @@ export default class ValidarCampos {
       if (!id_comuna && !id_circuito) {
         return retornarRespuestaFunciones(
           "error",
-          "Debe especificar un id comuna o un id circuito"
+          "Debe especificar un id comuna o un id circuito",
         );
       }
 
@@ -2158,7 +2158,7 @@ export default class ValidarCampos {
 
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar consejo comunal..."
+        "Error interno campos editar consejo comunal...",
       );
     }
   }
@@ -2174,7 +2174,7 @@ export default class ValidarCampos {
     nombre,
     descripcion,
     id_institucion,
-    id_departamento
+    id_departamento,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -2182,11 +2182,11 @@ export default class ValidarCampos {
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarIdInstitucion = this.validarCampoId(
         id_institucion,
-        "institucion"
+        "institucion",
       );
       const validarIdDepartamento = this.validarCampoId(
         id_departamento,
-        "departamento"
+        "departamento",
       );
 
       // 2. Verificar si alguna validación falló
@@ -2210,7 +2210,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar departamento..."
+        "Error interno campos editar departamento...",
       );
     }
   }
@@ -2247,7 +2247,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar cargo..."
+        "Error interno campos editar cargo...",
       );
     }
   }
@@ -2264,7 +2264,7 @@ export default class ValidarCampos {
     nombre,
     modulos,
     descripcion,
-    id_formacion
+    id_formacion,
   ) {
     try {
       // 1. Validar cada campo individualmente.
@@ -2293,7 +2293,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar formación..."
+        "Error interno campos editar formación...",
       );
     }
   }
@@ -2330,7 +2330,65 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar novedad..."
+        "Error interno campos editar novedad...",
+      );
+    }
+  }
+
+  /**
+   Valida los campos necesarios para validar una asistencia de un modulo.
+   @function validarCamposAsistenciaModulo
+   @param {string} modulo - El modulo que se va a validar.
+   @param {string} fecha - La fecha en que se valida el modulo en asistencia.
+   @param {number} id_asistencia - El ID de la asitencia a validar.
+   @param {number} id_formador - El ID del usuario que dio la formacion.
+   @param {string} descripcion - La nueva descripción de la novedad.
+   
+  */
+  static validarCamposAsistenciaModulo(
+    modulo,
+    fecha,
+    id_asistencia,
+    id_formador,
+    descripcion,
+  ) {
+    try {
+      // 1. Validar los campos de entrada.
+      const validarModulo = ValidarCampos.validarCampoModulo(modulo);
+      const validarFecha = ValidarCampos.validarCampoFechaISO(fecha);
+      const validarIdAsistencia = ValidarCampos.validarCampoId(
+        id_asistencia,
+        "asistencia",
+      );
+      const validarIdFormador = ValidarCampos.validarCampoId(
+        id_formador,
+        "formador",
+      );
+      const validarDescripcion = ValidarCampos.validarCampoTexto(descripcion);
+
+      // 2. Verificar si alguna validación falló
+      if (validarModulo.status === "error") return validarModulo;
+      if (validarFecha.status === "error") return validarFecha;
+      if (validarIdAsistencia.status === "error") return validarIdAsistencia;
+      if (validarIdFormador.status === "error") return validarIdFormador;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Validacion correcta", {
+        modulo: validarModulo.modulo,
+        fecha: validarFecha.fecha,
+        id_asistencia: validarIdAsistencia.id,
+        id_formador: validarIdFormador.id,
+        descripcion: validarDescripcion.texto,
+      });
+    } catch (error) {
+      // 9. Manejo de errores inesperados.
+      console.log(`Error, interno al validar campos asistencia: ` + error);
+
+      // Retorna una respuesta del error inesperado.
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, interno al validar campos asistencia",
       );
     }
   }

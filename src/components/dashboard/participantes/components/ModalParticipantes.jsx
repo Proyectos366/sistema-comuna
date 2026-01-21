@@ -1,56 +1,53 @@
 "use client";
 
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
-import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearPais from "@/components/formularios/FormCrearPais";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
-import ModalPrincipal from "@/components/modales/ModalPrincipal";
+import Div from "@/components/padres/Div";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonesModal from "@/components/botones/BotonesModal";
 
-import { crearPais } from "@/store/features/paises/thunks/crearPais";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import FormEditarPais from "@/components/formularios/FormEditarPais";
+import { validarModulo } from "@/store/features/participantes/thunks/validarModulo";
 
-export default function ModalPaises({ acciones, datosPais, validaciones }) {
+import { cambiarSeleccionFormadores } from "@/utils/dashboard/cambiarSeleccionFormadores";
+import { convertirFechaAISO } from "@/utils/Fechas";
+
+export default function ModalParticipantes({ datosActualizar }) {
   const dispatch = useDispatch();
+
+  const { usuarios } = useSelector((state) => state.usuarios);
+
+  const [idFormador, setIdFormador] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+
   const mostrarConfirmar = useSelector(
-    (state) => state.modal.modales.confirmar
+    (state) => state.modal.modales.confirmarCambios,
   );
-  const mostrarEditar = useSelector((state) => state.modal.modales.editar);
-  const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
   const notify = (msj) => toast(msj);
 
-  const { setNombre, setCapital, setDescripcion, setSerial } = acciones;
-
-  const { nombre, capital, descripcion, serial } = datosPais;
-
-  const {
-    validarNombre,
-    setValidarNombre,
-    validarCapital,
-    setValidarCapital,
-    validarSerial,
-    setValidarSerial,
-  } = validaciones;
-
-  const handleCrearPais = async () => {
+  const handleValidarModulo = async () => {
     try {
-      const nuevoPais = {
-        nombre: nombre,
-        capital: capital,
+      const validandoModulo = {
+        modulo: datosActualizar.modulo,
+        fecha: convertirFechaAISO(datosActualizar.fecha),
+        id_asistencia: datosActualizar.id_asistencia,
+        id_formador: idFormador,
         descripcion: descripcion,
-        serial: serial,
       };
+
       await dispatch(
-        crearPais({
-          nuevoPais: nuevoPais,
+        validarModulo({
+          validarModulo: validandoModulo,
           notify: notify,
           cerrarModal: cerrarModal,
-        })
+        }),
       ).unwrap();
     } catch (error) {
       console.log(error);
@@ -64,19 +61,43 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
       <Modal
         isVisible={mostrarConfirmar}
         onClose={() => {
-          dispatch(cerrarModal("confirmar"));
+          dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Crear este pais?"}
+        titulo={"¿Validar este modulo?"}
       >
         <ModalDatosContenedor>
-          <ModalDatos titulo="Nombre" descripcion={nombre} />
-          <ModalDatos titulo="Capital" descripcion={capital} />
-          <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Serial" descripcion={serial} />
+          <ModalDatos titulo="Modulo" descripcion={datosActualizar.modulo} />
+          <ModalDatos
+            titulo="Fecha validación"
+            descripcion={datosActualizar.fecha}
+          />
+
+          <Div
+            className={`w-full flex flex-col gap-2 mt-5 border border-[#99a1af] rounded-md p-2 hover:border-[#082158]`}
+          >
+            <SelectOpcion
+              idOpcion={idFormador}
+              nombre={"Formador"}
+              handleChange={(e) => {
+                cambiarSeleccionFormadores(e, setIdFormador);
+              }}
+              opciones={usuarios}
+              seleccione={"Seleccione"}
+            />
+
+            <InputDescripcion
+              nombre={"Observaciones"}
+              value={descripcion}
+              setValue={setDescripcion}
+              rows={6}
+              max={500}
+              autoComplete="off"
+            />
+          </Div>
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearPais}
+          aceptar={handleValidarModulo}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -86,15 +107,16 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
           nombreUno="Aceptar"
           nombreDos="Cancelar"
           campos={{
-            nombre,
-            capital,
-            descripcion,
-            serial,
+            modulo: datosActualizar.modulo,
+            fecha: datosActualizar.fecha,
+            id_asistencia: datosActualizar.id_asistencia,
+            id_formador: idFormador,
+            descripcion: descripcion,
           }}
         />
       </Modal>
 
-      <Modal
+      {/* <Modal
         isVisible={mostrarEditar}
         onClose={() => {
           dispatch(cerrarModal("editar"));
@@ -115,34 +137,7 @@ export default function ModalPaises({ acciones, datosPais, validaciones }) {
             setValidarCapital={setValidarCapital}
           />
         </ModalDatosContenedor>
-      </Modal>
-
-      <ModalPrincipal
-        isVisible={mostrarCrear}
-        onClose={() => {
-          dispatch(cerrarModal("crear"));
-        }}
-        titulo={"¿Crear pais?"}
-      >
-        <ModalDatosContenedor>
-          <FormCrearPais
-            nombre={nombre}
-            setNombre={setNombre}
-            capital={capital}
-            setCapital={setCapital}
-            descripcion={descripcion}
-            setDescripcion={setDescripcion}
-            serial={serial}
-            setSerial={setSerial}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-            validarCapital={validarCapital}
-            setValidarCapital={setValidarCapital}
-            validarSerial={validarSerial}
-            setValidarSerial={setValidarSerial}
-          />
-        </ModalDatosContenedor>
-      </ModalPrincipal>
+      </Modal> */}
     </>
   );
 }

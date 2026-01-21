@@ -1,30 +1,27 @@
-// Importaciones de módulos y funciones externas.
-// prisma es la instancia del ORM para interactuar con la base de datos.
-import prisma from "@/libs/prisma";
-// generarRespuesta es una utilidad para formatear respuestas HTTP estandarizadas.
-import { generarRespuesta } from "@/utils/respuestasAlFront";
-// validarAsistenciaPorModulo es un servicio que contiene la lógica de validación de negocio.
-import validarAsistenciaPorModulo from "@/services/asistencias/validarAsistenciaPorModulo";
-// registrarEventoSeguro es una utilidad para auditar acciones en la aplicación.
-import registrarEventoSeguro from "@/libs/trigget";
+/**
+  @fileoverview Controlador de API para la validacion de un modulo en asistencias. Este archivo
+  maneja la lógica para actualizar las asitencias por modulo en la base de datos a través
+  de una solicitud PATCH. Utiliza Prisma para la interacción con la base de datos, un servicio de
+  validación para asegurar la validez de los datos, y un sistema de registro de eventos para la
+  auditoría. @module
+*/
+
+import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
+import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
+import validarAsistenciaPorModulo from "@/services/asistencias/validarAsistenciaPorModulo"; // registrarEventoSeguro es una utilidad para auditar acciones en la aplicación.
 
 /**
- * @fileoverview Endpoint de API para validar la asistencia a un módulo de un curso.
- * @description Esta ruta `PATCH` se utiliza para marcar la asistencia de un vocero
- * a un módulo específico como "presente". El proceso incluye la validación de los datos
- * de entrada, la actualización atómica en la base de datos y el registro de eventos de seguridad.
- *
- * @param {Request} request - El objeto de solicitud HTTP, que se espera contenga un cuerpo JSON
- * con los datos necesarios para la validación: `modulo`, `fecha`, `id_asistencia`, y `nombreFormador`.
- * @returns {Promise<Response>} Retorna una `Promise` que resuelve en un objeto `Response` JSON.
- * - Si la operación es exitosa, devuelve un estado `201 Created` y los datos del curso actualizado.
- * - Si hay errores de validación, devuelve un estado `400 Bad Request` con un mensaje descriptivo.
- * - Si ocurre un error interno en el servidor, devuelve un estado `500 Internal Server Error`.
- */
+  Maneja las solicitudes HTTP PATCH para validar un modulo.
+  @async@function PATCH
+  @param {Request} request - Objeto de la solicitud que contiene los detalles del modulo.
+  @returns Promise - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
+*/
+
 export async function PATCH(request) {
   try {
     // 1. Desestructuración del cuerpo de la solicitud JSON.
-    const { modulo, fecha, id_asistencia, nombreFormador, descripcion } =
+    const { modulo, fecha, id_asistencia, id_formador, descripcion } =
       await request.json();
 
     // 2. Ejecución del servicio de validación para verificar los datos de la asistencia.
@@ -32,13 +29,12 @@ export async function PATCH(request) {
       modulo,
       fecha,
       id_asistencia,
-      nombreFormador,
-      descripcion
+      id_formador,
+      descripcion,
     );
 
     // 3. Manejo de errores de validación.
-    // Si la validación devuelve un estado de 'error', se registra el intento fallido
-    // y se retorna una respuesta 400.
+
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "asistencia",
@@ -54,16 +50,13 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
     // 4. Inicio de una transacción atómica con Prisma.
-    // Esto asegura que la actualización de la asistencia y la posterior consulta del curso
-    // ocurran sin interrupciones y, si una falla, se deshaga la otra.
     const [moduloEnAsistenciaValidado, nuevaAsistencia] =
       await prisma.$transaction(async (tx) => {
-        // a. Actualizar el registro de asistencia en la tabla `asistencia`.
         const asistenciaActualizada = await tx.asistencia.update({
           where: {
             id: validaciones.id_asistencia,
@@ -72,14 +65,13 @@ export async function PATCH(request) {
           data: {
             presente: true,
             fecha_registro: validaciones.fecha,
-            formador: validaciones.nombreFormador,
+            id_formador: validaciones.id_formador,
+            id_validador: validaciones.id_usuario,
             descripcion: validaciones.descripcion,
           },
         });
 
         // b. Consultar los datos completos del curso relacionado para la respuesta del cliente.
-        // Se incluyen los voceros, formaciones, módulos y asistencias para tener
-        // una vista completa del estado del curso.
         const cursoRelacionado = await tx.curso.findFirst({
           where: {
             id: asistenciaActualizada.id_curso,
@@ -88,23 +80,50 @@ export async function PATCH(request) {
           include: {
             voceros: {
               select: {
+                id: true,
+                cedula: true,
+                edad: true,
                 nombre: true,
                 nombre_dos: true,
                 apellido: true,
                 apellido_dos: true,
-                cedula: true,
+                genero: true,
                 telefono: true,
                 correo: true,
-                edad: true,
-                genero: true,
-                comunas: { select: { nombre: true } },
+                f_n: true,
+                laboral: true,
+                createdAt: true,
+                comunas: {
+                  select: {
+                    id: true,
+                    nombre: true, // Trae el nombre de la comuna
+                  },
+                },
+                consejos: {
+                  select: {
+                    id: true,
+                    nombre: true,
+                  },
+                },
+                circuitos: {
+                  select: {
+                    id: true,
+                    nombre: true,
+                  },
+                },
+                parroquias: {
+                  select: {
+                    id: true,
+                    nombre: true,
+                  },
+                },
               },
             },
             formaciones: {
               include: {
                 modulos: {
                   include: {
-                    asistencias: true,
+                    asistencias: true, // Relaciona módulos con asistencias
                   },
                 },
               },
@@ -134,7 +153,7 @@ export async function PATCH(request) {
         "error",
         "Error, al validar modulo en asistencia...",
         {},
-        400
+        400,
       );
     }
 
@@ -155,7 +174,7 @@ export async function PATCH(request) {
         "error",
         "Error, no se encontró el curso afectado",
         {},
-        400
+        400,
       );
     }
 
@@ -173,8 +192,8 @@ export async function PATCH(request) {
     return generarRespuesta(
       "ok",
       `Modulo ${validaciones.modulo} validado...`,
-      { curso: nuevaAsistencia },
-      201
+      { participantes: nuevaAsistencia },
+      201,
     );
   } catch (error) {
     console.log(`Error interno (asitencia): ` + error);

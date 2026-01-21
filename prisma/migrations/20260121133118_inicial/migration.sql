@@ -448,11 +448,11 @@ CREATE TABLE "curso" (
 -- CreateTable
 CREATE TABLE "asistencia" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "formador" TEXT DEFAULT '',
     "presente" BOOLEAN NOT NULL,
     "fecha_registro" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "descripcion" TEXT DEFAULT 'sin descripcion',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
+    "id_formador" INTEGER,
     "id_vocero" INTEGER NOT NULL,
     "id_modulo" INTEGER NOT NULL,
     "id_curso" INTEGER NOT NULL,
@@ -462,7 +462,8 @@ CREATE TABLE "asistencia" (
     CONSTRAINT "asistencia_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_modulo_fkey" FOREIGN KEY ("id_modulo") REFERENCES "modulo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "asistencia_id_curso_fkey" FOREIGN KEY ("id_curso") REFERENCES "curso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "asistencia_id_curso_fkey" FOREIGN KEY ("id_curso") REFERENCES "curso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "asistencia_id_formador_fkey" FOREIGN KEY ("id_formador") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

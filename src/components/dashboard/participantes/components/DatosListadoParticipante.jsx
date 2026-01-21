@@ -1,4 +1,5 @@
 import BloqueInfo from "@/components/BloqueInfo";
+
 import { calcularEdadPorFechaNacimiento, formatearFecha } from "@/utils/Fechas";
 import { formatearCedula } from "@/utils/formatearCedula";
 import { formatearTelefono } from "@/utils/formatearTelefono";
@@ -73,6 +74,14 @@ export default function DatosListadoParticipante({ participante }) {
         valor={participante.estaCertificado ? "Sí" : "No"}
         indice={1}
       />
+
+      {participante.fecha_completado && (
+        <BloqueInfo
+          indice={1}
+          nombre={"Fecha de certificación"}
+          valor={formatearFecha(participante.fecha_completado)}
+        />
+      )}
 
       <BloqueInfo
         indice={1}

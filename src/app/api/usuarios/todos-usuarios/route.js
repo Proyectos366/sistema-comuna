@@ -1,8 +1,9 @@
 /**
- @fileoverview Controlador de API para consultar todos los usuarios registrados en el sistema. Este
- endpoint valida el acceso, realiza la consulta en la base de datos, excluye ciertos correos
- específicos y retorna la lista de usuarios ordenados por nombre. Utiliza Prisma como ORM y servicios
- personalizados para validación y respuesta estandarizada. @module api/usuarios/consultarTodos
+ @fileoverview Controlador de API para consultar todos los usuarios registrados en el sistema.
+ Este endpoint valida el acceso, realiza la consulta en la base de datos, excluye ciertos
+ correos específicos y retorna la lista de usuarios ordenados por nombre. Utiliza Prisma como
+ ORM y servicios personalizados para validación y respuesta estandarizada.
+ @module api/usuarios/consultarTodos
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -10,14 +11,13 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para g
 import validarConsultarTodosUsuarios from "@/services/usuarios/validarConsultarTodosUsuarios"; // Servicio para validar la consulta
 
 /**
- * Maneja las solicitudes HTTP GET para obtener todos los usuarios del sistema.
- * Valida el contexto de la solicitud, consulta la base de datos excluyendo ciertos correos
- * y retorna una respuesta estructurada con la lista de usuarios.
- *
- * @async
- * @function GET
- * @returns {Promise<Response>} Respuesta HTTP con la lista de usuarios o un mensaje de error.
- */
+ Maneja las solicitudes HTTP GET para obtener todos los usuarios del sistema.
+ Valida el contexto de la solicitud, consulta la base de datos excluyendo ciertos correos
+ y retorna una respuesta estructurada con la lista de usuarios.
+ @async
+ @function GET
+ @returns {Promise<Response>} Respuesta HTTP con la lista de usuarios o un mensaje de error.
+*/
 
 export async function GET() {
   try {
@@ -30,7 +30,7 @@ export async function GET() {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -71,7 +71,7 @@ export async function GET() {
         "error",
         "Error, al consultar todos usuarios",
         {},
-        404
+        404,
       );
     }
 
@@ -80,7 +80,7 @@ export async function GET() {
       "ok",
       "Usuarios encontrados",
       { usuarios: todosUsuarios },
-      200
+      200,
     );
   } catch (error) {
     // 6. Manejo de errores inesperados

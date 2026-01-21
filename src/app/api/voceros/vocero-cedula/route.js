@@ -44,7 +44,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -70,13 +70,13 @@ export async function POST(request) {
           select: { nombre: true, id: true, id_parroquia: true },
         },
         circuitos: {
-          select: { nombre: true, id: true },
+          select: { id: true, nombre: true },
         },
         parroquias: {
-          select: { nombre: true },
+          select: { id: true, nombre: true },
         },
         consejos: {
-          select: { nombre: true },
+          select: { id: true, nombre: true },
         },
         cursos: {
           where: { borrado: false },
@@ -90,7 +90,7 @@ export async function POST(request) {
               select: {
                 id: true,
                 presente: true,
-                formador: true,
+                id_formador: true,
                 descripcion: true,
                 fecha_registro: true,
                 modulos: {
@@ -104,7 +104,7 @@ export async function POST(request) {
           },
         },
         cargos: {
-          select: { nombre: true, id: true },
+          select: { id: true, nombre: true },
         },
       },
     });
@@ -125,7 +125,7 @@ export async function POST(request) {
         "error",
         "Error, no existe el vocero...",
         {},
-        400
+        400,
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request) {
       "ok",
       "Vocero encontrado...",
       { voceros: [voceroPorCedula] },
-      200
+      200,
     );
   } catch (error) {
     // 8. Manejo de errores inesperados
@@ -166,7 +166,7 @@ export async function POST(request) {
       "error",
       "Error interno al consultar vocero...",
       {},
-      500
+      500,
     );
   }
 }

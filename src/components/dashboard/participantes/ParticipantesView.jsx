@@ -8,9 +8,9 @@ import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
-import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoParticipantes from "@/components/dashboard/participantes/components/ListadoParticipantes";
-//import ModalParticipantes from "@/components/dashboard/paises/components/ModalParticipantes";
+import ModalParticipantes from "./components/ModalParticipantes";
+
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
@@ -23,7 +23,6 @@ import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFor
 
 import { fetchParticipantes } from "@/store/features/participantes/thunks/todosParticipantes";
 import {
-  obtenerParticipantesAgrupados,
   obtenerParticipantesFiltradosAgrupados,
   obtenerParticipantesFiltradosOrdenados,
   opcionesOrden,
@@ -35,15 +34,16 @@ import Titulos from "@/components/Titulos";
 import DivOrdenVoceros from "./components/DivOrdenVoceros";
 import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
 import { opcionOrden } from "@/components/dashboard/participantes/function/opcionOrden";
-
-//import { fetchParticipantesIdFormacion } from "@/store/features/participantes/thunks/participantesIdFormacion";
+import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
 
 export default function ParticipantesView() {
   const dispatch = useDispatch();
+
   const { usuarioActivo } = useSelector((state) => state.auth);
   const { formaciones } = useSelector((state) => state.formaciones);
+  const { usuarios } = useSelector((state) => state.usuarios);
   const { participantes, loading } = useSelector(
-    (state) => state.participantes
+    (state) => state.participantes,
   );
 
   useEffect(() => {
@@ -53,6 +53,8 @@ export default function ParticipantesView() {
     } else {
       dispatch(fetchFormacionesInstitucion());
     }
+
+    dispatch(fetchUsuariosNombres());
   }, [dispatch]);
 
   const [idFormacion, setIdFormacion] = useState("");
@@ -66,6 +68,8 @@ export default function ParticipantesView() {
   const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
   const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
 
+  const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
+
   useEffect(() => {
     if (usuarioActivo.id_rol !== 1 && idFormacion) {
       dispatch(fetchParticipantesIdFormacion(idFormacion));
@@ -75,33 +79,37 @@ export default function ParticipantesView() {
   const participantesFiltradosOrdenados = useMemo(() => {
     return obtenerParticipantesFiltradosOrdenados(
       participantes,
+      usuarios,
       busqueda,
       ordenCampo,
-      ordenDireccion
+      ordenDireccion,
     );
-  }, [participantes, busqueda, ordenCampo, ordenDireccion]);
+  }, [participantes, usuarios, busqueda, ordenCampo, ordenDireccion]);
 
   const participantesFinales = useMemo(() => {
     if (ordenCampo) {
       return obtenerParticipantesFiltradosAgrupados(
         participantes,
+        usuarios,
         busqueda,
         ordenCampo,
         ordenDireccion,
-        ordenCampo
+        ordenCampo,
       );
     }
 
     const filtradosOrdenados = obtenerParticipantesFiltradosOrdenados(
       participantes,
+      usuarios,
       busqueda,
       ordenCampo,
-      ordenDireccion
+      ordenDireccion,
     );
 
     return filtradosOrdenados.slice(first, first + rows);
   }, [
     participantes,
+    usuarios,
     busqueda,
     ordenCampo,
     ordenDireccion,
@@ -116,7 +124,7 @@ export default function ParticipantesView() {
 
   return (
     <>
-      {/* <ModalParticipantes /> */}
+      <ModalParticipantes datosActualizar={datosActualizar} />
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión participantes"}
@@ -182,13 +190,15 @@ export default function ParticipantesView() {
                               {expanded === participante.id && (
                                 <ListadoParticipantes
                                   participante={participante}
+                                  datosActualizar={datosActualizar}
+                                  setDatosActualizar={setDatosActualizar}
                                 />
                               )}
                             </FichaDetallesVocero>
                           ))}
                         </DivOrdenVoceros>
                       );
-                    }
+                    },
                   )
                 ) : (
                   <EstadoMsjVacio dato={participantes} loading={loading} />
