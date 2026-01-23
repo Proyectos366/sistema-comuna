@@ -81,6 +81,8 @@ model usuario {
   formaciones            formacion[]             @relation(name: "CreadorFormacion")
   formadores             asistencia[]            @relation(name: "FormadorAsistencia")
   validadores            asistencia[]            @relation(name: "ValidadorAsistencia")
+  verificadores          curso[]                 @relation(name: "VerificadorCurso")
+  certificadores         curso[]                 @relation(name: "CertificadorCurso")
   cursos                 curso[]                 @relation(name: "CreadorCurso")
   asistencias            asistencia[]            @relation(name: "CreadorAsistencia")
   entidades              entidad[]               @relation(name: "CreadorEntidad")
@@ -551,23 +553,28 @@ model modulo {
 }
 
 model curso {
-  id               Int       @id @default(autoincrement())
-  fecha_completado DateTime?
-  verificado       Boolean   @default(false)
-  certificado      Boolean   @default(false)
-  culminado        Boolean   @default(false)
-  descripcion      String?   @default("sin descripcion")
-  borrado          Boolean   @default(false)
-  id_vocero        Int
-  id_formacion     Int
-  id_usuario       Int
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @default(now()) @updatedAt
+  id                Int       @id @default(autoincrement())
+  verificado        Boolean   @default(false)
+  fecha_verificado  DateTime?
+  certificado       Boolean   @default(false)
+  fecha_certificado DateTime?
+  culminado         Boolean   @default(false)
+  descripcion       String?   @default("sin descripcion")
+  borrado           Boolean   @default(false)
+  id_vocero         Int
+  id_formacion      Int
+  id_usuario        Int
+  id_verifico       Int?
+  id_certifico      Int?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
 
-  usuarios    usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
-  voceros     vocero       @relation(fields: [id_vocero], references: [id])
-  formaciones formacion    @relation(fields: [id_formacion], references: [id])
-  asistencias asistencia[]
+  usuarios       usuario      @relation(name: "CreadorCurso", fields: [id_usuario], references: [id])
+  voceros        vocero       @relation(fields: [id_vocero], references: [id])
+  formaciones    formacion    @relation(fields: [id_formacion], references: [id])
+  asistencias    asistencia[]
+  verificadores  usuario?     @relation(name: "VerificadorCurso", fields: [id_verifico], references: [id])
+  certificadores usuario?     @relation(name: "CertificadorCurso", fields: [id_certifico], references: [id])
 }
 
 model asistencia {

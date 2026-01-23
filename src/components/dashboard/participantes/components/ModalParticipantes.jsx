@@ -11,6 +11,9 @@ import Div from "@/components/padres/Div";
 import SelectOpcion from "@/components/SelectOpcion";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonesModal from "@/components/botones/BotonesModal";
+import DivScroll from "@/components/DivScroll";
+import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
+import ModalDatosLista from "@/components/modales/ModalDatosLista";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { validarModulo } from "@/store/features/participantes/thunks/validarModulo";
@@ -18,7 +21,14 @@ import { validarModulo } from "@/store/features/participantes/thunks/validarModu
 import { cambiarSeleccionFormadores } from "@/utils/dashboard/cambiarSeleccionFormadores";
 import { convertirFechaAISO } from "@/utils/Fechas";
 
-export default function ModalParticipantes({ datosActualizar }) {
+import datosMostrar from "@/components/dashboard/participantes/function/datosMostrar";
+
+export default function ModalParticipantes({
+  datosActualizar,
+  nombreFormacion,
+  opcion,
+  verificarCertificar,
+}) {
   const dispatch = useDispatch();
 
   const { usuarios } = useSelector((state) => state.usuarios);
@@ -26,8 +36,12 @@ export default function ModalParticipantes({ datosActualizar }) {
   const [idFormador, setIdFormador] = useState("");
   const [descripcion, setDescripcion] = useState("");
 
-  const mostrarConfirmar = useSelector(
+  const mostrarConfirmarCambios = useSelector(
     (state) => state.modal.modales.confirmarCambios,
+  );
+
+  const mostrarConfirmar = useSelector(
+    (state) => state.modal.modales.confirmar,
   );
 
   const notify = (msj) => toast(msj);
@@ -59,13 +73,14 @@ export default function ModalParticipantes({ datosActualizar }) {
       <ToastContainer />
 
       <Modal
-        isVisible={mostrarConfirmar}
+        isVisible={mostrarConfirmarCambios}
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
         titulo={"¿Validar este modulo?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo={"Formación"} descripcion={nombreFormacion} />
           <ModalDatos titulo="Modulo" descripcion={datosActualizar.modulo} />
           <ModalDatos
             titulo="Fecha validación"
@@ -116,28 +131,48 @@ export default function ModalParticipantes({ datosActualizar }) {
         />
       </Modal>
 
-      {/* <Modal
-        isVisible={mostrarEditar}
+      <Modal
+        isVisible={mostrarConfirmar}
         onClose={() => {
-          dispatch(cerrarModal("editar"));
+          dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Actualizar este pais?"}
+        titulo={
+          opcion && opcion === "verificar"
+            ? "¿Verificar este vocero?"
+            : "¿Certificar este vocero?"
+        }
       >
         <ModalDatosContenedor>
-          <FormEditarPais
-            nombre={nombre}
-            setNombre={setNombre}
-            capital={capital}
-            setCapital={setCapital}
-            descripcion={descripcion}
-            setDescripcion={setDescripcion}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-            validarCapital={validarCapital}
-            setValidarCapital={setValidarCapital}
-          />
+          <DivScroll indice={1}>
+            <AvisoAdvertencia
+              mensaje={
+                opcion && opcion === "verificar"
+                  ? "Una vez verificados, afirma que la validacion de modulos es correcta para esta formación"
+                  : "Una vez certificado, afirma que todos los procesos son correctos"
+              }
+            />
+            <ModalDatosLista
+              datos={datosMostrar}
+              objeto={verificarCertificar}
+            />
+          </DivScroll>
         </ModalDatosContenedor>
-      </Modal> */}
+
+        <BotonesModal
+          aceptar={handleValidarModulo}
+          cancelar={() => {
+            dispatch(cerrarModal("confirmar"));
+          }}
+          indiceUno="aceptar"
+          indiceDos="cancelar"
+          nombreUno="Aceptar"
+          nombreDos="Cancelar"
+          campos={{
+            id_curso: verificarCertificar.cursoId,
+            id_vocero: verificarCertificar.id,
+          }}
+        />
+      </Modal>
     </>
   );
 }

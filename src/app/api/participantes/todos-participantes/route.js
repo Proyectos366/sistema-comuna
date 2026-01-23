@@ -27,7 +27,7 @@ export async function GET() {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -74,6 +74,9 @@ export async function GET() {
                 nombre: true,
               },
             },
+            cargos: {
+              select: { id: true, nombre: true },
+            },
           },
         },
         formaciones: {
@@ -95,7 +98,7 @@ export async function GET() {
         "error",
         "Error, al consultar participantes...",
         {},
-        400
+        400,
       );
     }
 
@@ -106,7 +109,7 @@ export async function GET() {
       {
         participantes: todosParticipantes,
       },
-      201
+      201,
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
@@ -117,7 +120,7 @@ export async function GET() {
       "error",
       "Error, interno consultar (participantes)",
       {},
-      500
+      500,
     );
   }
 }

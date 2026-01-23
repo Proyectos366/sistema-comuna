@@ -69,6 +69,8 @@ export default function ParticipantesView() {
   const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
 
   const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
+  const [opcion, setOpcion] = useState("");
+  const [verificarCertificar, setVerificarCertificar] = useState([]);
 
   useEffect(() => {
     if (usuarioActivo.id_rol !== 1 && idFormacion) {
@@ -124,7 +126,12 @@ export default function ParticipantesView() {
 
   return (
     <>
-      <ModalParticipantes datosActualizar={datosActualizar} />
+      <ModalParticipantes
+        datosActualizar={datosActualizar}
+        nombreFormacion={nombreFormacion}
+        opcion={opcion}
+        verificarCertificar={verificarCertificar}
+      />
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión participantes"}
@@ -192,6 +199,11 @@ export default function ParticipantesView() {
                                   participante={participante}
                                   datosActualizar={datosActualizar}
                                   setDatosActualizar={setDatosActualizar}
+                                  setOpcion={setOpcion}
+                                  verificarCertificar={verificarCertificar}
+                                  setVerificarCertificar={
+                                    setVerificarCertificar
+                                  }
                                 />
                               )}
                             </FichaDetallesVocero>

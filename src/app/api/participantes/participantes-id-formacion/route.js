@@ -19,9 +19,8 @@ import validarConsultarParticipantesIdFormacion from "@/services/participantes/v
 export async function GET(request) {
   try {
     // 1. Valida la información de la solicitud utilizando el servicio correspondiente
-    const validaciones = await validarConsultarParticipantesIdFormacion(
-      request
-    );
+    const validaciones =
+      await validarConsultarParticipantesIdFormacion(request);
 
     // 2. Condición de validación fallida
     if (validaciones.status === "error") {
@@ -29,7 +28,7 @@ export async function GET(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -76,6 +75,9 @@ export async function GET(request) {
                 nombre: true,
               },
             },
+            cargos: {
+              select: { id: true, nombre: true },
+            },
           },
         },
         formaciones: {
@@ -97,7 +99,7 @@ export async function GET(request) {
         "error",
         "Error, al consultar participantes...",
         {},
-        400
+        400,
       );
     }
 
@@ -108,12 +110,12 @@ export async function GET(request) {
       {
         participantes: participantesPorFormacion,
       },
-      200
+      200,
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
     console.log(
-      `Error interno consultar (participantes por formacion): ` + error
+      `Error interno consultar (participantes por formacion): ` + error,
     );
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
@@ -121,7 +123,7 @@ export async function GET(request) {
       "error",
       "Error, interno consultar (participantes por formacion)",
       {},
-      500
+      500,
     );
   }
 }

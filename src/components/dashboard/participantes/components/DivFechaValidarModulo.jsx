@@ -26,7 +26,11 @@ export default function DivFechaValidarModulo({
             disabled={asistencia.presente}
             value={fechaAprobacionModulo[asistencia.id_modulo] || ""}
             onChange={(e) =>
-              actualizarFechaModulo(asistencia.id_modulo, e.target.value, asistencia.id)
+              actualizarFechaModulo(
+                asistencia.id_modulo,
+                e.target.value,
+                asistencia.id,
+              )
             }
           />
         </Div>

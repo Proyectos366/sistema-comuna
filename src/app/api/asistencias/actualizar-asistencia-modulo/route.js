@@ -117,6 +117,9 @@ export async function PATCH(request) {
                     nombre: true,
                   },
                 },
+                cargos: {
+                  select: { id: true, nombre: true },
+                },
               },
             },
             formaciones: {

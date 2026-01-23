@@ -106,6 +106,15 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
       nombresFormaciones = curso.formaciones.nombre;
     }
 
+    // Extraer nombres de cargos
+    let nombreCargos = "";
+
+    if (Array.isArray(vocero.cargos)) {
+      nombreCargos = vocero.cargos.map((f) => f.nombre).join(", ");
+    } else if (vocero.cargos) {
+      nombreCargos = vocero.cargos.nombre;
+    }
+
     // Procesar asistencias con información del validador
     let asistenciasConValidador = [];
     let nombresModulos = "";
@@ -148,6 +157,7 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
       modulos: nombresModulos, // Módulos con nombres de validadores
       formaciones: curso.formaciones,
       formacion: nombresFormaciones,
+      cargos: nombreCargos,
       totalAsistencias,
       asistenciaAprobada: tieneAsistenciasAprobada,
       puedeVerificar: !tieneAsistenciasPendientes,
@@ -258,49 +268,3 @@ export function obtenerParticipantesFiltradosAgrupados(
   // 2. Agrupar sobre la lista ya filtrada y ordenada
   return agruparParticipantes(filtradosOrdenados, campoAgrupacion);
 }
-
-/**
-export function prepararVocerosConCurso(todosParticipantes) {
-  return todosParticipantes?.map((curso) => {
-    const vocero = curso.voceros;
-
-    const totalAsistencias = curso.asistencias?.length || 0;
-    const tieneAsistenciasPendientes = curso.asistencias?.some(
-      (asistencia) => !asistencia.presente
-    );
-    const estaVerificado = curso.verificado;
-    const estaCertificado = curso.certificado;
-
-    return {
-      ...vocero,
-      cursoId: curso.id,
-      cursoNombre: curso.nombre,
-      asistencias: curso.asistencias,
-      modulos: curso.formaciones?.modulos || [],
-      formaciones: curso.formaciones,
-      totalAsistencias,
-      puedeVerificar: !tieneAsistenciasPendientes,
-      puedeCertificar: !tieneAsistenciasPendientes && estaVerificado,
-      estaVerificado,
-      estaCertificado,
-    };
-  });
-}
-*/
-
-/** 
-// Función que recibe los cursos y devuelve voceros con curso + asistencias/modulos
-export function prepararVocerosConCurso(todosParticipantes) {
-  return todosParticipantes?.map((curso) => {
-    const vocero = curso.voceros; // es un objeto único
-
-    return {
-      ...vocero,
-      cursoId: curso.id,
-      cursoNombre: curso.nombre,
-      asistencias: curso.asistencias,
-      modulos: curso.formaciones?.modulos || [],
-    };
-  });
-}
-*/

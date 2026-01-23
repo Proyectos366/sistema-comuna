@@ -1,4 +1,5 @@
-import BotonAceptarCancelar from "./BotonAceptarCancelar";
+import Div from "@/components/padres/Div";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 
 export default function BotonesModal({
   aceptar,
@@ -10,7 +11,7 @@ export default function BotonesModal({
   nombreDos,
 }) {
   return (
-    <div className="w-full flex justify-between space-x-4">
+    <Div className="w-full flex justify-between space-x-4">
       <BotonAceptarCancelar
         aceptar={aceptar}
         campos={campos}
@@ -23,6 +24,6 @@ export default function BotonesModal({
         indice={indiceDos}
         nombre={nombreDos}
       />
-    </div>
+    </Div>
   );
 }

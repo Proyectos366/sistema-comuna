@@ -1,7 +1,15 @@
 import Button from "@/components/padres/Button";
 import Div from "@/components/padres/Div";
+import { abrirModal } from "@/store/features/modal/slicesModal";
+import { useDispatch } from "react-redux";
 
-export default function ButtonsVerificarCertificar({ participante }) {
+export default function ButtonsVerificarCertificar({
+  participante,
+  setOpcion,
+  setVerificarCertificar,
+}) {
+  const dispatch = useDispatch();
+
   return (
     <Div className="mt-1 flex gap-4">
       <Button
@@ -9,21 +17,21 @@ export default function ButtonsVerificarCertificar({ participante }) {
           !participante.puedeVerificar
             ? "Para verificar primero debe validar todos los modulos"
             : !participante.estaVerificado
-            ? "Puede verificar"
-            : "Ya está verificado"
+              ? "Puede verificar"
+              : "Ya está verificado"
         }
-        disabled={!participante.puedeVerificar || participante.estaVerificado}
+        disabled={participante.estaVerificado && !participante.puedeCertificar}
         onClick={() => {
-          // setOpciones("verificado");
-          // abrirModal();
-          // setDatosVerificar(curso);
+          dispatch(abrirModal("confirmar"));
+          setOpcion("verificar");
+          setVerificarCertificar(participante);
         }}
         className={`py-2 sm:py-3 w-full rounded-md sm:text-lg ${
           !participante.puedeVerificar
             ? "bg-[#99a1af] text-[#000000] cursor-not-allowed"
             : participante.estaVerificado
-            ? "bg-[#2FA807] text-[#ffffff]"
-            : "color-fondo hover:text-[#1447e6] text-[#ffffff]"
+              ? "bg-[#2FA807] text-[#ffffff]"
+              : "bg-[#082158] text-[#ffffff] hover:bg-[#00184b] cursor-pointer"
         }`}
       >
         {participante.estaVerificado ? "Verificado" : "Verificar"}
@@ -34,14 +42,14 @@ export default function ButtonsVerificarCertificar({ participante }) {
           !participante.puedeCertificar
             ? "Para certificar primero debe estar verificado"
             : participante.estaVerificado
-            ? "Puede certificar"
-            : "Ya está certificado"
+              ? "Puede certificar"
+              : "Ya está certificado"
         }
         disabled={participante.culminado ? true : !participante.puedeCertificar}
         onClick={() => {
-          // setOpciones("certificado");
-          // abrirModal();
-          // setDatosCertificar(participante);
+          dispatch(abrirModal("confirmar"));
+          setOpcion("certificar");
+          setVerificarCertificar(participante);
         }}
         className={`py-2 sm:py-3 w-full rounded-md sm:text-lg ${
           participante.puedeCertificar

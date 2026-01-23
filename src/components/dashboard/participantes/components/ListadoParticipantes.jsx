@@ -19,23 +19,17 @@ export default function ListadoParticipantes({
   participante,
   datosActualizar,
   setDatosActualizar,
+  setOpcion,
+  verificarCertificar,
+  setVerificarCertificar,
 }) {
   const dispatch = useDispatch();
   const inputRefs = useRef({});
 
   const [fechaAprobacionModulo, setFechaAprobacionModulo] = useState("");
-  const [opcion, setOpcion] = useState("");
 
   const [fecha, setFecha] = useState("");
   const [validarFecha, setValidarFecha] = useState(false);
-
-  // const handleContainerClick = (idAsistencia) => {
-  //   const targetInput = inputRefs.current[idAsistencia];
-  //   if (targetInput && !targetInput.disabled) {
-  //     targetInput.showPicker?.();
-  //     targetInput.focus();
-  //   }
-  // };
 
   const actualizarFechaModulo = (moduloId, fecha, asistenciaId) => {
     setDatosActualizar({
@@ -93,12 +87,12 @@ export default function ListadoParticipantes({
                         asistencia.presente
                       }
                       onClick={() => {
-                        dispatch(abrirModal('confirmarCambios'))
+                        dispatch(abrirModal("confirmarCambios"));
                       }}
                       className={`py-[6px] sm:py-[9px] w-full rounded-md sm:text-lg ${
                         !fechaAprobacionModulo[asistencia.id_modulo]
                           ? "bg-[#99a1af] text-[#000000]"
-                          : "bg-[#082158]  cursor-pointer hover:bg-[#1447e6] text-[#ffffff]"
+                          : "bg-[#082158] text-[#ffffff] hover:bg-[#00184b] cursor-pointer"
                       }`}
                     >
                       Validar
@@ -111,7 +105,11 @@ export default function ListadoParticipantes({
         </Div>
       </DivVerificarCertificar>
 
-      <ButtonsVerificarCertificar participante={participante} />
+      <ButtonsVerificarCertificar
+        participante={participante}
+        setOpcion={setOpcion}
+        setVerificarCertificar={setVerificarCertificar}
+      />
     </Div>
   );
 }

@@ -6,7 +6,7 @@ export function filtrarOrdenarParticipantes(
   busqueda,
   ordenCampo,
   ordenDireccion,
-  camposBusqueda
+  camposBusqueda,
 ) {
   let filtrados = lista;
 
@@ -17,8 +17,8 @@ export function filtrarOrdenarParticipantes(
       camposBusqueda.some((campo) =>
         String(item[campo] || "")
           .toLowerCase()
-          .includes(lower)
-      )
+          .includes(lower),
+      ),
     );
   }
 
