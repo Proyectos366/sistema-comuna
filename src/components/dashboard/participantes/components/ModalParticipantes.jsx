@@ -22,6 +22,8 @@ import { cambiarSeleccionFormadores } from "@/utils/dashboard/cambiarSeleccionFo
 import { convertirFechaAISO } from "@/utils/Fechas";
 
 import datosMostrar from "@/components/dashboard/participantes/function/datosMostrar";
+import { verificarParticipanteCurso } from "@/store/features/participantes/thunks/verificarParticipanteCurso";
+import { certificarParticipanteCurso } from "@/store/features/participantes/thunks/certificarParticipanteCurso";
 
 export default function ModalParticipantes({
   datosActualizar,
@@ -59,6 +61,45 @@ export default function ModalParticipantes({
       await dispatch(
         validarModulo({
           validarModulo: validandoModulo,
+          notify: notify,
+          cerrarModal: cerrarModal,
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleVerificarParticipante = async () => {
+    try {
+      const verificandoParticipante = {
+        id_curso: verificarCertificar.cursoId,
+        id_vocero: verificarCertificar.id,
+      };
+
+      await dispatch(
+        verificarParticipanteCurso({
+          verificarParticipante: verificandoParticipante,
+          notify: notify,
+          cerrarModal: cerrarModal,
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCertificarParticipante = async () => {
+    try {
+      const certificandoParticipante = {
+        id_curso: verificarCertificar.cursoId,
+        id_vocero: verificarCertificar.id,
+        descripcion: descripcion,
+      };
+
+      await dispatch(
+        certificarParticipanteCurso({
+          certificarParticipante: certificandoParticipante,
           notify: notify,
           cerrarModal: cerrarModal,
         }),
@@ -155,11 +196,30 @@ export default function ModalParticipantes({
               datos={datosMostrar}
               objeto={verificarCertificar}
             />
+
+            {opcion && opcion === "certificar" && (
+              <Div
+                className={`w-full flex flex-col gap-2 mt-5 border border-[#99a1af] rounded-md p-2 hover:border-[#082158]`}
+              >
+                <InputDescripcion
+                  nombre={"Observaciones"}
+                  value={descripcion}
+                  setValue={setDescripcion}
+                  rows={6}
+                  max={500}
+                  autoComplete="off"
+                />
+              </Div>
+            )}
           </DivScroll>
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleValidarModulo}
+          aceptar={
+            opcion && opcion === "verificar"
+              ? handleVerificarParticipante
+              : handleCertificarParticipante
+          }
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
           }}
@@ -170,6 +230,7 @@ export default function ModalParticipantes({
           campos={{
             id_curso: verificarCertificar.cursoId,
             id_vocero: verificarCertificar.id,
+            descripcion: opcion && opcion === "certificar" ? descripcion : true,
           }}
         />
       </Modal>

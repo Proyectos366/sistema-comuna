@@ -75,11 +75,11 @@ export default function DatosListadoParticipante({ participante }) {
         indice={1}
       />
 
-      {participante.fecha_completado && (
+      {participante.fecha_certificado && (
         <BloqueInfo
           indice={1}
           nombre={"Fecha de certificación"}
-          valor={formatearFecha(participante.fecha_completado)}
+          valor={formatearFecha(participante.fecha_certificado)}
         />
       )}
 

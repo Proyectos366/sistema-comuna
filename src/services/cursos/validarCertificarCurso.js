@@ -17,7 +17,11 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
  @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
 */
 
-export default async function validarCertificarCurso(id_curso, id_vocero) {
+export default async function validarCertificarCurso(
+  id_curso,
+  id_vocero,
+  descripcion,
+) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -26,46 +30,58 @@ export default async function validarCertificarCurso(id_curso, id_vocero) {
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
     // 3. Validar el campo id_curso.
     const validarIdCurso = ValidarCampos.validarCampoId(id_curso, "curso");
 
-    // 4. Validar el campo id_vocero.
-    const validarIdVocero = ValidarCampos.validarCampoId(id_vocero, "vocero");
-
-    // 5. Si el id del curso es inválido, se retorna un error.
+    // 4. Si el id del curso es inválido, se retorna un error.
     if (validarIdCurso.status === "error") {
       return retornarRespuestaFunciones(
         validarIdCurso.status,
-        validarIdCurso.message
+        validarIdCurso.message,
       );
     }
+
+    // 5. Validar el campo id_vocero.
+    const validarIdVocero = ValidarCampos.validarCampoId(id_vocero, "vocero");
 
     // 6. Si el id del vocero es inválido, se retorna un error.
     if (validarIdVocero.status === "error") {
       return retornarRespuestaFunciones(
         validarIdVocero.status,
-        validarIdVocero.message
+        validarIdVocero.message,
       );
     }
 
-    // 7. Si todas las validaciones son correctas, se retorna la información consolidada.
+    // 7. Validar el campo descripcion.
+    const validarDescripcion = ValidarCampos.validarCampoTexto(descripcion);
+
+    // 8. Si el id del vocero es inválido, se retorna un error.
+    if (validarDescripcion.status === "error") {
+      return retornarRespuestaFunciones(
+        validarDescripcion.status,
+        validarDescripcion.message,
+      );
+    }
+
+    // 9. Si todas las validaciones son correctas, se retorna la información consolidada.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       id_curso: validarIdCurso.id,
       id_vocero: validarIdVocero.id,
+      descripcion: validarDescripcion.texto,
     });
   } catch (error) {
-    // 8. Manejo de errores inesperados.
+    // 10. Manejo de errores inesperados.
     console.log("Error interno validar certificar curso: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar certificar curso"
+      "Error interno validar certificar curso",
     );
   }
 }

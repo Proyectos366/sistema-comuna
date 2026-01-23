@@ -30,7 +30,7 @@ export default function ButtonsVerificarCertificar({
           !participante.puedeVerificar
             ? "bg-[#99a1af] text-[#000000] cursor-not-allowed"
             : participante.estaVerificado
-              ? "bg-[#2FA807] text-[#ffffff]"
+              ? "bg-[#2FA807] text-[#ffffff] cursor-not-allowed"
               : "bg-[#082158] text-[#ffffff] hover:bg-[#00184b] cursor-pointer"
         }`}
       >
@@ -45,7 +45,7 @@ export default function ButtonsVerificarCertificar({
               ? "Puede certificar"
               : "Ya está certificado"
         }
-        disabled={participante.culminado ? true : !participante.puedeCertificar}
+        disabled={participante.estaCulminado}
         onClick={() => {
           dispatch(abrirModal("confirmar"));
           setOpcion("certificar");
@@ -53,9 +53,9 @@ export default function ButtonsVerificarCertificar({
         }}
         className={`py-2 sm:py-3 w-full rounded-md sm:text-lg ${
           participante.puedeCertificar
-            ? participante.culminado
-              ? "bg-[#2FA807] text-[#ffffff]"
-              : "bg-[#082158] hover:bg-[#1447e6] text-[#ffffff]"
+            ? participante.estaCulminado
+              ? "bg-[#2FA807] text-[#ffffff] cursor-not-allowed"
+              : "bg-[#082158] text-[#ffffff] hover:bg-[#00184b] cursor-pointer"
             : "cursor-not-allowed bg-[#99a1af] text-[#000000]"
         }`}
       >

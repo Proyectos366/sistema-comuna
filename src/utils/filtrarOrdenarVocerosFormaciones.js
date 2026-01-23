@@ -96,6 +96,7 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
 
     const estaVerificado = curso.verificado;
     const estaCertificado = curso.certificado;
+    const estaCulminado = curso.culminado;
 
     // Extraer nombres de formaciones
     let nombresFormaciones = "";
@@ -164,6 +165,7 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
       puedeCertificar: !tieneAsistenciasPendientes && estaVerificado,
       estaVerificado,
       estaCertificado,
+      estaCulminado,
       fechaCompletado: curso?.fecha_completado,
     };
   });
