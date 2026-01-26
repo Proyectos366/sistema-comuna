@@ -18,6 +18,7 @@ import circuitosReducer from "@/store/features/circuitos/circuitosSlices";
 import consejosReducer from "@/store/features/consejos/consejosSlices";
 import vocerosReducer from "@/store/features/voceros/vocerosSlices";
 import participantesReducer from "@/store/features/participantes/participantesSlices";
+import cursosReducer from "@/store/features/cursos/cursosSlices";
 
 const store = configureStore({
   reducer: {
@@ -39,6 +40,7 @@ const store = configureStore({
     consejos: consejosReducer,
     voceros: vocerosReducer,
     participantes: participantesReducer,
+    cursos: cursosReducer,
   },
 });
 

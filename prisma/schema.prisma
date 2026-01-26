@@ -578,19 +578,19 @@ model curso {
 }
 
 model asistencia {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   presente       Boolean
-  fecha_registro DateTime @default(now())
-  descripcion    String?  @default("sin descripcion")
-  borrado        Boolean  @default(false)
+  fecha_validada DateTime?
+  descripcion    String?   @default("sin descripcion")
+  borrado        Boolean   @default(false)
   id_formador    Int?
   id_vocero      Int
   id_modulo      Int
   id_curso       Int
   id_usuario     Int
   id_validador   Int?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
 
   usuarios    usuario  @relation(name: "CreadorAsistencia", fields: [id_usuario], references: [id])
   voceros     vocero   @relation(fields: [id_vocero], references: [id])

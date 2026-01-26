@@ -26,7 +26,7 @@ export async function GET() {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -39,6 +39,9 @@ export async function GET() {
         where: {
           borrado: false,
         },
+        include: {
+          voceros: true,
+        },
       });
     } else {
       todasComunas = await prisma.comuna.findMany({
@@ -47,6 +50,9 @@ export async function GET() {
             in: validaciones.id_parroquias,
           },
           borrado: false, // opcional, si quieres excluir comunas marcadas como borradas
+        },
+        include: {
+          voceros: true,
         },
       });
     }
@@ -57,7 +63,7 @@ export async function GET() {
         "error",
         "Error, al consultar comunas...",
         {},
-        400
+        400,
       );
     }
 
@@ -68,7 +74,7 @@ export async function GET() {
       {
         comunas: todasComunas,
       },
-      201
+      201,
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
@@ -79,7 +85,7 @@ export async function GET() {
       "error",
       "Error, interno consultar (comunas)",
       {},
-      500
+      500,
     );
   }
 }

@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Div from "@/components/padres/Div";
-import LabelInput from "@/components/inputs/LabelInput";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
 import InputNombre from "@/components/inputs/InputNombre";
@@ -14,6 +13,7 @@ import SelectOpcion from "@/components/SelectOpcion";
 import InputClave from "@/components/inputs/InputClave";
 import MostrarMsj from "@/components/MostrarMensaje";
 import InputCheckBox from "@/components/inputs/InputCheckBox";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
@@ -68,15 +68,8 @@ export default function FormCrearUsuario({
   const dispatch = useDispatch();
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.usuarioForm
+    (state) => state.forms.reiniciarForm.usuarioForm,
   );
-
-  const [idInstiDepa, setIdInstiDepa] = useState("");
-
-  useEffect(() => {
-    const nuevoId = usuarioActivo.id_rol === 1 ? idInstitucion : idDepartamento;
-    setIdInstiDepa(nuevoId);
-  }, [idInstitucion, idDepartamento, usuarioActivo.id_rol]);
 
   useEffect(() => {
     if (mostrarCrear) {
@@ -245,7 +238,7 @@ export default function FormCrearUsuario({
           </div>
         )}
 
-        <div className="flex space-x-4">
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
@@ -261,7 +254,11 @@ export default function FormCrearUsuario({
               claveUno,
               claveDos,
               idRol,
-              idInstiDepa,
+              idInstitucion:
+                usuarioActivo.id_rol === 1
+                  ? idInstitucion
+                  : usuarioActivo.MiembrosInstitucion?.[0]?.id,
+              idDepartamento,
               autorizar,
             }}
           />
@@ -283,7 +280,7 @@ export default function FormCrearUsuario({
               autorizar,
             }}
           />
-        </div>
+        </AgruparCamposForm>
       </Div>
     </Formulario>
   );

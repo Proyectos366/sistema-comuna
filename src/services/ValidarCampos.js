@@ -616,7 +616,7 @@ export default class ValidarCampos {
       if (isNaN(fechaConvertida.getTime())) {
         return retornarRespuestaFunciones(
           "error",
-          "Error no se puede interpretar la fecha...",
+          "Error no se puede interpretar la fecha",
         );
       }
 
@@ -628,20 +628,17 @@ export default class ValidarCampos {
       if (fechaConvertida > ahora) {
         return retornarRespuestaFunciones(
           "error",
-          "Error fecha no puede pasar el dia actual...",
+          "Error fecha no puede pasar el dia actual",
         );
       }
 
       // 7. Verifica que la fecha no sea demasiado antigua
       if (fechaConvertida < fechaMinima) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error fecha muy antigua...",
-        );
+        return retornarRespuestaFunciones("error", "Error fecha muy antigua");
       }
 
       // 8. Retorna respuesta exitosa con la fecha convertida
-      return retornarRespuestaFunciones("ok", "Campo fecha correcto...", {
+      return retornarRespuestaFunciones("ok", "Campo fecha correcto", {
         fecha: fechaConvertida,
       });
     } catch (error) {

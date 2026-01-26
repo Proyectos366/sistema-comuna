@@ -21,6 +21,7 @@ export default async function validarCertificarCurso(
   id_curso,
   id_vocero,
   descripcion,
+  fecha,
 ) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
@@ -67,15 +68,26 @@ export default async function validarCertificarCurso(
       );
     }
 
-    // 9. Si todas las validaciones son correctas, se retorna la información consolidada.
+    const validarFecha = ValidarCampos.validarCampoFechaISO(fecha);
+
+    // 9. Si la fecha de certificacion es inválida, se retorna un error.
+    if (validarFecha.status === "error") {
+      return retornarRespuestaFunciones(
+        validarFecha.status,
+        validarFecha.message,
+      );
+    }
+
+    // 10. Si todas las validaciones son correctas, se retorna la información consolidada.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       id_curso: validarIdCurso.id,
       id_vocero: validarIdVocero.id,
       descripcion: validarDescripcion.texto,
+      fecha: validarFecha.fecha,
     });
   } catch (error) {
-    // 10. Manejo de errores inesperados.
+    // 11. Manejo de errores inesperados.
     console.log("Error interno validar certificar curso: " + error);
 
     // Retorna una respuesta del error inesperado

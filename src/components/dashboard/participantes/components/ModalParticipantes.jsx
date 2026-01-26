@@ -13,15 +13,15 @@ import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonesModal from "@/components/botones/BotonesModal";
 import DivScroll from "@/components/DivScroll";
 import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
+import InputFecha from "@/components/inputs/InputFecha";
 import ModalDatosLista from "@/components/modales/ModalDatosLista";
-
-import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { validarModulo } from "@/store/features/participantes/thunks/validarModulo";
+import datosMostrar from "@/components/dashboard/participantes/function/datosMostrar";
 
 import { cambiarSeleccionFormadores } from "@/utils/dashboard/cambiarSeleccionFormadores";
 import { convertirFechaAISO } from "@/utils/Fechas";
 
-import datosMostrar from "@/components/dashboard/participantes/function/datosMostrar";
+import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { validarModulo } from "@/store/features/participantes/thunks/validarModulo";
 import { verificarParticipanteCurso } from "@/store/features/participantes/thunks/verificarParticipanteCurso";
 import { certificarParticipanteCurso } from "@/store/features/participantes/thunks/certificarParticipanteCurso";
 
@@ -37,6 +37,9 @@ export default function ModalParticipantes({
 
   const [idFormador, setIdFormador] = useState("");
   const [descripcion, setDescripcion] = useState("");
+
+  const [fecha, setFecha] = useState("");
+  const [validarFecha, setValidarFecha] = useState(false);
 
   const mostrarConfirmarCambios = useSelector(
     (state) => state.modal.modales.confirmarCambios,
@@ -95,6 +98,7 @@ export default function ModalParticipantes({
         id_curso: verificarCertificar.cursoId,
         id_vocero: verificarCertificar.id,
         descripcion: descripcion,
+        fecha: convertirFechaAISO(fecha),
       };
 
       await dispatch(
@@ -209,6 +213,13 @@ export default function ModalParticipantes({
                   max={500}
                   autoComplete="off"
                 />
+
+                <InputFecha
+                  value={fecha}
+                  setValue={setFecha}
+                  validarFecha={validarFecha}
+                  setValidarFecha={setValidarFecha}
+                />
               </Div>
             )}
           </DivScroll>
@@ -231,6 +242,7 @@ export default function ModalParticipantes({
             id_curso: verificarCertificar.cursoId,
             id_vocero: verificarCertificar.id,
             descripcion: opcion && opcion === "certificar" ? descripcion : true,
+            fecha: opcion && opcion === "certificar" ? fecha : true,
           }}
         />
       </Modal>

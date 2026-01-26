@@ -35,6 +35,7 @@ import DivOrdenVoceros from "./components/DivOrdenVoceros";
 import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
 import { opcionOrden } from "@/components/dashboard/participantes/function/opcionOrden";
 import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
+import EstadisticasParticipantes from "./components/EstadisticasParticipantes";
 
 export default function ParticipantesView() {
   const dispatch = useDispatch();
@@ -197,10 +198,8 @@ export default function ParticipantesView() {
                               {expanded === participante.id && (
                                 <ListadoParticipantes
                                   participante={participante}
-                                  datosActualizar={datosActualizar}
                                   setDatosActualizar={setDatosActualizar}
                                   setOpcion={setOpcion}
-                                  verificarCertificar={verificarCertificar}
                                   setVerificarCertificar={
                                     setVerificarCertificar
                                   }
@@ -228,6 +227,11 @@ export default function ParticipantesView() {
               totalRecords={participantesFiltradosOrdenados.length}
             />
           </Div>
+
+          <EstadisticasParticipantes
+            registrosFiltrados={participantesFiltradosOrdenados}
+            idFormacion={idFormacion}
+          />
         </SectionTertiary>
       </SectionMain>
     </>

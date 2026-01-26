@@ -64,7 +64,7 @@ export async function PATCH(request) {
           },
           data: {
             presente: true,
-            fecha_registro: validaciones.fecha,
+            fecha_validada: validaciones.fecha,
             id_formador: validaciones.id_formador,
             id_validador: validaciones.id_usuario,
             descripcion: validaciones.descripcion,

@@ -1,5 +1,5 @@
-import BotonMostrarDetalles from "./botones/BotonMostrarDetalles";
-import Titulos from "./Titulos";
+import BotonMostrarDetalles from "@/components/botones/BotonMostrarDetalles";
+import Titulos from "@/components/Titulos";
 
 export default function EstadisticasVoceros({
   registrosFiltrados,

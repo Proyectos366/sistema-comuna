@@ -1,20 +1,23 @@
 /**
-@fileoverview Controlador de API para la creación de una nueva comuna. Este archivo maneja la
-lógica para crear una nueva comuna en la base de datosa través de una solicitud POST. Utiliza
-Prisma para la interacción con la base de datos, un servicio de validación para asegurar la
-validez de los datos, y un sistema de registro de eventos para la auditoría.
-@module
+  @fileoverview Controlador de API para la creación de una nueva comuna. Este archivo maneja la
+  lógica para crear una nueva comuna en la base de datosa través de una solicitud POST. Utiliza
+  Prisma para la interacción con la base de datos, un servicio de validación para asegurar la
+  validez de los datos, y un sistema de registro de eventos para la auditoría.
+  @module
 */
-// Importaciones de módulos y librerías
+
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import validarCrearComuna from "@/services/comunas/validarCrearComuna"; // Servicio para validar los datos de la nueva comuna.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
+
 /**
   Maneja las solicitudes HTTP POST para crear una nueva comuna.
-  @async@function POST@param {Request} request - Objeto de la solicitud que contiene los 
-  detalles de la comuna a crear.@returns {Promise>} - Una respuesta HTTP en formato JSON 
-  con el resultado de la operación o un error.
+  @async
+  @function POST
+  @param {Request} request - Objeto de la solicitud que contiene los 
+  detalles de la comuna a crear.
+  @returns {Promise>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
 
 export async function POST(request) {
@@ -39,7 +42,7 @@ export async function POST(request) {
       punto,
       rif,
       codigo,
-      id_parroquia
+      id_parroquia,
     );
 
     // 3. Condición de validación fallida
@@ -58,7 +61,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -106,11 +109,11 @@ export async function POST(request) {
 
     return generarRespuesta(
       "ok",
-      "Comuna creada...",
+      "Comuna creada",
       {
         comunas: nuevaComuna,
       },
-      201
+      201,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados

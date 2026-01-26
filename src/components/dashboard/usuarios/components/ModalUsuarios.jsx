@@ -32,7 +32,7 @@ export default function ModalUsuarios({
 }) {
   const dispatch = useDispatch();
   const mostrarConfirmar = useSelector(
-    (state) => state.modal.modales.confirmar
+    (state) => state.modal.modales.confirmar,
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
@@ -122,7 +122,7 @@ export default function ModalUsuarios({
           notify: notify,
           cerrarModal: cerrarModal,
           setAccion: setAccion,
-        })
+        }),
       ).unwrap();
     } catch (error) {
       console.log(error);
@@ -172,7 +172,6 @@ export default function ModalUsuarios({
             nombre,
             apellido,
             correo,
-            nombreInstitucion,
             nombreDepartamento,
             claveUno,
             claveDos,
@@ -190,10 +189,10 @@ export default function ModalUsuarios({
           accion === "cambiarDepartamento"
             ? "¿Cambiar departamento?"
             : accion === "asignarDepartamento"
-            ? "¿Asignar departamento?"
-            : accion === "cambiarRol"
-            ? "¿Cambiar rol?"
-            : "¿Actualizar este usuario?"
+              ? "¿Asignar departamento?"
+              : accion === "cambiarRol"
+                ? "¿Cambiar rol?"
+                : "¿Actualizar este usuario?"
         }
       >
         <ModalDatosContenedor>
@@ -255,7 +254,7 @@ export default function ModalUsuarios({
                   cerrarModal: cerrarModal,
                   notify: notify,
                   setAccion: setAccion,
-                })
+                }),
               );
             }
 
@@ -267,7 +266,7 @@ export default function ModalUsuarios({
                   cerrarModal: cerrarModal,
                   notify: notify,
                   setAccion: setAccion,
-                })
+                }),
               );
             }
           }}

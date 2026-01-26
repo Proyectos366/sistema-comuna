@@ -21,13 +21,14 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para e
 export async function PATCH(request) {
   try {
     // 1. Extrae datos de la solicitud JSON
-    const { id_curso, id_vocero, descripcion } = await request.json();
+    const { id_curso, id_vocero, descripcion, fecha } = await request.json();
 
     // 2. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarCertificarCurso(
       id_curso,
       id_vocero,
       descripcion,
+      fecha,
     );
 
     // 3. Condición de validación fallida
@@ -59,7 +60,7 @@ export async function PATCH(request) {
       data: {
         certificado: true,
         culminado: true,
-        fecha_certificado: new Date(),
+        fecha_certificado: validaciones.fecha,
         id_certifico: validaciones.id_usuario,
         descripcion: validaciones.descripcion,
       },
@@ -157,7 +158,7 @@ export async function PATCH(request) {
     // 8. Retorna una respuesta de exito
     return generarRespuesta(
       "ok",
-      "Certificado con exito...",
+      "Certificado con exito",
       {
         participantes: participanteCursoFormacionCertificado,
       },

@@ -1,7 +1,9 @@
+import { useDispatch } from "react-redux";
+
 import Button from "@/components/padres/Button";
 import Div from "@/components/padres/Div";
+
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { useDispatch } from "react-redux";
 
 export default function ButtonsVerificarCertificar({
   participante,

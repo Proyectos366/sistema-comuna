@@ -26,61 +26,6 @@ export const opcionesOrden = [
   { id: "modulo3", nombre: "Modulo III" },
 ];
 
-/** 
-export function prepararVocerosConCurso(todosParticipantes) {
-  return todosParticipantes?.map((curso) => {
-    const vocero = curso.voceros;
-
-    const totalAsistencias = curso.asistencias?.length || 0;
-    const tieneAsistenciasPendientes = curso.asistencias?.some(
-      (asistencia) => !asistencia.presente
-    );
-
-    const tieneAsistenciasAprobada = curso.asistencias?.some(
-      (asistencia) => asistencia.presente
-    );
-
-    const estaVerificado = curso.verificado;
-    const estaCertificado = curso.certificado;
-
-    // Extraer nombres de formaciones
-    let nombresFormaciones = "";
-
-    if (Array.isArray(curso.formaciones)) {
-      nombresFormaciones = curso.formaciones.map((f) => f.nombre).join(", ");
-    } else if (curso.formaciones) {
-      nombresFormaciones = curso.formaciones.nombre;
-    }
-
-    // Extraer nombres de formaciones
-    let nombresModulos = "";
-
-    if (Array.isArray(curso.asistencias)) {
-      nombresModulos = curso.asistencias.map((f) => f.asistencia).join(", ");
-    } else if (curso.asistencias) {
-      nombresModulos = curso.asistencias.modulos;
-    }
-
-    return {
-      ...vocero,
-      cursoId: curso.id,
-      cursoNombre: curso.nombre,
-      asistencias: curso.asistencias,
-      modulos: nombresModulos,
-      formaciones: curso.formaciones,
-      formacion: nombresFormaciones,
-      totalAsistencias,
-      asistenciaAprobada: tieneAsistenciasAprobada,
-      puedeVerificar: !tieneAsistenciasPendientes,
-      puedeCertificar: !tieneAsistenciasPendientes && estaVerificado,
-      estaVerificado,
-      estaCertificado,
-      fechaCompletado: curso?.fecha_completado,
-    };
-  });
-}
-*/
-
 export function prepararVocerosConCurso(todosParticipantes, usuarios) {
   return todosParticipantes?.map((curso) => {
     const vocero = curso.voceros;
@@ -97,6 +42,8 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
     const estaVerificado = curso.verificado;
     const estaCertificado = curso.certificado;
     const estaCulminado = curso.culminado;
+    const fechaVerificado = curso.fecha_verificado;
+    const fechaCertificado = curso.fecha_certificado;
 
     // Extraer nombres de formaciones
     let nombresFormaciones = "";
@@ -123,28 +70,39 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
     if (Array.isArray(curso.asistencias)) {
       // Procesar cada asistencia para agregar info del validador
       asistenciasConValidador = curso.asistencias.map((asistencia) => {
-        let nombreValidador = "No validado";
+        let nombreValidador = "";
+        let nombreFormador = "";
 
         // Buscar el validador por id_validador en el array de usuarios
         if (asistencia.id_validador && usuarios) {
           const validador = usuarios.find(
             (user) => user.id === asistencia.id_validador,
           );
+
+          const formador = usuarios.find(
+            (user) => user.id === asistencia.id_formador,
+          );
+
           if (validador) {
-            nombreValidador = validador.nombre;
+            nombreValidador = `${validador.nombre} ${validador.apellido}`;
+          }
+
+          if (formador) {
+            nombreFormador = `${formador.nombre} ${formador.apellido}`;
           }
         }
 
         return {
           ...asistencia,
           nombreValidador: nombreValidador,
-          moduloNombre: asistencia.modulos?.nombre || "Sin módulo",
+          nombreFormador: nombreFormador,
+          moduloNombre: "modulo " + asistencia.id_modulo,
         };
       });
 
       // Crear string de módulos con validadores
       nombresModulos = asistenciasConValidador
-        .map((a) => `${a.moduloNombre} (Validado por: ${a.nombreValidador})`)
+        .map((a) => `${a.moduloNombre} (Validado por: ${a.nombreFormador})`)
         .join(", ");
     } else if (curso.asistencias) {
       nombresModulos = curso.asistencias.modulos?.nombre || "";
@@ -166,7 +124,8 @@ export function prepararVocerosConCurso(todosParticipantes, usuarios) {
       estaVerificado,
       estaCertificado,
       estaCulminado,
-      fechaCompletado: curso?.fecha_completado,
+      fecha_verificado: fechaVerificado,
+      fecha_certificado: fechaCertificado,
     };
   });
 }

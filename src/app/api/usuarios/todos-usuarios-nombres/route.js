@@ -52,6 +52,7 @@ export async function GET(request) {
       select: {
         id: true,
         nombre: true,
+        apellido: true,
         MiembrosDepartamentos: {
           select: {
             id: true,
@@ -61,28 +62,6 @@ export async function GET(request) {
         },
       },
     });
-
-    /** 
-      const todosUsuarios = await prisma.usuario.findMany({
-        where: {
-          correo: {
-            not: {
-              in: ["carlosjperazab@gmail.com"],
-            },
-          },
-        },
-        orderBy: {
-          nombre: "asc",
-        },
-        select: {
-          id: true,
-          nombre: true,
-          MiembrosDepartamentos: {
-            select: { id: true, nombre: true, descripcion: true },
-          },
-        },
-      });
-    */
 
     // 4. Verifica si se obtuvieron resultados válidos
     if (!todosUsuarios) {
