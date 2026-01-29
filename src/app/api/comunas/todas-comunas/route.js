@@ -53,24 +53,20 @@ export async function GET() {
         },
         include: {
           voceros: true,
+          parroquias: true,
         },
       });
     }
 
     // 4. Condición de error si no se obtienen comunas
     if (!todasComunas) {
-      return generarRespuesta(
-        "error",
-        "Error, al consultar comunas...",
-        {},
-        400,
-      );
+      return generarRespuesta("error", "Error, al consultar comunas", {}, 400);
     }
 
     // 5. Condición de éxito: se encontraron comunas
     return generarRespuesta(
       "ok",
-      "Todas las comunas...",
+      "Todas las comunas",
       {
         comunas: todasComunas,
       },

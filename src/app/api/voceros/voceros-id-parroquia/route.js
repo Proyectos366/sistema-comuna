@@ -1,9 +1,9 @@
 /**
- @fileoverview Controlador de API para consultar voceros asociados a una parroquia específica. Este
- endpoint valida el ID de la parroquia recibido en la solicitud, realiza la consulta en la base de datos
- y retorna la lista de voceros correspondientes. También registra eventos de auditoría para intentos
- fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y servicios personalizados para
- validación. @module api/voceros/validarConsultarVocerosIdParroquia
+ @fileoverview Controlador de API para consultar voceros asociados a una parroquia específica.
+ Este endpoint valida el ID de la parroquia recibido en la solicitud, realiza la consulta en
+ la base de datos y retorna la lista de voceros correspondientes. También registra eventos de
+ auditoría para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y
+ servicios personalizados para validación. @module api/voceros/validarConsultarVocerosIdParroquia
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -61,15 +61,15 @@ export async function GET(request) {
         laboral: true,
         createdAt: true,
         comunas: {
-          select: { nombre: true, id: true, id_parroquia: true },
+          select: { id: true, nombre: true, id_parroquia: true },
         },
         circuitos: {
-          select: { nombre: true, id: true },
+          select: { id: true, nombre: true, id_parroquia: true },
         },
         parroquias: {
           select: { id: true, nombre: true },
         },
-        consejos: { select: { nombre: true, id: true } },
+        consejos: { select: { id: true, nombre: true, id_parroquia: true } },
         cursos: {
           where: { borrado: false },
           select: {
@@ -82,7 +82,7 @@ export async function GET(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: { select: { id: true, nombre: true } },
               },
             },

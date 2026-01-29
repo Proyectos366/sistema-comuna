@@ -8,7 +8,8 @@ import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Util
 import { writeFile, mkdir } from "fs/promises"; // Funciones para escribir archivos y crear directorios
 import path from "path"; // Utilidad para manejar rutas de archivos
 import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
-import { extensionArchivoRegex } from "@/utils/constantes"; // Regex para validar la extension de un archivo
+import { extensionArchivoRegex } from "@/utils/regex/extensionArchivoRegex";
+
 /**
  Valida la identidad del usuario y procesa la imagen de perfil enviada.
  Guarda la imagen en el sistema de archivos y retorna metadatos relevantes.
@@ -27,7 +28,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -38,9 +39,9 @@ export default async function validarCrearCambiarImgPerfil(request) {
     if (!imagen) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, imagen vacía...",
+        "Error, imagen vacía",
         {},
-        400
+        400,
       );
     }
 
@@ -57,7 +58,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
       nombreOriginalImagen.split(".").pop()?.toLowerCase() || "";
     const nombreSinExtension = nombreOriginalImagen.replace(
       extensionArchivoRegex,
-      ""
+      "",
     );
     const nombreSistemaFecha = `${nombreSinExtension}_${Date.now()}.${extensionImagen}`;
 
@@ -75,7 +76,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
       "storage",
       "uploads",
       "img-perfil",
-      nombreCarpetaUsuario
+      nombreCarpetaUsuario,
     );
 
     // 10. Creación de carpeta si no existe
@@ -109,7 +110,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar subir imagen de perfil"
+      "Error interno validar subir imagen de perfil",
     );
   }
 }

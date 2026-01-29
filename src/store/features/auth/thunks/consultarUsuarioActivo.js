@@ -23,8 +23,6 @@
 //   }
 // );
 
-
-
 // thunks/consultarUsuarioActivo.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -35,21 +33,15 @@ export const consultarUsuarioActivo = createAsyncThunk(
     try {
       const response = await axios.get("/api/usuarios/usuario-activo");
 
-      if (response?.data?.status === "ok") {
-        return {
-          usuario: response.data.usuarioActivo,
-          departamento: response.data.departamento,
-          validado: true,
-        };
-      } else {
-        return rejectWithValue("Usuario no válido");
-      }
+      return {
+        usuario: response.data.usuarioActivo,
+        departamento: response.data.departamento,
+        validado: true,
+      };
     } catch (error) {
-      // Detecta si es por falta de cookie
-      if (error?.response?.status === 400 || error?.response?.status === 400) {
-        return rejectWithValue("No autenticado");
-      }
-      return rejectWithValue("Error desconocido");
+      return rejectWithValue(
+        error.response?.data?.message || "Error de usuario activo",
+      );
     }
-  }
+  },
 );

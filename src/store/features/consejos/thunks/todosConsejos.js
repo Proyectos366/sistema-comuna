@@ -6,7 +6,7 @@ export const fetchTodosConsejos = createAsyncThunk(
   "consejos/fetchTodosConsejos",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/consejos/todos-consejos");
+      const response = await axios.get("/api/consejos/todos-consejos-comunales");
       return response.data.consejos;
     } catch (error) {
       // Puedes personalizar el mensaje de error según tus necesidades

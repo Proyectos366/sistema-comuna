@@ -1,9 +1,10 @@
 /**
- @fileoverview Controlador de API para consultar voceros asociados a un consejo comunal específico.
- Este endpoint valida el ID del consejo comunal recibido en la solicitud, realiza la consulta en la
- base de datos y retorna la lista de voceros correspondientes. También registra eventos de auditoría
- para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y servicios
- personalizados para validación. @module api/voceros/consultarPorIdConsejoComunal
+ @fileoverview Controlador de API para consultar voceros asociados a un consejo comunal
+ específico. Este endpoint valida el ID del consejo comunal recibido en la solicitud, realiza
+ la consulta en la base de datos y retorna la lista de voceros correspondientes. También
+ registra eventos de auditoría para intentos fallidos, errores y consultas exitosas. Utiliza
+ Prisma como ORM y servicios personalizados para validación.
+ @module api/voceros/consultarPorIdConsejoComunal
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -12,14 +13,13 @@ import validarConsultarVoceroIdConsejoComunal from "@/services/voceros/validarCo
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP GET para consultar voceros por ID de consejo comunal.
- * Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
- *
- * @async
- * @function GET
- * @param {Request} request - Solicitud HTTP con el ID del consejo comunal.
- * @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
- */
+ Maneja las solicitudes HTTP GET para consultar voceros por ID de consejo comunal.
+ Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
+ @async
+ @function GET
+ @param {Request} request - Solicitud HTTP con el ID del consejo comunal.
+ @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
+*/
 
 export async function GET(request) {
   try {
@@ -88,7 +88,7 @@ export async function GET(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: { select: { id: true, nombre: true } },
               },
             },

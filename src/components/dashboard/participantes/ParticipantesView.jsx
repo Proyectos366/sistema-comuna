@@ -35,7 +35,7 @@ import DivOrdenVoceros from "./components/DivOrdenVoceros";
 import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
 import { opcionOrden } from "@/components/dashboard/participantes/function/opcionOrden";
 import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
-import EstadisticasParticipantes from "./components/EstadisticasParticipantes";
+import EstadisticasParticipantes from "./components/estadisticas/EstadisticasParticipantes";
 
 export default function ParticipantesView() {
   const dispatch = useDispatch();

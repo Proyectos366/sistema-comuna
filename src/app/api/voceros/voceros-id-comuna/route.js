@@ -1,9 +1,9 @@
 /**
- @fileoverview Controlador de API para consultar voceros asociados a una comuna específica. Este
- endpoint valida el ID de la comuna recibido en la solicitud, realiza la consulta en la base de datos
- y retorna la lista de voceros correspondientes. También registra eventos de auditoría para intentos
- fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y servicios personalizados para
- validación. @module api/voceros/consultarPorIdComuna
+ @fileoverview Controlador de API para consultar voceros asociados a una comuna específica.
+ Este endpoint valida el ID de la comuna recibido en la solicitud, realiza la consulta en la
+ base de datos y retorna la lista de voceros correspondientes. También registra eventos de
+ auditoría para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y
+ servicios personalizados para validación. @module api/voceros/consultarPorIdComuna
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -82,7 +82,7 @@ export async function GET(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: { select: { id: true, nombre: true } },
               },
             },

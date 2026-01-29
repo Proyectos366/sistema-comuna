@@ -162,7 +162,7 @@ export async function POST(request) {
               id_curso: curso.id,
               id_usuario: validaciones.id_usuario,
               presente: false,
-              fecha_registro: new Date(),
+              fecha_validada: null,
             },
           });
 
@@ -225,7 +225,7 @@ export async function POST(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: { select: { id: true, nombre: true } },
               },
             },

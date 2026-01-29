@@ -1,9 +1,9 @@
 /**
- @fileoverview Controlador de API para consultar voceros asociados a un municipio específico. Este
- endpoint valida el contexto de la solicitud, obtiene las parroquias vinculadas al municipio y
- consulta todos los voceros pertenecientes a dichas parroquias. También registra eventos de auditoría
- para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como ORM y servicios
- personalizados. @module api/voceros/consultarPorMunicipi
+ @fileoverview Controlador de API para consultar voceros asociados a un municipio específico.
+ Este endpoint valida el contexto de la solicitud, obtiene las parroquias vinculadas al
+ municipio y consulta todos los voceros pertenecientes a dichas parroquias. También registra
+ eventos de auditoría para intentos fallidos, errores y consultas exitosas. Utiliza Prisma como
+ ORM y servicios personalizados. @module api/voceros/consultarVocerosMunicipio
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -12,13 +12,12 @@ import validarConsultarVocerosMunicipio from "@/services/voceros/validarConsulta
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP GET para consultar voceros por municipio.
- * Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
- *
- * @async
- * @function GET
- * @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
- */
+ Maneja las solicitudes HTTP GET para consultar voceros por municipio.
+ Valida la solicitud, consulta la base de datos y retorna una respuesta estructurada.
+ @async
+ @function GET
+ @returns {Promise<Response>} Respuesta HTTP con la lista de voceros o un mensaje de error.
+*/
 
 export async function GET(request) {
   try {
@@ -92,7 +91,7 @@ export async function GET(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: {
                   select: {
                     id: true,

@@ -3,8 +3,9 @@
  consulta de todos los consejos comunales. @module services/consejos/validarConsultarTodos
 */
 
+import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
  Valida la identidad del usuario que intenta consultar todos los consejos comunales disponibles.
@@ -21,14 +22,33 @@ export default async function validarConsultarTodosConsejosComunales() {
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
+    }
+
+    // 3. Se inicializa la variable para almacenar los IDs de las parroquias.
+    let idParroquias;
+
+    // 4. Si el rol del usuario no es master (ID 1), se buscan las parroquias de su municipio.
+    if (validaciones.id_rol !== 1) {
+      const parroquias = await prisma.parroquia.findMany({
+        where: {
+          id_municipio: validaciones.id_municipio,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      idParroquias = parroquias.map((p) => p.id);
     }
 
     // 3. Si todas las validaciones son correctas, se consolidan y retornan los datos del usuario.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
+      id_parroquias: idParroquias,
+      id_rol: validaciones.id_rol,
     });
   } catch (error) {
     // 4. Manejo de errores inesperados.
@@ -37,7 +57,7 @@ export default async function validarConsultarTodosConsejosComunales() {
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar consultar todos consejos"
+      "Error interno validar consultar todos consejos",
     );
   }
 }

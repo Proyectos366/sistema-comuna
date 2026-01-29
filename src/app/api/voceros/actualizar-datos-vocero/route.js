@@ -130,7 +130,7 @@ export async function PATCH(request) {
                   presente: true,
                   id_formador: true,
                   descripcion: true,
-                  fecha_registro: true,
+                  fecha_validada: true,
                   modulos: { select: { id: true, nombre: true } },
                 },
               },

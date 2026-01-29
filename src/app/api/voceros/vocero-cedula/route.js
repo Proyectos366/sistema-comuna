@@ -1,8 +1,8 @@
 /**
- @fileoverview Controlador de API para consultar un vocero por número de cédula. Este endpoint valida
- la cédula recibida, realiza la búsqueda en la base de datos y retorna los datos del vocero si existe.
- También registra eventos de auditoría para intentos fallidos, errores y consultas exitosas. Utiliza
- Prisma como ORM. @module api/voceros/consultarPorCedula
+ @fileoverview Controlador de API para consultar un vocero por número de cédula. Este endpoint
+ valida la cédula recibida, realiza la búsqueda en la base de datos y retorna los datos del
+ vocero si existe. También registra eventos de auditoría para intentos fallidos, errores y
+ consultas exitosas. Utiliza Prisma como ORM. @module api/voceros/consultarVoceroCedula
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -92,7 +92,7 @@ export async function POST(request) {
                 presente: true,
                 id_formador: true,
                 descripcion: true,
-                fecha_registro: true,
+                fecha_validada: true,
                 modulos: {
                   select: {
                     id: true,

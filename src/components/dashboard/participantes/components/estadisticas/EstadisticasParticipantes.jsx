@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import Titulos from "@/components/Titulos";
 import BotonMostrarDetalles from "@/components/botones/BotonMostrarDetalles";
-import { useDispatch, useSelector } from "react-redux";
+
 import { fetchCursos } from "@/store/features/cursos/thunks/todosCursos";
 import { fetchCursosIdFormacion } from "@/store/features/cursos/thunks/cursosIdFormacion";
 import { fetchTodasComunas } from "@/store/features/comunas/thunks/todasComunas";
 import { fetchTodosCircuitos } from "@/store/features/circuitos/thunks/todosCircuitos";
 import { fetchTodosConsejos } from "@/store/features/consejos/thunks/todosConsejos";
+import { analizarEntidadesAtendidas } from "@/components/dashboard/participantes/function/analizarEntidadesAtendidas";
+import EstadisticasEntidades from "./EstadisticasEntidades";
 
 export default function EstadisticasParticipantes({
   registrosFiltrados,
@@ -16,32 +19,6 @@ export default function EstadisticasParticipantes({
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
-  const { cursos } = useSelector((state) => state.cursos);
-  const { comunas } = useSelector((state) => state.comunas);
-  const { circuitos } = useSelector((state) => state.circuitos);
-  const { consejos } = useSelector((state) => state.consejos);
-
-  function obtenerInfoCertificados(cursos) {
-    return cursos?.map((curso) => ({
-      fecha_certificado: curso.fecha_certificado,
-      modulo: curso.asistencias?.[0]
-        ? {
-            id: curso.asistencias[0].id,
-            nombre:
-              curso.asistencias[0].modulos?.nombre ||
-              `Módulo ${curso.asistencias[0].id_modulo}`,
-            fecha_validada: curso.asistencias[0].fecha_validada,
-          }
-        : null,
-      comuna: curso.voceros?.comunas?.nombre,
-      circuito: curso.voceros?.circuitos?.nombre,
-      consejo: curso.voceros?.consejos?.nombre,
-    }));
-  }
-
-  // Uso:
-  const info = obtenerInfoCertificados(cursos);
-  console.log(info);
 
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
@@ -80,19 +57,27 @@ export default function EstadisticasParticipantes({
   }
 
   const totalHombres = registrosFiltrados.filter(
-    (r) => r.voceros?.genero === true,
+    (r) => r.genero === true,
   ).length;
 
   const totalMujeres = registrosFiltrados.filter(
-    (r) => r.voceros?.genero === false,
+    (r) => r.genero === false,
+  ).length;
+
+  const totalAdultosMayoresHombres = registrosFiltrados.filter(
+    (r) => r.genero === true && r.edad >= 60,
+  ).length;
+
+  const totalAdultosMayoresMujeres = registrosFiltrados.filter(
+    (r) => r.genero === false && r.edad >= 55,
   ).length;
 
   const totalCertificados = registrosFiltrados.filter(
-    (r) => r.certificado === true,
+    (r) => r.estaCertificado === true,
   ).length;
 
   const totalVerificados = registrosFiltrados.filter(
-    (r) => r.verificado === true,
+    (r) => r.estaVerificado === true,
   ).length;
 
   const toggleVocero = (index) => {
@@ -222,13 +207,15 @@ export default function EstadisticasParticipantes({
   };
 
   return (
-    <div className="p-1 sm:p-6 flex flex-col gap-4">
+    <div className="p-1 sm:p-6 flex flex-col gap-2">
       <Titulos indice={2} titulo={"📊 Estadísticas Voceros"} />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-fr -mt-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-fr">
         {[
           { titulo: "Participantes", valor: totalParticipantes },
           { titulo: "Hombres", valor: totalHombres },
           { titulo: "Mujeres", valor: totalMujeres },
+          { titulo: "Hombres adulto mayor", valor: totalAdultosMayoresHombres },
+          { titulo: "Mujeres adulta mayor", valor: totalAdultosMayoresMujeres },
           { titulo: "Certificados", valor: totalCertificados },
           { titulo: "Verificados", valor: totalVerificados },
         ]
@@ -267,7 +254,7 @@ export default function EstadisticasParticipantes({
         />
 
         {abierto && (
-          <div className="flex flex-col mt-2 gap-2 rounded-md p-2 border border-gray-300 hover:border-green-500">
+          <div className="flex flex-col gap-2 rounded-md p-2 border border-[#d1d5dc] hover:border-[#2FA807]">
             {renderListaExtendida(
               "Por Parroquia",
               generarEstadisticasPorEntidad("parroquias"),
@@ -282,6 +269,10 @@ export default function EstadisticasParticipantes({
             )}
           </div>
         )}
+      </div>
+
+      <div className=" flex flex-col gap-2">
+        <EstadisticasEntidades />
       </div>
     </div>
   );

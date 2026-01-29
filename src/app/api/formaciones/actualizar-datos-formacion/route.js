@@ -28,7 +28,7 @@ export async function PATCH(request) {
       nombre,
       cantidadModulos,
       descripcion,
-      id_formacion
+      id_formacion,
     );
 
     // 3. Condición de validación fallida
@@ -42,11 +42,12 @@ export async function PATCH(request) {
         datosAntes: null,
         datosDespues: validaciones,
       });
+
       return generarRespuesta(
         validaciones.status,
         validaciones.message,
         {},
-        400
+        validaciones.codigo ? validaciones.codigo : 400,
       );
     }
 
@@ -67,11 +68,12 @@ export async function PATCH(request) {
         datosAntes: { nombre, descripcion, id_formacion },
         datosDespues: null,
       });
+
       return generarRespuesta(
         "error",
         "Error, no se actualizo la formación",
         {},
-        400
+        400,
       );
     }
 
@@ -90,7 +92,7 @@ export async function PATCH(request) {
       "ok",
       "Formación actualizada",
       { formaciones: formacionDespues },
-      201
+      201,
     );
   } catch (error) {
     // 8. Manejo de errores inesperados
@@ -111,7 +113,7 @@ export async function PATCH(request) {
       "error",
       "Error interno al actualizar la formación",
       {},
-      500
+      500,
     );
   }
 }

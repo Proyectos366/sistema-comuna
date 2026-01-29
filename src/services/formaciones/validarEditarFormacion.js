@@ -24,7 +24,7 @@ export default async function validarEditarFormacion(
   nombre,
   cantidadModulos,
   descripcion,
-  id_formacion
+  id_formacion,
 ) {
   try {
     // 1. Validar identidad del usuario mediante el token.
@@ -34,7 +34,7 @@ export default async function validarEditarFormacion(
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -43,7 +43,7 @@ export default async function validarEditarFormacion(
       nombre,
       cantidadModulos,
       descripcion,
-      id_formacion
+      id_formacion,
     );
 
     // 4. Si los campos son inválidos, retornar error.
@@ -53,7 +53,7 @@ export default async function validarEditarFormacion(
         validandoCampos.message,
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
@@ -73,7 +73,7 @@ export default async function validarEditarFormacion(
         "error",
         "Error, la formación ya existe",
         { id_usuario: validaciones.id_usuario },
-        400
+        400,
       );
     }
 
@@ -82,6 +82,18 @@ export default async function validarEditarFormacion(
       where: { id: validandoCampos.id_formacion },
       include: { modulos: true },
     });
+
+    if (
+      !formacionAntes.id_institucion &&
+      !formacionAntes.id_departamento &&
+      validaciones.id_rol !== 1
+    ) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, usuario no tiene permisos",
+        { codigo: 403 },
+      );
+    }
 
     // 8. Obtener los módulos disponibles para asignar a la formación.
     const todosCantidadModulos = await prisma.modulo.findMany({
@@ -100,7 +112,7 @@ export default async function validarEditarFormacion(
         "Error, no hay cantidad modulos...",
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
@@ -123,7 +135,7 @@ export default async function validarEditarFormacion(
         "Error, no se actualizo la formación...",
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
@@ -153,7 +165,7 @@ export default async function validarEditarFormacion(
       // 16. Recorremos los modulos y filtramos.
       const modulosActualesIds = asistenciasActuales.map((a) => a.id_modulo);
       const nuevosModulos = modulosActualizados.filter(
-        (modulo) => !modulosActualesIds.includes(modulo.id)
+        (modulo) => !modulosActualesIds.includes(modulo.id),
       );
 
       // 17. Recorremos cada modulo para ir creando las asistencias.
@@ -165,7 +177,7 @@ export default async function validarEditarFormacion(
             id_curso: curso.id,
             id_usuario: curso.id_usuario,
             presente: false,
-            fecha_registro: new Date(),
+            fecha_validada: null,
           },
         });
       }
@@ -175,7 +187,7 @@ export default async function validarEditarFormacion(
       // 18. Filtramos las asistencias actuales en caso de que cambie la cantidad de modulo por
       // formacion.
       const asistenciasAEliminar = asistenciasActuales.filter(
-        (a) => !modulosPermitidos.includes(a.id_modulo)
+        (a) => !modulosPermitidos.includes(a.id_modulo),
       );
 
       // 19. Ejecutamos una funcion para cambiar los modulos por asistencia.
@@ -184,8 +196,8 @@ export default async function validarEditarFormacion(
           prisma.asistencia.update({
             where: { id: a.id },
             data: { borrado: true },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -206,7 +218,7 @@ export default async function validarEditarFormacion(
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar editar formación..."
+      "Error interno validar editar formación...",
     );
   }
 }
