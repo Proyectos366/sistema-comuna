@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import LabelInput from "@/components/inputs/LabelInput";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+
 import SelectOpcion from "@/components/SelectOpcion";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import InputRif from "@/components/inputs/InputRif";
-import Input from "@/components/inputs/Input";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
+
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
@@ -149,55 +151,41 @@ export default function FormCrearInstitucion({
 
         {idParroquia && (
           <>
-            <LabelInput nombre={"Nombre"}>
-              <InputNombre
-                type="text"
-                indice="nombre"
-                value={nombre}
-                setValue={setNombre}
-                validarNombre={validarNombre}
-                setValidarNombre={setValidarNombre}
-              />
-            </LabelInput>
+            <InputNombre
+              value={nombre}
+              setValue={setNombre}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+            />
 
-            <LabelInput nombre={"Descripción"}>
-              <InputDescripcion
-                value={descripcion}
-                setValue={setDescripcion}
-                rows={6}
-                max={500}
-                autoComplete="off"
-              />
-            </LabelInput>
+            <InputDescripcion
+              value={descripcion}
+              setValue={setDescripcion}
+              rows={6}
+              max={500}
+              autoComplete="off"
+            />
 
-            <LabelInput nombre={"Rif"}>
-              <InputRif
-                type="text"
-                indice="rif"
-                value={rif}
-                setValue={setRif}
-                validarRif={validarRif}
-                setValidarRif={setValidarRif}
-              />
-            </LabelInput>
+            <InputRif
+              value={rif}
+              setValue={setRif}
+              validarRif={validarRif}
+              setValidarRif={setValidarRif}
+            />
 
-            <LabelInput nombre={"Sector"}>
-              <Input
-                type={"text"}
-                value={sector}
-                onChange={(e) => setSector(e.target.value)}
-              />
-            </LabelInput>
+            <InputNombreSinValidar
+              htmlFor={"sector"}
+              value={sector}
+              setValue={setSector}
+            />
 
-            <LabelInput nombre={"Dirección"}>
-              <Input
-                type={"text"}
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-              />
-            </LabelInput>
+            <InputNombreSinValidar
+              htmlFor={"direccion"}
+              value={direccion}
+              setValue={setDireccion}
+            />
 
-            <div className="flex space-x-3">
+            <AgruparCamposForm>
               <BotonAceptarCancelar
                 indice={"aceptar"}
                 aceptar={() => {
@@ -240,7 +228,7 @@ export default function FormCrearInstitucion({
                   idParroquia,
                 }}
               />
-            </div>
+            </AgruparCamposForm>
           </>
         )}
       </DivScroll>

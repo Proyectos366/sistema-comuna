@@ -4,24 +4,23 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
-import BotonesModal from "@/components/botones/BotonesModal";
 import FormCrearUsuario from "@/components/formularios/FormCrearUsuario";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import SelectOpcion from "@/components/SelectOpcion";
+import BotonesModal from "@/components/botones/BotonesModal";
+
+import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
+import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
 
 import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
 import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
 
-import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
-import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
-
 import { cambiarDepartamentoUsuario } from "@/store/features/usuarios/thunks/cambiarDepartamentoUsuario";
 import { cambiarRolUsuario } from "@/store/features/usuarios/thunks/cambiarRolUsuario";
-
 import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 

@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import SelectOpcion from "@/components/SelectOpcion";
-import LabelInput from "@/components/inputs/LabelInput";
-import InputNombre from "@/components/inputs/InputNombre";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
@@ -167,18 +167,9 @@ export default function FormCrearCircuito({
 
         {idParroquia && (
           <>
-            <LabelInput nombre={"Nombre"}>
-              <InputNombre
-                type="text"
-                indice="nombre"
-                value={nombre}
-                setValue={setNombre}
-                validarNombre={validarNombre}
-                setValidarNombre={setValidarNombre}
-              />
-            </LabelInput>
+            <InputNombreSinValidar value={nombre} setValue={setNombre} />
 
-            <div className="flex space-x-3">
+            <AgruparCamposForm>
               <BotonAceptarCancelar
                 indice={"aceptar"}
                 aceptar={() => {
@@ -201,7 +192,7 @@ export default function FormCrearCircuito({
                   idParroquia,
                 }}
               />
-            </div>
+            </AgruparCamposForm>
           </>
         )}
       </DivScroll>

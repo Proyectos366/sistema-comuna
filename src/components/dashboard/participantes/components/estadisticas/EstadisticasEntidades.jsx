@@ -31,7 +31,19 @@ export default function EstadisticasEntidades({}) {
     <>
       <SectionParroquiasAgrupadas analisis={analisis} />
 
-      <SectionEntidad analisis={analisis} />
+      <SectionEntidad
+        datos={analisis.comunas}
+        genero={false}
+        entidad={"comunas"}
+        nombre={"comuna"}
+      />
+
+      <SectionEntidad
+        datos={analisis.consejos}
+        genero={true}
+        entidad={"consejos"}
+        nombre={"consejo"}
+      />
     </>
   );
 }

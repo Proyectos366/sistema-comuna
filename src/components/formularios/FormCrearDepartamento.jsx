@@ -3,20 +3,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import InputDescripcion from "@/components/inputs/InputDescripcion";
-import InputNombre from "@/components/inputs/InputNombre";
-import LabelInput from "@/components/inputs/LabelInput";
-import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "../AgruparCamposForm";
+import SelectOpcion from "../SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionInstitucion } from "@/utils/dashboard/cambiarSeleccionInstitucion";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
-import SelectOpcion from "../SelectOpcion";
-
 
 export default function FormCrearDepartamento({
   acciones,
@@ -28,7 +27,7 @@ export default function FormCrearDepartamento({
 
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.departamentoForm
+    (state) => state.forms.reiniciarForm.departamentoForm,
   );
 
   const { setIdInstitucion, setNombre, setDescripcion, setNombreInstitucion } =
@@ -67,28 +66,22 @@ export default function FormCrearDepartamento({
 
         {idInstitucion && (
           <>
-            <LabelInput nombre={"Nombre"}>
-              <InputNombre
-                type="text"
-                indice="nombre"
-                value={nombre}
-                setValue={setNombre}
-                validarNombre={validarNombre}
-                setValidarNombre={setValidarNombre}
-              />
-            </LabelInput>
+            <InputNombre
+              value={nombre}
+              setValue={setNombre}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+            />
 
-            <LabelInput nombre={"Descripción"}>
-              <InputDescripcion
-                value={descripcion}
-                setValue={setDescripcion}
-                rows={6}
-                max={500}
-                autoComplete="off"
-              />
-            </LabelInput>
+            <InputDescripcion
+              value={descripcion}
+              setValue={setDescripcion}
+              rows={6}
+              max={500}
+              autoComplete="off"
+            />
 
-            <div className="flex space-x-3">
+            <AgruparCamposForm>
               <BotonAceptarCancelar
                 indice={"aceptar"}
                 aceptar={() => {
@@ -113,7 +106,7 @@ export default function FormCrearDepartamento({
                   idInstitucion,
                 }}
               />
-            </div>
+            </AgruparCamposForm>
           </>
         )}
       </DivScroll>

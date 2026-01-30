@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputModulo from "@/components/inputs/InputModulo";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
@@ -16,7 +17,6 @@ import { textRegex } from "@/utils/regex/textRegex";
 import { moduloRegex } from "@/utils/regex/moduloRegex";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import AgruparCamposForm from "../AgruparCamposForm";
 
 export default function FormEditarFormacion({
   acciones,
@@ -50,7 +50,6 @@ export default function FormEditarFormacion({
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <DivScroll>
         <InputNombre
-          indice="nombre"
           value={nombre}
           setValue={setNombre}
           validarNombre={validarNombre}

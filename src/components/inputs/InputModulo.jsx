@@ -70,8 +70,8 @@ export default function InputModulo({
         indice={indice}
       />
 
-      {indice === "modulo" && value && !validarModulo && (
-        <DivMensajeInput mensaje={"Debe ser un número entero..."} />
+      {value && !validarModulo && (
+        <DivMensajeInput mensaje={"Debe ser un número entero"} />
       )}
     </LabelInput>
   );

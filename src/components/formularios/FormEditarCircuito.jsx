@@ -5,13 +5,12 @@ import { useDispatch } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import SelectOpcion from "@/components/SelectOpcion";
-import LabelInput from "@/components/inputs/LabelInput";
-import InputNombre from "@/components/inputs/InputNombre";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
-import { textRegex } from "@/utils/regex/textRegex";
 import { limpiarCampos } from "@/utils/limpiarForm";
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
 
@@ -71,9 +70,7 @@ export default function FormEditarCircuito({
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
-        const limpio = String(valor).trim();
-        const esValido = textRegex.test(limpio);
-        if (typeof setValidar === "function") setValidar(esValido);
+        if (typeof setValidar === "function") setValidar(true);
       }
     };
 
@@ -94,18 +91,9 @@ export default function FormEditarCircuito({
           setNombre={setNombreParroquia}
         />
 
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+        <InputNombreSinValidar value={nombre} setValue={setNombre} />
 
-        <div className="flex space-x-3">
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
@@ -128,7 +116,7 @@ export default function FormEditarCircuito({
               idParroquia,
             }}
           />
-        </div>
+        </AgruparCamposForm>
       </DivScroll>
     </Formulario>
   );

@@ -3,11 +3,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import InputDescripcion from "@/components/inputs/InputDescripcion";
+import DivScroll from "../DivScroll";
+import AgruparCamposForm from "../AgruparCamposForm";
 import InputNombre from "@/components/inputs/InputNombre";
-import LabelInput from "@/components/inputs/LabelInput";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
@@ -33,7 +34,7 @@ export default function FormCrearPais({
 
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.paisForm
+    (state) => state.forms.reiniciarForm.paisForm,
   );
 
   useEffect(() => {
@@ -51,29 +52,22 @@ export default function FormCrearPais({
         e.preventDefault();
       }}
     >
-      <LabelInput nombre={"Nombre"}>
+      <DivScroll>
         <InputNombre
-          type="text"
-          indice="nombre"
           value={nombre}
           setValue={setNombre}
           validarNombre={validarNombre}
           setValidarNombre={setValidarNombre}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Capital"}>
         <InputNombre
-          type="text"
-          indice="nombre"
+          htmlFor={"capital"}
           value={capital}
           setValue={setCapital}
           validarNombre={validarCapital}
           setValidarNombre={setValidarCapital}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Descripción"}>
         <InputDescripcion
           value={descripcion}
           setValue={setDescripcion}
@@ -81,47 +75,44 @@ export default function FormCrearPais({
           max={500}
           autoComplete="off"
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Serial"}>
         <InputNombre
-          type="text"
-          indice="nombre"
+          htmlFor={"serial"}
           value={serial}
           setValue={setSerial}
           validarNombre={validarSerial}
           setValidarNombre={setValidarSerial}
         />
-      </LabelInput>
 
-      <div className="flex space-x-3">
-        <BotonAceptarCancelar
-          indice={"aceptar"}
-          aceptar={() => {
-            dispatch(cerrarModal("crear"));
-            dispatch(abrirModal("confirmar"));
-          }}
-          nombre={"Crear"}
-          campos={{
-            nombre,
-            capital,
-            descripcion,
-            serial,
-          }}
-        />
+        <AgruparCamposForm>
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
+            nombre={"Crear"}
+            campos={{
+              nombre,
+              capital,
+              descripcion,
+              serial,
+            }}
+          />
 
-        <BotonLimpiarCampos
-          aceptar={() => {
-            dispatch(resetForm("paisForm"));
-          }}
-          campos={{
-            nombre,
-            capital,
-            descripcion,
-            serial,
-          }}
-        />
-      </div>
+          <BotonLimpiarCampos
+            aceptar={() => {
+              dispatch(resetForm("paisForm"));
+            }}
+            campos={{
+              nombre,
+              capital,
+              descripcion,
+              serial,
+            }}
+          />
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

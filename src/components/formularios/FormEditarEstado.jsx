@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "../inputs/LabelInput";
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import InputNombre from "../inputs/InputNombre";
-import SelectOpcion from "../SelectOpcion";
-import InputDescripcion from "../inputs/InputDescripcion";
-import InputCodigoPostal from "../inputs/InputCodigoPostal";
+
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputCodigoPostal from "@/components/inputs/InputCodigoPostal";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 export default function FormEditarEstado({
@@ -46,47 +50,39 @@ export default function FormEditarEstado({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <SelectOpcion
-        idOpcion={idPais}
-        nombre={"Paises"}
-        handleChange={(e) => cambiarSeleccionPais(e, setIdPais)}
-        opciones={paises}
-        seleccione={"Seleccione"}
-        setNombre={setNombrePais}
-      />
+      <DivScroll>
+        <SelectOpcion
+          idOpcion={idPais}
+          nombre={"Paises"}
+          handleChange={(e) => cambiarSeleccionPais(e, setIdPais)}
+          opciones={paises}
+          seleccione={"Seleccione"}
+          setNombre={setNombrePais}
+        />
 
-      <LabelInput nombre={"Nombre"}>
         <InputNombre
-          type="text"
-          indice="nombre"
           value={nombre}
           setValue={setNombre}
           validarNombre={validarNombre}
           setValidarNombre={setValidarNombre}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Capital"}>
         <InputNombre
-          type="text"
-          indice="nombre"
+          htmlFor={"capital"}
+          nombre={"Capital"}
           value={capital}
           setValue={setCapital}
           validarNombre={validarCapital}
           setValidarNombre={setValidarCapital}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Código postal"}>
         <InputCodigoPostal
           value={codigoPostal}
           setValue={setCodigoPostal}
           validarCodigoPostal={validarCodigoPostal}
           setValidarCodigoPostal={setValidarCodigoPostal}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Descripción"}>
         <InputDescripcion
           value={descripcion}
           setValue={setDescripcion}
@@ -94,38 +90,38 @@ export default function FormEditarEstado({
           max={500}
           autoComplete="off"
         />
-      </LabelInput>
 
-      <div className="flex space-x-3">
-        <BotonAceptarCancelar
-          indice={"aceptar"}
-          aceptar={() => {
-            dispatch(cerrarModal("crear"));
-            dispatch(abrirModal("confirmar"));
-          }}
-          nombre={"Crear"}
-          campos={{
-            nombre,
-            capital,
-            codigoPostal,
-            descripcion,
-            idPais,
-          }}
-        />
+        <AgruparCamposForm>
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
+            nombre={"Crear"}
+            campos={{
+              nombre,
+              capital,
+              codigoPostal,
+              descripcion,
+              idPais,
+            }}
+          />
 
-        <BotonLimpiarCampos
-          aceptar={() => {
-            dispatch(resetForm("estadoForm"));
-          }}
-          campos={{
-            nombre,
-            capital,
-            codigoPostal,
-            descripcion,
-            idPais,
-          }}
-        />
-      </div>
+          <BotonLimpiarCampos
+            aceptar={() => {
+              dispatch(resetForm("estadoForm"));
+            }}
+            campos={{
+              nombre,
+              capital,
+              codigoPostal,
+              descripcion,
+              idPais,
+            }}
+          />
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

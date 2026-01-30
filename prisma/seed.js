@@ -519,13 +519,15 @@ async function main() {
   });
 
   // Crear una formacion inicial para todas las instituciones
+  // Crear la formación conectando solo los 3 primeros módulos
   await prisma.formacion.create({
     data: {
       nombre: "participación ciudadana y contraloria social",
-      descripcion:
-        "primera formacion enviada por la cgr caracas, con el objetivo de certificar a las comunas",
+      descripcion: "primera formacion enviada por la cgr caracas...",
       id_usuario: 1,
-      modulos: 3,
+      modulos: {
+        connect: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      },
     },
   });
 
@@ -535,16 +537,16 @@ async function main() {
     data: {
       id_usuario: 1,
       MiembrosPaises: {
-        connect: { id: 1 },
+        connect: [{ id: 1 }],
       },
       MiembrosEstados: {
-        connect: { id: 4 },
+        connect: [{ id: 4 }],
       },
       MiembrosMunicipios: {
-        connect: { id: 16 },
+        connect: [{ id: 16 }],
       },
       MiembrosParroquias: {
-        connect: { id: 5 },
+        connect: [{ id: 5 }],
       },
       MiembrosInstitucion: {
         connect: [{ id: 1 }],

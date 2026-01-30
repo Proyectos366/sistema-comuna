@@ -4,15 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import OpcionesCrearVocero from "@/components/dashboard/voceros/components/OpcionesCrearVocero";
 import AgruparCamposForm from "@/components/AgruparCamposForm";
+import OpcionesCrearVocero from "@/components/dashboard/voceros/components/OpcionesCrearVocero";
 import InputCedula from "@/components/inputs/InputCedula";
 import InputEdad from "@/components/inputs/InputEdad";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputTelefono from "@/components/inputs/InputTelefono";
 import InputCorreo from "@/components/inputs/InputCorreo";
 import SelectOpcion from "@/components/SelectOpcion";
-
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
@@ -143,8 +142,8 @@ export default function FormCrearVocero({
         {(opcion === "comuna"
           ? idComuna
           : opcion === "circuito"
-          ? idCircuito
-          : idConsejo) && (
+            ? idCircuito
+            : idConsejo) && (
           <>
             <AgruparCamposForm>
               <InputCedula
@@ -285,8 +284,8 @@ export default function FormCrearVocero({
                     opcion === "comuna"
                       ? idComuna
                       : opcion === "circuito"
-                      ? idCircuito
-                      : idConsejo,
+                        ? idCircuito
+                        : idConsejo,
                 }}
               />
 
@@ -300,8 +299,8 @@ export default function FormCrearVocero({
                     opcion === "comuna"
                       ? idComuna
                       : opcion === "circuito"
-                      ? idCircuito
-                      : idConsejo,
+                        ? idCircuito
+                        : idConsejo,
                 }}
               />
             </AgruparCamposForm>

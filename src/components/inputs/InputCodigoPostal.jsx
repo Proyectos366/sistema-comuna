@@ -1,5 +1,7 @@
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
+import LabelInput from "@/components/inputs/LabelInput";
+import Input from "@/components/inputs/Input";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+
 import {
   codigoPostalRegex,
   codigoPostalVacioRegex,
@@ -7,11 +9,9 @@ import {
 
 export default function InputCodigoPostal({
   indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
   value,
   autoComplete,
   readOnly,
@@ -49,12 +49,15 @@ export default function InputCodigoPostal({
   };
 
   return (
-    <div className="space-y-2 relative">
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "codigoPostal"}
+      nombre={nombre ? nombre : "Código postal"}
+    >
       <Input
         type={"text"}
-        id={id}
+        id={htmlFor ? htmlFor : "codigoPostal"}
         value={value}
-        name={name}
+        name={htmlFor ? htmlFor : "codigoPostal"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
@@ -66,11 +69,11 @@ export default function InputCodigoPostal({
         indice={indice}
       />
 
-      {indice === "codigoPostal" && value && !validarCodigoPostal && (
+      {value && !validarCodigoPostal && (
         <DivMensajeInput
           mensaje={"Código postal inválido. Ej: 1010, SW1A 1AA, H3Z 2Y7"}
         />
       )}
-    </div>
+    </LabelInput>
   );
 }

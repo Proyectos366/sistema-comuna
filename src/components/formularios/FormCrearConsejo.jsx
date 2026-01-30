@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import InputNombreSinValidar from "../inputs/InputNombreSinValidar";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
-import AgruparCamposForm from "@/components/AgruparCamposForm";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";

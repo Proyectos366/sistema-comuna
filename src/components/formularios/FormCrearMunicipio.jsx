@@ -3,12 +3,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import InputDescripcion from "@/components/inputs/InputDescripcion";
-import InputNombre from "@/components/inputs/InputNombre";
-import LabelInput from "@/components/inputs/LabelInput";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import SelectOpcion from "@/components/SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
@@ -37,7 +38,7 @@ export default function FormCrearMunicipio({
 
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.municipioForm
+    (state) => state.forms.reiniciarForm.municipioForm,
   );
 
   useEffect(() => {
@@ -55,48 +56,44 @@ export default function FormCrearMunicipio({
         e.preventDefault();
       }}
     >
-      <SelectOpcion
-        idOpcion={idPais}
-        nombre={"Paises"}
-        handleChange={(e) => {
-          cambiarSeleccionPais(e, setIdPais);
-          if (idEstado) {
-            setIdEstado("");
-          }
-        }}
-        opciones={paises}
-        seleccione={"Seleccione"}
-        setNombre={setNombrePais}
-      />
-
-      {idPais && (
+      <DivScroll>
         <SelectOpcion
-          idOpcion={idEstado}
-          nombre={"Estados"}
+          idOpcion={idPais}
+          nombre={"Paises"}
           handleChange={(e) => {
-            cambiarSeleccionEstado(e, setIdEstado);
+            cambiarSeleccionPais(e, setIdPais);
+            if (idEstado) {
+              setIdEstado("");
+            }
           }}
-          opciones={estados}
+          opciones={paises}
           seleccione={"Seleccione"}
-          setNombre={setNombreEstado}
-          indice={1}
+          setNombre={setNombrePais}
         />
-      )}
 
-      {idEstado && (
-        <>
-          <LabelInput nombre={"Nombre"}>
+        {idPais && (
+          <SelectOpcion
+            idOpcion={idEstado}
+            nombre={"Estados"}
+            handleChange={(e) => {
+              cambiarSeleccionEstado(e, setIdEstado);
+            }}
+            opciones={estados}
+            seleccione={"Seleccione"}
+            setNombre={setNombreEstado}
+            indice={1}
+          />
+        )}
+
+        {idEstado && (
+          <>
             <InputNombre
-              type="text"
-              indice="nombre"
               value={nombre}
               setValue={setNombre}
               validarNombre={validarNombre}
               setValidarNombre={setValidarNombre}
             />
-          </LabelInput>
 
-          <LabelInput nombre={"Descripción"}>
             <InputDescripcion
               value={descripcion}
               setValue={setDescripcion}
@@ -104,38 +101,38 @@ export default function FormCrearMunicipio({
               max={500}
               autoComplete="off"
             />
-          </LabelInput>
-        </>
-      )}
+          </>
+        )}
 
-      <div className="flex space-x-3">
-        <BotonAceptarCancelar
-          indice={"aceptar"}
-          aceptar={() => {
-            dispatch(cerrarModal("crear"));
-            dispatch(abrirModal("confirmar"));
-          }}
-          nombre={"Crear"}
-          campos={{
-            nombre,
-            descripcion,
-            idPais,
-            idEstado,
-          }}
-        />
+        <AgruparCamposForm>
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={() => {
+              dispatch(cerrarModal("crear"));
+              dispatch(abrirModal("confirmar"));
+            }}
+            nombre={"Crear"}
+            campos={{
+              nombre,
+              descripcion,
+              idPais,
+              idEstado,
+            }}
+          />
 
-        <BotonLimpiarCampos
-          aceptar={() => {
-            dispatch(resetForm("municipioForm"));
-          }}
-          campos={{
-            nombre,
-            descripcion,
-            idPais,
-            idEstado,
-          }}
-        />
-      </div>
+          <BotonLimpiarCampos
+            aceptar={() => {
+              dispatch(resetForm("municipioForm"));
+            }}
+            campos={{
+              nombre,
+              descripcion,
+              idPais,
+              idEstado,
+            }}
+          />
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

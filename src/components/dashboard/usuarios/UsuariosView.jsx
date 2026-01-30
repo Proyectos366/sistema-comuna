@@ -18,6 +18,7 @@ import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+
 import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
 import { abrirModal } from "@/store/features/modal/slicesModal";
 
@@ -78,7 +79,7 @@ export default function UsuariosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [usuarios, busqueda, ordenCampo, ordenDireccion]);
 

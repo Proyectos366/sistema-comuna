@@ -1,6 +1,9 @@
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import InputImagen from "../inputs/InputImagen";
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import InputImagen from "@/components/inputs/InputImagen";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 export default function FormCrearEditarImg({
   imgPrevia,
@@ -17,35 +20,33 @@ export default function FormCrearEditarImg({
       }}
       className="flex flex-col"
     >
-      <InputImagen
-        imgPrevia={imgPrevia}
-        setImgVistaPrevia={setImgVistaPrevia}
-        setFile={setFile}
-      />
-
-      <div className="flex space-x-4">
-        <BotonAceptarCancelar
-          indice={"aceptar"}
-          aceptar={crearEditar}
-          nombre={"Guardar"}
-          campos={{
-            imgPrevia,
-          }}
+      <DivScroll>
+        <InputImagen
+          imgPrevia={imgPrevia}
+          setImgVistaPrevia={setImgVistaPrevia}
+          setFile={setFile}
         />
 
-        <BotonAceptarCancelar
-          indice={"limpiar"}
-          aceptar={() => {
-            limpiarCampos({
-              setImgVistaPrevia,
-            });
-          }}
-          nombre={"Limpiar"}
-          campos={{
-            imgPrevia,
-          }}
-        />
-      </div>
+        <AgruparCamposForm>
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={crearEditar}
+            nombre={"Guardar"}
+            campos={{
+              imgPrevia,
+            }}
+          />
+
+          <BotonLimpiarCampos
+            aceptar={() => {
+              limpiarCampos({ setImgVistaPrevia });
+            }}
+            campos={{
+              imgPrevia,
+            }}
+          />
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

@@ -50,7 +50,6 @@ export default function FormCrearFormacion({
     >
       <DivScroll>
         <InputNombre
-          indice="nombre"
           value={nombre}
           setValue={setNombre}
           validarNombre={validarNombre}
@@ -58,7 +57,6 @@ export default function FormCrearFormacion({
         />
 
         <InputModulo
-          indice="modulo"
           value={modulos}
           setValue={setModulos}
           validarModulo={validarModulo}

@@ -1,15 +1,15 @@
-import DivMensajeInput from "../mensaje/DivMensaje";
-import Input from "./Input";
+import LabelInput from "@/components/inputs/LabelInput";
+import Input from "@/components/inputs/Input";
+import DivMensajeInput from "@/components/mensaje/DivMensaje";
+
+import { noNumerosRegex } from "@/utils/regex/noNumerosRegex";
 import { rifRegex } from "@/utils/regex/rifRegex";
 
 export default function InputRif({
-  type,
   indice,
-  name,
   disabled,
   className,
   placeholder,
-  id,
   value,
   onChange,
   autoComplete,
@@ -19,19 +19,18 @@ export default function InputRif({
   validarRif,
   setValidarRif,
   setValue,
-  titulo,
 }) {
   // Elimina guiones y letras para validar
   const limpiarRif = (valor) => {
     const letra = valor.charAt(0).toUpperCase();
-    const numeros = valor.replace(/\D/g, "").slice(0, 9);
+    const numeros = valor.replace(noNumerosRegex, "").slice(0, 9);
     return `${letra}${numeros}`;
   };
 
   // Formatea el RIF con guiones y letra inicial
   const formatearRif = (valor) => {
     const letra = valor.charAt(0).toUpperCase(); // Conserva la letra inicial
-    const soloNumeros = valor.replace(/\D/g, "");
+    const soloNumeros = valor.replace(noNumerosRegex, "");
     const cuerpo = soloNumeros.slice(0, 8);
     const verificador = soloNumeros.slice(8, 9);
     return `${letra}-${cuerpo}-${verificador}`;
@@ -60,12 +59,15 @@ export default function InputRif({
   };
 
   return (
-    <div className="space-y-2 relative" title={titulo}>
+    <LabelInput
+      htmlFor={htmlFor ? htmlFor : "rif"}
+      nombre={nombre ? nombre : "Rif"}
+    >
       <Input
-        type={type}
-        id={id}
+        type={"text"}
+        id={htmlFor ? htmlFor : "rif"}
         value={value}
-        name={name}
+        name={htmlFor ? htmlFor : "rif"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}
@@ -77,9 +79,9 @@ export default function InputRif({
         indice={indice}
       />
 
-      {indice === "rif" && value && !validarRif && (
-        <DivMensajeInput mensaje="RIF inválido" />
+      {value && !validarRif && (
+        <DivMensajeInput mensaje="Formato de RIF inválido" />
       )}
-    </div>
+    </LabelInput>
   );
 }

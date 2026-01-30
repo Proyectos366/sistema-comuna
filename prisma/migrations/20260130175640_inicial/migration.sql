@@ -429,27 +429,32 @@ CREATE TABLE "modulo" (
 -- CreateTable
 CREATE TABLE "curso" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "fecha_completado" DATETIME,
     "verificado" BOOLEAN NOT NULL DEFAULT false,
+    "fecha_verificado" DATETIME,
     "certificado" BOOLEAN NOT NULL DEFAULT false,
+    "fecha_certificado" DATETIME,
     "culminado" BOOLEAN NOT NULL DEFAULT false,
     "descripcion" TEXT DEFAULT 'sin descripcion',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_vocero" INTEGER NOT NULL,
     "id_formacion" INTEGER NOT NULL,
     "id_usuario" INTEGER NOT NULL,
+    "id_verifico" INTEGER,
+    "id_certifico" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "curso_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "curso_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "curso_id_formacion_fkey" FOREIGN KEY ("id_formacion") REFERENCES "formacion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "curso_id_formacion_fkey" FOREIGN KEY ("id_formacion") REFERENCES "formacion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "curso_id_verifico_fkey" FOREIGN KEY ("id_verifico") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "curso_id_certifico_fkey" FOREIGN KEY ("id_certifico") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "asistencia" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "presente" BOOLEAN NOT NULL,
-    "fecha_registro" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "fecha_validada" DATETIME,
     "descripcion" TEXT DEFAULT 'sin descripcion',
     "borrado" BOOLEAN NOT NULL DEFAULT false,
     "id_formador" INTEGER,
@@ -457,13 +462,15 @@ CREATE TABLE "asistencia" (
     "id_modulo" INTEGER NOT NULL,
     "id_curso" INTEGER NOT NULL,
     "id_usuario" INTEGER NOT NULL,
+    "id_validador" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "asistencia_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_vocero_fkey" FOREIGN KEY ("id_vocero") REFERENCES "vocero" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_modulo_fkey" FOREIGN KEY ("id_modulo") REFERENCES "modulo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "asistencia_id_curso_fkey" FOREIGN KEY ("id_curso") REFERENCES "curso" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "asistencia_id_formador_fkey" FOREIGN KEY ("id_formador") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "asistencia_id_formador_fkey" FOREIGN KEY ("id_formador") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "asistencia_id_validador_fkey" FOREIGN KEY ("id_validador") REFERENCES "usuario" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

@@ -1,20 +1,20 @@
-import BotonAceptarCancelar from "../botones/BotonAceptarCancelar";
-import Formulario from "../Formulario";
-import InputDescripcion from "../inputs/InputDescripcion";
-import InputNombre from "../inputs/InputNombre";
-import LabelInput from "../inputs/LabelInput";
-import SelectOpcion from "../SelectOpcion";
+import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputDescripcion from "@/components/inputs/InputDescripcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 export default function FormCrearNovedad({
   usuarioActivo,
   idInstitucion,
   idDepartamento,
   idPrioridad,
-
   setIdInstitucion,
   setIdDepartamento,
   setIdPrioridad,
-
   nombre,
   setNombre,
   descripcion,
@@ -26,11 +26,9 @@ export default function FormCrearNovedad({
   setNombreDepartamento,
   setNombreInstitucion,
   setNombrePrioridad,
-
   cambiarSeleccionDepartamento,
   cambiarSeleccionInstitucion,
   cambiarSeleccionPrioridad,
-
   abrirModal,
   limpiarCampos,
 }) {
@@ -45,56 +43,52 @@ export default function FormCrearNovedad({
       }}
       className="flex flex-col"
     >
-      {usuarioActivo.id_rol === 1 && (
+      <DivScroll>
+        {usuarioActivo.id_rol === 1 && (
+          <SelectOpcion
+            idOpcion={idInstitucion}
+            nombre={"Instituciones"}
+            handleChange={cambiarSeleccionInstitucion}
+            opciones={instituciones}
+            seleccione={"Seleccione"}
+            setNombre={setNombreInstitucion}
+            indice={1}
+          />
+        )}
+
+        {usuarioActivo.id_rol !== 1 && (
+          <SelectOpcion
+            idOpcion={idDepartamento}
+            nombre={"Departamentos"}
+            handleChange={cambiarSeleccionDepartamento}
+            opciones={departamentos}
+            seleccione={"Seleccione"}
+            setNombre={setNombreDepartamento}
+            indice={1}
+          />
+        )}
+
         <SelectOpcion
-          idOpcion={idInstitucion}
-          nombre={"Instituciones"}
-          handleChange={cambiarSeleccionInstitucion}
-          opciones={instituciones}
+          idOpcion={idPrioridad}
+          nombre={"Prioridad"}
+          handleChange={cambiarSeleccionPrioridad}
+          opciones={[
+            { id: 1, nombre: "alta" },
+            { id: 2, nombre: "media" },
+            { id: 3, nombre: "baja" },
+          ]}
           seleccione={"Seleccione"}
-          setNombre={setNombreInstitucion}
+          setNombre={setNombrePrioridad}
           indice={1}
         />
-      )}
 
-      {usuarioActivo.id_rol !== 1 && (
-        <SelectOpcion
-          idOpcion={idDepartamento}
-          nombre={"Departamentos"}
-          handleChange={cambiarSeleccionDepartamento}
-          opciones={departamentos}
-          seleccione={"Seleccione"}
-          setNombre={setNombreDepartamento}
-          indice={1}
-        />
-      )}
-
-      <SelectOpcion
-        idOpcion={idPrioridad}
-        nombre={"Prioridad"}
-        handleChange={cambiarSeleccionPrioridad}
-        opciones={[
-          { id: 1, nombre: "alta" },
-          { id: 2, nombre: "media" },
-          { id: 3, nombre: "baja" },
-        ]}
-        seleccione={"Seleccione"}
-        setNombre={setNombrePrioridad}
-        indice={1}
-      />
-
-      <LabelInput nombre={"Nombre"}>
         <InputNombre
-          type="text"
-          indice="nombre"
           value={nombre}
           setValue={setNombre}
           validarNombre={validarNombre}
           setValidarNombre={setValidarNombre}
         />
-      </LabelInput>
 
-      <LabelInput nombre={"Descripción"}>
         <InputDescripcion
           value={descripcion}
           setValue={setDescripcion}
@@ -102,33 +96,31 @@ export default function FormCrearNovedad({
           max={500}
           autoComplete="off"
         />
-      </LabelInput>
 
-      <div className="flex space-x-3">
-        <BotonAceptarCancelar
-          indice={"aceptar"}
-          aceptar={abrirModal}
-          nombre={"Crear"}
-          campos={{
-            nombre,
-            descripcion,
-            id,
-          }}
-        />
+        <AgruparCamposForm>
+          <BotonAceptarCancelar
+            indice={"aceptar"}
+            aceptar={abrirModal}
+            nombre={"Crear"}
+            campos={{
+              nombre,
+              descripcion,
+              id,
+            }}
+          />
 
-        <BotonAceptarCancelar
-          indice={"limpiar"}
-          aceptar={() => {
-            limpiarCampos({ setNombre, setDescripcion, setId });
-          }}
-          nombre={"Limpiar"}
-          campos={{
-            nombre,
-            descripcion,
-            id,
-          }}
-        />
-      </div>
+          <BotonLimpiarCampos
+            aceptar={() => {
+              limpiarCampos({ setNombre, setDescripcion, setId });
+            }}
+            campos={{
+              nombre,
+              descripcion,
+              id,
+            }}
+          />
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

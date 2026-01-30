@@ -3,16 +3,18 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputNombre from "@/components/inputs/InputNombre";
 import InputCodigoPostal from "@/components/inputs/InputCodigoPostal";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
-import InputNombre from "@/components/inputs/InputNombre";
-import LabelInput from "@/components/inputs/LabelInput";
-import SelectOpcion from "@/components/SelectOpcion";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
+
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
 
@@ -40,7 +42,7 @@ export default function FormCrearEstado({
 
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.estadoForm
+    (state) => state.forms.reiniciarForm.estadoForm,
   );
 
   useEffect(() => {
@@ -55,49 +57,40 @@ export default function FormCrearEstado({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <SelectOpcion
-        idOpcion={idPais}
-        nombre={"Paises"}
-        handleChange={(e) => cambiarSeleccionPais(e, setIdPais)}
-        opciones={paises}
-        seleccione={"Seleccione"}
-        setNombre={setNombrePais}
-      />
+      <DivScroll>
+        <SelectOpcion
+          idOpcion={idPais}
+          nombre={"Paises"}
+          handleChange={(e) => cambiarSeleccionPais(e, setIdPais)}
+          opciones={paises}
+          seleccione={"Seleccione"}
+          setNombre={setNombrePais}
+        />
 
-      {idPais && (
-        <>
-          <LabelInput nombre={"Nombre"}>
+        {idPais && (
+          <>
             <InputNombre
-              type="text"
-              indice="nombre"
               value={nombre}
               setValue={setNombre}
               validarNombre={validarNombre}
               setValidarNombre={setValidarNombre}
             />
-          </LabelInput>
 
-          <LabelInput nombre={"Capital"}>
             <InputNombre
-              type="text"
-              indice="nombre"
+              htmlFor={"nombreEstado"}
               value={capital}
               setValue={setCapital}
               validarNombre={validarCapital}
               setValidarNombre={setValidarCapital}
             />
-          </LabelInput>
 
-          <LabelInput nombre={"Código postal"}>
             <InputCodigoPostal
               value={codigoPostal}
               setValue={setCodigoPostal}
               validarCodigoPostal={validarCodigoPostal}
               setValidarCodigoPostal={setValidarCodigoPostal}
             />
-          </LabelInput>
 
-          <LabelInput nombre={"Descripción"}>
             <InputDescripcion
               value={descripcion}
               setValue={setDescripcion}
@@ -105,40 +98,40 @@ export default function FormCrearEstado({
               max={500}
               autoComplete="off"
             />
-          </LabelInput>
 
-          <div className="flex space-x-3">
-            <BotonAceptarCancelar
-              indice={"aceptar"}
-              aceptar={() => {
-                dispatch(cerrarModal("crear"));
-                dispatch(abrirModal("confirmar"));
-              }}
-              nombre={"Crear"}
-              campos={{
-                nombre,
-                capital,
-                codigoPostal,
-                descripcion,
-                idPais,
-              }}
-            />
+            <AgruparCamposForm>
+              <BotonAceptarCancelar
+                indice={"aceptar"}
+                aceptar={() => {
+                  dispatch(cerrarModal("crear"));
+                  dispatch(abrirModal("confirmar"));
+                }}
+                nombre={"Crear"}
+                campos={{
+                  nombre,
+                  capital,
+                  codigoPostal,
+                  descripcion,
+                  idPais,
+                }}
+              />
 
-            <BotonLimpiarCampos
-              aceptar={() => {
-                dispatch(resetForm("estadoForm"));
-              }}
-              campos={{
-                nombre,
-                capital,
-                codigoPostal,
-                descripcion,
-                idPais,
-              }}
-            />
-          </div>
-        </>
-      )}
+              <BotonLimpiarCampos
+                aceptar={() => {
+                  dispatch(resetForm("estadoForm"));
+                }}
+                campos={{
+                  nombre,
+                  capital,
+                  codigoPostal,
+                  descripcion,
+                  idPais,
+                }}
+              />
+            </AgruparCamposForm>
+          </>
+        )}
+      </DivScroll>
     </Formulario>
   );
 }

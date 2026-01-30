@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { textRegex } from "@/utils/regex/textRegex";
-
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import LabelInput from "@/components/inputs/LabelInput";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
+
+import { textRegex } from "@/utils/regex/textRegex";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
@@ -23,7 +23,7 @@ export default function FormEditarCargo({
 
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const reiniciarForm = useSelector(
-    (state) => state.forms.reiniciarForm.cargoForm
+    (state) => state.forms.reiniciarForm.cargoForm,
   );
 
   const { setNombre, setDescripcion } = acciones;
@@ -54,28 +54,22 @@ export default function FormEditarCargo({
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
       <DivScroll>
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+        <InputNombre
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
 
-        <LabelInput nombre={"Descripción"}>
-          <InputDescripcion
-            value={descripcion}
-            setValue={setDescripcion}
-            rows={6}
-            max={500}
-            autoComplete="off"
-          />
-        </LabelInput>
+        <InputDescripcion
+          value={descripcion}
+          setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
+        />
 
-        <div className="flex space-x-3">
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
@@ -98,7 +92,7 @@ export default function FormEditarCargo({
               descripcion,
             }}
           />
-        </div>
+        </AgruparCamposForm>
       </DivScroll>
     </Formulario>
   );

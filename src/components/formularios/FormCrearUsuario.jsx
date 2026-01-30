@@ -3,17 +3,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Div from "@/components/padres/Div";
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import InputNombre from "@/components/inputs/InputNombre";
-import InputCedula from "@/components/inputs/InputCedula";
-import InputCorreo from "@/components/inputs/InputCorreo";
-import SelectOpcion from "@/components/SelectOpcion";
-import InputClave from "@/components/inputs/InputClave";
-import MostrarMsj from "@/components/MostrarMensaje";
-import InputCheckBox from "@/components/inputs/InputCheckBox";
+import DivScroll from "@/components/DivScroll";
 import AgruparCamposForm from "@/components/AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputCedula from "@/components/inputs/InputCedula";
+import InputNombre from "@/components/inputs/InputNombre";
+import InputCorreo from "@/components/inputs/InputCorreo";
+import InputClave from "@/components/inputs/InputClave";
+import InputCheckBox from "@/components/inputs/InputCheckBox";
+import Div from "@/components/padres/Div";
+import Span from "@/components/padres/Span";
+import MostrarMsj from "@/components/MostrarMensaje";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
@@ -131,8 +133,8 @@ export default function FormCrearUsuario({
   };
 
   return (
-    <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <Div className="overflow-y-auto h-[390px] no-scrollbar flex flex-col w-full gap-2 px-1">
+    <Formulario onSubmit={(e) => e.preventDefault()}>
+      <DivScroll>
         <InputCedula
           value={cedula}
           setValue={setCedula}
@@ -211,9 +213,9 @@ export default function FormCrearUsuario({
           indice={"clave2"}
         />
 
-        <div className="flex flex-col w-full">
-          <span className="text-gray-700 font-medium">Autorizar</span>
-          <div className="flex justify-evenly border border-gray-300 py-2 rounded-md hover:border hover:border-[#082158]">
+        <Div className="flex flex-col w-full">
+          <Span className="text-[#364153] font-medium">Autorizar</Span>
+          <Div className="flex justify-evenly border border-[#d1d5dc] py-2 rounded-md hover:border hover:border-[#082158]">
             {[
               { id: 1, nombre: "Si" },
               { id: 2, nombre: "No" },
@@ -223,19 +225,19 @@ export default function FormCrearUsuario({
                 key={opcion.id}
                 id={opcion.id}
                 nombre={opcion.nombre}
-                isChecked={autorizar === opcion.id} // Solo una opción puede estar seleccionada
+                isChecked={autorizar === opcion.id}
                 onToggle={() =>
                   toggleAutorizar(opcion.id, setAutorizar, autorizar)
-                } // Cambia el estado con la opción elegida
+                }
               />
             ))}
-          </div>
-        </div>
+          </Div>
+        </Div>
 
         {mensaje && (
-          <div className="w-full">
+          <Div className="w-full">
             <MostrarMsj mensaje={mensaje} />
-          </div>
+          </Div>
         )}
 
         <AgruparCamposForm>
@@ -281,7 +283,7 @@ export default function FormCrearUsuario({
             }}
           />
         </AgruparCamposForm>
-      </Div>
+      </DivScroll>
     </Formulario>
   );
 }
