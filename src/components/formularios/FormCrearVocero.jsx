@@ -21,6 +21,7 @@ import { limpiarCampos } from "@/utils/limpiarForm";
 import { cambiarSeleccionGenero } from "@/utils/dashboard/cambiarSeleccionGenero";
 import { cambiarSeleccionCargo } from "@/utils/dashboard/cambiarSeleccionCargo";
 import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
+import InputFecha from "../inputs/InputFecha";
 
 export default function FormCrearVocero({
   acciones,
@@ -65,6 +66,7 @@ export default function FormCrearVocero({
     setTelefono,
     setCorreo,
     setLaboral,
+    setFecha,
     setOpcion,
   } = acciones;
 
@@ -100,6 +102,7 @@ export default function FormCrearVocero({
     telefono,
     correo,
     laboral,
+    fecha,
     opcion,
   } = datosVocero;
 
@@ -122,6 +125,8 @@ export default function FormCrearVocero({
     setValidarCorreo,
     validarLaboral,
     setValidarLaboral,
+    validarFecha,
+    setValidarFecha,
   } = validaciones;
 
   return (
@@ -247,6 +252,16 @@ export default function FormCrearVocero({
             </AgruparCamposForm>
 
             <AgruparCamposForm>
+              <InputFecha
+                nombre={"Fecha de atendido"}
+                value={fecha}
+                setValue={setFecha}
+                validarFecha={validarFecha}
+                setValidarFecha={setValidarFecha}
+              />
+            </AgruparCamposForm>
+
+            <AgruparCamposForm>
               <SelectOpcion
                 idOpcion={idCargo}
                 nombre={"Cargos"}
@@ -279,7 +294,17 @@ export default function FormCrearVocero({
                 }}
                 nombre={"Crear"}
                 campos={{
+                  cedula,
+                  edad,
                   nombre,
+                  apellido,
+                  genero,
+                  telefono,
+                  correo,
+                  laboral,
+                  fecha,
+                  idCargo,
+                  idFormacion,
                   id:
                     opcion === "comuna"
                       ? idComuna
@@ -291,10 +316,34 @@ export default function FormCrearVocero({
 
               <BotonLimpiarCampos
                 aceptar={() => {
-                  limpiarCampos({ setNombre });
+                  limpiarCampos({
+                    setCedula,
+                    setEdad,
+                    setNombre,
+                    setNombreDos,
+                    setApellido,
+                    setApellidoDos,
+                    setGenero,
+                    setTelefono,
+                    setCorreo,
+                    setLaboral,
+                    setFecha,
+                    setIdCargo,
+                    setIdFormacion,
+                  });
                 }}
                 campos={{
+                  cedula,
+                  edad,
                   nombre,
+                  apellido,
+                  genero,
+                  telefono,
+                  correo,
+                  laboral,
+                  fecha,
+                  idCargo,
+                  idFormacion,
                   id:
                     opcion === "comuna"
                       ? idComuna

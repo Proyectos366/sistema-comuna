@@ -224,7 +224,8 @@ export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
 
               {usuarioActivo.id_rol === 3 && (
                 <>
-                  {departamento.nombre === "oac" && (
+                  {(departamento.nombre === "oac" ||
+                    departamento.nombre === "direccion general") && (
                     <>
                       {/* <EnlacesBarraLateral
                         id_rol={usuarioActivo.id_rol}
@@ -280,7 +281,8 @@ export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
 
               {usuarioActivo.id_rol === 4 && (
                 <>
-                  {departamento.nombre === "oac" && (
+                  {(departamento.nombre === "oac" ||
+                    departamento.nombre === "direccion general") && (
                     <>
                       {/* <EnlacesBarraLateral
                         id_rol={usuarioActivo.id_rol}

@@ -46,6 +46,7 @@ export default function MunicipiosView() {
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
+  const [idMunicipio, setIdMunicipio] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
@@ -74,6 +75,7 @@ export default function MunicipiosView() {
   const acciones = {
     setIdPais: setIdPais,
     setIdEstado: setIdEstado,
+    setIdMunicipio: setIdMunicipio,
     setNombrePais: setNombrePais,
     setNombreEstado: setNombreEstado,
     setNombre: setNombreMunicipio,
@@ -83,6 +85,7 @@ export default function MunicipiosView() {
   const datosMunicipio = {
     idPais: idPais,
     idEstado: idEstado,
+    idMunicipio: idMunicipio,
     nombrePais: nombrePais,
     nombreEstado: nombreEstado,
     nombre: nombreMunicipio,
@@ -100,7 +103,7 @@ export default function MunicipiosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [municipios, busqueda, ordenCampo, ordenDireccion]);
 
@@ -111,6 +114,16 @@ export default function MunicipiosView() {
   useEffect(() => {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
+
+  const editarMunicipio = (municipio) => {
+    setIdPais(municipio.id_pais);
+    setIdEstado(municipio.id_estado);
+    setIdMunicipio(municipio.id);
+    setNombreMunicipio(municipio.nombre);
+    setDescripcionMunicipio(municipio.descripcion);
+
+    dispatch(abrirModal("editar"));
+  };
 
   return (
     <>
@@ -188,7 +201,10 @@ export default function MunicipiosView() {
                             />
 
                             {expanded === municipio.id && (
-                              <ListadoMunicipios municipio={municipio} />
+                              <ListadoMunicipios
+                                municipio={municipio}
+                                editarMunicipio={editarMunicipio}
+                              />
                             )}
                           </FichaDetalles>
                         );

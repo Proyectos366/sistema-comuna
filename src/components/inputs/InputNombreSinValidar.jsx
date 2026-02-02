@@ -3,7 +3,6 @@ import Input from "@/components/inputs/Input";
 
 export default function InputNombreSinValidar({
   indice,
-  name,
   disabled,
   className,
   placeholder,
@@ -29,7 +28,7 @@ export default function InputNombreSinValidar({
         type={"text"}
         id={htmlFor ? htmlFor : "nombreSinValidar"}
         value={value}
-        name={name}
+        name={htmlFor ? htmlFor : "nombreSinValidar"}
         disabled={disabled}
         className={className}
         onChange={leyendoInput}

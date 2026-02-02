@@ -66,6 +66,7 @@ export default function VocerosView() {
   const [telefonoVocero, setTelefonoVocero] = useState("");
   const [correoVocero, setCorreoVocero] = useState("");
   const [laboralVocero, setLaboralVocero] = useState("");
+  const [fecha, setFecha] = useState("");
 
   const [idPais, setIdPais] = useState("");
   const [idEstado, setIdEstado] = useState("");
@@ -90,6 +91,7 @@ export default function VocerosView() {
   const [validarTelefono, setValidarTelefono] = useState(false);
   const [validarCorreo, setValidarCorreo] = useState(false);
   const [validarLaboral, setValidarLaboral] = useState(false);
+  const [validarFecha, setValidarFecha] = useState(false);
 
   const [seleccionado, setSeleccionado] = useState(null);
 
@@ -153,6 +155,7 @@ export default function VocerosView() {
     setTelefono: setTelefonoVocero,
     setCorreo: setCorreoVocero,
     setLaboral: setLaboralVocero,
+    setFecha: setFecha,
     setOpcion: setOpcion,
   };
 
@@ -188,6 +191,7 @@ export default function VocerosView() {
     telefono: telefonoVocero,
     correo: correoVocero,
     laboral: laboralVocero,
+    fecha: fecha,
     opcion: opcion,
   };
 
@@ -210,6 +214,8 @@ export default function VocerosView() {
     setValidarCorreo: setValidarCorreo,
     validarLaboral: validarLaboral,
     setValidarLaboral: setValidarLaboral,
+    validarFecha: validarFecha,
+    setValidarFecha: setValidarFecha,
   };
 
   const vocerosFiltradosOrdenados = useMemo(() => {
@@ -218,7 +224,7 @@ export default function VocerosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [voceros, busqueda, ordenCampo, ordenDireccion]);
 
@@ -289,6 +295,7 @@ export default function VocerosView() {
               setIdComuna,
               setIdCircuito,
               setIdConsejo,
+              setFecha,
             });
 
             dispatch(abrirModal("crear"));

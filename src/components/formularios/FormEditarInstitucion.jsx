@@ -3,26 +3,25 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import Formulario from "@/components/Formulario";
-import Input from "@/components/inputs/Input";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "../AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputRif from "@/components/inputs/InputRif";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
+import InputNombreSinValidar from "../inputs/InputNombreSinValidar";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
-import SelectOpcion from "@/components/SelectOpcion";
-import DivScroll from "@/components/DivScroll";
 
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
+import { limpiarCampos } from "@/utils/limpiarForm";
+import { rifRegex } from "@/utils/regex/rifRegex";
+import { textRegex } from "@/utils/regex/textRegex";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 import { fetchInstitucionesIdMunicipio } from "@/store/features/instituciones/thunks/institucionesIdMunicipio";
-
-import { limpiarCampos } from "@/utils/limpiarForm";
-import { rifRegex } from "@/utils/regex/rifRegex";
-import { textRegex } from "@/utils/regex/textRegex";
 
 export default function FormEditarInstitucion({
   acciones,
@@ -110,55 +109,43 @@ export default function FormEditarInstitucion({
           indice={0}
         />
 
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+        <InputNombre
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
 
-        <LabelInput nombre={"Descripción"}>
-          <InputDescripcion
-            value={descripcion}
-            setValue={setDescripcion}
-            rows={6}
-            max={500}
-            autoComplete="off"
-          />
-        </LabelInput>
+        <InputDescripcion
+          value={descripcion}
+          setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
+        />
 
-        <LabelInput nombre={"Rif"}>
-          <InputRif
-            type="text"
-            indice="rif"
-            value={rif}
-            setValue={setRif}
-            validarRif={validarRif}
-            setValidarRif={setValidarRif}
-          />
-        </LabelInput>
+        <InputRif
+          value={rif}
+          setValue={setRif}
+          validarRif={validarRif}
+          setValidarRif={setValidarRif}
+        />
 
-        <LabelInput nombre={"Sector"}>
-          <Input
-            type={"text"}
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-          />
-        </LabelInput>
+        <InputNombreSinValidar
+          htmlFor={"sector"}
+          nombre={"Sector"}
+          value={sector}
+          setValue={setSector}
+        />
 
-        <LabelInput nombre={"Dirección"}>
-          <Input
-            type={"text"}
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-          />
-        </LabelInput>
+        <InputNombreSinValidar
+          htmlFor={"direccion"}
+          nombre={"Dirección"}
+          value={direccion}
+          setValue={setDireccion}
+        />
 
-        <div className="flex space-x-3">
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
@@ -194,7 +181,7 @@ export default function FormEditarInstitucion({
               direccion,
             }}
           />
-        </div>
+        </AgruparCamposForm>
       </DivScroll>
     </Formulario>
   );

@@ -16,6 +16,8 @@ import { crearMunicipio } from "@/store/features/municipios/thunks/crearMunicipi
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
+import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
+import { actualizarMunicipio } from "@/store/features/municipios/thunks/actualizarMunicipio";
 
 export default function ModalMunicipios({
   acciones,
@@ -27,7 +29,10 @@ export default function ModalMunicipios({
   const { estados } = useSelector((state) => state.estados);
 
   const mostrarConfirmar = useSelector(
-    (state) => state.modal.modales.confirmar
+    (state) => state.modal.modales.confirmar,
+  );
+  const mostrarConfirmarCambios = useSelector(
+    (state) => state.modal.modales.confirmarCambios,
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
@@ -35,23 +40,36 @@ export default function ModalMunicipios({
   const {
     setIdPais,
     setIdEstado,
+    setIdMunicipio,
     setNombrePais,
     setNombreEstado,
     setNombre,
     setDescripcion,
   } = acciones;
 
-  const { idPais, idEstado, nombrePais, nombreEstado, nombre, descripcion } =
-    datosMunicipio;
+  const {
+    idPais,
+    idEstado,
+    idMunicipio,
+    nombrePais,
+    nombreEstado,
+    nombre,
+    descripcion,
+  } = datosMunicipio;
 
   const { validarNombre, setValidarNombre } = validaciones;
 
   useEffect(() => {
-    dispatch(fetchPaises());
     if (idPais) {
       dispatch(fetchEstadosIdPais(idPais));
     }
   }, [dispatch, idPais]);
+
+  useEffect(() => {
+    if (idEstado) {
+      dispatch(fetchMunicipiosIdEstado(idEstado));
+    }
+  }, [dispatch, idEstado]);
 
   const notify = (msj) => toast(msj);
 
@@ -68,7 +86,26 @@ export default function ModalMunicipios({
           nuevoMunicipio: nuevoMunicipio,
           notify: notify,
           cerrarModal: cerrarModal,
-        })
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEditarMunicipio = async () => {
+    try {
+      const updateMunicipio = {
+        id: idMunicipio,
+        nombre: nombre,
+        descripcion: descripcion,
+      };
+      await dispatch(
+        actualizarMunicipio({
+          updateMunicipio: updateMunicipio,
+          notify: notify,
+          cerrarModal: cerrarModal,
+        }),
       ).unwrap();
     } catch (error) {
       console.log(error);
@@ -113,6 +150,36 @@ export default function ModalMunicipios({
       </Modal>
 
       <Modal
+        isVisible={mostrarConfirmarCambios}
+        onClose={() => {
+          dispatch(cerrarModal("confirmarCambios"));
+        }}
+        titulo={"¿Actualizar este municipiol?"}
+      >
+        <ModalDatosContenedor>
+          <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Descripción" descripcion={descripcion} />
+        </ModalDatosContenedor>
+
+        <BotonesModal
+          aceptar={handleEditarMunicipio}
+          cancelar={() => {
+            dispatch(cerrarModal("confirmarCambios"));
+            dispatch(abrirModal("editar"));
+          }}
+          indiceUno="crear"
+          indiceDos="cancelar"
+          nombreUno="Guardar cambios"
+          nombreDos="Cancelar"
+          campos={{
+            idMunicipio,
+            nombre,
+            descripcion,
+          }}
+        />
+      </Modal>
+
+      <Modal
         isVisible={mostrarEditar}
         onClose={() => {
           dispatch(cerrarModal("editar"));
@@ -121,18 +188,9 @@ export default function ModalMunicipios({
       >
         <ModalDatosContenedor>
           <FormEditarMunicipio
-            idPais={idPais}
-            setIdPais={setIdPais}
-            idEstado={idEstado}
-            setIdEstado={setIdEstado}
-            nombre={nombre}
-            setNombre={setNombre}
-            descripcion={descripcion}
-            setDescripcion={setDescripcion}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-            setNombrePais={setNombrePais}
-            setNombreEstado={setNombreEstado}
+            acciones={acciones}
+            datosMunicipio={datosMunicipio}
+            validaciones={validaciones}
           />
         </ModalDatosContenedor>
       </Modal>

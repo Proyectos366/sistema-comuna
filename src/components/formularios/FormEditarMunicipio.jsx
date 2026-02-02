@@ -1,25 +1,42 @@
 "use client";
 
 import { useEffect } from "react";
-import LabelInput from "@/components/inputs/LabelInput";
-import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+
 import Formulario from "@/components/Formulario";
+import DivScroll from "@/components/DivScroll";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
-import BotonLimpiarCampos from "../botones/BotonLimpiarCampos";
+import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
+import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 export default function FormEditarMunicipio({
-  nombre,
-  setNombre,
-  descripcion,
-  setDescripcion,
-  validarNombre,
-  setValidarNombre,
-  limpiarCampos,
-  mostrarMensaje,
-  editar,
-  mensaje,
+  acciones,
+  datosMunicipio,
+  validaciones,
 }) {
+  const {
+    setIdPais,
+    setIdEstado,
+    setIdMunicipio,
+    setNombrePais,
+    setNombreEstado,
+    setNombre,
+    setDescripcion,
+  } = acciones;
+
+  const {
+    idPais,
+    idEstado,
+    idMunicipio,
+    nombrePais,
+    nombreEstado,
+    nombre,
+    descripcion,
+  } = datosMunicipio;
+
+  const { validarNombre, setValidarNombre } = validaciones;
+
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
       if (valor) {
@@ -34,29 +51,23 @@ export default function FormEditarMunicipio({
 
   return (
     <Formulario onSubmit={(e) => e.preventDefault()} className="">
-      <div className="flex flex-col w-full gap-2 px-1">
-        <LabelInput nombre={"Nombre"}>
-          <InputNombre
-            type="text"
-            indice="nombre"
-            value={nombre}
-            setValue={setNombre}
-            validarNombre={validarNombre}
-            setValidarNombre={setValidarNombre}
-          />
-        </LabelInput>
+      <DivScroll>
+        <InputNombre
+          value={nombre}
+          setValue={setNombre}
+          validarNombre={validarNombre}
+          setValidarNombre={setValidarNombre}
+        />
 
-        <LabelInput nombre={"Descripción"}>
-          <InputDescripcion
-            value={descripcion}
-            setValue={setDescripcion}
-            rows={6}
-            max={500}
-            autoComplete="off"
-          />
-        </LabelInput>
+        <InputDescripcion
+          value={descripcion}
+          setValue={setDescripcion}
+          rows={6}
+          max={500}
+          autoComplete="off"
+        />
 
-        <div className="flex space-x-3">
+        <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
             aceptar={() => {
@@ -79,8 +90,8 @@ export default function FormEditarMunicipio({
               descripcion,
             }}
           />
-        </div>
-      </div>
+        </AgruparCamposForm>
+      </DivScroll>
     </Formulario>
   );
 }

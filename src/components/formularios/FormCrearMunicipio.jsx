@@ -81,7 +81,6 @@ export default function FormCrearMunicipio({
             opciones={estados}
             seleccione={"Seleccione"}
             setNombre={setNombreEstado}
-            indice={1}
           />
         )}
 

@@ -21,6 +21,7 @@ import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
+import { convertirFechaAISO } from "@/utils/Fechas";
 
 export default function ModalVoceros({
   acciones,
@@ -34,16 +35,16 @@ export default function ModalVoceros({
   const { consejos } = useSelector((state) => state.consejos);
 
   const mostrarConfirmar = useSelector(
-    (state) => state.modal.modales.confirmar
+    (state) => state.modal.modales.confirmar,
   );
   const mostrarConfirmarCambios = useSelector(
-    (state) => state.modal.modales.confirmarCambios
+    (state) => state.modal.modales.confirmarCambios,
   );
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
   const mostrarConsultarCedula = useSelector(
-    (state) => state.modal.modales.consultar
+    (state) => state.modal.modales.consultar,
   );
 
   const {
@@ -78,13 +79,14 @@ export default function ModalVoceros({
     telefono,
     correo,
     laboral,
+    fecha,
     opcion,
   } = datosVocero;
 
   const notify = (msj) => toast(msj);
 
   const buscarIdComuna = consejos?.filter(
-    (consejo) => consejo.id === idConsejo
+    (consejo) => consejo.id === idConsejo,
   );
 
   const handleCrearVocero = async () => {
@@ -101,6 +103,7 @@ export default function ModalVoceros({
         correo: correo,
         direccion: "",
         laboral: laboral,
+        fecha: convertirFechaAISO(fecha),
         cargos: Array.isArray(idCargo)
           ? idCargo.map((id) => ({ id }))
           : [{ id: idCargo }],
@@ -124,7 +127,7 @@ export default function ModalVoceros({
           nuevoVocero: nuevoVocero,
           notify: notify,
           cerrarModal: cerrarModal,
-        })
+        }),
       ).unwrap();
     } catch (error) {
       console.log(error);
@@ -152,7 +155,7 @@ export default function ModalVoceros({
           updateVocero: updateVocero,
           notify: notify,
           cerrarModal: cerrarModal,
-        })
+        }),
       ).unwrap();
     } catch (error) {
       console.log(error);
@@ -206,15 +209,15 @@ export default function ModalVoceros({
               opcion === "comuna"
                 ? "Comuna"
                 : opcion === "circuito"
-                ? "Circuito comunal"
-                : "Consejo comunal"
+                  ? "Circuito comunal"
+                  : "Consejo comunal"
             }
             descripcion={
               opcion === "comuna"
                 ? nombreComuna
                 : opcion === "circuito"
-                ? nombreCircuito
-                : nombreConsejo
+                  ? nombreCircuito
+                  : nombreConsejo
             }
           />
           <ModalDatos titulo="Cedúla" descripcion={cedula} />
@@ -251,8 +254,8 @@ export default function ModalVoceros({
               opcion === "comuna"
                 ? idComuna
                 : opcion === "circuito"
-                ? idCircuito
-                : idConsejo,
+                  ? idCircuito
+                  : idConsejo,
           }}
         />
       </Modal>
