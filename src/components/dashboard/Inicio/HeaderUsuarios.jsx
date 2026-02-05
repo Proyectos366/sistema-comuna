@@ -2,10 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Titulos from "../Titulos";
-import ToggleMenuLateral from "./ToggleMenuLateral";
-import EnlacesBarraLateral from "./EnlacesBarraLateral";
 import { useSelector, useDispatch } from "react-redux";
+
+import Titulos from "@/components/Titulos";
+import ButtonToggleMenuLateral from "@/components/dashboard/Inicio/ToggleMenuLateral";
+import EnlacesBarraLateral from "@/components/dashboard/Inicio/EnlacesBarraLateral";
+
+import Header from "@/components/padres/Header";
+import Div from "@/components/padres/Div";
+import Span from "@/components/padres/Span";
+import Ul from "@/components/padres/Ul";
+import Li from "@/components/padres/Li";
+
 import { cerrarSesion } from "@/store/features/auth/thunks/cerrarSesion";
 
 export default function HeaderUsuarios({
@@ -13,6 +21,7 @@ export default function HeaderUsuarios({
   abrirPanel,
   cambiarRuta,
   vista,
+  screenSize,
 }) {
   const { usuarioActivo } = useSelector((state) => state.auth);
 
@@ -44,50 +53,45 @@ export default function HeaderUsuarios({
       await dispatch(cerrarSesion()).unwrap();
       router.push("/", { shallow: true });
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+      console.log("Error al cerrar sesión:", error);
     }
   };
 
-  // const cerrarSesion = async () => {
-  //   try {
-  //     const response = await axios.get(`/api/login`);
-
-  //     if (response?.data?.status === "ok") {
-  //       router.push("/", { shallow: true });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error, no se pudo cerrar sesión:", error);
-  //   }
-  // };
-
   return (
-    <section className="bg-white rounded-md p-2 flex justify-between items-center mt-2">
-      <div className={`flex items-center space-x-2 w-1/2`}>
-        <ToggleMenuLateral
+    <Header className="bg-[#ffffff] rounded-md p-2 flex justify-between items-center mt-2">
+      <Div className={`flex items-center gap-2 w-1/2`}>
+        <ButtonToggleMenuLateral
           abrirDashboar={abrirDashboar}
           abrirPanel={abrirPanel}
         />
 
-        <div className={`${abrirPanel ? "hidden sm:flex" : "flex"}`}>
-          <Titulos indice={5} titulo={"Gestión de comunas"} />
-        </div>
-      </div>
+        <Div className={`${abrirPanel ? "hidden sm:flex" : "flex"}`}>
+          <Titulos
+            indice={5}
+            titulo={
+              screenSize.width >= 640
+                ? "Gestión Contraloria Municipio Zamora"
+                : "Gestión CMZ"
+            }
+          />
+        </Div>
+      </Div>
 
-      <div
+      <Div
         className={`${
           abrirPanel ? "hidden sm:flex" : "flex"
         } items-center justify-end w-1/2`}
       >
-        <div
+        <Div
           onClick={() => setMenuOpcionesUsuario(!menuOpcionesUsuario)}
           className="relative py-1 cursor-pointer transition-all transform group"
         >
-          <div
+          <Div
             className={`${
               menuOpcionesUsuario ? "bg-[#E61C45]" : "bg-[#082158]"
-            } flex items-center gap-4 px-2 py-1 rounded-md  backdrop-blur-md border border-white/20 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg`}
+            } flex items-center gap-4 px-2 py-1 rounded-md shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg`}
           >
-            <div className="p-2 rounded-full bg-white">
+            <Div className="p-2 rounded-full bg-[#ffffff]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -98,20 +102,20 @@ export default function HeaderUsuarios({
                 <path fill="none" d="M0 0h24v24H0z" />
                 <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H18C18 18.6863 15.3137 16 12 16C8.68629 16 6 18.6863 6 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11Z" />
               </svg>
-            </div>
+            </Div>
 
-            <span className="text-white text-md tracking-wide drop-shadow-md truncate text-end uppercase">
+            <Span className="text-[#ffffff] text-md tracking-wide drop-shadow-md truncate text-end uppercase">
               {usuarioActivo?.nombre}
-            </span>
-          </div>
+            </Span>
+          </Div>
 
           {menuOpcionesUsuario && (
-            <div
+            <Div
               ref={refMenuPerfil}
-              className="absolute w-48 top-0 mt-12 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-2 z-50"
+              className="absolute w-48 top-0 mt-12 right-0 bg-[#ffffff] border border-[#d1d5dc] rounded-md shadow-lg p-2 z-50"
             >
-              <ul className="flex flex-col gap-2">
-                <li onClick={() => setMenuOpcionesUsuario(false)}>
+              <Ul className="flex flex-col gap-2">
+                <Li onClick={() => setMenuOpcionesUsuario(false)}>
                   <EnlacesBarraLateral
                     id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
@@ -119,8 +123,8 @@ export default function HeaderUsuarios({
                     vistaActual={"perfil"}
                     nombre={"Perfil"}
                   />
-                </li>
-                <li onClick={() => setMenuOpcionesUsuario(false)}>
+                </Li>
+                <Li onClick={() => setMenuOpcionesUsuario(false)}>
                   <EnlacesBarraLateral
                     id_rol={usuarioActivo.id_rol}
                     cambiarRuta={cambiarRuta}
@@ -128,21 +132,21 @@ export default function HeaderUsuarios({
                     vistaActual={"cambiar-clave"}
                     nombre={"Cambiar clave"}
                   />
-                </li>
-                <li
-                  className="px-4 py-2 text-center hover:bg-[#E61C45] hover:text-white hover:rounded-md hover:font-semibold cursor-pointer text-red-500"
+                </Li>
+                <Li
+                  className="px-4 py-1 text-center hover:bg-[#E61C45] hover:text-[#ffffff] hover:rounded-md hover:font-semibold cursor-pointer text-[#ee113d]"
                   onClick={() => {
                     handleCerrarSesion();
                     setMenuOpcionesUsuario(false);
                   }}
                 >
                   Salir
-                </li>
-              </ul>
-            </div>
+                </Li>
+              </Ul>
+            </Div>
           )}
-        </div>
-      </div>
-    </section>
+        </Div>
+      </Div>
+    </Header>
   );
 }

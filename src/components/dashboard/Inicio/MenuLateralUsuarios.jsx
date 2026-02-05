@@ -1,38 +1,42 @@
-import EnlacesBarraLateral from "./EnlacesBarraLateral";
 import { useSelector } from "react-redux";
+
+import Div from "@/components/padres/Div";
+import Section from "@/components/padres/Section";
+import P from "@/components/padres/P";
+import EnlacesBarraLateral from "@/components/dashboard/Inicio/EnlacesBarraLateral";
 
 export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
   const { usuarioActivo, departamento } = useSelector((state) => state.auth);
 
   return (
-    <div
+    <Div
       className={`fixed inset-y-0 left-0 transform ${
         abrirPanel ? "translate-x-0" : "-translate-x-full"
       } transition-transform duration-500 ease-in-out w-56 z-30`}
     >
-      <section
+      <Section
         className={`w-56 h-full py-2 px-4 fixed inset-y-0 left-0 transform ${
           abrirPanel
             ? "translate-x-0 opacity-100"
             : "-translate-x-full opacity-0"
         } transition-all duration-700 ease-in-out`}
       >
-        <div className="space-y-4 h-full flex flex-col justify-between">
-          <div className="flex flex-col">
-            <div className="py-1 flex flex-col justify-center items-center">
-              <div className="flex flex-col items-center p-1 border border-white rounded-full">
+        <Div className="">
+          <Div className="flex flex-col">
+            <Div className="py-1 flex flex-col justify-center items-center">
+              <Div className="flex flex-col items-center p-1 border border-[#ffffff] rounded-full">
                 <img
                   className="w-full p-2 h-14"
                   src="/img/logo_contraloria.png"
-                  alt="Logo en la barra laterall izquierda"
+                  alt="Logo en la barra lateral izquierda"
                 />
-              </div>
-              <p className="text-white text-center fuente-arial-black text-xs shadow-lg">
+              </Div>
+              <P className="text-[#ffffff] text-center fuente-arial-black text-xs shadow-lg">
                 Contraloria Municipio Zamora
-              </p>
-            </div>
+              </P>
+            </Div>
 
-            <div className="mt-2 flex flex-col space-y-2 overflow-y-auto h-[390px] no-scrollbar">
+            <Div className="mt-2 flex flex-col gap-2 overflow-y-auto h-[calc(100vh-255px)] no-scrollbar">
               <EnlacesBarraLateral
                 id_rol={usuarioActivo.id_rol}
                 cambiarRuta={cambiarRuta}
@@ -347,17 +351,18 @@ export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
                 vistaActual={"novedades"}
                 nombre={"Novedades"}
               />
-            </div>
-          </div>
-          <div>
-            <img
-              className="w-full h-32 opacity-50"
-              src="/img/busqueda.png"
-              alt="Imagen de busqueda"
-            />
-          </div>
-        </div>
-      </section>
-    </div>
+            </Div>
+
+            <Div>
+              <img
+                className="w-full h-32 opacity-50"
+                src="/img/busqueda.png"
+                alt="Imagen de busqueda"
+              />
+            </Div>
+          </Div>
+        </Div>
+      </Section>
+    </Div>
   );
 }

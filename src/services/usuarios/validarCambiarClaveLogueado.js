@@ -24,7 +24,7 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 export default async function validarCambiarClaveLogueado(
   claveVieja,
   claveUno,
-  claveDos
+  claveDos,
 ) {
   try {
     // 1. Validar identidad del usuario mediante el token.
@@ -34,7 +34,7 @@ export default async function validarCambiarClaveLogueado(
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -49,7 +49,7 @@ export default async function validarCambiarClaveLogueado(
 
     // 4. Si el usuario no existe, retornar error.
     if (!claveUsuarioActivo) {
-      return retornarRespuestaFunciones("error", "Error, usuario invalido...", {
+      return retornarRespuestaFunciones("error", "Error usuario invalido", {
         id_usuario: validaciones.id_usuario,
       });
     }
@@ -64,21 +64,25 @@ export default async function validarCambiarClaveLogueado(
         validandoCampos.message,
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
     // 7. Comparar la clave actual ingresada con la almacenada.
     const comparada = await CifrarDescifrarClaves.compararClave(
       claveVieja,
-      claveUsuarioActivo.clave
+      claveUsuarioActivo.clave,
     );
 
     // 8. Si las claves comparadas es false, se retorna un error.
     if (comparada.status === "error") {
-      return retornarRespuestaFunciones(comparada.status, comparada.message, {
-        id_usuario: validaciones.id_usuario,
-      });
+      return retornarRespuestaFunciones(
+        comparada.status,
+        "Error clave vieja incorrecta",
+        {
+          id_usuario: validaciones.id_usuario,
+        },
+      );
     }
 
     // 9. Cifrar la nueva clave.
@@ -91,7 +95,7 @@ export default async function validarCambiarClaveLogueado(
         claveEncriptada.message,
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
@@ -107,7 +111,7 @@ export default async function validarCambiarClaveLogueado(
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar cambiar clave loggeado"
+      "Error interno validar cambiar clave loggeado",
     );
   }
 }

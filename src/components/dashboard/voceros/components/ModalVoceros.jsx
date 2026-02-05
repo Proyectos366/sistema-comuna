@@ -10,17 +10,18 @@ import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
-import ConsultarCedula from "@/components/sistema/opciones_inicio/ConsultarCedula";
+import ConsultarCedula from "@/components/consultas/ConsultarCedula";
 import ModalConsultar from "@/components/modales/ModalConsultar";
-import ConsultarVocerosComuna from "@/components/sistema/opciones_inicio/ConsultarComunas";
-import ConsultarVocerosCircuito from "@/components/sistema/opciones_inicio/ConsultarCircuitos";
-import ConsultarVocerosConsejo from "@/components/sistema/opciones_inicio/ConsultarConsejosComunales";
-import ConsultarVocerosParroquia from "@/components/sistema/opciones_inicio/ConsultarParroquias";
+import ConsultarVocerosComuna from "@/components/consultas/ConsultarComunas";
+import ConsultarVocerosCircuito from "@/components/consultas/ConsultarCircuitos";
+import ConsultarVocerosConsejo from "@/components/consultas/ConsultarConsejosComunales";
+import ConsultarVocerosParroquia from "@/components/consultas/ConsultarParroquias";
 
 import { crearVocero } from "@/store/features/voceros/thunks/crearVocero";
 import { actualizarVocero } from "@/store/features/voceros/thunks/actualizarVocero";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { fetchVoceroCedula } from "@/store/features/voceros/thunks/voceroCedula";
+
 import { convertirFechaAISO } from "@/utils/Fechas";
 
 export default function ModalVoceros({
@@ -162,18 +163,22 @@ export default function ModalVoceros({
     }
   };
 
-  const consultarVoceroCedula = () => {
-    dispatch(fetchVoceroCedula(cedula))
-      .unwrap()
-      .then((respuesta) => {
-        if (respuesta) {
-          dispatch(cerrarModal("consultar"));
-        }
-      })
-      .catch((error) => {
-        console.error("Error consultando vocero:", error);
-        notify(error);
-      });
+  const consultarVoceroCedula = async () => {
+    try {
+      const voceroCedula = {
+        cedula: cedula,
+      };
+
+      await dispatch(
+        fetchVoceroCedula({
+          voceroCedula: voceroCedula,
+          notify: notify,
+          cerrarModal: cerrarModal,
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const titulos = {

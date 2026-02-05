@@ -12,15 +12,14 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para g
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP POST para crear un nuevo usuario.
- * Valida los datos recibidos, genera un token de activación,
- * registra al usuario en la base de datos y retorna su perfil.
- *
- * @async
- * @function POST
- * @param {Request} request - Solicitud HTTP con los datos del nuevo usuario.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario creado o mensaje de error.
- */
+ Maneja las solicitudes HTTP POST para crear un nuevo usuario.
+ Valida los datos recibidos, genera un token de activación,
+ registra al usuario en la base de datos y retorna su perfil.
+ @async
+ @function POST
+ @param {Request} request - Solicitud HTTP con los datos del nuevo usuario.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario creado o mensaje de error.
+*/
 
 export async function POST(request) {
   try {
@@ -48,7 +47,7 @@ export async function POST(request) {
       claveDos,
       id_rol,
       autorizar,
-      institucion
+      institucion,
     );
 
     // 3. Si la validación falla, registra el intento fallido y retorna error 400
@@ -67,7 +66,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -166,11 +165,11 @@ export async function POST(request) {
       "ok",
       "Usuario creado con exito",
       { usuarios: usuarioConDepartamentos },
-      201
+      201,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno, crear usuario: ` + error);
+    console.log(`Error interno crear usuario:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -183,6 +182,6 @@ export async function POST(request) {
     });
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
-    return generarRespuesta("error", "Error interno, crear usuario", {}, 500);
+    return generarRespuesta("error", "Error interno crear usuario", {}, 500);
   }
 }

@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/app/context/AuthContext";
-import { useSelector } from "react-redux";
-import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
-import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
-import Footer from "../Footer";
+
+import Div from "@/components/padres/Div";
+import MenuLateralUsuario from "@/components/dashboard/Inicio/MenuLateralUsuarios";
+import HeaderUsuarios from "@/components/dashboard/Inicio/HeaderUsuarios";
+import Main from "@/components/padres/Main";
+import Footer from "@/components/Footer";
+
 //import MostrarPerfilUsuario from "./MostrarPerfilUsuario";
 //import MostrarCambiarClaveUsuario from "./MostrarCambiarClaveUsuario";
 
@@ -34,8 +38,10 @@ import CircuitosView from "@/components/dashboard/circuitos/CircuitosView";
 import ConsejosView from "@/components/dashboard/consejos/ConsejosView";
 import VocerosView from "@/components/dashboard/voceros/VocerosView";
 import ParticipantesView from "@/components/dashboard/participantes/ParticipantesView";
+import PerfilView from "@/components/dashboard/perfil/PerfilView";
+import CambiarClaveView from "@/components/dashboard/cambiar-clave/CambiarClaveView";
 
-export default function VistaUniversalUsuarios() {
+export default function Dashboard() {
   const { screenSize } = useUser();
 
   const { usuarioActivo, departamento } = useSelector((state) => state.auth);
@@ -194,7 +200,7 @@ export default function VistaUniversalUsuarios() {
   return (
     <>
       {usuarioActivo && (
-        <div
+        <Div
           className={`flex flex-col ${
             abrirPanel ? "" : "container mx-auto px-2"
           }`}
@@ -205,21 +211,20 @@ export default function VistaUniversalUsuarios() {
             abrirPanel={abrirPanel}
           />
 
-          <div
+          <Div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] space-y-3 ${
               abrirPanel ? "ml-56 px-2" : "ml-0"
             } transition-all duration-500 ease-in-out`}
           >
-            <header>
-              <HeaderUsuarios
-                abrirDashboar={abrirDashboar}
-                abrirPanel={abrirPanel}
-                vista={vista}
-                cambiarRuta={cambiarRuta}
-              />
-            </header>
+            <HeaderUsuarios
+              abrirDashboar={abrirDashboar}
+              abrirPanel={abrirPanel}
+              vista={vista}
+              cambiarRuta={cambiarRuta}
+              screenSize={screenSize}
+            />
 
-            <main className="bg-[#faf5f8] rounded-md">
+            <Main className="bg-[#faf5f8] rounded-md">
               {vista === "usuarios" && <UsuariosView />}
 
               {vista === "paises" && <PaisesView />}
@@ -248,35 +253,11 @@ export default function VistaUniversalUsuarios() {
 
               {vista === "participantes" && <ParticipantesView />}
 
+              {vista === "perfil" && <PerfilView />}
+
+              {vista === "cambiar-clave" && <CambiarClaveView />}
+
               {/*
-              {vista === "perfil" && (
-                <MostrarPerfilUsuario
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
-
-              {vista === "cambiar-clave" && (
-                <MostrarCambiarClaveUsuario
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}
-
               {vista === "novedades" && (
                 <NovedadesForm
                   mostrar={mostrarModal}
@@ -290,11 +271,11 @@ export default function VistaUniversalUsuarios() {
                   usuarioActivo={usuarioActivo}
                 />
               )}*/}
-            </main>
+            </Main>
 
             <Footer />
-          </div>
-        </div>
+          </Div>
+        </Div>
       )}
     </>
   );

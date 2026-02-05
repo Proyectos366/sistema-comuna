@@ -1,6 +1,152 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import SectionMain from "@/components/SectionMain";
+import SectionTertiary from "@/components/SectionTertiary";
+import Div from "@/components/padres/Div";
+import ModalPerfil from "@/components/dashboard/perfil/components/ModalPerfil";
+import DetallesEmpleado from "@/components/dashboard/perfil/components/DetallesEmpleado";
+import ImgPrevia from "@/components/dashboard/perfil/components/ImgPrevia";
+
+import { obtenerPerfilUsuario } from "@/store/features/usuarios/thunks/perfilUsuario";
+
+export default function PerfilView({}) {
+  const dispatch = useDispatch();
+
+  const { usuarios, loading } = useSelector((state) => state.usuarios);
+
+  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [apellidoUsuario, setApellidoUsuario] = useState("");
+  const [correoUsuario, setCorreoUsuario] = useState("");
+
+  const [imagen, setImagen] = useState(null);
+  const [file, setFile] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [validarNombre, setValidarNombre] = useState(false);
+  const [validarApellido, setValidarApellido] = useState(false);
+
+  const [accion, setAccion] = useState("");
+
+  useEffect(() => {
+    dispatch(obtenerPerfilUsuario());
+  }, [dispatch]);
+
+  return (
+    <>
+      <ModalPerfil
+        imgPrevia={imagen}
+        setImgPrevia={setImagen}
+        setFile={setFile}
+        file={file}
+      />
+
+      <SectionMain>
+        <SectionTertiary
+          indice={1}
+          nombre={"Perfil empleado"}
+          funcion={() => {}}
+        >
+          <Div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
+            <ImgPrevia
+              imgPrevia={
+                usuarios?.imagenes?.[0]?.path
+                  ? `/api/usuarios/mostrar-img-perfil?path=${usuarios.imagenes[0].path.replace(
+                      /^\/+/,
+                      "",
+                    )}`
+                  : "/img/perfil.png"
+              }
+              datos={usuarios}
+              indice={true}
+              setAccion={setAccion}
+            />
+
+            <DetallesEmpleado usuarios={usuarios} />
+          </Div>
+        </SectionTertiary>
+      </SectionMain>
+    </>
+  );
+}
+
+{
+  /* <div className="flex items-center justify-center">
+              <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <img
+                  src={
+                    usuarios?.imagenes?.[0]?.path
+                      ? `/api/usuarios/mostrar-img-perfil?path=${usuarios.imagenes[0].path.replace(
+                          /^\/+/,
+                          "",
+                        )}`
+                      : "/img/perfil.png"
+                  }
+                  alt="Foto de perfil"
+                  className="rounded-full w-full h-full object-cover group-hover:scale-105 transform transition-transform duration-300 ease-in-out"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAccion("imagen");
+                    dispatch(
+                      abrirModal(
+                        usuarios?.imagenes?.[0]?.path ? "editar" : "crear",
+                      ),
+                    );
+                  }}
+                  className="absolute bottom-0 w-full bg-black bg-opacity-40 text-white text-sm text-center py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                >
+                  {usuarios?.imagenes?.[0]?.path ? "Cambiar" : "Asignar"}
+                </button>
+              </div>
+            </div> */
+}
+
+{
+  /* <ModalEditar
+        isVisible={mostrar}
+        onClose={cerrarModal}
+        titulo={
+          accion === "imagen" ? "Imagen de perfil" : "¿Actualizar este cargo?"
+        }
+      >
+        {accion === "imagen" ? (
+          <FormCrearEditarImg
+            imgPrevia={imagen}
+            setImgVistaPrevia={setImagen}
+            setFile={setFile}
+            abrirModal={abrirModal}
+            limpiarCampos={limpiarCampos}
+            crearEditar={crearEditarImgPerfil}
+          />
+        ) : (
+          <div className="w-full">
+            <FormEditarUsuario
+              nombre={nombreUsuario}
+              setNombre={setNombreUsuario}
+              apellido={apellidoUsuario}
+              setApellido={setApellidoUsuario}
+              validarNombre={validarNombre}
+              setValidarNombre={setValidarNombre}
+              validarApellido={validarApellido}
+              setValidarApellido={setValidarApellido}
+              limpiarCampos={limpiarCampos}
+              mostrarMensaje={mostrarMensaje}
+              editar={editarUsuario}
+              mensaje={mensaje}
+            />
+          </div>
+        )}
+      </ModalEditar> */
+}
+
+/** 
+"use client";
+
+import { useState, useEffect } from "react";
 import axios from "axios";
 import SectionRegistroMostrar from "../SectionRegistroMostrar";
 import DivUnoDentroSectionRegistroMostrar from "../DivUnoDentroSectionRegistroMostrar";
@@ -167,20 +313,12 @@ export default function MostrarPerfilUsuario({
           <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-10 w-full bg-gray-100 rounded-md p-2 sm:p-6">
             <div className="flex items-center justify-center">
               <div className="relative group w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden shadow-lg border-4 border-[#082158] hover:shadow-xl transition-shadow duration-300 ease-in-out">
-                {/* <img
-                  src={
-                    perfilUsuario?.imagenes?.[0]?.path
-                      ? `/api/usuarios/mostrar-img-perfil${perfilUsuario.imagenes[0].path}`
-                      : "/img/perfil.png"
-                  }
-                  alt="Foto de perfil"
-                  className="rounded-full w-full h-full object-cover group-hover:scale-105 transform transition-transform duration-300 ease-in-out"
-                /> */}
+                
 
                 <img
                   src={
                     perfilUsuario?.imagenes?.[0]?.path
-                      ? `/api/usuarios/mostrar-img-perfil?path=${perfilUsuario.imagenes[0].path.replace(
+                      ? `/api/usuarios/mostrar-img-perfil?path=${usuarios.imagenes[0].path.replace(
                           /^\/+/,
                           ""
                         )}`
@@ -245,7 +383,7 @@ export default function MostrarPerfilUsuario({
                   nombre={"Departamento"}
                   valor={
                     perfilUsuario?.MiembrosDepartamentos?.[0]?.nombre
-                      ? perfilUsuario.MiembrosDepartamentos?.[0]?.nombre
+                      ? usuarios.MiembrosDepartamentos?.[0]?.nombre
                       : "sin asignar"
                   }
                 />
@@ -257,3 +395,4 @@ export default function MostrarPerfilUsuario({
     </>
   );
 }
+*/

@@ -1,56 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useRouter, usePathname } from "next/navigation";
-import HeaderUsuarios from "@/components/sistema/HeaderUsuarios";
-import Footer from "../Footer";
-import MostrarAlInicioUsuarios from "@/components/sistema/MostrarInicioUsuarios";
-import MenuLateralUsuario from "@/components/sistema/MenuLateralUsuarios";
-import { useUser } from "@/app/context/AuthContext";
 import { useSelector } from "react-redux";
+import { useRouter, usePathname } from "next/navigation";
+import { useUser } from "@/app/context/AuthContext";
 
-export default function VistaUniversalInicio() {
-  const {
-    screenSize,
-    mostrarModal,
-    abrirModal,
-    cerrarModal,
-    mensaje,
-    mostrarMensaje,
-    abrirMensaje,
-    limpiarCampos,
-    ejecutarAccionesConRetraso,
-  } = useUser();
+import Div from "@/components/padres/Div";
+import HeaderUsuarios from "@/components/dashboard/Inicio/HeaderUsuarios";
+import Main from "@/components/padres/Main";
+import Footer from "@/components/Footer";
+import InicioUsuarios from "@/components/dashboard/Inicio/InicioUsuarios";
+import MenuLateralUsuario from "@/components/dashboard/Inicio/MenuLateralUsuarios";
+
+export default function DashboardInicio() {
+  const { screenSize } = useUser();
 
   const { usuarioActivo, departamento } = useSelector((state) => state.auth);
 
   const [vista, setVista] = useState("");
 
   const [abrirPanel, setAbrirPanel] = useState(true);
-
-  const [buscador, setBuscador] = useState("");
-  const [validarCedula, setValidarCedula] = useState(false);
-
-  const [seleccionarConsulta, setSeleccionarConsulta] = useState("");
-
-  const [cedula, setCedula] = useState("");
-
-  const [todasParroquias, setTodasParroquias] = useState([]);
-  const [todasComunas, setTodasComunas] = useState([]);
-  const [todosConsejos, setTodosConsejos] = useState([]);
-
-  const [voceroPorCedula, setVoceroPorCedula] = useState([]);
-  const [voceroPorParroquia, setVoceroPorParroquia] = useState([]);
-  const [voceroPorComuna, setVoceroPorComuna] = useState([]);
-  const [voceroPorConsejo, setVoceroPorConsejo] = useState([]);
-  const [voceroPorTodos, setVoceroPorTodos] = useState([]);
-
-  const [expandido, setExpandido] = useState({});
-
-  const [idOpcion, setIdOpcion] = useState("");
-
-  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -219,12 +188,6 @@ export default function VistaUniversalInicio() {
     }
   }, [pathname, router, userType]);
 
-  useEffect(() => {
-    if (todasParroquias.length !== 0 && idOpcion) {
-      consultarVoceroParroquia();
-    }
-  }, [todasParroquias, idOpcion]);
-
   const cambiarRuta = (subRuta, nuevaVista, id_rol) => {
     // Determinar la base de la ruta según el id_rol
     let baseRuta = ""; // Por defecto, no hay ninguna ruta
@@ -254,111 +217,15 @@ export default function VistaUniversalInicio() {
     setAbrirPanel(!abrirPanel);
   };
 
-  const consultarVoceroCedula = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.post("/api/voceros/cedula-vocero", {
-        cedula: cedula,
-      });
-
-      setVoceroPorCedula(response.data.vocero);
-
-      abrirMensaje(response.data.message);
-
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-    } catch (error) {
-      console.log("Error, al consultar vocero: " + error);
-      abrirMensaje(error?.response?.data.message);
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-      setVoceroPorCedula([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const consultarVoceroParroquia = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.post("/api/voceros/parroquia-vocero", {
-        idParroquia: idOpcion,
-      });
-
-      setVoceroPorParroquia(response.data.vocero);
-
-      abrirMensaje(response.data.message);
-
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-    } catch (error) {
-      console.log("Error, al consultar vocero por parroquia: " + error);
-      abrirMensaje(error?.response?.data.message);
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-      setVoceroPorParroquia([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const consultarVoceroComuna = async () => {
-    console.log("Consulta vocero por comuna: " + voceroPorComuna.length);
-  };
-
-  const consultarVoceroConsejo = async () => {
-    console.log("Consulta vocero por consejo: " + voceroPorConsejo);
-  };
-
-  const consultarVoceroTodos = async () => {
-    console.log("Consulta vocero por todos: " + voceroPorTodos.length);
-  };
-
-  const consultarTodasParroquias = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/parroquias/todas-parroquias");
-
-      setTodasParroquias(response.data.parroquias);
-
-      abrirMensaje(response.data.message);
-
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-    } catch (error) {
-      console.log("Error, al consultar parroquias: " + error);
-      abrirMensaje(error?.response?.data.message);
-      ejecutarAccionesConRetraso([
-        { accion: cerrarModal, tiempo: 3000 }, // Se ejecutará en 3 segundos
-      ]);
-      setTodasParroquias([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const consultarTodasComunas = async () => {
-    console.log("Todas las comunas: " + todasComunas.length);
-  };
-
-  const consultarTodosConsejos = async () => {
-    console.log("Todos los consejos: " + todosConsejos.length);
-  };
-
   return (
     <>
       {usuarioActivo && (
-        <div
+        <Div
           className={`flex flex-col justify-between ${
             abrirPanel ? "" : "container mx-auto px-2"
           } `}
         >
-          <div
+          <Div
             className={`fixed inset-y-0 left-0 transform ${
               abrirPanel ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-1000 ease-in-out w-56 z-30`}
@@ -368,69 +235,32 @@ export default function VistaUniversalInicio() {
               cambiarRuta={cambiarRuta}
               abrirPanel={abrirPanel}
             />
-          </div>
+          </Div>
 
-          <div
+          <Div
             className={`grid min-h-dvh grid-rows-[auto_1fr_auto] gap-4 ${
               abrirPanel ? "ml-56 px-2 " : "ml-0"
             } transition-all duration-1000 ease-in-out`}
           >
-            <header>
-              <HeaderUsuarios
-                abrirDashboar={abrirDashboar}
-                abrirPanel={abrirPanel}
-                vista={vista}
-                cambiarRuta={cambiarRuta}
-              />
-            </header>
+            <HeaderUsuarios
+              abrirDashboar={abrirDashboar}
+              abrirPanel={abrirPanel}
+              vista={vista}
+              cambiarRuta={cambiarRuta}
+              screenSize={screenSize}
+            />
 
-            <main className={`bg-[#faf5f8] rounded-md px-4 h-full`}>
-              <MostrarAlInicioUsuarios
-                buscador={buscador}
-                setBuscador={setBuscador}
-                validarCedula={validarCedula}
-                setValidarCedula={setValidarCedula}
-                seleccionarConsulta={seleccionarConsulta}
-                setSeleccionarConsulta={setSeleccionarConsulta}
-                consultarTodasParroquias={consultarTodasParroquias}
-                consultarTodasComunas={consultarTodasComunas}
-                consultarTodosConsejos={consultarTodosConsejos}
-                consultarTodos={consultarVoceroTodos}
-                cedula={cedula}
-                setCedula={setCedula}
-                consultarVoceroCedula={consultarVoceroCedula}
-                voceroPorCedula={voceroPorCedula}
-                consultarVoceroParroquia={consultarVoceroParroquia}
-                voceroPorParroquia={voceroPorParroquia}
-                consultarVoceroComuna={consultarVoceroComuna}
-                voceroPorComuna={voceroPorComuna}
-                consultarVoceroConsejo={consultarVoceroConsejo}
-                voceroPorConsejo={voceroPorConsejo}
-                consultarVoceroTodos={consultarVoceroTodos}
-                voceroPorTodos={voceroPorTodos}
-                idOpcion={idOpcion}
-                setIdOpcion={setIdOpcion}
-                todasParroquias={todasParroquias}
-                todasComunas={todasComunas}
-                todosConsejos={todosConsejos}
-                loading={loading}
-                abrirModal={abrirModal}
-                mostrar={mostrarModal}
-                cerrarModal={cerrarModal}
-                mostrarMensaje={mostrarMensaje}
-                mensaje={mensaje}
-                abrirMensaje={abrirMensaje}
-                limpiarCampos={limpiarCampos}
-                ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                expandido={expandido}
-                setExpandido={setExpandido}
-                id_usuario={usuarioActivo?.id}
-              />
-            </main>
+            <Main className={`bg-[#faf5f8] rounded-md px-4 h-full`}>
+              <Div
+                className={"h-[calc(100vh-200px)] overflow-y-auto no-scrollbar"}
+              >
+                <InicioUsuarios />
+              </Div>
+            </Main>
 
             <Footer />
-          </div>
-        </div>
+          </Div>
+        </Div>
       )}
     </>
   );

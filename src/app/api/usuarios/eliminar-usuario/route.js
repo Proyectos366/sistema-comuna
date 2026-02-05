@@ -12,15 +12,14 @@ import validarEliminarUsuario from "@/services/usuarios/validarEliminarUsuario";
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP PATCH para eliminar (lógicamente) a un usuario.
- * Valida los datos recibidos, actualiza el campo `borrado` en la base de datos
- * y retorna una respuesta estructurada con el perfil actualizado del usuario.
- *
- * @async
- * @function PATCH
- * @param {Request} request - Solicitud HTTP con el estado de eliminación y el ID del usuario.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP PATCH para eliminar (lógicamente) a un usuario.
+ Valida los datos recibidos, actualiza el campo `borrado` en la base de datos
+ y retorna una respuesta estructurada con el perfil actualizado del usuario.
+ @async
+ @function PATCH
+ @param {Request} request - Solicitud HTTP con el estado de eliminación y el ID del usuario.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
+*/
 
 export async function PATCH(request) {
   try {
@@ -46,7 +45,7 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -98,12 +97,7 @@ export async function PATCH(request) {
         },
       });
 
-      return generarRespuesta(
-        "error",
-        "Error, al eliminar usuario...",
-        {},
-        400
-      );
+      return generarRespuesta("error", "Error, al eliminar usuario", {}, 400);
     }
 
     // 6. Registro exitoso del evento y retorno del usuario actualizado
@@ -122,15 +116,15 @@ export async function PATCH(request) {
 
     return generarRespuesta(
       "ok",
-      "Usuario eliminado correctamente...",
+      "Usuario eliminado correctamente",
       {
         usuarios: usuarioActualizado,
       },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno (eliminar usuario): ` + error);
+    console.log(`Error interno eliminar usuario:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -145,9 +139,9 @@ export async function PATCH(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error, interno (eliminar usuario)",
+      "Error, interno eliminar usuario",
       {},
-      500
+      500,
     );
   }
 }

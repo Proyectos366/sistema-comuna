@@ -4,21 +4,30 @@ import axios from "axios";
 // Thunk para obtener un vocero por el numero de cedula con manejo de errores
 export const fetchVoceroCedula = createAsyncThunk(
   "voceros/fetchVoceroCedula",
-  async (cedula, { rejectWithValue }) => {
+  async (data, thunkAPI) => {
     try {
-      if (!cedula) {
+      if (!data.voceroCedula.cedula) {
         return rejectWithValue("Cédula en blanco");
       }
 
       const response = await axios.post(`/api/voceros/vocero-cedula`, {
-        cedula: cedula,
+        cedula: data.voceroCedula.cedula,
       });
 
-      return response.data.voceros;
+      const voceroPorCedula = response.data.voceros;
+
+      data.notify(response.data.message);
+
+      thunkAPI.dispatch(data.cerrarModal("consultar"));
+
+      return voceroPorCedula;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Error al obtener el vocero por cédula"
-      );
+      data.notify(error?.response?.data.message);
+      const mensajeError =
+        error.response?.data?.message ||
+        error.message ||
+        "Error al obtener vocero por cédula";
+      return thunkAPI.rejectWithValue(mensajeError);
     }
-  }
+  },
 );

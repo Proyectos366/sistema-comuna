@@ -1,8 +1,9 @@
 /**
- @fileoverview Controlador de API para cambiar el departamento asignado a un usuario. Este endpoint
- valida los datos recibidos, actualiza la relación en la base de datos, registra eventos de auditoría
- y retorna el perfil actualizado del usuario. Utiliza Prisma como ORM y servicios personalizados
- para validación y respuesta estandarizada. @module api/usuarios/cambiarAlDepartamento
+ @fileoverview Controlador de API para cambiar el departamento asignado a un usuario. Este
+ endpoint valida los datos recibidos, actualiza la relación en la base de datos, registra
+ eventos de auditoría y retorna el perfil actualizado del usuario. Utiliza Prisma como ORM y
+ servicios personalizados para validación y respuesta estandarizada.
+ @module api/usuarios/cambiarAlDepartamento
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -11,15 +12,14 @@ import validarCambiarAlDepartamento from "@/services/usuarios/validarCambiarAlDe
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP PATCH para cambiar el departamento de un usuario.
- * Valida los datos recibidos, actualiza la relación en la base de datos
- * y retorna una respuesta estructurada con el perfil actualizado del usuario.
- *
- * @async
- * @function PATCH
- * @param {Request} request - Solicitud HTTP con los IDs de usuario y departamento.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP PATCH para cambiar el departamento de un usuario.
+ Valida los datos recibidos, actualiza la relación en la base de datos
+ y retorna una respuesta estructurada con el perfil actualizado del usuario.
+ @async
+ @function PATCH
+ @param {Request} request - Solicitud HTTP con los IDs de usuario y departamento.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
+*/
 
 export async function PATCH(request) {
   try {
@@ -29,7 +29,7 @@ export async function PATCH(request) {
     // 2. Ejecuta la validación de los datos recibidos
     const validaciones = await validarCambiarAlDepartamento(
       idDepartamento,
-      idUsuario
+      idUsuario,
     );
 
     // 3. Si la validación falla, registra el intento fallido y retorna error 400
@@ -38,7 +38,7 @@ export async function PATCH(request) {
         tabla: "usuario",
         accion: "INTENTO_FALLIDO_CAMBIAR_DEPARTAMENTO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion: "Validacion fallida al cambiar un usuario de departamento",
         datosAntes: null,
         datosDespues: validaciones,
@@ -48,7 +48,7 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -106,9 +106,9 @@ export async function PATCH(request) {
 
       return generarRespuesta(
         "error",
-        "Error, al cambiar de departamento...",
+        "Error al cambiar de departamento",
         {},
-        !cambiadoALDepartamento ? 400 : 404
+        !cambiadoALDepartamento ? 400 : 404,
       );
     }
 
@@ -117,7 +117,7 @@ export async function PATCH(request) {
       tabla: "usuario",
       accion: "UPDATE_CAMBIAR_DEPARTAMENTO",
       id_objeto: usuarioActualizado?.MiembrosDepartamentos?.[0]?.id,
-      id_usuario: validaciones.id_usuario,
+      id_usuario: validaciones?.id_usuario,
       descripcion: `Usuario cambiado con exito al departamento ${usuarioActualizado?.MiembrosDepartamentos?.[0]?.nombre}`,
       datosAntes: null,
       datosDespues: {
@@ -128,15 +128,15 @@ export async function PATCH(request) {
 
     return generarRespuesta(
       "ok",
-      "Cambio exitoso...",
+      "Cambio de departamento exitoso",
       {
         usuarios: usuarioActualizado,
       },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno (cambiar al departamento): ` + error);
+    console.log(`Error interno cambio de departamento:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -151,9 +151,9 @@ export async function PATCH(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error, interno (cambiar al departamento)",
+      "Error interno cambio de departamento",
       {},
-      500
+      500,
     );
   }
 }

@@ -1,9 +1,9 @@
 /**
- @fileoverview Componente principal de la vista de inicio del administrador. Renderiza la interfaz
- universal de inicio dentro del entorno del dashboard. Este módulo sirve como punto de entrada para
- la sección inicial del administrador. @module views/AdministradorInicio
+ @fileoverview Componente principal de la vista de inicio del administrador. Renderiza la
+ interfaz universal de inicio dentro del entorno del dashboard. Este módulo sirve como punto
+ de entrada para la sección inicial del administrador. @module views/AdministradorInicio
 */
-import VistaUniversalInicio from "@/components/sistema/VistaUniversalInicio"; // 1. Importa el componente de inicio universal
+import DashboardInicio from "@/views/DashboardInicio";
 
 /**
  Componente de la vista de inicio del administrador. Renderiza el componente de inicio dentro de
@@ -15,7 +15,7 @@ export default function Administrador() {
   // 2. Retorna el componente de inicio envuelto en un fragmento
   return (
     <>
-      <VistaUniversalInicio />
+      <DashboardInicio />
     </>
   );
 }

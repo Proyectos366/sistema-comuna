@@ -17,6 +17,7 @@ import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 export default function FormCrearEstado({
   idPais,
@@ -118,7 +119,12 @@ export default function FormCrearEstado({
 
               <BotonLimpiarCampos
                 aceptar={() => {
-                  dispatch(resetForm("estadoForm"));
+                  limpiarCampos({
+                    setNombre,
+                    setCapital,
+                    setCodigoPostal,
+                    setDescripcion,
+                  });
                 }}
                 campos={{
                   nombre,

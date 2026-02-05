@@ -12,15 +12,14 @@ import validarRestaurarUsuario from "@/services/usuarios/validarRestaurarUsuario
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP PATCH para restaurar un usuario previamente eliminado.
- * Valida los datos recibidos, actualiza el estado del campo `borrado` en la base de datos
- * y retorna una respuesta estructurada con el perfil actualizado del usuario.
- *
- * @async
- * @function PATCH
- * @param {Request} request - Solicitud HTTP con el estado de restauración y el ID del usuario.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario restaurado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP PATCH para restaurar un usuario previamente eliminado.
+ Valida los datos recibidos, actualiza el estado del campo `borrado` en la base de datos
+ y retorna una respuesta estructurada con el perfil actualizado del usuario.
+ @async
+ @function PATCH
+ @param {Request} request - Solicitud HTTP con el estado de restauración y el ID del usuario.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario restaurado o un mensaje de error.
+*/
 
 export async function PATCH(request) {
   try {
@@ -46,7 +45,7 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -102,7 +101,7 @@ export async function PATCH(request) {
         "error",
         "Error, al restaurar usuario...",
         {},
-        400
+        400,
       );
     }
 
@@ -122,15 +121,15 @@ export async function PATCH(request) {
 
     return generarRespuesta(
       "ok",
-      "Usuario restaurado correctamente...",
+      "Usuario restaurado correctamente",
       {
         usuarios: usuarioActualizado,
       },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno (restaurar usuario): ` + error);
+    console.log(`Error interno restaurar usuario:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -145,9 +144,9 @@ export async function PATCH(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error, interno (restaurar usuario)",
+      "Error, interno restaurar usuario",
       {},
-      500
+      500,
     );
   }
 }

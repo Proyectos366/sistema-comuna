@@ -33,10 +33,10 @@ async function main() {
   await prisma.usuario.createMany({
     data: [
       {
-        cedula: 21259230,
-        nombre: "carlos",
+        cedula: 212592300,
+        nombre: "caslero",
         apellido: "peraza",
-        correo: "carlosjperazab@gmail.com",
+        correo: "caslerojperazab@gmail.com",
         token: "6w2r5ks4rb1gd4r1",
         validado: true,
         clave: "$2a$05$qv5dKCZmInzicTS5D0BFu.ThM5g99ScAkKKDjqKfQzMraQjhRnqgS",
@@ -51,6 +51,16 @@ async function main() {
         validado: true,
         id_rol: 2,
         clave: "$2a$05$029a1Dus7qStop21IuIKCOgGtrge/F6LvDwGgb9pnxz5/uqEQ3MU.",
+      },
+      {
+        cedula: 21259230,
+        nombre: "carlos",
+        apellido: "peraza",
+        correo: "carlosjperazab@gmail.com",
+        token: "7x3s6lt5sc2he5s2",
+        validado: true,
+        clave: "$2a$05$qv5dKCZmInzicTS5D0BFu.ThM5g99ScAkKKDjqKfQzMraQjhRnqgS",
+        id_rol: 1,
       },
     ],
   });
@@ -518,12 +528,11 @@ async function main() {
     ],
   });
 
-  // Crear una formacion inicial para todas las instituciones
-  // Crear la formación conectando solo los 3 primeros módulos
+  // Crear una formacion inicial para todas las instituciones con 3 modulos
   await prisma.formacion.create({
     data: {
       nombre: "participación ciudadana y contraloria social",
-      descripcion: "primera formacion enviada por la cgr caracas...",
+      descripcion: "primera formacion enviada por la cgr caracas",
       id_usuario: 1,
       modulos: {
         connect: [{ id: 1 }, { id: 2 }, { id: 3 }],
@@ -560,7 +569,7 @@ async function main() {
 
 main()
   .then(() => {
-    console.log("Seed ejecutado correctamente 🚀");
+    console.log("Seed ejecutado correctamente");
   })
   .catch((e) => {
     console.error(e);

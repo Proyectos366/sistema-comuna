@@ -3,7 +3,7 @@
  universal de usuarios dentro del entorno del dashboard. Este módulo sirve como punto de entrada
  para la sección del empleado. @module views/Empleado
 */
-import VistaUniversalUsuarios from "@/components/sistema/VistaUniversalUsuarios"; // 1. Importa el componente de usuarios
+import Dashboard from "@/views/Dashboard";
 
 /**
  Componente de la vista del empleado. Renderiza el componente de usuarios dentro de un fragmento
@@ -14,7 +14,7 @@ export default function Empleados() {
   // 2. Retorna el componente de usuarios envuelto en un fragmento
   return (
     <>
-      <VistaUniversalUsuarios></VistaUniversalUsuarios>
+      <Dashboard />
     </>
   );
 }

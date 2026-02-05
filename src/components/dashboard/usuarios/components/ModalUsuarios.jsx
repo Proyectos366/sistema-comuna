@@ -23,6 +23,7 @@ import { cambiarDepartamentoUsuario } from "@/store/features/usuarios/thunks/cam
 import { cambiarRolUsuario } from "@/store/features/usuarios/thunks/cambiarRolUsuario";
 import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+import { asignarDepartamentoUsuario } from "@/store/features/usuarios/thunks/asignarDepartamentoUsuario";
 
 export default function ModalUsuarios({
   acciones,
@@ -242,12 +243,21 @@ export default function ModalUsuarios({
 
         <BotonesModal
           aceptar={() => {
-            if (
-              accion === "cambiarDepartamento" ||
-              accion === "asignarDepartamento"
-            ) {
+            if (accion === "cambiarDepartamento") {
               dispatch(
                 cambiarDepartamentoUsuario({
+                  idUsuario: idUsuario,
+                  idDepartamento: idDepartamento,
+                  cerrarModal: cerrarModal,
+                  notify: notify,
+                  setAccion: setAccion,
+                }),
+              );
+            }
+
+            if (accion === "asignarDepartamento") {
+              dispatch(
+                asignarDepartamentoUsuario({
                   idUsuario: idUsuario,
                   idDepartamento: idDepartamento,
                   cerrarModal: cerrarModal,

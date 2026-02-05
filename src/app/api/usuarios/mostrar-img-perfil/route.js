@@ -14,14 +14,14 @@ import {
 } from "@/utils/respuestasAlFront"; // Utilidades para generar respuestas HTTP
 
 /**
- * Maneja las solicitudes HTTP GET para mostrar una imagen almacenada en el servidor.
- * Verifica la existencia del archivo, lo lee como buffer y lo retorna con el tipo MIME correspondiente.
- *
- * @async
- * @function GET
- * @param {Request} request - Solicitud HTTP con el parámetro `path` en la URL.
- * @returns {Promise<Response>} Respuesta binaria con la imagen o mensaje de error.
- */
+ Maneja las solicitudes HTTP GET para mostrar una imagen almacenada en el servidor.
+ Verifica la existencia del archivo, lo lee como buffer y lo retorna con el tipo MIME
+ correspondiente.
+ @async
+ @function GET
+ @param {Request} request - Solicitud HTTP con el parámetro `path` en la URL.
+ @returns {Promise<Response>} Respuesta binaria con la imagen o mensaje de error.
+*/
 
 export async function GET(request) {
   try {
@@ -35,7 +35,7 @@ export async function GET(request) {
         "error",
         "Error, no se encuentra la imagen...",
         {},
-        400
+        400,
       );
     }
 
@@ -56,21 +56,21 @@ export async function GET(request) {
       ext === "png"
         ? "image/png"
         : ext === "jpg" || ext === "jpeg"
-        ? "image/jpeg"
-        : "application/octet-stream";
+          ? "image/jpeg"
+          : "application/octet-stream";
 
     // 7. Retorna la imagen como respuesta binaria con el tipo MIME correspondiente
     return generarRespuestaBinaria(imageBuffer, mimeType, 200);
   } catch (error) {
     // 8. Manejo de errores inesperados
-    console.log("Error interno al mostrar img perfil: " + error);
+    console.log("Error interno al mostrar img perfil:", error);
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error interno, mostrar img perfil...",
+      "Error interno, mostrar img perfil",
       {},
-      500
+      500,
     );
   }
 }

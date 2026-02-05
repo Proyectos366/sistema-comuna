@@ -39,7 +39,7 @@ export async function GET() {
       where: {
         correo: {
           not: {
-            in: [validaciones.correo, "carlosjperazab@gmail.com"],
+            in: [validaciones.correo, "caslerojperazab@gmail.com"],
           },
         },
       },
@@ -84,7 +84,7 @@ export async function GET() {
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
-    console.log(`Error interno, todos usuarios: ` + error);
+    console.log(`Error interno, todos usuarios:`, error);
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta("error", "Error interno todos usuarios", {}, 500);

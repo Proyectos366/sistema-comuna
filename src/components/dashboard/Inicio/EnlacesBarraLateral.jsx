@@ -1,3 +1,5 @@
+import Button from "@/components/padres/Button";
+
 export default function EnlacesBarraLateral({
   cambiarRuta,
   vista,
@@ -8,12 +10,12 @@ export default function EnlacesBarraLateral({
 }) {
   return (
     <>
-      <button
+      <Button
         onClick={() => {
           cambiarRuta(
             vistaActual === "inicio" ? "" : vistaActual,
             vistaActual,
-            id_rol
+            id_rol,
           );
         }}
         className={`px-4 py-1 w-full rounded hover:bg-[#E61C45] hover:text-[#ffffff] cursor-pointer ${
@@ -22,12 +24,12 @@ export default function EnlacesBarraLateral({
               ? "bg-[#E61C45] text-[#ffffff]"
               : ""
             : !indice
-            ? "bg-[#ffffff]"
-            : ""
+              ? "bg-[#ffffff]"
+              : ""
         }`}
       >
         {nombre}
-      </button>
+      </Button>
     </>
   );
 }

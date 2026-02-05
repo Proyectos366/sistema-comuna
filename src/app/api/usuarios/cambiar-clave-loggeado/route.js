@@ -11,17 +11,16 @@ import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para g
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP POST para cambiar la contraseña de un usuario logueado.
- * Valida las credenciales actuales, encripta la nueva contraseña,
- * actualiza el registro del usuario y retorna una respuesta estructurada.
- *
- * @async
- * @function POST
- * @param {Request} request - Solicitud HTTP con las claves actual y nueva.
- * @returns {Promise<Response>} Respuesta HTTP indicando éxito o error en el cambio de clave.
- */
+ Maneja las solicitudes HTTP POST para cambiar la contraseña de un usuario logueado.
+ Valida las credenciales actuales, encripta la nueva contraseña,
+ actualiza el registro del usuario y retorna una respuesta estructurada.
+ @async
+ @function POST
+ @param {Request} request - Solicitud HTTP con las claves actual y nueva.
+ @returns {Promise<Response>} Respuesta HTTP indicando éxito o error en el cambio de clave.
+*/
 
-export async function POST(request) {
+export async function PATCH(request) {
   try {
     // 1. Extrae las claves del cuerpo de la solicitud
     const { claveVieja, claveUno, claveDos } = await request.json();
@@ -30,7 +29,7 @@ export async function POST(request) {
     const validaciones = await validarCambiarClaveLogueado(
       claveVieja,
       claveUno,
-      claveDos
+      claveDos,
     );
 
     // 3. Si la validación falla, registra el intento fallido y retorna error 400
@@ -39,7 +38,7 @@ export async function POST(request) {
         tabla: "usuario",
         accion: "INTENTO_FALLIDO_CAMBIAR_CLAVE_LOGGEADO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion: "Validacion fallida al cambiar clave, usuario loggeado",
         datosAntes: null,
         datosDespues: validaciones,
@@ -49,15 +48,41 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
     // 4. Actualiza la clave del usuario en la base de datos
-    const claveCambiadaUsuarioLoggueado = await prisma.usuario.update({
-      where: { id: validaciones.id_usuario },
-      data: { clave: validaciones.claveEncriptada },
-    });
+    const [cambiarClave, claveCambiadaUsuarioLoggueado] =
+      await prisma.$transaction([
+        prisma.usuario.update({
+          where: { id: validaciones.id_usuario },
+          data: { clave: validaciones.claveEncriptada },
+        }),
+
+        prisma.usuario.findFirst({
+          where: {
+            id: validaciones.id_usuario,
+          },
+          select: {
+            id: true,
+            cedula: true,
+            correo: true,
+            nombre: true,
+            apellido: true,
+            borrado: true,
+            validado: true,
+            createdAt: true,
+            id_rol: true,
+            roles: {
+              select: { id: true, nombre: true },
+            },
+            MiembrosDepartamentos: {
+              select: { id: true, nombre: true, descripcion: true },
+            },
+          },
+        }),
+      ]);
 
     // 5. Si la actualización falla, registra el error y retorna error 400
     if (!claveCambiadaUsuarioLoggueado) {
@@ -65,7 +90,7 @@ export async function POST(request) {
         tabla: "usuario",
         accion: "ERROR_UPDATE_CAMBIAR_CLAVE_LOGGUEADO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion: "No se puedo cambiar la clave de usuario loggueado",
         datosAntes: null,
         datosDespues: {
@@ -77,7 +102,7 @@ export async function POST(request) {
         "error",
         "Error, fallo al cambiar clave",
         {},
-        400
+        400,
       );
     }
 
@@ -86,16 +111,23 @@ export async function POST(request) {
       tabla: "usuario",
       accion: "UPDATE_CAMBIAR_CLAVE_LOGGUEADO",
       id_objeto: claveCambiadaUsuarioLoggueado.id,
-      id_usuario: validaciones.id_usuario,
+      id_usuario: validaciones?.id_usuario,
       descripcion: "Cambio de clave exitoso usuario loggeado",
       datosAntes: null,
       datosDespues: claveCambiadaUsuarioLoggueado,
     });
 
-    return generarRespuesta("ok", "Clave cambiada con exito...", {}, 201);
+    return generarRespuesta(
+      "ok",
+      "Clave cambiada con exito",
+      {
+        usuarios: claveCambiadaUsuarioLoggueado,
+      },
+      200,
+    );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno al cambiar clave loggeado: ` + error);
+    console.log(`Error interno al cambiar clave loggeado:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -110,9 +142,9 @@ export async function POST(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error interno, al cambiar clave loggeado",
+      "Error interno al cambiar clave loggeado",
       {},
-      500
+      500,
     );
   }
 }

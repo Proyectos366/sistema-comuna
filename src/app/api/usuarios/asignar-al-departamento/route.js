@@ -12,15 +12,14 @@ import validarAsignarAlDepartamento from "@/services/usuarios/validarAsignarAlDe
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP PATCH para asignar un usuario a un departamento.
- * Valida los datos recibidos, actualiza la relación en la base de datos,
- * registra eventos de auditoría y retorna el perfil actualizado del usuario.
- *
- * @async
- * @function PATCH
- * @param {Request} request - Solicitud HTTP con los IDs de usuario y departamento.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o mensaje de error.
- */
+ Maneja las solicitudes HTTP PATCH para asignar un usuario a un departamento.
+ Valida los datos recibidos, actualiza la relación en la base de datos,
+ registra eventos de auditoría y retorna el perfil actualizado del usuario.
+ @async
+ @function PATCH
+ @param {Request} request - Solicitud HTTP con los IDs de usuario y departamento.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o mensaje de error.
+*/
 
 export async function PATCH(request) {
   try {
@@ -39,7 +38,7 @@ export async function PATCH(request) {
         tabla: "usuario",
         accion: "INTENTO_FALLIDO_ASIGNAR_DEPARTAMENTO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion:
           "Validacion fallida al intentar asignar un usuario a un departamento",
         datosAntes: null,
@@ -94,7 +93,7 @@ export async function PATCH(request) {
         tabla: "usuario",
         accion: "ERROR_UPDATE_ASIGNAR_DEPARTAMENTO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion: "No se pudo asignar al departamento",
         datosAntes: null,
         datosDespues: usuarioActualizado,
@@ -113,7 +112,7 @@ export async function PATCH(request) {
       tabla: "usuario",
       accion: "UPDATE_ASIGNAR_DEPARTAMENTO",
       id_objeto: usuarioActualizado?.MiembrosDepartamentos?.[0]?.id,
-      id_usuario: validaciones.id_usuario,
+      id_usuario: validaciones?.id_usuario,
       descripcion: `Usuario asignado con exito al departamento ${usuarioActualizado?.MiembrosDepartamentos?.[0]?.nombre}`,
       datosAntes: null,
       datosDespues: usuarioActualizado,
@@ -122,7 +121,7 @@ export async function PATCH(request) {
     return generarRespuesta(
       "ok",
       "Se asigno con exito al departamento",
-      { usuario: usuarioActualizado },
+      { usuarios: usuarioActualizado },
       200
     );
   } catch (error) {

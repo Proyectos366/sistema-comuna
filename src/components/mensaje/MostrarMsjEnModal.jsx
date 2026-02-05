@@ -1,12 +1,13 @@
-import MostrarMsj from "../MostrarMensaje";
+import Div from "@/components/padres/Div";
+import MostrarMsj from "@/components/MostrarMensaje";
 
-export default function MostarMsjEnModal({ mostrarMensaje, mensaje }) {
+export default function MostrarMsjEnModal({ mostrarMensaje, mensaje }) {
   return (
     <>
       {mostrarMensaje && (
-        <div className="w-full">
+        <Div className="w-full">
           <MostrarMsj mensaje={mensaje} />
-        </div>
+        </Div>
       )}
     </>
   );

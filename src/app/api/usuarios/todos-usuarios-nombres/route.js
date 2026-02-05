@@ -38,7 +38,7 @@ export async function GET(request) {
     const todosUsuarios = await prisma.usuario.findMany({
       where: {
         correo: {
-          not: "carlosjperazab@gmail.com",
+          not: "caslerojperazab@gmail.com",
         },
         MiembrosInstitucion: {
           some: {

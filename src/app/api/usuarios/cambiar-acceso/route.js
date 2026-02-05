@@ -2,8 +2,8 @@
  @fileoverview Controlador de API para cambiar el estado de acceso de un usuario. Este endpoint
  permite autorizar o restringir el acceso de inicio de sesión de un usuario. Valida los datos
  recibidos, actualiza el estado en la base de datos, registra eventos de auditoría y retorna el
- perfil actualizado del usuario. Utiliza Prisma como ORM y servicios personalizados para validación
- y respuesta estandarizada. @module api/usuarios/cambiarAcceso
+ perfil actualizado del usuario. Utiliza Prisma como ORM y servicios personalizados para
+ validación y respuesta estandarizada. @module api/usuarios/cambiarAcceso
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
@@ -12,15 +12,14 @@ import validarCambiarAcceso from "@/services/usuarios/validarCambiarAcceso"; // 
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
 
 /**
- * Maneja las solicitudes HTTP PATCH para cambiar el estado de acceso de un usuario.
- * Valida los datos recibidos, actualiza el campo `validado` en la base de datos
- * y retorna una respuesta estructurada con el perfil actualizado del usuario.
- *
- * @async
- * @function PATCH
- * @param {Request} request - Solicitud HTTP con los datos de validación y el ID del usuario.
- * @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
- */
+ Maneja las solicitudes HTTP PATCH para cambiar el estado de acceso de un usuario.
+ Valida los datos recibidos, actualiza el campo `validado` en la base de datos
+ y retorna una respuesta estructurada con el perfil actualizado del usuario.
+ @async
+ @function PATCH
+ @param {Request} request - Solicitud HTTP con los datos de validación y el ID del usuario.
+ @returns {Promise<Response>} Respuesta HTTP con el usuario actualizado o un mensaje de error.
+*/
 
 export async function PATCH(request) {
   try {
@@ -36,7 +35,7 @@ export async function PATCH(request) {
         tabla: "usuario",
         accion: "INTENTO_FALLIDO_AUTORIZAR",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion:
           "Validacion fallida al autenticar usuario para inicio de sesion",
         datosAntes: null,
@@ -47,7 +46,7 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -92,7 +91,7 @@ export async function PATCH(request) {
           ? "ERROR_UPDATE_AUTORIZADO"
           : "ERROR_UPDATE_RESTRINGIDO",
         id_objeto: 0,
-        id_usuario: validaciones.id_usuario,
+        id_usuario: validaciones?.id_usuario,
         descripcion: validaciones.validado
           ? "No se pudo autorizar el usuario para inicio de sesion"
           : "No se pudo restringir el usuario para inicio de sesion",
@@ -105,9 +104,9 @@ export async function PATCH(request) {
 
       return generarRespuesta(
         "error",
-        "Error, al cambiar acceso...",
+        "Error, al cambiar acceso",
         {},
-        !cambiandoAcceso ? 400 : 404
+        !cambiandoAcceso ? 400 : 404,
       );
     }
 
@@ -118,7 +117,7 @@ export async function PATCH(request) {
         ? "UPDATE_AUTORIZADO"
         : "UPDATE_RESTRINGIDO",
       id_objeto: usuarioActualizado.id,
-      id_usuario: validaciones.id_usuario,
+      id_usuario: validaciones?.id_usuario,
       descripcion: validaciones.validado
         ? "Usuario se autorizo para inicio de sesion"
         : "Usuario se restringio para inicio de sesion",
@@ -131,15 +130,15 @@ export async function PATCH(request) {
 
     return generarRespuesta(
       "ok",
-      "Cambio exitoso...",
+      "Cambio de acceso exitoso",
       {
         usuarios: usuarioActualizado,
       },
-      200
+      200,
     );
   } catch (error) {
     // 7. Manejo de errores inesperados
-    console.log(`Error interno (cambiar acceso): ` + error);
+    console.log(`Error interno cambiar acceso:`, error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
@@ -152,11 +151,6 @@ export async function PATCH(request) {
     });
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
-    return generarRespuesta(
-      "error",
-      "Error, interno (cambiar acceso)",
-      {},
-      500
-    );
+    return generarRespuesta("error", "Error interno cambiar acceso", {}, 500);
   }
 }
