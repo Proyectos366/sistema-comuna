@@ -27,7 +27,7 @@ export async function GET() {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -49,6 +49,10 @@ export async function GET() {
           },
           borrado: false, // opcional, si quieres excluir circuitos marcados como borrados
         },
+        include: {
+          voceros: true,
+          parroquias: true,
+        },
       });
     }
 
@@ -58,7 +62,7 @@ export async function GET() {
         "error",
         "Error, al consultar circuitos...",
         {},
-        400
+        400,
       );
     }
 
@@ -69,7 +73,7 @@ export async function GET() {
       {
         circuitos: todosCircuitos,
       },
-      201
+      201,
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
@@ -80,7 +84,7 @@ export async function GET() {
       "error",
       "Error, interno consultar (circuitos)",
       {},
-      500
+      500,
     );
   }
 }

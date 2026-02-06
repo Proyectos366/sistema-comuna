@@ -18,12 +18,12 @@ export default function ButtonToggleDetallesVocero({
             ? "bg-[#e2e8f0] hover:bg-[#d3dce6] text-[#1e2939]"
             : "border-[#082158] text-[#082158] hover:bg-[#082158] hover:text-[#ffffff]"
           : !dato.estaCertificado
-          ? expanded === dato.id
-            ? "border-[#E61C45] text-[black] hover:bg-[#E61C45] hover:text-[#ffffff]"
-            : "text-[#E61C45] hover:text-[#ffffff]"
-          : expanded === dato.id
-          ? "border-[#2FA807] text-[black] hover:bg-[#2FA807] hover:text-[#ffffff]"
-          : "text-[#2FA807] hover:text-[#ffffff]"
+            ? expanded === dato.id
+              ? "border-[#E61C45] text-[#000000] hover:bg-[#E61C45] hover:text-[#ffffff]"
+              : "text-[#E61C45] hover:text-[#ffffff]"
+            : expanded === dato.id
+              ? "border-[#2FA807] text-[#000000] hover:bg-[#2FA807] hover:text-[#ffffff]"
+              : "text-[#2FA807] hover:text-[#ffffff]"
       }`}
     >
       👤 {dato.nombre} {dato.nombre_dos} {dato.apellido} {dato.apellido_dos}

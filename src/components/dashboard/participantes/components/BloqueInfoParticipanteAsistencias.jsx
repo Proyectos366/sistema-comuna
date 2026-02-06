@@ -15,7 +15,7 @@ export default function BloqueInfoParticipanteAsistencias({
   estaVerificado,
   puedeVerificar,
 }) {
-  let colorClase = "text-black";
+  let colorClase = "text-[#000000]";
 
   if (indice === 2) {
     colorClase = "text-[#E61C45]";

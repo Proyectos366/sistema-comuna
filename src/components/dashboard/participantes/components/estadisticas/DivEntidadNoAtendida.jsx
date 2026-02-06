@@ -1,7 +1,6 @@
 import BloqueInfo from "@/components/BloqueInfo";
 import Div from "@/components/padres/Div";
 import Titulos from "@/components/Titulos";
-import { formatearFecha } from "@/utils/Fechas";
 
 export default function DivEntidadNoAtendida({ datos, entidad, nombre }) {
   return (
@@ -16,10 +15,7 @@ export default function DivEntidadNoAtendida({ datos, entidad, nombre }) {
           >
             <BloqueInfo nombre={nombre} valor={dato.nombre} />
 
-            <BloqueInfo
-              nombre={"Parroquia"}
-              valor={dato?.parroquia?.nombre}
-            />
+            <BloqueInfo nombre={"Parroquia"} valor={dato?.parroquia?.nombre} />
           </Div>
         ))}
       </Div>

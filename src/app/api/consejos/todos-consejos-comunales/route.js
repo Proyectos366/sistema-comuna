@@ -55,6 +55,7 @@ export async function GET() {
         },
         include: {
           voceros: true,
+          parroquias: true,
         },
       });
     }

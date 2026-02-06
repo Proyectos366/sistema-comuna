@@ -5,6 +5,7 @@ import Section from "@/components/padres/Section";
 import Div from "@/components/padres/Div";
 import Titulos from "@/components/Titulos";
 import BloqueInfo from "@/components/BloqueInfo";
+
 import { formatearFecha } from "@/utils/Fechas";
 
 export default function SectionParroquiasAgrupadas({ analisis }) {
@@ -25,7 +26,7 @@ export default function SectionParroquiasAgrupadas({ analisis }) {
       {abierto && (
         <>
           <Section className="flex flex-col gap-2 rounded-md p-2 border border-[#d1d5dc] hover:border-[#2FA807]">
-            {Object.entries(analisis.comunas.agrupadas_por_parroquia).map(
+            {Object.entries(analisis.comunas.agrupados_por_parroquia).map(
               ([parroquiaNombre, grupo]) => (
                 <Div key={parroquiaNombre} className="flex flex-col  p-2">
                   <Titulos

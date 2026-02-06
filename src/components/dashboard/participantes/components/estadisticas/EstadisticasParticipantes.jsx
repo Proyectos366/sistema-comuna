@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import Div from "@/components/padres/Div";
+import Ul from "@/components/padres/Ul";
+import Li from "@/components/padres/Li";
+import P from "@/components/padres/P";
+import Span from "@/components/padres/Span";
 import Titulos from "@/components/Titulos";
 import BotonMostrarDetalles from "@/components/botones/BotonMostrarDetalles";
+import EstadisticasEntidades from "@/components/dashboard/participantes/components/estadisticas/EstadisticasEntidades";
 
 import { fetchCursos } from "@/store/features/cursos/thunks/todosCursos";
 import { fetchCursosIdFormacion } from "@/store/features/cursos/thunks/cursosIdFormacion";
 import { fetchTodasComunas } from "@/store/features/comunas/thunks/todasComunas";
 import { fetchTodosCircuitos } from "@/store/features/circuitos/thunks/todosCircuitos";
 import { fetchTodosConsejos } from "@/store/features/consejos/thunks/todosConsejos";
-import { analizarEntidadesAtendidas } from "@/components/dashboard/participantes/function/analizarEntidadesAtendidas";
-import EstadisticasEntidades from "./EstadisticasEntidades";
 
 export default function EstadisticasParticipantes({
   registrosFiltrados,
@@ -98,10 +102,12 @@ export default function EstadisticasParticipantes({
       const vocero = r;
       const entidadObj = vocero?.[claveEntidad];
 
-      const entidadObjComunas =
-        vocero?.[claveEntidad] && !vocero?.consejos
-          ? vocero?.[claveEntidad]
-          : "";
+      const entidadObjComunas = vocero?.[claveEntidad]
+        ? vocero?.[claveEntidad]
+        : "";
+
+      //Asi estaba para mostrar solo si era vocero de comuna y no sonsejo comunal
+      //const entidadObjComunas = vocero?.[claveEntidad] && !vocero?.consejos ? vocero?.[claveEntidad] : "";
 
       if (claveEntidad === "consejos" && !entidadObj?.nombre) return acc;
       if (claveEntidad === "comunas" && !entidadObjComunas?.nombre) return acc;
@@ -166,7 +172,7 @@ export default function EstadisticasParticipantes({
     };
 
     return (
-      <div className="w-full flex flex-col gap-2">
+      <Div className="w-full flex flex-col gap-2">
         <BotonMostrarDetalles
           toggleDetalles={() => toggleEntidad(entidad.parr)}
           nombre={titulo}
@@ -175,41 +181,41 @@ export default function EstadisticasParticipantes({
         />
 
         {abiertoEntidad[entidad.parr] && (
-          <div className="bg-[white] shadow-lg rounded-md p-2 sm:p-4 w-full border overflow-y-auto max-h-[470px] no-scrollbar">
-            <ul className="space-y-3">
+          <Div className="bg-[#ffffff] shadow-lg rounded-md p-2 sm:p-4 w-full border overflow-y-auto max-h-[470px] no-scrollbar">
+            <Ul className="space-y-3">
               {Object.entries(datos).map(([clave, valores]) => {
                 return (
-                  <li key={clave} className="border-b pb-2">
+                  <Li key={clave} className="border-b pb-2">
                     <Titulos
                       indice={5}
                       titulo={clave}
-                      className={`text-blue-800 uppercase`}
+                      className={`text-[#193cb8] uppercase`}
                     />
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-2 text-sm text-[#082158] mt-2">
+                    <Div className="grid grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-2 text-sm text-[#082158] mt-2">
                       {Object.entries(valores).map(([tipo, count]) => (
-                        <p
+                        <P
                           key={tipo}
-                          className="flex flex-col items-center sm:flex-row justify-between border border-gray-300 rounded-md p-2 bg-gray-100"
+                          className="flex flex-col items-center sm:flex-row justify-between border border-[#d1d5dc] rounded-md p-2 bg-[#f3f4f6]"
                         >
-                          <span>{tipo}</span>
-                          <span className="font-bold">{count}</span>
-                        </p>
+                          <Span>{tipo}</Span>
+                          <Span className="font-bold">{count}</Span>
+                        </P>
                       ))}
-                    </div>
-                  </li>
+                    </Div>
+                  </Li>
                 );
               })}
-            </ul>
-          </div>
+            </Ul>
+          </Div>
         )}
-      </div>
+      </Div>
     );
   };
 
   return (
-    <div className="p-1 sm:p-6 flex flex-col gap-2">
+    <Div className="p-1 sm:p-6 flex flex-col gap-2">
       <Titulos indice={2} titulo={"📊 Estadísticas Voceros"} />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-fr">
+      <Div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-fr">
         {[
           { titulo: "Participantes", valor: totalParticipantes },
           { titulo: "Hombres", valor: totalHombres },
@@ -232,21 +238,21 @@ export default function EstadisticasParticipantes({
             })),
           )
           .map(({ titulo, valor, color = "blue" }) => (
-            <div
+            <Div
               key={titulo}
-              className={`bg-${color}-50 border border-gray-300 shadow rounded-md text-center uppercase flex flex-col justify-center items-center p-2`}
+              className={`bg-${color}-50 border border-[#d1d5dc] shadow rounded-md text-center uppercase flex flex-col justify-center items-center p-2`}
             >
-              <p className="text-sm text-gray-600 break-words text-center leading-tight">
+              <P className="text-sm text-[#4a5565] break-words text-center leading-tight">
                 {titulo}
-              </p>
-              <p className={`text-xl font-bold text-${color}-700 mt-2`}>
+              </P>
+              <P className={`text-xl font-bold text-${color}-700 mt-2`}>
                 {valor}
-              </p>
-            </div>
+              </P>
+            </Div>
           ))}
-      </div>
+      </Div>
 
-      <div className="rounded flex flex-col gap-2">
+      <Div className="rounded flex flex-col gap-2">
         <BotonMostrarDetalles
           toggleDetalles={toggleVocero}
           nombre={"Detalles por entidad"}
@@ -254,7 +260,7 @@ export default function EstadisticasParticipantes({
         />
 
         {abierto && (
-          <div className="flex flex-col gap-2 rounded-md p-2 border border-[#d1d5dc] hover:border-[#2FA807]">
+          <Div className="flex flex-col gap-2 rounded-md p-2 border border-[#d1d5dc] hover:border-[#2FA807]">
             {renderListaExtendida(
               "Por Parroquia",
               generarEstadisticasPorEntidad("parroquias"),
@@ -267,13 +273,13 @@ export default function EstadisticasParticipantes({
               "Por Consejo Comunal",
               generarEstadisticasPorEntidad("consejos"),
             )}
-          </div>
+          </Div>
         )}
-      </div>
+      </Div>
 
-      <div className=" flex flex-col gap-2">
+      <Div className=" flex flex-col gap-2">
         <EstadisticasEntidades />
-      </div>
-    </div>
+      </Div>
+    </Div>
   );
 }
