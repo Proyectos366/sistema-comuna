@@ -174,12 +174,14 @@ export default function FormCrearInstitucion({
             />
 
             <InputNombreSinValidar
+              nombre={"Sector"}
               htmlFor={"sector"}
               value={sector}
               setValue={setSector}
             />
 
             <InputNombreSinValidar
+              nombre={"Dirección"}
               htmlFor={"direccion"}
               value={direccion}
               setValue={setDireccion}

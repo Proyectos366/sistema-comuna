@@ -19,6 +19,8 @@ export default function InputRif({
   validarRif,
   setValidarRif,
   setValue,
+  htmlFor,
+  nombre,
 }) {
   // Elimina guiones y letras para validar
   const limpiarRif = (valor) => {

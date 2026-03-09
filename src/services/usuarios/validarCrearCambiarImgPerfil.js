@@ -4,10 +4,10 @@
  @module services/usuarios/validarCrearCambiarImgPerfil
 */
 
-import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import { writeFile, mkdir } from "fs/promises"; // Funciones para escribir archivos y crear directorios
 import path from "path"; // Utilidad para manejar rutas de archivos
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import { extensionArchivoRegex } from "@/utils/regex/extensionArchivoRegex";
 
 /**
@@ -74,7 +74,8 @@ export default async function validarCrearCambiarImgPerfil(request) {
     const rutaUsuario = path.join(
       process.cwd(),
       "storage",
-      "uploads",
+      "instituciones",
+      validaciones.nombreInstitucion,
       "img-perfil",
       nombreCarpetaUsuario,
     );
@@ -83,7 +84,7 @@ export default async function validarCrearCambiarImgPerfil(request) {
     await mkdir(rutaUsuario, { recursive: true });
 
     // 11. Definición de rutas finales
-    const rutaRelativa = `/uploads/img-perfil/${nombreCarpetaUsuario}/${nombreSistemaFecha}`;
+    const rutaRelativa = `/${validaciones.nombreInstitucion}/img-perfil/${nombreCarpetaUsuario}/${nombreSistemaFecha}`;
     const rutaFinal = path.join(rutaUsuario, nombreSistemaFecha);
 
     // 12. Escritura del archivo en disco

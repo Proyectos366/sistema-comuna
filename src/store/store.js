@@ -19,6 +19,8 @@ import consejosReducer from "@/store/features/consejos/consejosSlices";
 import vocerosReducer from "@/store/features/voceros/vocerosSlices";
 import participantesReducer from "@/store/features/participantes/participantesSlices";
 import cursosReducer from "@/store/features/cursos/cursosSlices";
+import novedadesReducer from "@/store/features/novedades/novedadesSlices";
+import estantesReducer from "@/store/features/estantes/estantesSlices";
 
 const store = configureStore({
   reducer: {
@@ -41,6 +43,8 @@ const store = configureStore({
     voceros: vocerosReducer,
     participantes: participantesReducer,
     cursos: cursosReducer,
+    novedades: novedadesReducer,
+    estantes: estantesReducer,
   },
 });
 

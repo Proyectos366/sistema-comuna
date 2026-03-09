@@ -31,16 +31,16 @@ export async function GET(request) {
 
     // 2. Verifica que se haya proporcionado una ruta válida
     if (!imagePath) {
-      return generarRespuesta(
-        "error",
-        "Error, no se encuentra la imagen...",
-        {},
-        400,
-      );
+      return generarRespuesta("error", "Error no hay imagen", {}, 400);
     }
 
-    // 3. Construye la ruta absoluta del archivo en el sistema
-    const fullPath = path.join(process.cwd(), "storage", imagePath);
+    // 3. Construye la ruta absoluta del archivo en el sistema con la institución
+    const fullPath = path.join(
+      process.cwd(),
+      "storage",
+      "instituciones",
+      imagePath,
+    );
 
     // 4. Verifica si el archivo existe en el sistema
     if (!fs.existsSync(fullPath)) {
@@ -68,7 +68,7 @@ export async function GET(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error interno, mostrar img perfil",
+      "Error interno mostrar img perfil",
       {},
       500,
     );

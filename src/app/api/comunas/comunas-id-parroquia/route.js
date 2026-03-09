@@ -1,18 +1,22 @@
 /**
-@fileoverview Controlador de API para la consulta de comunas asociadas a una parroquia.
-Este archivo maneja la lógica para obtener todas las comunas de una parroquia específica
-a través de una solicitud GET. Utiliza Prisma para la interacción con la base de datos y un
-servicio de validaciónpara asegurar la validez de los datos de entrada.
-@module
+  @fileoverview Controlador de API para la consulta de comunas asociadas a una parroquia.
+  Este archivo maneja la lógica para obtener todas las comunas de una parroquia específica
+  a través de una solicitud GET. Utiliza Prisma para la interacción con la base de datos y un
+  servicio de validaciónpara asegurar la validez de los datos de entrada.
+  @module
 */
-// Importaciones de módulos y librerías
+
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import validarConsultarComunasIdParroquia from "@/services/comunas/validarConsultarComunasIdParroquia"; // Servicio para validar la consulta de comunas por ID de parroquia.
-/**
-Maneja las solicitudes HTTP GET para obtener comunas asociadas a una parroquia específica.@async@function GET@param {Request} request - Objeto de la solicitud que contiene información sobre la parroquia a consultar.@returns {Promise<object>} - Una respuesta HTTP en formato JSON con las comunas encontradas o un error.
-*/
 
+/**
+  Maneja las solicitudes HTTP GET para obtener comunas asociadas a una parroquia específica.
+  @async
+  @function GET
+  @param {Request} request - Objeto de la solicitud que contiene información sobre la parroquia a consultar.
+  @returns {Promise<object>} - Una respuesta HTTP en formato JSON con las comunas encontradas o un error.
+*/
 export async function GET(request) {
   try {
     // 1. Valida la información de la solicitud utilizando el servicio correspondiente

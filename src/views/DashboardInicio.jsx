@@ -73,7 +73,8 @@ export default function DashboardInicio() {
       subRuta === "participantes" ||
       subRuta === "departamentos" ||
       subRuta === "oac" ||
-      subRuta === "novedades"
+      subRuta === "novedades" ||
+      subRuta === "estantes"
     ) {
       setVista(subRuta);
     } else {
@@ -116,6 +117,7 @@ export default function DashboardInicio() {
         "cambiar-clave",
         "oac",
         "novedades",
+        "estantes",
       ],
       2: [
         "parroquias",
@@ -132,6 +134,7 @@ export default function DashboardInicio() {
         "perfil",
         "cambiar-clave",
         "novedades",
+        "estantes",
       ],
       3: [
         "comunas",
@@ -144,6 +147,7 @@ export default function DashboardInicio() {
         "perfil",
         "cambiar-clave",
         "novedades",
+        "estantes",
       ],
       4: [
         "comunas",
@@ -155,6 +159,7 @@ export default function DashboardInicio() {
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",
         "novedades",
+        "estantes",
       ],
     };
 

@@ -40,6 +40,8 @@ import VocerosView from "@/components/dashboard/voceros/VocerosView";
 import ParticipantesView from "@/components/dashboard/participantes/ParticipantesView";
 import PerfilView from "@/components/dashboard/perfil/PerfilView";
 import CambiarClaveView from "@/components/dashboard/cambiar-clave/CambiarClaveView";
+import NovedadesView from "@/components/dashboard/novedades/NovedadesView";
+import EstantesView from "@/components/dashboard/estantes/EstantesView";
 
 export default function Dashboard() {
   const { screenSize } = useUser();
@@ -112,6 +114,7 @@ export default function Dashboard() {
         "cambiar-clave",
         "oac",
         "novedades",
+        "estantes",
       ],
       2: [
         "parroquias",
@@ -128,6 +131,7 @@ export default function Dashboard() {
         "perfil",
         "cambiar-clave",
         "novedades",
+        "estantes",
       ],
       3: [
         "comunas",
@@ -140,6 +144,7 @@ export default function Dashboard() {
         "perfil",
         "cambiar-clave",
         "novedades",
+        "estantes",
       ],
       4: [
         "comunas",
@@ -151,6 +156,7 @@ export default function Dashboard() {
         "cambiar-clave",
         departamento?.nombre === "oac" ? "oac" : "",
         "novedades",
+        "estantes",
       ],
     };
 
@@ -257,20 +263,9 @@ export default function Dashboard() {
 
               {vista === "cambiar-clave" && <CambiarClaveView />}
 
-              {/*
-              {vista === "novedades" && (
-                <NovedadesForm
-                  mostrar={mostrarModal}
-                  abrirModal={abrirModal}
-                  cerrarModal={cerrarModal}
-                  mensaje={mensaje}
-                  mostrarMensaje={mostrarMensaje}
-                  abrirMensaje={abrirMensaje}
-                  limpiarCampos={limpiarCampos}
-                  ejecutarAccionesConRetraso={ejecutarAccionesConRetraso}
-                  usuarioActivo={usuarioActivo}
-                />
-              )}*/}
+              {vista === "novedades" && <NovedadesView />}
+
+              {vista === "estantes" && <EstantesView />}
             </Main>
 
             <Footer />

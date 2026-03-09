@@ -61,6 +61,7 @@ export default async function obtenerDatosUsuarioToken() {
       id_municipio: datosUsuario?.MiembrosInstitucion?.[0]?.id_municipio,
       id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
       id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
+      nombreInstitucion: datosUsuario?.MiembrosInstitucion?.[0]?.nombre,
     });
   } catch (error) {
     // 6. Manejo de errores inesperados.
