@@ -5,6 +5,7 @@ import { crearEstante } from "@/store/features/estantes/thunks/crearEstante";
 import { actualizarEstante } from "@/store/features/estantes/thunks/actualizarEstante";
 import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
 import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
+import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
 
 const estantesSlice = createSlice({
   name: "estantes",
@@ -40,6 +41,20 @@ const estantesSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
+      .addCase(fetchEstantesIdDepartamento.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEstantesIdDepartamento.fulfilled, (state, action) => {
+        state.loading = false;
+        state.estantes = action.payload;
+      })
+      .addCase(fetchEstantesIdDepartamento.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
       .addCase(crearEstante.pending, (state) => {
         state.loading = true;
         state.error = null;

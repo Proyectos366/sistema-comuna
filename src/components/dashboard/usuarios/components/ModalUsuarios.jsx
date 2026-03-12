@@ -13,7 +13,7 @@ import SelectOpcion from "@/components/SelectOpcion";
 import BotonesModal from "@/components/botones/BotonesModal";
 
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
-import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
+import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccionDepartamento";
 
 import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
 import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";

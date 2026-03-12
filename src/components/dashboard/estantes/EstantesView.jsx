@@ -11,7 +11,7 @@ import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoEstantes from "@/components/dashboard/estantes/components/ListadoEstantes";
-//import ModalEstantes from "@/components/dashboard/estantes/components/ModalEstantes";
+import ModalEstantes from "@/components/dashboard/estantes/components/ModalEstantes";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
@@ -20,23 +20,45 @@ import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchEstantes } from "@/store/features/estantes/thunks/todosEstantes";
 import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
+import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
+import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccionDepartamento";
+import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
+import SelectOpcion from "@/components/SelectOpcion";
 
 export default function EstantesView() {
   const dispatch = useDispatch();
+
+  const { usuarioActivo } = useSelector((state) => state.auth);
   const { estantes, loading } = useSelector((state) => state.estantes);
+  const { departamentos } = useSelector((state) => state.departamentos);
 
   useEffect(() => {
-    dispatch(fetchEstantesInstitucion());
-  }, [dispatch]);
+    if (usuarioActivo.id_rol === 1) {
+      dispatch(fetchEstantes());
+    } else if (usuarioActivo.id_rol === 2) {
+      dispatch(fetchEstantesInstitucion());
+    }
+
+    dispatch(fetchDepartamentos());
+  }, [dispatch, usuarioActivo]);
 
   const [nombreEstante, setNombreEstante] = useState("");
   const [descripcionEstante, setDescripcionEstante] = useState("");
+  const [aliasEstante, setAliasEstante] = useState("");
+  const [nivelesEstante, setNivelesEstante] = useState("");
+  const [seccionesEstante, setSeccionesEstante] = useState("");
+  const [cabeceraEstante, setCabeceraEstante] = useState("");
 
+  const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [idEstante, setIdEstante] = useState("");
+  const [idDepartamento, setIdDepartamento] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
   const [validarNombreEstante, setValidarNombreEstante] = useState(false);
+  const [validarAliasEstante, setValidarAliasEstante] = useState(false);
+  const [validarnivelesEstante, setValidarnivelesEstante] = useState(false);
+  const [validarSeccionesEstante, setValidarSeccionesEstante] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -45,6 +67,10 @@ export default function EstantesView() {
   const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
   const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
 
+  useEffect(() => {
+    dispatch(fetchEstantesIdDepartamento(idDepartamento));
+  }, [dispatch, idDepartamento]);
+
   const camposBusqueda = ["nombre"];
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
 
@@ -52,17 +78,31 @@ export default function EstantesView() {
     setIdEstante: setIdEstante,
     setNombre: setNombreEstante,
     setDescripcion: setDescripcionEstante,
+    setAlias: setAliasEstante,
+    setNiveles: setNivelesEstante,
+    setSecciones: setSeccionesEstante,
+    setCabecera: setCabeceraEstante,
   };
 
   const datosEstante = {
     idEstante: idEstante,
     nombre: nombreEstante,
     descripcion: descripcionEstante,
+    alias: aliasEstante,
+    niveles: nivelesEstante,
+    secciones: seccionesEstante,
+    cabecera: cabeceraEstante,
   };
 
   const validaciones = {
     validarNombre: validarNombreEstante,
     setValidarNombre: setValidarNombreEstante,
+    validarAlias: validarAliasEstante,
+    setValidarAlias: setValidarAliasEstante,
+    validarniveles: validarnivelesEstante,
+    setValidarniveles: setValidarnivelesEstante,
+    validarSecciones: validarSeccionesEstante,
+    setValidarSecciones: setValidarSeccionesEstante,
   };
 
   const estantesFiltradosOrdenados = useMemo(() => {
@@ -87,17 +127,20 @@ export default function EstantesView() {
     setIdEstante(estante.id);
     setNombreEstante(estante.nombre);
     setDescripcionEstante(estante.descripcion);
+    setNivelesEstante(estante.niveles);
+    setSeccionesEstante(estante.secciones);
+    setCabeceraEstante(estante.cabecera);
 
     dispatch(abrirModal("editar"));
   };
 
   return (
     <>
-      {/* <ModalEstantes
+      <ModalEstantes
         acciones={acciones}
         datosEstante={datosEstante}
         validaciones={validaciones}
-      /> */}
+      />
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión estantes"}
@@ -105,6 +148,17 @@ export default function EstantesView() {
             dispatch(abrirModal("crear"));
           }}
         >
+          <SelectOpcion
+            idOpcion={idDepartamento}
+            nombre={"Departamentos"}
+            handleChange={(e) => {
+              cambiarSeleccionDepartamento(e, setIdDepartamento);
+            }}
+            opciones={departamentos}
+            seleccione={"Seleccione"}
+            setNombre={setNombreDepartamento}
+          />
+
           {estantes.length !== 0 && (
             <BuscadorOrdenador
               busqueda={busqueda}

@@ -20,7 +20,7 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { cambiarSeleccionRol } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionRol";
 import { cambiarSeleccionInstitucion } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionInstitucion";
-import { cambiarSeleccionDepartamento } from "@/components/dashboard/usuarios/funciones/cambiarSeleccionDepartamento";
+import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccionDepartamento";
 import { toggleAutorizar } from "@/components/dashboard/usuarios/funciones/toggleAutorizar";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";

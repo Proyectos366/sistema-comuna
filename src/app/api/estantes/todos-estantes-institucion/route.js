@@ -40,8 +40,13 @@ export async function GET() {
     });
 
     // 4. Condición de error si no se obtuvieron registros
-    if (!todosEstantes) {
-      return generarRespuesta("error", "Error, al consultar estantes", {}, 400);
+    if (todosEstantes.length === 0) {
+      return generarRespuesta(
+        "ok",
+        "Aún no hay estantes",
+        { estantes: [] },
+        200,
+      );
     }
 
     // 5. Condición de éxito: se encontraron estantes

@@ -22,10 +22,10 @@ import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar e
 export async function POST(request) {
   try {
     // 1. Obtiene los datos del cuerpo de la solicitud (request)
-    const { nombre, descripcion } = await request.json();
+    const { nombre, descripcion, alias } = await request.json();
 
     // 2. Valida los datos recibidos utilizando el servicio 'validarCrearEstante'
-    const validaciones = await validarCrearEstante(nombre, descripcion);
+    const validaciones = await validarCrearEstante(nombre, descripcion, alias);
 
     // 3. Condición de validación fallida
     if (validaciones.status === "error") {
