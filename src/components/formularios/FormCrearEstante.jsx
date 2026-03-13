@@ -79,7 +79,7 @@ export default function FormCrearEstante({
           }}
           opciones={[
             { id: "1", nombre: "Si" },
-            { id: "0", nombre: "No" },
+            { id: "2", nombre: "No" },
           ]}
           seleccione={"Seleccione"}
         />

@@ -14,6 +14,8 @@ import { formatearFecha } from "@/utils/Fechas";
 export default function ListadoEstantes({ estante, editarEstante }) {
   const dispatch = useDispatch();
 
+  console.log(estante);
+
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
@@ -41,6 +43,26 @@ export default function ListadoEstantes({ estante, editarEstante }) {
           </Div>
         </Button>
       </Div>
+
+      <BloqueInfo indice={1} nombre={"Alias"} valor={estante.alias} />
+      <BloqueInfo indice={1} nombre={"Código"} valor={estante.codigo} />
+      <BloqueInfo indice={1} nombre={"Niveles"} valor={estante.nivel} />
+      <BloqueInfo indice={1} nombre={"Secciones"} valor={estante.seccion} />
+      <BloqueInfo
+        indice={1}
+        nombre={"Carpetas"}
+        valor={estante._count.carpetas}
+      />
+      <BloqueInfo
+        indice={1}
+        nombre={"Archivos"}
+        valor={estante._count.archivos}
+      />
+      <BloqueInfo
+        indice={1}
+        nombre={"Tamaño total"}
+        valor={estante.pesoTotalEstante}
+      />
 
       <Div className="flex items-center justify-between">
         <BloqueInfo

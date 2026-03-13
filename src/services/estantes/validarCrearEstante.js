@@ -18,7 +18,14 @@ import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // F
  @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación.
 */
 
-export default async function validarCrearEstante(nombre, descripcion, alias) {
+export default async function validarCrearEstante(
+  nombre,
+  descripcion,
+  alias,
+  niveles,
+  secciones,
+  cabecera,
+) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -35,7 +42,10 @@ export default async function validarCrearEstante(nombre, descripcion, alias) {
     const validarCampos = ValidarCampos.validarCamposCrearEstante(
       nombre,
       descripcion,
-      alias
+      alias,
+      niveles,
+      secciones,
+      cabecera,
     );
 
     // 4. Si los campos no son válidos, se retorna un error.
@@ -52,7 +62,7 @@ export default async function validarCrearEstante(nombre, descripcion, alias) {
         id_institucion: validaciones.id_institucion,
         id_departamento: validaciones.id_departamento,
         nombre: validarCampos.nombre,
-        alias: validarCampos.alias
+        alias: validarCampos.alias,
       },
     });
 
@@ -65,17 +75,37 @@ export default async function validarCrearEstante(nombre, descripcion, alias) {
     }
 
     // crear codigo del departamento
+    const cantidadEstantes = await prisma.estante.count({
+      where: {
+        id_departamento: validaciones.id_departamento,
+      },
+    });
 
+    const numeroCodigo = String(
+      cantidadEstantes ? cantidadEstantes + 1 : cantidadEstantes,
+    ).padStart(4, "0");
+    const codigoNuevo =
+      validaciones.codDepa.toUpperCase() + "-EST-" + numeroCodigo;
 
+    // Verificar si el departamento ya existe
+    const estanteExistente = await prisma.estante.findFirst({
+      where: {
+        OR: [
+          { codigo: codigoNuevo },
+          { nombre: validarCampos.nombre },
+          { alias: validarCampos.alias },
+        ],
+        id_institucion: validaciones.id_institucion,
+      },
+    });
 
-
-
-
-
-
-
-
-
+    // 6. Si se encuentra un estante con el mismo nombre, se retorna un error.
+    if (estanteExistente) {
+      return retornarRespuestaFunciones("error", "Error, estante ya existe", {
+        id_usuario: validaciones.id_usuario,
+        codigo: 409,
+      });
+    }
 
     // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
@@ -83,6 +113,12 @@ export default async function validarCrearEstante(nombre, descripcion, alias) {
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       alias: validarCampos.alias,
+      niveles: validarCampos.niveles,
+      secciones: validarCampos.secciones,
+      cabecera: validarCampos.cabecera,
+      codigo: codigoNuevo,
+      nombreInstitucion: validaciones.nombreInstitucion,
+      nombreDepartamento: validaciones.nombreDepartamento,
       id_institucion: validaciones.id_institucion,
       id_departamento: validaciones.id_departamento,
     });

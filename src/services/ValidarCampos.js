@@ -835,6 +835,122 @@ export default class ValidarCampos {
   }
 
   /**
+   Valida el campo de cantidad de niveles. Verifica que el valor esté presente, sea un número
+   entero positivo, y que esté dentro del rango permitido (1 a MAX_NIVELES).
+   @function validarCampoNiveles
+   @param {string|number} nivel - Cantidad de niveles ingresada por el usuario.
+   @returns {Object} Objeto con estado, mensaje y número de niveles validado.
+  */
+  static validarCampoNivel(nivel) {
+    try {
+      // 1. Verifica si el campo está vacío
+      if (!nivel) {
+        return retornarRespuestaFunciones("error", "Campo nivel vacio");
+      }
+
+      // 2. Convierte el valor a número
+      const nivelNumero = Number(nivel);
+
+      // 3. Verifica si es un número válido y positivo
+      if (isNaN(nivelNumero) || nivelNumero <= 0) {
+        return retornarRespuestaFunciones("error", "Error, nivel inválido");
+      }
+
+      // 4. Verifica si es un número entero
+      if (!Number.isInteger(nivelNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, nivel debe ser un número entero",
+        );
+      }
+
+      // 5. Verifica si el número mínimo es 1
+      if (nivelNumero < 1) {
+        return retornarRespuestaFunciones("error", "Error, minimo 1 nivel");
+      }
+
+      const MAX_NIVELES = 20;
+
+      // 6. Verifica si excede el máximo permitido
+      if (nivelNumero > MAX_NIVELES) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, maximo ${MAX_NIVELES} niveles`,
+        );
+      }
+
+      // 7. Retorna respuesta exitosa con el número de niveles validado
+      return retornarRespuestaFunciones("ok", "Campo nivel valido", {
+        nivel: nivelNumero,
+      });
+    } catch (error) {
+      // 8. Manejo de errores inesperados
+      console.log(`Error interno campo nivel: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo nivel");
+    }
+  }
+
+  /**
+   Valida el campo de cantidad de secciones. Verifica que el valor esté presente, sea un número
+   entero positivo, y que esté dentro del rango permitido (1 a MAX_SECCIONES).
+   @function validarCampoSecciones
+   @param {string|number} seccion - Cantidad de secciones ingresada por el usuario.
+   @returns {Object} Objeto con estado, mensaje y número de secciones validado.
+  */
+  static validarCamposeccion(seccion) {
+    try {
+      // 1. Verifica si el campo está vacío
+      if (!seccion) {
+        return retornarRespuestaFunciones("error", "Campo seccion vacio");
+      }
+
+      // 2. Convierte el valor a número
+      const seccionNumero = Number(seccion);
+
+      // 3. Verifica si es un número válido y positivo
+      if (isNaN(seccionNumero) || seccionNumero <= 0) {
+        return retornarRespuestaFunciones("error", "Error, seccion inválida");
+      }
+
+      // 4. Verifica si es un número entero
+      if (!Number.isInteger(seccionNumero)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, seccion debe ser un número entero",
+        );
+      }
+
+      // 5. Verifica si el número mínimo es 1
+      if (seccionNumero < 1) {
+        return retornarRespuestaFunciones("error", "Error, minimo 1 seccion");
+      }
+
+      const MAX_SECCIONES = 10;
+
+      // 6. Verifica si excede el máximo permitido
+      if (seccionNumero > MAX_SECCIONES) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, maximo ${MAX_SECCIONES} secciones`,
+        );
+      }
+
+      // 7. Retorna respuesta exitosa con el número de secciones validado
+      return retornarRespuestaFunciones("ok", "Campo seccion valido", {
+        seccion: seccionNumero,
+      });
+    } catch (error) {
+      // 8. Manejo de errores inesperados
+      console.log(`Error interno campo seccion: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campo seccion");
+    }
+  }
+
+  /**
    Valida todos los campos necesarios para registrar un nuevo usuario. Aplica validaciones
    individuales para cada campo y retorna una respuesta consolidada.
    @function validarCamposRegistro
@@ -1198,7 +1314,8 @@ export default class ValidarCampos {
   }
 
   /**
-   Valida los campos necesarios para crear una comuna. @function validarCamposCrearComuna
+   Valida los campos necesarios para crear una comuna.
+   @function validarCamposCrearComuna
   */
   static validarCamposCrearComuna(
     nombre,
@@ -1259,7 +1376,8 @@ export default class ValidarCampos {
   }
 
   /**
-   Valida los campos necesarios para crear un circuito. @function validarCamposCrearCircuito
+   Valida los campos necesarios para crear un circuito.
+   @function validarCamposCrearCircuito
   */
   static validarCamposCrearCircuito(
     nombre,
@@ -1317,7 +1435,8 @@ export default class ValidarCampos {
   }
 
   /**
-   Valida los campos necesarios para crear un consejo comunal. @function validarCamposCrearConsejoComunal
+   Valida los campos necesarios para crear un consejo comunal.
+   @function validarCamposCrearConsejoComunal
   */
   static validarCamposCrearConsejoComunal(
     nombre,
@@ -1415,7 +1534,8 @@ export default class ValidarCampos {
   }
 
   /**
-   Valida los campos necesarios para registrar un vocero. @function validarCamposRegistroVocero
+   Valida los campos necesarios para registrar un vocero.
+   @function validarCamposRegistroVocero
   */
   static validarCamposRegistroVocero(
     nombre,
@@ -1583,6 +1703,65 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones("error", "Error interno campos cargo");
     }
   }
+
+  /**
+   Valida los campos necesarios para crear un nuevo cargo.
+   @function validarCamposCrearCargo
+   @param {string} nombre - El nombre del cargo.
+   @param {string} descripcion - La descripción del cargo.
+  */
+  static validarCamposCrearEstante(
+    nombre,
+    descripcion,
+    alias,
+    niveles,
+    secciones,
+    cabecera,
+  ) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarNombre = this.validarCampoNombre(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarAlias = this.validarCampoNombre(alias);
+
+      const validarNivel = this.validarCampoNivel(niveles);
+      const validarSeccion = this.validarCamposeccion(secciones);
+      const validarCabecera = this.validarCampoNumeroPasarBoolean(
+        cabecera,
+        "cabecera",
+      );
+
+      // 2. Verificar si alguna validación falló
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarAlias.status === "error") return validarAlias;
+      if (validarNivel.status === "error") return validarNivel;
+      if (validarSeccion.status === "error") return validarSeccion;
+      if (validarCabecera.status === "error") return validarCabecera;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        nombre: validarNombre.nombre,
+        descripcion: validarDescripcion.texto,
+        alias: validarAlias.nombre,
+        niveles: validarNivel.nivel,
+        secciones: validarSeccion.seccion,
+        cabecera: validarCabecera.boolean,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos cargo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones("error", "Error interno campos cargo");
+    }
+  }
+
+  /**
+   * De aqui en adelante estan las funciones de validacion para editar
+   *
+   *
+   */
 
   /**
    Valida los campos necesarios para crear una novedad.

@@ -24,7 +24,7 @@ export default async function obtenerDatosUsuarioToken() {
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -39,7 +39,7 @@ export default async function obtenerDatosUsuarioToken() {
           select: { id: true, nombre: true, id_municipio: true },
         },
         MiembrosDepartamentos: {
-          select: { id: true, nombre: true },
+          select: { id: true, nombre: true, codigo: true },
         },
       },
     });
@@ -62,6 +62,8 @@ export default async function obtenerDatosUsuarioToken() {
       id_institucion: datosUsuario?.MiembrosInstitucion?.[0]?.id,
       id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
       nombreInstitucion: datosUsuario?.MiembrosInstitucion?.[0]?.nombre,
+      nombreDepartamento: datosUsuario?.MiembrosDepartamentos?.[0]?.nombre,
+      codDepa: datosUsuario?.MiembrosDepartamentos?.[0]?.codigo,
     });
   } catch (error) {
     // 6. Manejo de errores inesperados.
@@ -70,7 +72,7 @@ export default async function obtenerDatosUsuarioToken() {
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno obtener datos usuario..."
+      "Error interno obtener datos usuario...",
     );
   }
 }

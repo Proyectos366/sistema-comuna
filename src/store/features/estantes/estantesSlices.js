@@ -41,7 +41,6 @@ const estantesSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
       .addCase(fetchEstantesIdDepartamento.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -54,7 +53,6 @@ const estantesSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
       .addCase(crearEstante.pending, (state) => {
         state.loading = true;
         state.error = null;

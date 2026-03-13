@@ -37,6 +37,42 @@ export async function GET(request) {
         id_departamento: validaciones.id_departamento,
         borrado: false,
       },
+      include: {
+        carpetas: {
+          select: {
+            id: true,
+            nombre: true,
+            descripcion: true,
+            nivel: true,
+            seccion: true,
+            _count: {
+              select: {
+                archivos: true,
+              },
+            },
+          },
+          orderBy: {
+            nombre: "asc",
+          },
+        },
+        archivos: {
+          select: {
+            id: true,
+            size: true,
+          },
+        },
+        _count: {
+          select: {
+            carpetas: true,
+            archivos: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          codigo: "asc",
+        },
+      ],
     });
 
     // 4. Condición de error si no se obtuvieron registros

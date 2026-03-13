@@ -10,6 +10,9 @@ import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la 
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import validarCrearEstante from "@/services/estantes/validarCrearEstante"; // Servicio para validar los datos de entrada del estante.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad en la base de datos.
+import { CrearCarpetasStorage } from "@/utils/crearRutaCarpetasStorage";
+import path from "path"; // Módulo de Node.js para manejar rutas de archivos y directorios.
+import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 
 /**
  Maneja las solicitudes HTTP POST para crear un nuevo estante.
@@ -21,13 +24,24 @@ import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar e
 
 export async function POST(request) {
   try {
-    // 1. Obtiene los datos del cuerpo de la solicitud (request)
-    const { nombre, descripcion, alias } = await request.json();
+    // 1.Instancia para crear carpetas en el storage
+    const crearRutasCarpetas = new CrearCarpetasStorage();
 
-    // 2. Valida los datos recibidos utilizando el servicio 'validarCrearEstante'
-    const validaciones = await validarCrearEstante(nombre, descripcion, alias);
+    // 2. Obtiene los datos del cuerpo de la solicitud (request)
+    const { nombre, descripcion, alias, niveles, secciones, cabecera } =
+      await request.json();
 
-    // 3. Condición de validación fallida
+    // 3. Valida los datos recibidos utilizando el servicio 'validarCrearEstante'
+    const validaciones = await validarCrearEstante(
+      nombre,
+      descripcion,
+      alias,
+      niveles,
+      secciones,
+      cabecera,
+    );
+
+    // 4. Condición de validación fallida
     if (validaciones.status === "error") {
       await registrarEventoSeguro(request, {
         tabla: "estante",
@@ -47,16 +61,94 @@ export async function POST(request) {
       );
     }
 
-    // 4. Crea un nuevo estante en la base de datos utilizando Prisma
-    const nuevoEstante = await prisma.estante.create({
-      data: {
-        nombre: validaciones.nombre,
-        descripcion: validaciones.descripcion,
-        id_usuario: validaciones.id_usuario,
-      },
+    // 5. Crea un nuevo estante en la base de datos utilizando Prisma
+    const nuevoEstante = await prisma.$transaction(async (tx) => {
+      // 5.1 Funcion para crear el estante
+      const estante = await tx.estante.create({
+        data: {
+          nombre: validaciones.nombre,
+          descripcion: validaciones.descripcion,
+          alias: validaciones.alias,
+          nivel: validaciones.niveles,
+          seccion: validaciones.secciones,
+          cabecera: validaciones.cabecera,
+          codigo: validaciones.codigo,
+          id_institucion: validaciones.id_institucion,
+          id_departamento: validaciones.id_departamento,
+          id_usuario: validaciones.id_usuario,
+        },
+      });
+
+      // 5.2 Intentar crear la carpeta física
+      try {
+        const storagePath = path.join(
+          process.cwd(),
+          `storage/instituciones/${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}`,
+        );
+
+        await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.nombre);
+      } catch (error) {
+        // Si falla la carpeta, lanzamos error para que se revierta la transacción
+        throw new Error("Error al crear carpeta de estante: " + error.message);
+      }
+
+      // 5.3 Consultar SOLO el estante que se acaba de crear
+      const estanteCreado = await tx.estante.findUnique({
+        where: {
+          id: estante.id,
+          borrado: false,
+        },
+        include: {
+          carpetas: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              nivel: true,
+              seccion: true,
+              _count: {
+                select: {
+                  archivos: true,
+                },
+              },
+            },
+            orderBy: {
+              nombre: "asc",
+            },
+          },
+          archivos: {
+            select: {
+              id: true,
+              size: true,
+            },
+          },
+          _count: {
+            select: {
+              carpetas: true,
+              archivos: true,
+            },
+          },
+        },
+      });
+
+      // 5.5 Asegurarnos de que carpetas sea un array aunque esté vacío
+      const estanteConCarpetasArray = {
+        ...estanteCreado,
+        carpetas: estanteCreado.carpetas || [], // Si es undefined, lo convertimos en array vacío
+        archivos: estanteCreado.archivos || [], // También aseguramos archivos
+        _count: estanteCreado._count || { carpetas: 0, archivos: 0 }, // Aseguramos _count
+      };
+
+      // 5.5 Procesar el estante individual
+      const estanteProcesado = procesarDetallesEstante([
+        estanteConCarpetasArray,
+      ]);
+
+      // 5.6 Retornar el primer elemento
+      return estanteProcesado[0];
     });
 
-    // 5. Condición de error al crear el estante en la base de datos
+    // 6. Condición de error al crear el estante en la base de datos
     if (!nuevoEstante) {
       await registrarEventoSeguro(request, {
         tabla: "estante",
@@ -72,7 +164,7 @@ export async function POST(request) {
       return generarRespuesta("error", "Error, no se creo el estante", {}, 400);
     }
 
-    // 6. Condición de éxito: el estante se creó correctamente
+    // 7. Condición de éxito: el estante se creó correctamente
     await registrarEventoSeguro(request, {
       tabla: "estante",
       accion: "CREAR_ESTANTE",
@@ -83,7 +175,7 @@ export async function POST(request) {
       datosDespues: nuevoEstante,
     });
 
-    // 7. Retorna una respuesta de éxito con un código de estado 201 (Created)
+    // 8. Retorna una respuesta de éxito con un código de estado 201 (Created)
     return generarRespuesta(
       "ok",
       "Estante creado",
@@ -91,7 +183,7 @@ export async function POST(request) {
       201,
     );
   } catch (error) {
-    // 8. Manejo de errores inesperados (bloque catch)
+    // 9. Manejo de errores inesperados (bloque catch)
     console.log(`Error interno crear estante: ` + error);
 
     // Registra un evento de error interno en la bitácora

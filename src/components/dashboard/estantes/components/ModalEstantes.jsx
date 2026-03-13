@@ -105,7 +105,10 @@ export default function ModalEstantes({
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
           <ModalDatos titulo="Alias" descripcion={alias} />
-          <ModalDatos titulo="Niveles" descripcion={Number(niveles)} />
+          <ModalDatos
+            titulo="Niveles"
+            descripcion={niveles ? Number(niveles) : niveles}
+          />
           <ModalDatos titulo="Secciones" descripcion={secciones} />
           <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
         </ModalDatosContenedor>
