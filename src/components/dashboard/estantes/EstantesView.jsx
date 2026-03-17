@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
+import SelectOpcion from "@/components/SelectOpcion";
 import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
@@ -16,14 +17,13 @@ import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccionDepartamento";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchEstantes } from "@/store/features/estantes/thunks/todosEstantes";
 import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
 import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
-import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccionDepartamento";
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
-import SelectOpcion from "@/components/SelectOpcion";
 
 export default function EstantesView() {
   const dispatch = useDispatch();

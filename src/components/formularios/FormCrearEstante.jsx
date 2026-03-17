@@ -3,18 +3,20 @@ import { useDispatch } from "react-redux";
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
 import AgruparCamposForm from "@/components/AgruparCamposForm";
-import InputNombre from "@/components/inputs/InputNombre";
+import InputNombreEstante from "@/components/inputs/InputNombreEstante";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
+import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { limpiarCampos } from "@/utils/limpiarForm";
-import SelectOpcion from "../SelectOpcion";
 import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
 import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
 import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
+
 import cantNiveles from "@/constants/cantNiveles";
 import cantSecciones from "@/constants/cantSecciones";
 
@@ -55,12 +57,10 @@ export default function FormCrearEstante({
       }}
     >
       <DivScroll>
-        <InputNombre
+        <InputNombreSinValidar
           value={nombre}
           setValue={setNombre}
-          validarNombre={validarNombre}
-          setValidarNombre={setValidarNombre}
-          placeholder={"Ej: Estante Principal"}
+          nombre={"Nombre"}
         />
 
         <InputDescripcion
@@ -104,13 +104,13 @@ export default function FormCrearEstante({
           seleccione={"Seleccione"}
         />
 
-        <InputNombre
-        nombre={'Alias'}
-          value={alias}
-          setValue={setAlias}
-          validarNombre={validarAlias}
-          setValidarNombre={setValidarAlias}
-          placeholder={"Ej: Estante A"}
+        <InputNombreEstante
+          value={nombre}
+          setValue={setNombre}
+          validarEstante={validarNombre}
+          setValidarEstante={setValidarNombre}
+          nombre={"Alias"}
+          indice="estante2"
         />
 
         <AgruparCamposForm>
