@@ -86,7 +86,7 @@ export async function POST(request) {
           `storage/instituciones/${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}`,
         );
 
-        await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.nombre);
+        await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.alias);
       } catch (error) {
         // Si falla la carpeta, lanzamos error para que se revierta la transacción
         throw new Error("Error al crear carpeta de estante: " + error.message);

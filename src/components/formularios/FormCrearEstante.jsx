@@ -105,10 +105,10 @@ export default function FormCrearEstante({
         />
 
         <InputNombreEstante
-          value={nombre}
-          setValue={setNombre}
-          validarEstante={validarNombre}
-          setValidarEstante={setValidarNombre}
+          value={alias}
+          setValue={setAlias}
+          validarEstante={validarAlias}
+          setValidarEstante={setValidarAlias}
           nombre={"Alias"}
           indice="estante2"
         />

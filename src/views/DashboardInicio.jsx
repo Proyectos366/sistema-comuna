@@ -255,10 +255,8 @@ export default function DashboardInicio() {
               screenSize={screenSize}
             />
 
-            <Main className={`bg-[#faf5f8] rounded-md px-4 h-full`}>
-              <Div
-                className={"h-[calc(100vh-200px)] overflow-y-auto no-scrollbar"}
-              >
+            <Main className="bg-[#faf5f8] rounded-md p-4 h-full overflow-hidden">
+              <Div className="h-full overflow-y-auto no-scrollbar">
                 <InicioUsuarios />
               </Div>
             </Main>
@@ -269,4 +267,14 @@ export default function DashboardInicio() {
       )}
     </>
   );
+}
+
+{
+  /*
+    <Main className={`bg-[#faf5f8] rounded-md p-4 h-full`}>
+      <Div className={"h-[calc(100vh-200px)] overflow-y-auto no-scrollbar"}
+        <InicioUsuarios />
+      </Div>
+    </Main>
+  */
 }

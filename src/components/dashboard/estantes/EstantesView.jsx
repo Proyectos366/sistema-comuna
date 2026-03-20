@@ -148,16 +148,18 @@ export default function EstantesView() {
             dispatch(abrirModal("crear"));
           }}
         >
-          <SelectOpcion
-            idOpcion={idDepartamento}
-            nombre={"Departamentos"}
-            handleChange={(e) => {
-              cambiarSeleccionDepartamento(e, setIdDepartamento);
-            }}
-            opciones={departamentos}
-            seleccione={"Seleccione"}
-            setNombre={setNombreDepartamento}
-          />
+          {usuarioActivo.id_rol <= 2 && (
+            <SelectOpcion
+              idOpcion={idDepartamento}
+              nombre={"Departamentos"}
+              handleChange={(e) => {
+                cambiarSeleccionDepartamento(e, setIdDepartamento);
+              }}
+              opciones={departamentos}
+              seleccione={"Seleccione"}
+              setNombre={setNombreDepartamento}
+            />
+          )}
 
           {estantes.length !== 0 && (
             <BuscadorOrdenador

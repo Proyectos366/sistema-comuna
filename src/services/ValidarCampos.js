@@ -15,6 +15,7 @@ import { claveRegex } from "@/utils/regex/claveRegex";
 import { rifRegex } from "@/utils/regex/rifRegex";
 import { textRegex } from "@/utils/regex/textRegex";
 import { fechaFormatoIsoRegex } from "@/utils/regex/fechaFormatoIsoRegex";
+import { estanteRegex } from "@/utils/regex/nombreEstanteRegex";
 
 /**
  Clase que agrupa métodos estáticos para validar campos individuales. Cada método retorna una
@@ -71,17 +72,14 @@ export default class ValidarCampos {
     try {
       // 1. Verifica si el campo está vacío
       if (!nombre) {
-        return retornarRespuestaFunciones(
-          "error",
-          "Error, campo nombre vacio...",
-        );
+        return retornarRespuestaFunciones("error", "Error, campo nombre vacio");
       }
 
       // 2. Valida el formato del nombre usando expresión regular
       if (!textRegex.test(nombre)) {
         return retornarRespuestaFunciones(
           "error",
-          "Error, formato de nombre invalido...",
+          "Error, formato de nombre invalido probando",
         );
       }
 
@@ -134,6 +132,43 @@ export default class ValidarCampos {
         "error",
         "Error, interno campo texto...",
       );
+    }
+  }
+
+  /**
+   Valida el campo de alias. Verifica que no esté vacío y que cumpla con el formato
+   permitido: letras, números, espacios y el prefijo "no" (opcional).
+   Formato válido: "estante no 01", "estante 01", "estante rosado grande no 01", "estante 0001"
+   @function validarCampoAlias
+   @param {string} alias - Alias ingresado por el usuario.
+   @returns {Object} Objeto con estado, mensaje y alias normalizado si es válido.
+  */
+  static validarCampoAlias(alias) {
+    try {
+      // 1. Verifica si el campo está vacío
+      if (!alias) {
+        return retornarRespuestaFunciones("error", "Error, campo alias vacío");
+      }
+
+      // 2. Expresión regular para validar el formato
+      if (!estanteRegex.test(alias)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, formato de alias inválido",
+        );
+      }
+
+      // 3. Normaliza el alias (opcional - puedes elegir qué formato prefieres)
+      const aliasNormalizado = alias.toLowerCase();
+
+      // 4. Retorna respuesta exitosa con el alias validado
+      return retornarRespuestaFunciones("ok", "Campo alias correcto", {
+        alias: aliasNormalizado,
+      });
+    } catch (error) {
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno campo alias: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno campo alias");
     }
   }
 
@@ -1720,9 +1755,9 @@ export default class ValidarCampos {
   ) {
     try {
       // 1. Validar cada campo individualmente.
-      const validarNombre = this.validarCampoNombre(nombre);
+      const validarNombre = this.validarCampoTexto(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
-      const validarAlias = this.validarCampoNombre(alias);
+      const validarAlias = this.validarCampoAlias(alias);
 
       const validarNivel = this.validarCampoNivel(niveles);
       const validarSeccion = this.validarCamposeccion(secciones);
@@ -1741,9 +1776,9 @@ export default class ValidarCampos {
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados", {
-        nombre: validarNombre.nombre,
+        nombre: validarNombre.texto,
         descripcion: validarDescripcion.texto,
-        alias: validarAlias.nombre,
+        alias: validarAlias.alias,
         niveles: validarNivel.nivel,
         secciones: validarSeccion.seccion,
         cabecera: validarCabecera.boolean,
@@ -1759,8 +1794,18 @@ export default class ValidarCampos {
 
   /**
    * De aqui en adelante estan las funciones de validacion para editar
-   *
-   *
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
    */
 
   /**
