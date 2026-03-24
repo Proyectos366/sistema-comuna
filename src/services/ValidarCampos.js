@@ -2520,6 +2520,65 @@ export default class ValidarCampos {
   }
 
   /**
+   Valida los campos necesarios para editar un estante.
+   @function validarCamposEditarEstante
+   @param {string} nombre - El nuevo nombre del estante.
+   @param {string} descripcion - La nueva descripción del estante.
+   @param {number} niveles - La nueva cantidad de niveles del estante.
+   @param {number} secciones - La nueva cantidad de secciones del estante.
+   @param {boolean} cabecera - Indica si el estante es de cabecera o no.
+   @param {number} id_estante - El ID del estante a editar.
+  */
+  static validarCamposEditarEstante(
+    nombre,
+    descripcion,
+    niveles,
+    secciones,
+    cabecera,
+    id_estante,
+  ) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarIdEstante = this.validarCampoId(id_estante, "estante");
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarNivel = this.validarCampoNivel(niveles);
+      const validarSeccion = this.validarCamposeccion(secciones);
+      const validarCabecera = this.validarCampoNumeroPasarBoolean(
+        cabecera,
+        "cabecera",
+      );
+
+      // 2. Verificar si alguna validación falló
+      if (validarIdEstante.status === "error") return validarIdEstante;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarNivel.status === "error") return validarNivel;
+      if (validarSeccion.status === "error") return validarSeccion;
+      if (validarCabecera.status === "error") return validarCabecera;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        id_estante: validarIdEstante.id,
+        nombre: validarNombre.texto,
+        descripcion: validarDescripcion.texto,
+        niveles: validarNivel.nivel,
+        secciones: validarSeccion.seccion,
+        cabecera: validarCabecera.boolean,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos editar cargo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos editar cargo...",
+      );
+    }
+  }
+
+  /**
    Valida los campos necesarios para editar una novedad.
    @function validarCamposEditarNovedad
    @param {string} nombre - El nuevo nombre o título de la novedad.

@@ -48,10 +48,12 @@ export default function EstantesView() {
   const [nivelesEstante, setNivelesEstante] = useState("");
   const [seccionesEstante, setSeccionesEstante] = useState("");
   const [cabeceraEstante, setCabeceraEstante] = useState("");
+  const [opcion, setOpcion] = useState("crear");
 
   const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [idEstante, setIdEstante] = useState("");
   const [idDepartamento, setIdDepartamento] = useState("");
+  const [borradoRestauradoEstante, setBorradoRestauradoEstante] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
@@ -82,6 +84,8 @@ export default function EstantesView() {
     setNiveles: setNivelesEstante,
     setSecciones: setSeccionesEstante,
     setCabecera: setCabeceraEstante,
+    setBorradoRestaurado: setBorradoRestauradoEstante,
+    setOpcion: setOpcion,
   };
 
   const datosEstante = {
@@ -92,6 +96,8 @@ export default function EstantesView() {
     niveles: nivelesEstante,
     secciones: seccionesEstante,
     cabecera: cabeceraEstante,
+    borradoRestaurado: borradoRestauradoEstante,
+    opcion: opcion,
   };
 
   const validaciones = {
@@ -127,8 +133,8 @@ export default function EstantesView() {
     setIdEstante(estante.id);
     setNombreEstante(estante.nombre);
     setDescripcionEstante(estante.descripcion);
-    setNivelesEstante(estante.niveles);
-    setSeccionesEstante(estante.secciones);
+    setNivelesEstante(estante.nivel);
+    setSeccionesEstante(estante.seccion);
     setCabeceraEstante(estante.cabecera);
 
     dispatch(abrirModal("editar"));
@@ -196,6 +202,9 @@ export default function EstantesView() {
                           <ListadoEstantes
                             estante={estante}
                             editarEstante={editarEstante}
+                            setOpcion={setOpcion}
+                            setIdEstante={setIdEstante}
+                            setBorradoRestaurado={setBorradoRestauradoEstante}
                           />
                         )}
                       </FichaDetalles>

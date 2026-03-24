@@ -62,16 +62,40 @@ export default async function validarCrearEstante(
         id_institucion: validaciones.id_institucion,
         id_departamento: validaciones.id_departamento,
         nombre: validarCampos.nombre,
-        alias: validarCampos.alias,
       },
     });
 
     // 6. Si se encuentra un estante con el mismo nombre, se retorna un error.
     if (nombreRepetido) {
-      return retornarRespuestaFunciones("error", "Error, estante ya existe", {
-        id_usuario: validaciones.id_usuario,
-        codigo: 409,
-      });
+      return retornarRespuestaFunciones(
+        "error",
+        "Error nombre de estante repetido",
+        {
+          id_usuario: validaciones.id_usuario,
+          codigo: 409,
+        },
+      );
+    }
+
+    // 7. Verificar si el nombre del estante ya existe en la base de datos.
+    const aliasRepetido = await prisma.estante.findFirst({
+      where: {
+        id_institucion: validaciones.id_institucion,
+        id_departamento: validaciones.id_departamento,
+        alias: validarCampos.alias,
+      },
+    });
+
+    // 8. Si se encuentra un estante con el mismo alias, se retorna un error.
+    if (aliasRepetido) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error alias de estante repetido",
+        {
+          id_usuario: validaciones.id_usuario,
+          codigo: 409,
+        },
+      );
     }
 
     // crear codigo del departamento
@@ -90,7 +114,7 @@ export default async function validarCrearEstante(
     // Verificar si el departamento ya existe
     const estanteExistente = await prisma.estante.findFirst({
       where: {
-        OR: [
+        AND: [
           { codigo: codigoNuevo },
           { nombre: validarCampos.nombre },
           { alias: validarCampos.alias },
@@ -101,7 +125,7 @@ export default async function validarCrearEstante(
 
     // 6. Si se encuentra un estante con el mismo nombre, se retorna un error.
     if (estanteExistente) {
-      return retornarRespuestaFunciones("error", "Error, estante ya existe", {
+      return retornarRespuestaFunciones("error", "Error estante existente", {
         id_usuario: validaciones.id_usuario,
         codigo: 409,
       });

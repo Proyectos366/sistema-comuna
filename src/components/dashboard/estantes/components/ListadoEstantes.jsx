@@ -9,12 +9,13 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-//import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
+import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
+import { abrirModal } from "@/store/features/modal/slicesModal";
 
-export default function ListadoEstantes({ estante, editarEstante }) {
+export default function ListadoEstantes({ estante, editarEstante, setOpcion, setIdEstante, setBorradoRestaurado }) {
   const dispatch = useDispatch();
 
-  console.log(estante);
+  //console.log(estante);
 
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
@@ -74,11 +75,15 @@ export default function ListadoEstantes({ estante, editarEstante }) {
         <SwitchToggle
           checked={!estante.borrado}
           onToggle={() => {
+            setOpcion('eliminar')
+            setIdEstante(estante.id);
+            setBorradoRestaurado(estante.borrado);
+            dispatch(abrirModal("confirmar"));            
             // dispatch(
             //   eliminarRestaurarEstante({
             //     estado: estante.borrado,
             //     id_estante: estante.id,
-            //   })
+            //   }),
             // );
           }}
         />

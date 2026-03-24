@@ -10,6 +10,7 @@ import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la 
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad en la base de datos.
 import validarEditarEstante from "@/services/estantes/validarEditarEstante"; // Servicio para validar los datos de entrada del estante.
+import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 
 /**
  Maneja las solicitudes HTTP PATCH para actualizar un estante.
@@ -22,12 +23,16 @@ import validarEditarEstante from "@/services/estantes/validarEditarEstante"; // 
 export async function PATCH(request) {
   try {
     // 1. Obtiene los datos del cuerpo de la solicitud (request)
-    const { nombre, descripcion, id_estante } = await request.json();
+    const { nombre, descripcion, niveles, secciones, cabecera, id_estante } =
+      await request.json();
 
     // 2. Valida los datos recibidos utilizando el servicio 'validarEditarEstante'
     const validaciones = await validarEditarEstante(
       nombre,
       descripcion,
+      niveles,
+      secciones,
+      cabecera,
       id_estante,
     );
 
@@ -52,24 +57,78 @@ export async function PATCH(request) {
     }
 
     // 4. Inicia una transacción de Prisma para asegurar la integridad de los datos
-    const [actualizado, estanteActualizado] = await prisma.$transaction([
-      // 4.1. Actualiza el estante en la base de datos
-      prisma.estante.update({
-        where: { id: validaciones.id_estante },
-        data: {
-          nombre: validaciones.nombre,
-          descripcion: validaciones.descripcion,
-        },
-      }),
-
-      // 4.2. Consulta el registro actualizado para confirmar la operación
-      prisma.estante.findFirst({
+    const estanteActualizado = await prisma.$transaction(async (tx) => {
+      // 4.1 Actualiza el estante en la base de datos
+      const estante = await tx.estante.update({
         where: {
           id: validaciones.id_estante,
           borrado: false,
         },
-      }),
-    ]);
+        data: {
+          nombre: validaciones.nombre,
+          descripcion: validaciones.descripcion,
+          nivel: validaciones.niveles,
+          seccion: validaciones.secciones,
+          cabecera: validaciones.cabecera,
+          // Nota: el alias no se actualiza porque es el identificador de la carpeta física
+        },
+      });
+
+      // 4.2 Consultar el estante actualizado con sus relaciones
+      const estanteCreado = await tx.estante.findUnique({
+        where: {
+          id: estante.id,
+          borrado: false,
+        },
+        include: {
+          carpetas: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              nivel: true,
+              seccion: true,
+              _count: {
+                select: {
+                  archivos: true,
+                },
+              },
+            },
+            orderBy: {
+              nombre: "asc",
+            },
+          },
+          archivos: {
+            select: {
+              id: true,
+              size: true,
+            },
+          },
+          _count: {
+            select: {
+              carpetas: true,
+              archivos: true,
+            },
+          },
+        },
+      });
+
+      // 4.3 Asegurarnos de que carpetas sea un array aunque esté vacío
+      const estanteConCarpetasArray = {
+        ...estanteCreado,
+        carpetas: estanteCreado?.carpetas || [],
+        archivos: estanteCreado?.archivos || [],
+        _count: estanteCreado?._count || { carpetas: 0, archivos: 0 },
+      };
+
+      // 4.4 Procesar el estante individual
+      const estanteProcesado = procesarDetallesEstante([
+        estanteConCarpetasArray,
+      ]);
+
+      // 4.5 Retornar el primer elemento
+      return estanteProcesado[0];
+    });
 
     // 5. Condición de error al consultar el estante actualizado
     if (!estanteActualizado) {

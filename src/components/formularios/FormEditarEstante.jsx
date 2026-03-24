@@ -1,16 +1,25 @@
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
 import AgruparCamposForm from "@/components/AgruparCamposForm";
-import InputNombre from "@/components/inputs/InputNombre";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputNombreSinValidar from "@/components/inputs/InputNombreSinValidar";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
+
 import { textRegex } from "@/utils/regex/textRegex";
 import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
+import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
+import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
+
+import cantNiveles from "@/constants/cantNiveles";
+import cantSecciones from "@/constants/cantSecciones";
 
 export default function FormEditarEstante({
   acciones,
@@ -50,7 +59,32 @@ export default function FormEditarEstante({
     };
 
     validarYActualizar(nombre, setValidarNombre);
-  }, [nombre]);
+
+    // Transformar niveles
+    if (niveles) {
+      const nivelesStr = String(niveles);
+      const nivelesTransformado =
+        nivelesStr.length === 1 ? `0${nivelesStr}` : nivelesStr;
+      if (nivelesTransformado !== niveles) {
+        setNiveles(nivelesTransformado);
+      }
+    }
+
+    // Transformar secciones
+    if (secciones) {
+      const seccionesStr = String(secciones);
+      if (seccionesStr !== secciones) {
+        setSecciones(seccionesStr);
+      }
+    }
+
+    // Validar cabecera
+    if (cabecera) {
+      const cabeceraStr = cabecera ? "1" : "2";
+
+      setCabecera(cabeceraStr);
+    }
+  }, [nombre, niveles, secciones, descripcion, cabecera]);
 
   return (
     <Formulario
@@ -59,12 +93,10 @@ export default function FormEditarEstante({
       }}
     >
       <DivScroll>
-        <InputNombre
+        <InputNombreSinValidar
           value={nombre}
           setValue={setNombre}
-          validarNombre={validarNombre}
-          setValidarNombre={setValidarNombre}
-          placeholder={"Ej: Estante Principal"}
+          nombre={"Nombre"}
         />
 
         <InputDescripcion
@@ -75,6 +107,39 @@ export default function FormEditarEstante({
           autoComplete="off"
         />
 
+        <SelectOpcion
+          idOpcion={cabecera}
+          nombre={"Cabecera"}
+          handleChange={(e) => {
+            cambiarSeleccionCabecera(e, setCabecera);
+          }}
+          opciones={[
+            { id: "1", nombre: "Si" },
+            { id: "2", nombre: "No" },
+          ]}
+          seleccione={"Seleccione"}
+        />
+
+        <SelectOpcion
+          idOpcion={niveles}
+          nombre={"Niveles"}
+          handleChange={(e) => {
+            cambiarSeleccionNivel(e, setNiveles);
+          }}
+          opciones={cantNiveles}
+          seleccione={"Seleccione"}
+        />
+
+        <SelectOpcion
+          idOpcion={secciones}
+          nombre={"Secciones"}
+          handleChange={(e) => {
+            cambiarSeleccionSeccion(e, setSecciones);
+          }}
+          opciones={cantSecciones}
+          seleccione={"Seleccione"}
+        />
+
         <AgruparCamposForm>
           <BotonAceptarCancelar
             indice={"aceptar"}
@@ -82,20 +147,32 @@ export default function FormEditarEstante({
               dispatch(cerrarModal("editar"));
               dispatch(abrirModal("confirmarCambios"));
             }}
-            nombre={"Guardar cambios"}
+            nombre={"Actualizar"}
             campos={{
               nombre,
               descripcion,
+              niveles,
+              secciones,
+              cabecera,
             }}
           />
 
           <BotonLimpiarCampos
             aceptar={() => {
-              limpiarCampos({ setNombre });
+              limpiarCampos({
+                setNombre,
+                setDescripcion,
+                setNiveles,
+                setSecciones,
+                setCabecera,
+              });
             }}
             campos={{
               nombre,
               descripcion,
+              niveles,
+              secciones,
+              cabecera,
             }}
           />
         </AgruparCamposForm>
