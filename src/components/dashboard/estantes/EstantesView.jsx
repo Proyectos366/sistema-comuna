@@ -21,9 +21,10 @@ import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccion
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchEstantes } from "@/store/features/estantes/thunks/todosEstantes";
-import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
+//import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
 import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
+import { fetchEstantesDepartamentoMiembro } from "@/store/features/estantes/thunks/todosEstantesDepartamentoMiembro";
 
 export default function EstantesView() {
   const dispatch = useDispatch();
@@ -35,8 +36,8 @@ export default function EstantesView() {
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
       dispatch(fetchEstantes());
-    } else if (usuarioActivo.id_rol === 2) {
-      dispatch(fetchEstantesInstitucion());
+    } else {
+      dispatch(fetchEstantesDepartamentoMiembro());
     }
 
     dispatch(fetchDepartamentos());

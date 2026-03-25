@@ -33,7 +33,6 @@ export async function GET() {
     const todosEstantes = await prisma.estante.findMany({
       where: {
         id_institucion: validaciones.id_institucion,
-        borrado: false,
       },
       include: {
         carpetas: {
@@ -79,7 +78,7 @@ export async function GET() {
         "ok",
         "Aún no hay estantes",
         { estantes: [] },
-        200,
+        404,
       );
     }
 

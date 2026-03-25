@@ -9,6 +9,11 @@ const cantNiveles = [
   { id: "08", nombre: "08" },
   { id: "09", nombre: "09" },
   { id: "10", nombre: "10" },
+];
+
+export default cantNiveles;
+
+/**
   { id: "11", nombre: "11" },
   { id: "12", nombre: "12" },
   { id: "13", nombre: "13" },
@@ -19,6 +24,4 @@ const cantNiveles = [
   { id: "18", nombre: "18" },
   { id: "19", nombre: "19" },
   { id: "20", nombre: "20" },
-];
-
-export default cantNiveles;
+*/

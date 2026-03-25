@@ -9,6 +9,7 @@
 import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import validarConsultarEstantesIdDepartamento from "@/services/estantes/validarConsultarEstantesIdDepartamento"; // Servicio para validar la consulta de estantes.
+import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 
 /**
  Maneja las solicitudes HTTP GET para obtener todos los estantes por id_departamento.
@@ -31,11 +32,10 @@ export async function GET(request) {
       );
     }
 
-    // 3. Consulta todos los estantes no borrados en la base de datos
+    // 3. Consulta todos los estantes por id_departamento
     const todosEstantes = await prisma.estante.findMany({
       where: {
         id_departamento: validaciones.id_departamento,
-        borrado: false,
       },
       include: {
         carpetas: {
@@ -75,17 +75,25 @@ export async function GET(request) {
       ],
     });
 
-    // 4. Condición de error si no se obtuvieron registros
-    if (!todosEstantes) {
-      return generarRespuesta("error", "Error, al consultar estantes", {}, 400);
+    // 4. Condición si no se obtuvieron registros
+    if (todosEstantes.length === 0) {
+      return generarRespuesta(
+        "ok",
+        "Aún no hay estantes",
+        { estantes: [] },
+        404,
+      );
     }
+
+    // 5. Procesar los datos (calcular pesos por carpeta y por estante)
+    const estantesConPesos = procesarDetallesEstante(todosEstantes);
 
     // 5. Condición de éxito: se encontraron estantes
     return generarRespuesta(
       "ok",
       "Todas los estantes",
       {
-        estantes: todosEstantes,
+        estantes: estantesConPesos,
       },
       201,
     );

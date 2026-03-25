@@ -4,15 +4,18 @@ import axios from "axios";
 export const eliminarRestaurarEstante = createAsyncThunk(
   "estantes/eliminarRestaurarEstante",
   async (data, thunkAPI) => {
+    const { estado, id_estante } = data.deleteEstante;
+
     try {
       const response = await axios.patch(
-        `/api/estantes/${!data.estado ? "eliminar" : "restaurar"}-estante`,
+        `/api/estantes/${!estado ? "eliminar" : "restaurar"}-estante`,
         {
-          id_estante: data.id_estante,
-          estado: data.estado,
+          id_estante: id_estante,
+          estado: estado,
         },
       );
 
+      data.notify(response.data.message);
       return response?.data?.estantes;
     } catch (error) {
       return thunkAPI.rejectWithValue(

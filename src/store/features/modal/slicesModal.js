@@ -8,6 +8,7 @@ const initialState = {
     confirmar: false,
     confirmarCambios: false,
     consultar: false,
+    confirmarEliminarRestaurar: false,
   },
 };
 

@@ -10,6 +10,7 @@ import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la ba
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import validarRestaurarEstante from "@/services/estantes/validarRestaurarEstante"; // Servicio para validar la restauración del estante
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 
 /**
  Maneja las solicitudes HTTP PATCH para restaurar (lógicamente) un estante.
@@ -49,34 +50,84 @@ export async function PATCH(request) {
       );
     }
 
-    // 4. Ejecuta transacción: actualiza el estado de restauracion y consulta el estante actualizado
-    const [restaurandoEstante, estanteActualizado] = await prisma.$transaction([
-      prisma.estante.update({
-        where: { id: validaciones.id_estante },
-        data: {
-          borrado: validaciones.borrado,
-        },
-      }),
-
-      prisma.estante.findFirst({
+    // 4. Ejecuta transacción: actualiza el estado de eliminación y consulta el estante actualizado
+    const estanteRestaurado = await prisma.$transaction(async (tx) => {
+      // 4.1 Actualiza el estado de eliminación del estante
+      const estante = await tx.estante.update({
         where: {
           id: validaciones.id_estante,
         },
-      }),
-    ]);
+        data: {
+          borrado: validaciones.borrado,
+        },
+      });
+
+      // 4.2 Consultar el estante actualizado con sus relaciones
+      const estanteConsultado = await tx.estante.findUnique({
+        where: {
+          id: estante.id,
+        },
+        include: {
+          carpetas: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              nivel: true,
+              seccion: true,
+              _count: {
+                select: {
+                  archivos: true,
+                },
+              },
+            },
+            orderBy: {
+              nombre: "asc",
+            },
+          },
+          archivos: {
+            select: {
+              id: true,
+              size: true,
+            },
+          },
+          _count: {
+            select: {
+              carpetas: true,
+              archivos: true,
+            },
+          },
+        },
+      });
+
+      // 4.3 Asegurarnos de que carpetas sea un array aunque esté vacío
+      const estanteConCarpetasArray = {
+        ...estanteConsultado,
+        carpetas: estanteConsultado?.carpetas || [],
+        archivos: estanteConsultado?.archivos || [],
+        _count: estanteConsultado?._count || { carpetas: 0, archivos: 0 },
+      };
+
+      // 4.4 Procesar el estante individual
+      const estanteProcesado = procesarDetallesEstante([
+        estanteConCarpetasArray,
+      ]);
+
+      // 4.5 Retornar el primer elemento
+      return estanteProcesado[0];
+    });
 
     // 5. Si no se obtiene el estante o la actualización falla, registra el error y retorna
-    if (!restaurandoEstante || !estanteActualizado) {
+    if (!estanteRestaurado) {
       await registrarEventoSeguro(request, {
         tabla: "estante",
-        accion: "ERROR_DELETE_ESTANTE",
+        accion: "ERROR_RESTORE_ESTANTE",
         id_objeto: 0,
         id_usuario: validaciones.id_usuario,
         descripcion: "No se pudo restaurar el estante",
         datosAntes: null,
         datosDespues: {
-          restaurandoEstante,
-          estanteActualizado,
+          estanteRestaurado,
         },
       });
 
@@ -87,13 +138,12 @@ export async function PATCH(request) {
     await registrarEventoSeguro(request, {
       tabla: "estante",
       accion: "RESTAURAR_ESTANTE",
-      id_objeto: estanteActualizado.id,
+      id_objeto: estanteRestaurado.id,
       id_usuario: validaciones.id_usuario,
       descripcion: "Estante restaurado con exito",
       datosAntes: null,
       datosDespues: {
-        restaurandoEstante,
-        estanteActualizado,
+        estanteRestaurado,
       },
     });
 
@@ -102,13 +152,13 @@ export async function PATCH(request) {
       "ok",
       "Estante restaurado correctamente",
       {
-        estantes: estanteActualizado,
+        estantes: estanteRestaurado,
       },
       200,
     );
   } catch (error) {
     // 8. Manejo de errores inesperados
-    console.log(`Error interno (restaurar estante): ` + error);
+    console.log(`Error interno restaurar estante: ` + error);
 
     await registrarEventoSeguro(request, {
       tabla: "estante",
@@ -123,7 +173,7 @@ export async function PATCH(request) {
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta(
       "error",
-      "Error, interno (restaurar estante)",
+      "Error, interno restaurar estante",
       {},
       500,
     );

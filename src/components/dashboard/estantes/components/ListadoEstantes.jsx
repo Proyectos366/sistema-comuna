@@ -52,12 +52,12 @@ export default function ListadoEstantes({ estante, editarEstante, setOpcion, set
       <BloqueInfo
         indice={1}
         nombre={"Carpetas"}
-        valor={estante._count.carpetas}
+        valor={estante._count?.carpetas}
       />
       <BloqueInfo
         indice={1}
         nombre={"Archivos"}
-        valor={estante._count.archivos}
+        valor={estante._count?.archivos}
       />
       <BloqueInfo
         indice={1}
@@ -78,7 +78,7 @@ export default function ListadoEstantes({ estante, editarEstante, setOpcion, set
             setOpcion('eliminar')
             setIdEstante(estante.id);
             setBorradoRestaurado(estante.borrado);
-            dispatch(abrirModal("confirmar"));            
+            dispatch(abrirModal("confirmarEliminarRestaurar"));            
             // dispatch(
             //   eliminarRestaurarEstante({
             //     estado: estante.borrado,

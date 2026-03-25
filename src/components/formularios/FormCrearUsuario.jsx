@@ -158,11 +158,12 @@ export default function FormCrearUsuario({
 
         <InputNombre
           nombre={"Apellido"}
+          htmlFor={"apellido"}
           value={apellido}
           setValue={setApellido}
           validarNombre={validarApellido}
           setValidarNombre={setValidarApellido}
-          placeholder={"Estefania"}
+          placeholder={"morgado"}
         />
 
         <SelectOpcion

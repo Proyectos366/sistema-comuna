@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -10,12 +9,12 @@ import FormEditarEstante from "@/components/formularios/FormEditarEstante";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
+import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
 import { crearEstante } from "@/store/features/estantes/thunks/crearEstante";
 import { actualizarEstante } from "@/store/features/estantes/thunks/actualizarEstante";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import AvisoAdvertencia from "../../participantes/components/AvisoAdvertencia";
 import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
 
 export default function ModalEstantes({
@@ -31,6 +30,11 @@ export default function ModalEstantes({
   const mostrarConfirmarCambios = useSelector(
     (state) => state.modal.modales.confirmarCambios,
   );
+
+  const mostrarEliminarRestaurar = useSelector(
+    (state) => state.modal.modales.confirmarEliminarRestaurar,
+  );
+
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
@@ -67,6 +71,7 @@ export default function ModalEstantes({
         }),
       ).unwrap();
     } catch (error) {
+      notify(error);
       console.log(error);
     }
   };
@@ -90,6 +95,7 @@ export default function ModalEstantes({
         }),
       ).unwrap();
     } catch (error) {
+      notify(error);
       console.log(error);
     }
   };
@@ -102,13 +108,15 @@ export default function ModalEstantes({
       };
 
       await dispatch(
-        actualizarEstante({
+        eliminarRestaurarEstante({
           deleteEstante: deleteEstante,
           notify: notify,
-          cerrarModal: cerrarModal,
         }),
       ).unwrap();
+
+      dispatch(cerrarModal("confirmarEliminarRestaurar"));
     } catch (error) {
+      notify(error);
       console.log(error);
     }
   };
@@ -122,43 +130,22 @@ export default function ModalEstantes({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={
-          opcion === "crear"
-            ? "¿Crear este estante?"
-            : "¿Eliminar este estante?"
-        }
+        titulo={"¿Crear este estante?"}
       >
         <ModalDatosContenedor>
-          {opcion === "crear" ? (
-            <>
-              <ModalDatos titulo="Nombre" descripcion={nombre} />
-              <ModalDatos titulo="Descripción" descripcion={descripcion} />
-              <ModalDatos titulo="Alias" descripcion={alias} />
-              <ModalDatos
-                titulo="Niveles"
-                descripcion={niveles ? Number(niveles) : niveles}
-              />
-              <ModalDatos titulo="Secciones" descripcion={secciones} />
-              <ModalDatos
-                titulo="Cabecera"
-                descripcion={cabecera ? "si" : "no"}
-              />
-            </>
-          ) : (
-            <>
-              <AvisoAdvertencia
-                mensaje={`Una vez haga click en aceptar, se elimianrá el
-                  estante y toda su información relacionada. Incluyendo
-                  carpetas y archivos`}
-              />
-            </>
-          )}
+          <ModalDatos titulo="Nombre" descripcion={nombre} />
+          <ModalDatos titulo="Descripción" descripcion={descripcion} />
+          <ModalDatos titulo="Alias" descripcion={alias} />
+          <ModalDatos
+            titulo="Niveles"
+            descripcion={niveles ? Number(niveles) : niveles}
+          />
+          <ModalDatos titulo="Secciones" descripcion={secciones} />
+          <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={
-            opcion === "crear" ? handleCrearEstante : handleBorrarRestaurarEstante
-          }
+          aceptar={handleCrearEstante}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -174,6 +161,41 @@ export default function ModalEstantes({
             niveles,
             secciones,
             cabecera,
+          }}
+        />
+      </Modal>
+
+      <Modal
+        isVisible={mostrarEliminarRestaurar}
+        onClose={() => {
+          dispatch(cerrarModal("confirmarEliminarRestaurar"));
+        }}
+        titulo={
+          borradoRestaurado
+            ? "¿Restaurar este estante?"
+            : "¿Eliminar este estante?"
+        }
+      >
+        <ModalDatosContenedor>
+          <AvisoAdvertencia
+            mensaje={`Una vez haga click en aceptar, se ${borradoRestaurado ? "restaurará" : "eliminará"} el
+                  estante y toda su información relacionada. Incluyendo
+                  carpetas y archivos`}
+          />
+        </ModalDatosContenedor>
+
+        <BotonesModal
+          aceptar={handleBorrarRestaurarEstante}
+          cancelar={() => {
+            dispatch(cerrarModal("confirmarEliminarRestaurar"));
+          }}
+          indiceUno="crear"
+          indiceDos="cancelar"
+          nombreUno="Aceptar"
+          nombreDos="Cancelar"
+          campos={{
+            idEstante,
+            borradoRestaurado,
           }}
         />
       </Modal>

@@ -10,6 +10,7 @@ import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la ba
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import validarEliminarEstante from "@/services/estantes/validarEliminarEstante"; // Servicio para validar la eliminación del estante
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 
 /**
  Maneja las solicitudes HTTP PATCH para eliminar (lógicamente) un estante.
@@ -46,28 +47,79 @@ export async function PATCH(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400,
+        validaciones.codigo ? validaciones.codigo : 400,
       );
     }
 
     // 4. Ejecuta transacción: actualiza el estado de eliminación y consulta el estante actualizado
-    const [eliminandoEstante, estanteActualizado] = await prisma.$transaction([
-      prisma.estante.update({
-        where: { id: validaciones.id_estante },
-        data: {
-          borrado: validaciones.borrado,
-        },
-      }),
-
-      prisma.estante.findFirst({
+    const estanteActualizado = await prisma.$transaction(async (tx) => {
+      // 4.1 Actualiza el estado de eliminación del estante
+      const estante = await tx.estante.update({
         where: {
           id: validaciones.id_estante,
         },
-      }),
-    ]);
+        data: {
+          borrado: validaciones.borrado,
+        },
+      });
+
+      // 4.2 Consultar el estante actualizado con sus relaciones
+      const estanteConsultado = await tx.estante.findUnique({
+        where: {
+          id: estante.id,
+        },
+        include: {
+          carpetas: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              nivel: true,
+              seccion: true,
+              _count: {
+                select: {
+                  archivos: true,
+                },
+              },
+            },
+            orderBy: {
+              nombre: "asc",
+            },
+          },
+          archivos: {
+            select: {
+              id: true,
+              size: true,
+            },
+          },
+          _count: {
+            select: {
+              carpetas: true,
+              archivos: true,
+            },
+          },
+        },
+      });
+
+      // 4.3 Asegurarnos de que carpetas sea un array aunque esté vacío
+      const estanteConCarpetasArray = {
+        ...estanteConsultado,
+        carpetas: estanteConsultado?.carpetas || [],
+        archivos: estanteConsultado?.archivos || [],
+        _count: estanteConsultado?._count || { carpetas: 0, archivos: 0 },
+      };
+
+      // 4.4 Procesar el estante individual
+      const estanteProcesado = procesarDetallesEstante([
+        estanteConCarpetasArray,
+      ]);
+
+      // 4.5 Retornar el primer elemento
+      return estanteProcesado[0];
+    });
 
     // 5. Si no se obtiene el estante o la actualización falla, registra el error y retorna
-    if (!eliminandoEstante || !estanteActualizado) {
+    if (!estanteActualizado) {
       await registrarEventoSeguro(request, {
         tabla: "estante",
         accion: "ERROR_DELETE_ESTANTE",
@@ -93,7 +145,6 @@ export async function PATCH(request) {
       descripcion: "Estante eliminado con exito",
       datosAntes: null,
       datosDespues: {
-        eliminandoEstante,
         estanteActualizado,
       },
     });
