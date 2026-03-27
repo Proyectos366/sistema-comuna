@@ -18,7 +18,7 @@ export default function EnlacesBarraLateral({
             id_rol,
           );
         }}
-        className={`px-4 py-1 w-full rounded hover:bg-[#E61C45] hover:text-[#ffffff] cursor-pointer ${
+        className={`px-4 py-1 w-full rounded ${!indice ? 'hover:bg-[#E61C45] hover:text-[#ffffff]' : 'bg-[#082158] text-[#ffffff] hover:bg-[#E61C45] '} cursor-pointer ${
           vista === vistaActual
             ? !indice
               ? "bg-[#E61C45] text-[#ffffff]"

@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 
 import SwitchToggle from "@/components/SwitchToggle";
@@ -9,11 +9,22 @@ import BloqueInfo from "@/components/BloqueInfo";
 
 import { formatearFecha } from "@/utils/Fechas";
 
-import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
 import { abrirModal } from "@/store/features/modal/slicesModal";
+import EnlacesBarraLateral from "../../Inicio/EnlacesBarraLateral";
+import { setEstanteActual } from "@/store/features/estantes/estantesSlices";
 
-export default function ListadoEstantes({ estante, editarEstante, setOpcion, setIdEstante, setBorradoRestaurado }) {
+export default function ListadoEstantes({
+  estante,
+  editarEstante,
+  setOpcion,
+  setIdEstante,
+  setBorradoRestaurado,
+  cambiarRuta,
+  vista,
+}) {
   const dispatch = useDispatch();
+
+  const { usuarioActivo } = useSelector((state) => state.auth);
 
   //console.log(estante);
 
@@ -75,16 +86,10 @@ export default function ListadoEstantes({ estante, editarEstante, setOpcion, set
         <SwitchToggle
           checked={!estante.borrado}
           onToggle={() => {
-            setOpcion('eliminar')
+            setOpcion("eliminar");
             setIdEstante(estante.id);
             setBorradoRestaurado(estante.borrado);
-            dispatch(abrirModal("confirmarEliminarRestaurar"));            
-            // dispatch(
-            //   eliminarRestaurarEstante({
-            //     estado: estante.borrado,
-            //     id_estante: estante.id,
-            //   }),
-            // );
+            dispatch(abrirModal("confirmarEliminarRestaurar"));
           }}
         />
       </Div>
@@ -94,6 +99,28 @@ export default function ListadoEstantes({ estante, editarEstante, setOpcion, set
         nombre={"Creada"}
         valor={formatearFecha(estante.createdAt)}
       />
+
+      <Div
+        onClick={() => {
+          dispatch(
+            setEstanteActual({
+              id: estante.id,
+              nombre: estante.nombre,
+              nivel: estante.nivel,
+              seccion: estante.seccion,
+            }),
+          );
+        }}
+      >
+        <EnlacesBarraLateral
+          id_rol={usuarioActivo.id_rol}
+          cambiarRuta={cambiarRuta}
+          vista={vista}
+          vistaActual={"carpetas"}
+          nombre={"Abrir estante"}
+          indice={1}
+        />
+      </Div>
     </Div>
   );
 }

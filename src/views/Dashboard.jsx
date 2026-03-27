@@ -42,6 +42,7 @@ import PerfilView from "@/components/dashboard/perfil/PerfilView";
 import CambiarClaveView from "@/components/dashboard/cambiar-clave/CambiarClaveView";
 import NovedadesView from "@/components/dashboard/novedades/NovedadesView";
 import EstantesView from "@/components/dashboard/estantes/EstantesView";
+import CarpetasView from "@/components/dashboard/carpetas/CarpetasView";
 
 export default function Dashboard() {
   const { screenSize } = useUser();
@@ -115,6 +116,8 @@ export default function Dashboard() {
         "oac",
         "novedades",
         "estantes",
+        "carpetas",
+        "archivos",
       ],
       2: [
         "parroquias",
@@ -132,6 +135,8 @@ export default function Dashboard() {
         "cambiar-clave",
         "novedades",
         "estantes",
+        "carpetas",
+        "archivos",
       ],
       3: [
         "comunas",
@@ -145,6 +150,8 @@ export default function Dashboard() {
         "cambiar-clave",
         "novedades",
         "estantes",
+        "carpetas",
+        "archivos",
       ],
       4: [
         "comunas",
@@ -157,6 +164,8 @@ export default function Dashboard() {
         departamento?.nombre === "oac" ? "oac" : "",
         "novedades",
         "estantes",
+        "carpetas",
+        "archivos",
       ],
     };
 
@@ -265,7 +274,11 @@ export default function Dashboard() {
 
               {vista === "novedades" && <NovedadesView />}
 
-              {vista === "estantes" && <EstantesView />}
+              {vista === "estantes" && (
+                <EstantesView cambiarRuta={cambiarRuta} vista={vista} />
+              )}
+
+              {vista === "carpetas" && <CarpetasView />}
             </Main>
 
             <Footer />

@@ -347,7 +347,11 @@ export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
               <EnlacesBarraLateral
                 id_rol={usuarioActivo.id_rol}
                 cambiarRuta={cambiarRuta}
-                vista={vista}
+                vista={
+                  vista === "carpetas" || vista === "archivos"
+                    ? "estantes"
+                    : vista
+                }
                 vistaActual={"estantes"}
                 nombre={"Estantes"}
               />

@@ -14,8 +14,31 @@ const estantesSlice = createSlice({
     estantes: [],
     loading: false,
     error: null,
+    estanteActual: {
+      id: null,
+      nombre: null,
+      nivel: null,
+      seccion: null,
+    },
   },
-  reducers: {},
+  reducers: {
+    setEstanteActual: (state, action) => {
+      state.estanteActual = {
+        id: action.payload.id,
+        nombre: action.payload.nombre,
+        nivel: action.payload.nivel,
+        seccion: action.payload.seccion,
+      };
+    },
+    clearEstanteActual: (state) => {
+      state.estanteActual = {
+        id: null,
+        nombre: null,
+        nivel: null,
+        seccion: null,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchEstantes.pending, (state) => {
@@ -117,4 +140,5 @@ const estantesSlice = createSlice({
   },
 });
 
+export const { setEstanteActual, clearEstanteActual } = estantesSlice.actions;
 export default estantesSlice.reducer;

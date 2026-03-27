@@ -26,7 +26,7 @@ import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/es
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
 import { fetchEstantesDepartamentoMiembro } from "@/store/features/estantes/thunks/todosEstantesDepartamentoMiembro";
 
-export default function EstantesView() {
+export default function EstantesView({ cambiarRuta, vista }) {
   const dispatch = useDispatch();
 
   const { usuarioActivo } = useSelector((state) => state.auth);
@@ -206,6 +206,8 @@ export default function EstantesView() {
                             setOpcion={setOpcion}
                             setIdEstante={setIdEstante}
                             setBorradoRestaurado={setBorradoRestauradoEstante}
+                            cambiarRuta={cambiarRuta}
+                            vista={vista}
                           />
                         )}
                       </FichaDetalles>
