@@ -6,7 +6,7 @@ import { actualizarEstante } from "@/store/features/estantes/thunks/actualizarEs
 import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
 import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
 import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
-import { fetchEstantesDepartamentoMiembro } from "./thunks/todosEstantesDepartamentoMiembro";
+import { fetchEstantesDepartamentoMiembro } from "@/store/features/estantes/thunks/todosEstantesDepartamentoMiembro";
 
 const estantesSlice = createSlice({
   name: "estantes",
@@ -15,7 +15,7 @@ const estantesSlice = createSlice({
     loading: false,
     error: null,
     estanteActual: {
-      id: null,
+      idEstante: null,
       nombre: null,
       nivel: null,
       seccion: null,
@@ -24,7 +24,7 @@ const estantesSlice = createSlice({
   reducers: {
     setEstanteActual: (state, action) => {
       state.estanteActual = {
-        id: action.payload.id,
+        idEstante: action.payload.idEstante,
         nombre: action.payload.nombre,
         nivel: action.payload.nivel,
         seccion: action.payload.seccion,
@@ -32,7 +32,7 @@ const estantesSlice = createSlice({
     },
     clearEstanteActual: (state) => {
       state.estanteActual = {
-        id: null,
+        idEstante: null,
         nombre: null,
         nivel: null,
         seccion: null,

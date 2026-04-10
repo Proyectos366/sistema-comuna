@@ -16,6 +16,7 @@ import { rifRegex } from "@/utils/regex/rifRegex";
 import { textRegex } from "@/utils/regex/textRegex";
 import { fechaFormatoIsoRegex } from "@/utils/regex/fechaFormatoIsoRegex";
 import { estanteRegex } from "@/utils/regex/nombreEstanteRegex";
+import { carpetaRegex } from "@/utils/regex/nombreCarpetaRegex";
 
 /**
  Clase que agrupa métodos estáticos para validar campos individuales. Cada método retorna una
@@ -143,7 +144,7 @@ export default class ValidarCampos {
    @param {string} alias - Alias ingresado por el usuario.
    @returns {Object} Objeto con estado, mensaje y alias normalizado si es válido.
   */
-  static validarCampoAlias(alias) {
+  static validarCampoAlias(alias, indice) {
     try {
       // 1. Verifica si el campo está vacío
       if (!alias) {
@@ -151,7 +152,7 @@ export default class ValidarCampos {
       }
 
       // 2. Expresión regular para validar el formato
-      if (!estanteRegex.test(alias)) {
+      if (!indice ? !estanteRegex.test(alias) : !carpetaRegex.test(alias)) {
         return retornarRespuestaFunciones(
           "error",
           "Error, formato de alias inválido",
@@ -879,15 +880,16 @@ export default class ValidarCampos {
   static validarCampoNivel(nivel) {
     try {
       // 1. Verifica si el campo está vacío
-      if (!nivel) {
+      if (!nivel && nivel !== 0) {
+        // Atención: 0 es válido, no debe entrar aquí
         return retornarRespuestaFunciones("error", "Campo nivel vacio");
       }
 
       // 2. Convierte el valor a número
       const nivelNumero = Number(nivel);
 
-      // 3. Verifica si es un número válido y positivo
-      if (isNaN(nivelNumero) || nivelNumero <= 0) {
+      // 3. Verifica si es un número válido y no negativo
+      if (isNaN(nivelNumero) || nivelNumero < 0) {
         return retornarRespuestaFunciones("error", "Error, nivel inválido");
       }
 
@@ -899,14 +901,9 @@ export default class ValidarCampos {
         );
       }
 
-      // 5. Verifica si el número mínimo es 1
-      if (nivelNumero < 1) {
-        return retornarRespuestaFunciones("error", "Error, minimo 1 nivel");
-      }
-
       const MAX_NIVELES = 20;
 
-      // 6. Verifica si excede el máximo permitido
+      // 5. Verifica si excede el máximo permitido
       if (nivelNumero > MAX_NIVELES) {
         return retornarRespuestaFunciones(
           "error",
@@ -914,15 +911,12 @@ export default class ValidarCampos {
         );
       }
 
-      // 7. Retorna respuesta exitosa con el número de niveles validado
+      // 6. Retorna respuesta exitosa con el número de niveles validado
       return retornarRespuestaFunciones("ok", "Campo nivel valido", {
         nivel: nivelNumero,
       });
     } catch (error) {
-      // 8. Manejo de errores inesperados
       console.log(`Error interno campo nivel: ` + error);
-
-      // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones("error", "Error interno campo nivel");
     }
   }
@@ -934,7 +928,7 @@ export default class ValidarCampos {
    @param {string|number} seccion - Cantidad de secciones ingresada por el usuario.
    @returns {Object} Objeto con estado, mensaje y número de secciones validado.
   */
-  static validarCamposeccion(seccion) {
+  static validarCampoSeccion(seccion) {
     try {
       // 1. Verifica si el campo está vacío
       if (!seccion) {
@@ -1740,10 +1734,13 @@ export default class ValidarCampos {
   }
 
   /**
-   Valida los campos necesarios para crear un nuevo cargo.
-   @function validarCamposCrearCargo
-   @param {string} nombre - El nombre del cargo.
-   @param {string} descripcion - La descripción del cargo.
+   Valida los campos necesarios para crear un nuevo estante.
+   @function validarCamposCrearEstante
+   @param {string} nombre - El nombre del estante.
+   @param {string} descripcion - La descripción del estante.
+   @param {string} alias - El alias del estante.
+   @param {number} niveles - La cantidad de niveles del estante.
+   @param {number} secciones - La cantidad de secciones del estante.
   */
   static validarCamposCrearEstante(
     nombre,
@@ -1751,20 +1748,14 @@ export default class ValidarCampos {
     alias,
     niveles,
     secciones,
-    cabecera,
   ) {
     try {
       // 1. Validar cada campo individualmente.
       const validarNombre = this.validarCampoTexto(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarAlias = this.validarCampoAlias(alias);
-
       const validarNivel = this.validarCampoNivel(niveles);
-      const validarSeccion = this.validarCamposeccion(secciones);
-      const validarCabecera = this.validarCampoNumeroPasarBoolean(
-        cabecera,
-        "cabecera",
-      );
+      const validarSeccion = this.validarCampoSeccion(secciones);
 
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
@@ -1772,7 +1763,6 @@ export default class ValidarCampos {
       if (validarAlias.status === "error") return validarAlias;
       if (validarNivel.status === "error") return validarNivel;
       if (validarSeccion.status === "error") return validarSeccion;
-      if (validarCabecera.status === "error") return validarCabecera;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados", {
@@ -1781,32 +1771,75 @@ export default class ValidarCampos {
         alias: validarAlias.alias,
         niveles: validarNivel.nivel,
         secciones: validarSeccion.seccion,
-        cabecera: validarCabecera.boolean,
       });
     } catch (error) {
       // 4. Manejo de errores inesperados
-      console.log(`Error interno campos cargo: ` + error);
+      console.log(`Error interno campos estante: ` + error);
 
       // Retorna una respuesta del error inesperado
-      return retornarRespuestaFunciones("error", "Error interno campos cargo");
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos estante",
+      );
     }
   }
 
   /**
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   * De aqui en adelante estan las funciones de validacion para editar
-   */
+   Valida los campos necesarios para crear una nueva carpeta.
+   @function validarCamposCrearCarpeta
+   @param {number} idEstante - El ID del estante al que pertenece la carpeta.
+   @param {string} nombre - El nombre de la carpeta.
+   @param {string} descripcion - La descripción de la carpeta.
+   @param {string} alias - El alias de la carpeta.
+   @param {number} nivel - El nivel de la carpeta.
+   @param {number} seccion - La sección de la carpeta.
+   @param {string|number} cabecera - Indica si el carpeta va en la cabecera (1 o "si") o no (0 o "no").
+  */
+  static validarCamposCrearCarpeta(
+    idEstante,
+    nombre,
+    descripcion,
+    alias,
+    nivel,
+    seccion,
+  ) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarIdEstante = this.validarCampoId(idEstante, "estante");
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarAlias = this.validarCampoAlias(alias, 1);
+      const validarNivel = this.validarCampoNivel(nivel);
+      const validarSeccion = this.validarCampoSeccion(seccion);
+
+      // 2. Verificar si alguna validación falló
+      if (validarIdEstante.status === "error") return validarIdEstante;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarAlias.status === "error") return validarAlias;
+      if (validarNivel.status === "error") return validarNivel;
+      if (validarSeccion.status === "error") return validarSeccion;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        id_estante: validarIdEstante.id,
+        nombre: validarNombre.texto,
+        descripcion: validarDescripcion.texto,
+        alias: validarAlias.alias,
+        nivel: validarNivel.nivel,
+        seccion: validarSeccion.seccion,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos carpeta: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos carpeta",
+      );
+    }
+  }
 
   /**
    Valida los campos necesarios para crear una novedad.
@@ -1867,6 +1900,22 @@ export default class ValidarCampos {
       );
     }
   }
+
+  /**
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   * De aqui en adelante estan las funciones de validacion para editar
+   */
 
   /**
    Valida los campos necesarios para editar un país.
@@ -2543,7 +2592,7 @@ export default class ValidarCampos {
       const validarNombre = this.validarCampoTexto(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarNivel = this.validarCampoNivel(niveles);
-      const validarSeccion = this.validarCamposeccion(secciones);
+      const validarSeccion = this.validarCampoSeccion(secciones);
       const validarCabecera = this.validarCampoNumeroPasarBoolean(
         cabecera,
         "cabecera",

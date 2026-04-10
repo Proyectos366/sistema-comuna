@@ -11,12 +11,13 @@ import EnlacesBarraLateral from "@/components/dashboard/Inicio/EnlacesBarraLater
 import { formatearFecha } from "@/utils/Fechas";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { setEstanteActual } from "@/store/features/estantes/estantesSlices";
+import { setCarpetaActual } from "@/store/features/carpetas/carpetasSlices";
 
-export default function ListadoEstantes({
-  estante,
-  editarEstante,
-  setIdEstante,
+export default function ListadoCarpetas({
+  carpeta,
+  editarCarpeta,
+  setOpcion,
+  setIdCarpeta,
   setBorradoRestaurado,
   cambiarRuta,
   vista,
@@ -25,19 +26,21 @@ export default function ListadoEstantes({
 
   const { usuarioActivo } = useSelector((state) => state.auth);
 
+  //console.log(carpeta);
+
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
         <BloqueInfo
           indice={1}
           nombre={"Descripción"}
-          valor={estante.descripcion}
+          valor={carpeta.descripcion}
         />
 
         <Button
           title="Editar"
           onClick={() => {
-            editarEstante(estante);
+            editarCarpeta(carpeta);
           }}
           className="p-1 sm:px-4 sm:py-1 sm:min-w-28 rounded-md bg-[#082158]  text-white shadow-md hover:scale-105 transition cursor-pointer"
         >
@@ -53,38 +56,35 @@ export default function ListadoEstantes({
         </Button>
       </Div>
 
-      <BloqueInfo indice={1} nombre={"Alias"} valor={estante.alias} />
-      <BloqueInfo indice={1} nombre={"Código"} valor={estante.codigo} />
-      <BloqueInfo indice={1} nombre={"Niveles"} valor={estante.nivel} />
-      <BloqueInfo indice={1} nombre={"Secciones"} valor={estante.seccion} />
-      <BloqueInfo
-        indice={1}
-        nombre={"Carpetas"}
-        valor={estante._count?.carpetas}
-      />
+      <BloqueInfo indice={1} nombre={"Alias"} valor={carpeta.alias} />
+      <BloqueInfo indice={1} nombre={"Código"} valor={carpeta.codigo} />
+      <BloqueInfo indice={1} nombre={"Nivel"} valor={carpeta.nivel} />
+      <BloqueInfo indice={1} nombre={"Sección"} valor={carpeta.seccion} />
       <BloqueInfo
         indice={1}
         nombre={"Archivos"}
-        valor={estante._count?.archivos}
+        valor={carpeta._count?.archivos}
       />
+
       <BloqueInfo
         indice={1}
         nombre={"Tamaño total"}
-        valor={estante.pesoTotalEstante}
+        valor={carpeta.pesoTotalArchivos}
       />
 
       <Div className="flex items-center justify-between">
         <BloqueInfo
-          indice={!estante.borrado ? 3 : 2}
-          nombre={"estante"}
-          valor={!estante.borrado ? "Activo" : "Inactivo"}
+          indice={!carpeta.borrado ? 3 : 2}
+          nombre={"Carpeta"}
+          valor={!carpeta.borrado ? "Activo" : "Inactivo"}
         />
 
         <SwitchToggle
-          checked={!estante.borrado}
+          checked={!carpeta.borrado}
           onToggle={() => {
-            setIdEstante(estante.id);
-            setBorradoRestaurado(estante.borrado);
+            setOpcion("eliminar");
+            setIdCarpeta(carpeta.id);
+            setBorradoRestaurado(carpeta.borrado);
             dispatch(abrirModal("confirmarEliminarRestaurar"));
           }}
         />
@@ -93,17 +93,17 @@ export default function ListadoEstantes({
       <BloqueInfo
         indice={1}
         nombre={"Creada"}
-        valor={formatearFecha(estante.createdAt)}
+        valor={formatearFecha(carpeta.createdAt)}
       />
 
       <Div
         onClick={() => {
           dispatch(
-            setEstanteActual({
-              idEstante: estante.id,
-              nombre: estante.nombre,
-              nivel: estante.nivel,
-              seccion: estante.seccion,
+            setCarpetaActual({
+              idCarpeta: carpeta.id,
+              nombre: carpeta.nombre,
+              nivel: carpeta.nivel,
+              seccion: carpeta.seccion,
             }),
           );
         }}
@@ -112,8 +112,8 @@ export default function ListadoEstantes({
           id_rol={usuarioActivo.id_rol}
           cambiarRuta={cambiarRuta}
           vista={vista}
-          vistaActual={"carpetas"}
-          nombre={"Abrir estante"}
+          vistaActual={"archivos"}
+          nombre={"Abrir archivo"}
           indice={1}
         />
       </Div>

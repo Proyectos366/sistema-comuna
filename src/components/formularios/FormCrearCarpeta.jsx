@@ -13,25 +13,52 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
 import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
 import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
+import { generarItems } from "@/utils/generarItems";
 
-import cantNiveles from "@/constants/cantNiveles";
-import cantSecciones from "@/constants/cantSecciones";
-
-export default function FormCrearEstante({
+export default function FormCrearCarpeta({
   acciones,
-  datosEstante,
+  datosCarpeta,
   validaciones,
 }) {
   const dispatch = useDispatch();
 
-  const { setNombre, setDescripcion, setAlias, setNiveles, setSecciones } =
-    acciones;
+  const {
+    setNombre,
+    setDescripcion,
+    setAlias,
+    setNivel,
+    setSeccion,
+    setCabecera,
+  } = acciones;
 
-  const { nombre, descripcion, alias, niveles, secciones } = datosEstante;
+  const {
+    idEstante,
+    nombre,
+    descripcion,
+    alias,
+    nivel,
+    seccion,
+    cabecera,
+    nivelEstante,
+    seccionEstante,
+  } = datosCarpeta;
 
-  const { validarAlias, setValidarAlias } = validaciones;
+  const {
+    validarNombre,
+    setValidarNombre,
+    validarAlias,
+    setValidarAlias,
+    validarniveles,
+    setValidarniveles,
+    validarSecciones,
+    setValidarSecciones,
+  } = validaciones;
+
+  const nivelFinal = cabecera == 1 || cabecera == "1" ? 0 : nivel;
+  const seccionFinal = cabecera == 1 || cabecera == "1" ? 0 : seccion;
 
   return (
     <Formulario
@@ -44,7 +71,7 @@ export default function FormCrearEstante({
           value={nombre}
           setValue={setNombre}
           nombre={"Nombre"}
-          placeholder={"estante rosado n° 001"}
+          placeholder={"carpeta marrón n° 001"}
         />
 
         <InputDescripcion
@@ -56,24 +83,41 @@ export default function FormCrearEstante({
         />
 
         <SelectOpcion
-          idOpcion={niveles}
-          nombre={"Niveles"}
+          idOpcion={cabecera}
+          nombre={"Cabecera"}
           handleChange={(e) => {
-            cambiarSeleccionNivel(e, setNiveles);
+            cambiarSeleccionCabecera(e, setCabecera);
           }}
-          opciones={cantNiveles}
+          opciones={[
+            { id: "1", nombre: "Si" },
+            { id: "2", nombre: "No" },
+          ]}
           seleccione={"Seleccione"}
         />
 
-        <SelectOpcion
-          idOpcion={secciones}
-          nombre={"Secciones"}
-          handleChange={(e) => {
-            cambiarSeleccionSeccion(e, setSecciones);
-          }}
-          opciones={cantSecciones}
-          seleccione={"Seleccione"}
-        />
+        {cabecera !== "1" && (
+          <>
+            <SelectOpcion
+              idOpcion={nivel}
+              nombre={"Niveles"}
+              handleChange={(e) => {
+                cambiarSeleccionNivel(e, setNivel);
+              }}
+              opciones={generarItems(nivelEstante)}
+              seleccione={"Seleccione"}
+            />
+
+            <SelectOpcion
+              idOpcion={seccion}
+              nombre={"Secciones"}
+              handleChange={(e) => {
+                cambiarSeleccionSeccion(e, setSeccion);
+              }}
+              opciones={generarItems(seccionEstante)}
+              seleccione={"Seleccione"}
+            />
+          </>
+        )}
 
         <InputNombreEstante
           value={alias}
@@ -81,7 +125,8 @@ export default function FormCrearEstante({
           validarEstante={validarAlias}
           setValidarEstante={setValidarAlias}
           nombre={"Alias"}
-          indice="estante2"
+          indice="carpeta2"
+          placeholder={"carpeta marron no 001"}
         />
 
         <AgruparCamposForm>
@@ -96,8 +141,10 @@ export default function FormCrearEstante({
               nombre,
               descripcion,
               alias,
-              niveles,
-              secciones,
+              nivelFinal,
+              seccionFinal,
+              cabecera,
+              idEstante,
             }}
           />
 
@@ -107,16 +154,19 @@ export default function FormCrearEstante({
                 setNombre,
                 setDescripcion,
                 setAlias,
-                setNiveles,
-                setSecciones,
+                setNivel,
+                setSeccion,
+                setCabecera,
               });
             }}
             campos={{
               nombre,
               descripcion,
               alias,
-              niveles,
-              secciones,
+              nivel,
+              seccion,
+              cabecera,
+              idEstante,
             }}
           />
         </AgruparCamposForm>

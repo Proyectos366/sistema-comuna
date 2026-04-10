@@ -28,7 +28,7 @@ export async function POST(request) {
     const crearRutasCarpetas = new CrearCarpetasStorage();
 
     // 2. Obtiene los datos del cuerpo de la solicitud (request)
-    const { nombre, descripcion, alias, niveles, secciones, cabecera } =
+    const { nombre, descripcion, alias, niveles, secciones } =
       await request.json();
 
     // 3. Valida los datos recibidos utilizando el servicio 'validarCrearEstante'
@@ -38,7 +38,6 @@ export async function POST(request) {
       alias,
       niveles,
       secciones,
-      cabecera,
     );
 
     // 4. Condición de validación fallida
@@ -71,7 +70,6 @@ export async function POST(request) {
           alias: validaciones.alias,
           nivel: validaciones.niveles,
           seccion: validaciones.secciones,
-          cabecera: validaciones.cabecera,
           codigo: validaciones.codigo,
           id_institucion: validaciones.id_institucion,
           id_departamento: validaciones.id_departamento,

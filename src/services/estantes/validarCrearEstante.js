@@ -24,7 +24,6 @@ export default async function validarCrearEstante(
   alias,
   niveles,
   secciones,
-  cabecera,
 ) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
@@ -45,7 +44,6 @@ export default async function validarCrearEstante(
       alias,
       niveles,
       secciones,
-      cabecera,
     );
 
     // 4. Si los campos no son válidos, se retorna un error.
@@ -139,7 +137,6 @@ export default async function validarCrearEstante(
       alias: validarCampos.alias,
       niveles: validarCampos.niveles,
       secciones: validarCampos.secciones,
-      cabecera: validarCampos.cabecera,
       codigo: codigoNuevo,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,

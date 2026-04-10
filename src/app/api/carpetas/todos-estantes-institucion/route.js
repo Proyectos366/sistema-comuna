@@ -78,7 +78,7 @@ export async function GET() {
         "ok",
         "Aún no hay estantes",
         { estantes: [] },
-        200,
+        404,
       );
     }
 

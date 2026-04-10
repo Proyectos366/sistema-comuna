@@ -14,24 +14,40 @@ import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { textRegex } from "@/utils/regex/textRegex";
 import { limpiarCampos } from "@/utils/limpiarForm";
+import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
 import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
 import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
 
 import cantNiveles from "@/constants/cantNiveles";
 import cantSecciones from "@/constants/cantSecciones";
 
-export default function FormEditarEstante({
+export default function FormEditarCarpeta({
   acciones,
-  datosEstante,
+  datosCarpeta,
   validaciones,
 }) {
   const dispatch = useDispatch();
 
-  const { setNombre, setDescripcion, setNiveles, setSecciones } = acciones;
+  const {
+    setIdCarpeta,
+    setNombre,
+    setDescripcion,
+    setNivel,
+    setSeccion,
+    setCabecera,
+  } = acciones;
 
-  const { nombre, descripcion, niveles, secciones } = datosEstante;
+  const { idCarpeta, nombre, descripcion, nivel, seccion, cabecera } =
+    datosCarpeta;
 
-  const { validarNombre, setValidarNombre } = validaciones;
+  const {
+    validarNombre,
+    setValidarNombre,
+    validarniveles,
+    setValidarniveles,
+    validarSecciones,
+    setValidarSecciones,
+  } = validaciones;
 
   useEffect(() => {
     const validarYActualizar = (valor, setValidar) => {
@@ -45,23 +61,30 @@ export default function FormEditarEstante({
     validarYActualizar(nombre, setValidarNombre);
 
     // Transformar niveles
-    if (niveles) {
-      const nivelesStr = String(niveles);
+    if (nivel) {
+      const nivelesStr = String(nivel);
       const nivelesTransformado =
         nivelesStr.length === 1 ? `0${nivelesStr}` : nivelesStr;
-      if (nivelesTransformado !== niveles) {
-        setNiveles(nivelesTransformado);
+      if (nivelesTransformado !== nivel) {
+        setNivel(nivelesTransformado);
       }
     }
 
     // Transformar secciones
-    if (secciones) {
-      const seccionesStr = String(secciones);
-      if (seccionesStr !== secciones) {
-        setSecciones(seccionesStr);
+    if (seccion) {
+      const seccionesStr = String(seccion);
+      if (seccionesStr !== seccion) {
+        setSeccion(seccionesStr);
       }
     }
-  }, [nombre, niveles, secciones, descripcion]);
+
+    // Validar cabecera
+    if (cabecera) {
+      const cabeceraStr = cabecera ? "1" : "2";
+
+      setCabecera(cabeceraStr);
+    }
+  }, [nombre, nivel, seccion, descripcion, cabecera]);
 
   return (
     <Formulario
@@ -74,7 +97,6 @@ export default function FormEditarEstante({
           value={nombre}
           setValue={setNombre}
           nombre={"Nombre"}
-          placeholder={"estante rosado n° 001"}
         />
 
         <InputDescripcion
@@ -86,24 +108,41 @@ export default function FormEditarEstante({
         />
 
         <SelectOpcion
-          idOpcion={niveles}
-          nombre={"Niveles"}
+          idOpcion={cabecera}
+          nombre={"Cabecera"}
           handleChange={(e) => {
-            cambiarSeleccionNivel(e, setNiveles);
+            cambiarSeleccionCabecera(e, setCabecera);
           }}
-          opciones={cantNiveles}
+          opciones={[
+            { id: "1", nombre: "Si" },
+            { id: "2", nombre: "No" },
+          ]}
           seleccione={"Seleccione"}
         />
 
-        <SelectOpcion
-          idOpcion={secciones}
-          nombre={"Secciones"}
-          handleChange={(e) => {
-            cambiarSeleccionSeccion(e, setSecciones);
-          }}
-          opciones={cantSecciones}
-          seleccione={"Seleccione"}
-        />
+        {cabecera === "1" && (
+          <>
+            <SelectOpcion
+              idOpcion={nivel}
+              nombre={"Niveles"}
+              handleChange={(e) => {
+                cambiarSeleccionNivel(e, setNivel);
+              }}
+              opciones={cantNiveles}
+              seleccione={"Seleccione"}
+            />
+
+            <SelectOpcion
+              idOpcion={seccion}
+              nombre={"Secciones"}
+              handleChange={(e) => {
+                cambiarSeleccionSeccion(e, setSeccion);
+              }}
+              opciones={cantSecciones}
+              seleccione={"Seleccione"}
+            />
+          </>
+        )}
 
         <AgruparCamposForm>
           <BotonAceptarCancelar
@@ -116,8 +155,9 @@ export default function FormEditarEstante({
             campos={{
               nombre,
               descripcion,
-              niveles,
-              secciones,
+              nivel,
+              seccion,
+              cabecera,
             }}
           />
 
@@ -126,15 +166,17 @@ export default function FormEditarEstante({
               limpiarCampos({
                 setNombre,
                 setDescripcion,
-                setNiveles,
-                setSecciones,
+                setNivel,
+                setSeccion,
+                setCabecera,
               });
             }}
             campos={{
               nombre,
               descripcion,
-              niveles,
-              secciones,
+              nivel,
+              seccion,
+              cabecera,
             }}
           />
         </AgruparCamposForm>

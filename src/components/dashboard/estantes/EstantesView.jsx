@@ -21,7 +21,6 @@ import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccion
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchEstantes } from "@/store/features/estantes/thunks/todosEstantes";
-//import { fetchEstantesInstitucion } from "@/store/features/estantes/thunks/todosEstantesInstitucion";
 import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
 import { fetchEstantesDepartamentoMiembro } from "@/store/features/estantes/thunks/todosEstantesDepartamentoMiembro";
@@ -48,20 +47,15 @@ export default function EstantesView({ cambiarRuta, vista }) {
   const [aliasEstante, setAliasEstante] = useState("");
   const [nivelesEstante, setNivelesEstante] = useState("");
   const [seccionesEstante, setSeccionesEstante] = useState("");
-  const [cabeceraEstante, setCabeceraEstante] = useState("");
-  const [opcion, setOpcion] = useState("crear");
 
-  const [nombreDepartamento, setNombreDepartamento] = useState("");
+  //const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [idEstante, setIdEstante] = useState("");
   const [idDepartamento, setIdDepartamento] = useState("");
   const [borradoRestauradoEstante, setBorradoRestauradoEstante] = useState("");
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreEstante, setValidarNombreEstante] = useState(false);
   const [validarAliasEstante, setValidarAliasEstante] = useState(false);
-  const [validarnivelesEstante, setValidarnivelesEstante] = useState(false);
-  const [validarSeccionesEstante, setValidarSeccionesEstante] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -84,9 +78,7 @@ export default function EstantesView({ cambiarRuta, vista }) {
     setAlias: setAliasEstante,
     setNiveles: setNivelesEstante,
     setSecciones: setSeccionesEstante,
-    setCabecera: setCabeceraEstante,
     setBorradoRestaurado: setBorradoRestauradoEstante,
-    setOpcion: setOpcion,
   };
 
   const datosEstante = {
@@ -96,20 +88,12 @@ export default function EstantesView({ cambiarRuta, vista }) {
     alias: aliasEstante,
     niveles: nivelesEstante,
     secciones: seccionesEstante,
-    cabecera: cabeceraEstante,
     borradoRestaurado: borradoRestauradoEstante,
-    opcion: opcion,
   };
 
   const validaciones = {
-    validarNombre: validarNombreEstante,
-    setValidarNombre: setValidarNombreEstante,
     validarAlias: validarAliasEstante,
     setValidarAlias: setValidarAliasEstante,
-    validarniveles: validarnivelesEstante,
-    setValidarniveles: setValidarnivelesEstante,
-    validarSecciones: validarSeccionesEstante,
-    setValidarSecciones: setValidarSeccionesEstante,
   };
 
   const estantesFiltradosOrdenados = useMemo(() => {
@@ -136,7 +120,6 @@ export default function EstantesView({ cambiarRuta, vista }) {
     setDescripcionEstante(estante.descripcion);
     setNivelesEstante(estante.nivel);
     setSeccionesEstante(estante.seccion);
-    setCabeceraEstante(estante.cabecera);
 
     dispatch(abrirModal("editar"));
   };
@@ -164,7 +147,6 @@ export default function EstantesView({ cambiarRuta, vista }) {
               }}
               opciones={departamentos}
               seleccione={"Seleccione"}
-              setNombre={setNombreDepartamento}
             />
           )}
 
@@ -203,7 +185,6 @@ export default function EstantesView({ cambiarRuta, vista }) {
                           <ListadoEstantes
                             estante={estante}
                             editarEstante={editarEstante}
-                            setOpcion={setOpcion}
                             setIdEstante={setIdEstante}
                             setBorradoRestaurado={setBorradoRestauradoEstante}
                             cambiarRuta={cambiarRuta}

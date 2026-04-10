@@ -4,22 +4,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import BotonesModal from "@/components/botones/BotonesModal";
-import FormCrearEstante from "@/components/formularios/FormCrearEstante";
-import FormEditarEstante from "@/components/formularios/FormEditarEstante";
+import FormCrearCarpeta from "@/components/formularios/FormCrearCarpeta";
+import FormEditarCarpeta from "@/components/formularios/FormEditarCarpeta";
 import Modal from "@/components/modales/Modal";
 import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 
-import { crearEstante } from "@/store/features/estantes/thunks/crearEstante";
-import { actualizarEstante } from "@/store/features/estantes/thunks/actualizarEstante";
+import { crearCarpeta } from "@/store/features/carpetas/thunks/crearCarpeta";
+import { actualizarCarpeta } from "@/store/features/carpetas/thunks/actualizarCarpeta";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
-import { eliminarRestaurarEstante } from "@/store/features/estantes/thunks/eliminarRestaurarEstante";
+import { eliminarRestaurarCarpeta } from "@/store/features/carpetas/thunks/eliminarRestaurarCarpeta";
 
-export default function ModalEstantes({
+export default function ModalCarpetas({
   acciones,
-  datosEstante,
+  datosCarpeta,
   validaciones,
 }) {
   const dispatch = useDispatch();
@@ -39,53 +39,60 @@ export default function ModalEstantes({
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
 
   const {
+    idCarpeta,
     idEstante,
     nombre,
     descripcion,
     alias,
-    niveles,
-    secciones,
+    nivel,
+    seccion,
+    cabecera,
     borradoRestaurado,
-  } = datosEstante;
+    opcion,
+    nombreEstante,
+  } = datosCarpeta;
 
   const notify = (msj) => toast(msj);
 
-  const handleCrearEstante = async () => {
+  const handleCrearCarpeta = async () => {
     try {
-      const nuevoEstante = {
+      const nuevaCarpeta = {
         nombre: nombre,
         descripcion: descripcion,
         alias: alias,
-        niveles: niveles,
-        secciones: secciones,
+        nivel: nivel,
+        seccion: seccion,
+        cabecera: cabecera,
+        idEstante: idEstante,
       };
 
       await dispatch(
-        crearEstante({
-          nuevoEstante: nuevoEstante,
+        crearCarpeta({
+          nuevaCarpeta: nuevaCarpeta,
           notify: notify,
           cerrarModal: cerrarModal,
         }),
       ).unwrap();
     } catch (error) {
-      notify(error);
+      //notify(error);
       console.log(error);
     }
   };
 
-  const handleEditarEstante = async () => {
+  const handleEditarCarpeta = async () => {
     try {
-      const updateEstante = {
+      const updateCarpeta = {
         nombre: nombre,
         descripcion: descripcion,
-        niveles: niveles,
-        secciones: secciones,
-        id_estante: idEstante,
+        nivel: nivel,
+        seccion: seccion,
+        cabecera: cabecera,
+        id_carpeta: idCarpeta,
       };
 
       await dispatch(
-        actualizarEstante({
-          updateEstante: updateEstante,
+        actualizarCarpeta({
+          updateCarpeta: updateCarpeta,
           notify: notify,
           cerrarModal: cerrarModal,
         }),
@@ -96,16 +103,16 @@ export default function ModalEstantes({
     }
   };
 
-  const handleBorrarRestaurarEstante = async () => {
+  const handleBorrarRestaurarCarpeta = async () => {
     try {
-      const deleteEstante = {
-        id_estante: idEstante,
+      const deleteCarpeta = {
+        id_carpeta: idCarpeta,
         estado: borradoRestaurado,
       };
 
       await dispatch(
-        eliminarRestaurarEstante({
-          deleteEstante: deleteEstante,
+        eliminarRestaurarCarpeta({
+          deleteCarpeta: deleteCarpeta,
           notify: notify,
         }),
       ).unwrap();
@@ -117,6 +124,9 @@ export default function ModalEstantes({
     }
   };
 
+  const nivelFinal = cabecera == 1 || cabecera == "1" ? 0 : nivel;
+  const seccionFinal = cabecera == 1 || cabecera == "1" ? 0 : seccion;
+
   return (
     <>
       <ToastContainer />
@@ -126,21 +136,28 @@ export default function ModalEstantes({
         onClose={() => {
           dispatch(cerrarModal("confirmar"));
         }}
-        titulo={"¿Crear este estante?"}
+        titulo={"¿Crear esta carpeta?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo="Estante" descripcion={nombreEstante} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
           <ModalDatos titulo="Alias" descripcion={alias} />
-          <ModalDatos
-            titulo={niveles != "00" ? "Niveles" : "Cabecera"}
-            descripcion={niveles == "00" ? `Nivel 0` : Number(niveles)}
-          />
-          <ModalDatos titulo="Secciones" descripcion={secciones} />
+          {nivelFinal !== 0 && (
+            <ModalDatos
+              titulo="Nivel"
+              descripcion={nivel ? Number(nivel) : nivel}
+            />
+          )}
+          {seccionFinal !== 0 && (
+            <ModalDatos titulo="Sección" descripcion={seccion} />
+          )}
+
+          <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearEstante}
+          aceptar={handleCrearCarpeta}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
@@ -153,8 +170,11 @@ export default function ModalEstantes({
             nombre,
             descripcion,
             alias,
-            niveles,
-            secciones,
+            nivelFinal,
+            seccionFinal,
+            cabecera,
+            nombreEstante,
+            idEstante,
           }}
         />
       </Modal>
@@ -166,20 +186,19 @@ export default function ModalEstantes({
         }}
         titulo={
           borradoRestaurado
-            ? "¿Restaurar este estante?"
-            : "¿Eliminar este estante?"
+            ? "¿Restaurar esta carpeta?"
+            : "¿Eliminar esta carpeta?"
         }
       >
         <ModalDatosContenedor>
           <AvisoAdvertencia
-            mensaje={`Una vez haga click en aceptar, se ${borradoRestaurado ? "restaurará" : "eliminará"} el
-                  estante y toda su información relacionada. Incluyendo
-                  carpetas y archivos`}
+            mensaje={`Una vez haga click en aceptar, se ${borradoRestaurado ? "restaurará" : "eliminará"}
+                      la carpeta y toda su información relacionada. Incluyendo archivos`}
           />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleBorrarRestaurarEstante}
+          aceptar={handleBorrarRestaurarCarpeta}
           cancelar={() => {
             dispatch(cerrarModal("confirmarEliminarRestaurar"));
           }}
@@ -188,7 +207,7 @@ export default function ModalEstantes({
           nombreUno="Aceptar"
           nombreDos="Cancelar"
           campos={{
-            idEstante,
+            idCarpeta,
             borradoRestaurado,
           }}
         />
@@ -199,17 +218,19 @@ export default function ModalEstantes({
         onClose={() => {
           dispatch(cerrarModal("confirmarCambios"));
         }}
-        titulo={"¿Actualizar este estante?"}
+        titulo={"¿Actualizar esta carpeta?"}
       >
         <ModalDatosContenedor>
+          <ModalDatos titulo="Nombre estante" descripcion={nombreEstante} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Niveles" descripcion={niveles} />
-          <ModalDatos titulo="Secciones" descripcion={secciones} />
+          <ModalDatos titulo="Nivel" descripcion={nivel} />
+          <ModalDatos titulo="Sección" descripcion={seccion} />
+          <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleEditarEstante}
+          aceptar={handleEditarCarpeta}
           cancelar={() => {
             dispatch(cerrarModal("confirmarCambios"));
             dispatch(abrirModal("editar"));
@@ -221,9 +242,10 @@ export default function ModalEstantes({
           campos={{
             nombre,
             descripcion,
-            niveles,
-            secciones,
-            idEstante,
+            nivel,
+            seccion,
+            cabecera,
+            idCarpeta,
           }}
         />
       </Modal>
@@ -233,12 +255,12 @@ export default function ModalEstantes({
         onClose={() => {
           dispatch(cerrarModal("editar"));
         }}
-        titulo={"¿Actualizar este estante?"}
+        titulo={"¿Actualizar esta carpeta?"}
       >
         <ModalDatosContenedor>
-          <FormEditarEstante
+          <FormEditarCarpeta
             acciones={acciones}
-            datosEstante={datosEstante}
+            datosCarpeta={datosCarpeta}
             validaciones={validaciones}
           />
         </ModalDatosContenedor>
@@ -249,12 +271,12 @@ export default function ModalEstantes({
         onClose={() => {
           dispatch(cerrarModal("crear"));
         }}
-        titulo={"¿Crear estante?"}
+        titulo={"¿Crear carpeta?"}
       >
         <ModalDatosContenedor>
-          <FormCrearEstante
+          <FormCrearCarpeta
             acciones={acciones}
-            datosEstante={datosEstante}
+            datosCarpeta={datosCarpeta}
             validaciones={validaciones}
           />
         </ModalDatosContenedor>

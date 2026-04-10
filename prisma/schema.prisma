@@ -252,7 +252,6 @@ model estante {
   alias           String
   nivel           Int
   seccion         Int
-  cabecera        Boolean
   codigo          String?  @unique
   borrado         Boolean  @default(false)
   id_usuario      Int

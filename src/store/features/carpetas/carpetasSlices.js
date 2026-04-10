@@ -7,6 +7,7 @@ import { eliminarRestaurarCarpeta } from "@/store/features/carpetas/thunks/elimi
 import { fetchCarpetasInstitucion } from "@/store/features/carpetas/thunks/todasCarpetasInstitucion";
 import { fetchCarpetasIdEstante } from "@/store/features/carpetas/thunks/carpetasIdEstante";
 import { fetchCarpetasDepartamentoMiembro } from "@/store/features/carpetas/thunks/todasCarpetasDepartamentoMiembro";
+import { fetchCarpetasIdDepartamento } from "@/store/features/carpetas/thunks/carpetasIdDepartamento";
 
 const carpetasSlice = createSlice({
   name: "carpetas",
@@ -15,7 +16,7 @@ const carpetasSlice = createSlice({
     loading: false,
     error: null,
     carpetaActual: {
-      id: null,
+      idCarpeta: null,
       nombre: null,
       nivel: null,
       seccion: null,
@@ -24,7 +25,7 @@ const carpetasSlice = createSlice({
   reducers: {
     setCarpetaActual: (state, action) => {
       state.carpetaActual = {
-        id: action.payload.id,
+        idCarpeta: action.payload.id,
         nombre: action.payload.nombre,
         nivel: action.payload.nivel,
         seccion: action.payload.seccion,
@@ -32,7 +33,7 @@ const carpetasSlice = createSlice({
     },
     clearCarpetaActual: (state) => {
       state.carpetaActual = {
-        id: null,
+        idCarpeta: null,
         nombre: null,
         nivel: null,
         seccion: null,
@@ -74,6 +75,18 @@ const carpetasSlice = createSlice({
         state.carpetas = action.payload;
       })
       .addCase(fetchCarpetasIdEstante.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchCarpetasIdDepartamento.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCarpetasIdDepartamento.fulfilled, (state, action) => {
+        state.loading = false;
+        state.carpetas = action.payload;
+      })
+      .addCase(fetchCarpetasIdDepartamento.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
