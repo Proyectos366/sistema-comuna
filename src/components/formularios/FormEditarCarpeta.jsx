@@ -14,12 +14,9 @@ import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { textRegex } from "@/utils/regex/textRegex";
 import { limpiarCampos } from "@/utils/limpiarForm";
-import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
 import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
 import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
-
-import cantNiveles from "@/constants/cantNiveles";
-import cantSecciones from "@/constants/cantSecciones";
+import { generarItems, generarItemsSecciones } from "@/utils/generarItems";
 
 export default function FormEditarCarpeta({
   acciones,
@@ -28,17 +25,18 @@ export default function FormEditarCarpeta({
 }) {
   const dispatch = useDispatch();
 
-  const {
-    setIdCarpeta,
-    setNombre,
-    setDescripcion,
-    setNivel,
-    setSeccion,
-    setCabecera,
-  } = acciones;
+  const { setIdCarpeta, setNombre, setDescripcion, setNivel, setSeccion } =
+    acciones;
 
-  const { idCarpeta, nombre, descripcion, nivel, seccion, cabecera } =
-    datosCarpeta;
+  const {
+    idCarpeta,
+    nombre,
+    descripcion,
+    nivel,
+    seccion,
+    nivelEstante,
+    seccionEstante,
+  } = datosCarpeta;
 
   const {
     validarNombre,
@@ -61,8 +59,9 @@ export default function FormEditarCarpeta({
     validarYActualizar(nombre, setValidarNombre);
 
     // Transformar niveles
-    if (nivel) {
+    if (nivel >= 0) {
       const nivelesStr = String(nivel);
+
       const nivelesTransformado =
         nivelesStr.length === 1 ? `0${nivelesStr}` : nivelesStr;
       if (nivelesTransformado !== nivel) {
@@ -71,20 +70,14 @@ export default function FormEditarCarpeta({
     }
 
     // Transformar secciones
-    if (seccion) {
+    if (seccion >= 1) {
       const seccionesStr = String(seccion);
+
       if (seccionesStr !== seccion) {
         setSeccion(seccionesStr);
       }
     }
-
-    // Validar cabecera
-    if (cabecera) {
-      const cabeceraStr = cabecera ? "1" : "2";
-
-      setCabecera(cabeceraStr);
-    }
-  }, [nombre, nivel, seccion, descripcion, cabecera]);
+  }, [nombre, nivel, seccion, descripcion]);
 
   return (
     <Formulario
@@ -108,41 +101,28 @@ export default function FormEditarCarpeta({
         />
 
         <SelectOpcion
-          idOpcion={cabecera}
-          nombre={"Cabecera"}
+          idOpcion={nivel}
+          nombre={"Nivel"}
           handleChange={(e) => {
-            cambiarSeleccionCabecera(e, setCabecera);
+            cambiarSeleccionNivel(e, setNivel);
           }}
-          opciones={[
-            { id: "1", nombre: "Si" },
-            { id: "2", nombre: "No" },
-          ]}
+          opciones={generarItems(nivelEstante, {
+            indice: true,
+            formatoDigitos: 2,
+            nombreCero: "cabecera",
+          })}
           seleccione={"Seleccione"}
         />
 
-        {cabecera === "1" && (
-          <>
-            <SelectOpcion
-              idOpcion={nivel}
-              nombre={"Niveles"}
-              handleChange={(e) => {
-                cambiarSeleccionNivel(e, setNivel);
-              }}
-              opciones={cantNiveles}
-              seleccione={"Seleccione"}
-            />
-
-            <SelectOpcion
-              idOpcion={seccion}
-              nombre={"Secciones"}
-              handleChange={(e) => {
-                cambiarSeleccionSeccion(e, setSeccion);
-              }}
-              opciones={cantSecciones}
-              seleccione={"Seleccione"}
-            />
-          </>
-        )}
+        <SelectOpcion
+          idOpcion={seccion}
+          nombre={"Sección"}
+          handleChange={(e) => {
+            cambiarSeleccionSeccion(e, setSeccion);
+          }}
+          opciones={generarItemsSecciones(seccionEstante)}
+          seleccione={"Seleccione"}
+        />
 
         <AgruparCamposForm>
           <BotonAceptarCancelar
@@ -157,7 +137,6 @@ export default function FormEditarCarpeta({
               descripcion,
               nivel,
               seccion,
-              cabecera,
             }}
           />
 
@@ -168,7 +147,6 @@ export default function FormEditarCarpeta({
                 setDescripcion,
                 setNivel,
                 setSeccion,
-                setCabecera,
               });
             }}
             campos={{
@@ -176,7 +154,6 @@ export default function FormEditarCarpeta({
               descripcion,
               nivel,
               seccion,
-              cabecera,
             }}
           />
         </AgruparCamposForm>

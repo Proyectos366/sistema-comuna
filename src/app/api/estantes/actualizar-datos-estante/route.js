@@ -23,8 +23,10 @@ import procesarDetallesEstante from "@/utils/procesarDetallesEstante";
 export async function PATCH(request) {
   try {
     // 1. Obtiene los datos del cuerpo de la solicitud (request)
-    const { nombre, descripcion, niveles, secciones, cabecera, id_estante } =
+    const { nombre, descripcion, niveles, secciones, id_estante } =
       await request.json();
+
+    console.log("Id del estante:", id_estante);
 
     // 2. Valida los datos recibidos utilizando el servicio 'validarEditarEstante'
     const validaciones = await validarEditarEstante(
@@ -32,7 +34,6 @@ export async function PATCH(request) {
       descripcion,
       niveles,
       secciones,
-      cabecera,
       id_estante,
     );
 
@@ -59,6 +60,7 @@ export async function PATCH(request) {
     // 4. Inicia una transacción de Prisma para asegurar la integridad de los datos
     const estanteActualizado = await prisma.$transaction(async (tx) => {
       // 4.1 Actualiza el estante en la base de datos
+      // Nota: el alias no se actualiza porque es el identificador de la carpeta física
       const estante = await tx.estante.update({
         where: {
           id: validaciones.id_estante,
@@ -69,8 +71,6 @@ export async function PATCH(request) {
           descripcion: validaciones.descripcion,
           nivel: validaciones.niveles,
           seccion: validaciones.secciones,
-          cabecera: validaciones.cabecera,
-          // Nota: el alias no se actualiza porque es el identificador de la carpeta física
         },
       });
 
@@ -138,8 +138,8 @@ export async function PATCH(request) {
         id_objeto: validaciones.id_estante,
         id_usuario: validaciones.id_usuario,
         descripcion: "No se pudo actualizar el estante",
-        datosAntes: { nombre, descripcion, id_estante },
-        datosDespues: actualizado,
+        datosAntes: { nombre, descripcion, niveles, secciones, id_estante },
+        datosDespues: estanteActualizado,
       });
 
       // Retorna una respuesta de error con un código de estado 400

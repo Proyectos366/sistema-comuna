@@ -96,27 +96,29 @@ export default function ListadoEstantes({
         valor={formatearFecha(estante.createdAt)}
       />
 
-      <Div
-        onClick={() => {
-          dispatch(
-            setEstanteActual({
-              idEstante: estante.id,
-              nombre: estante.nombre,
-              nivel: estante.nivel,
-              seccion: estante.seccion,
-            }),
-          );
-        }}
-      >
-        <EnlacesBarraLateral
-          id_rol={usuarioActivo.id_rol}
-          cambiarRuta={cambiarRuta}
-          vista={vista}
-          vistaActual={"carpetas"}
-          nombre={"Abrir estante"}
-          indice={1}
-        />
-      </Div>
+      {!estante.borrado && (
+        <Div
+          onClick={() => {
+            dispatch(
+              setEstanteActual({
+                idEstante: estante.id,
+                nombre: estante.nombre,
+                nivel: estante.nivel,
+                seccion: estante.seccion,
+              }),
+            );
+          }}
+        >
+          <EnlacesBarraLateral
+            id_rol={usuarioActivo.id_rol}
+            cambiarRuta={cambiarRuta}
+            vista={vista}
+            vistaActual={"carpetas"}
+            nombre={"Abrir estante"}
+            indice={1}
+          />
+        </Div>
+      )}
     </Div>
   );
 }

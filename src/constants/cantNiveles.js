@@ -1,5 +1,4 @@
 const cantNiveles = [
-  { id: "00", nombre: "Cabecera" },
   { id: "01", nombre: "01" },
   { id: "02", nombre: "02" },
   { id: "03", nombre: "03" },

@@ -91,7 +91,6 @@ export default function ModalEstantes({
         }),
       ).unwrap();
     } catch (error) {
-      notify(error);
       console.log(error);
     }
   };
@@ -204,7 +203,7 @@ export default function ModalEstantes({
         <ModalDatosContenedor>
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Niveles" descripcion={niveles} />
+          <ModalDatos titulo="Niveles" descripcion={Number(niveles)} />
           <ModalDatos titulo="Secciones" descripcion={secciones} />
         </ModalDatosContenedor>
 

@@ -1793,7 +1793,6 @@ export default class ValidarCampos {
    @param {string} alias - El alias de la carpeta.
    @param {number} nivel - El nivel de la carpeta.
    @param {number} seccion - La sección de la carpeta.
-   @param {string|number} cabecera - Indica si el carpeta va en la cabecera (1 o "si") o no (0 o "no").
   */
   static validarCamposCrearCarpeta(
     idEstante,
@@ -2575,7 +2574,6 @@ export default class ValidarCampos {
    @param {string} descripcion - La nueva descripción del estante.
    @param {number} niveles - La nueva cantidad de niveles del estante.
    @param {number} secciones - La nueva cantidad de secciones del estante.
-   @param {boolean} cabecera - Indica si el estante es de cabecera o no.
    @param {number} id_estante - El ID del estante a editar.
   */
   static validarCamposEditarEstante(
@@ -2583,7 +2581,6 @@ export default class ValidarCampos {
     descripcion,
     niveles,
     secciones,
-    cabecera,
     id_estante,
   ) {
     try {
@@ -2593,10 +2590,6 @@ export default class ValidarCampos {
       const validarDescripcion = this.validarCampoTexto(descripcion);
       const validarNivel = this.validarCampoNivel(niveles);
       const validarSeccion = this.validarCampoSeccion(secciones);
-      const validarCabecera = this.validarCampoNumeroPasarBoolean(
-        cabecera,
-        "cabecera",
-      );
 
       // 2. Verificar si alguna validación falló
       if (validarIdEstante.status === "error") return validarIdEstante;
@@ -2604,7 +2597,6 @@ export default class ValidarCampos {
       if (validarDescripcion.status === "error") return validarDescripcion;
       if (validarNivel.status === "error") return validarNivel;
       if (validarSeccion.status === "error") return validarSeccion;
-      if (validarCabecera.status === "error") return validarCabecera;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados", {
@@ -2613,16 +2605,66 @@ export default class ValidarCampos {
         descripcion: validarDescripcion.texto,
         niveles: validarNivel.nivel,
         secciones: validarSeccion.seccion,
-        cabecera: validarCabecera.boolean,
       });
     } catch (error) {
       // 4. Manejo de errores inesperados
-      console.log(`Error interno campos editar cargo: ` + error);
+      console.log(`Error interno campos editar estante: ` + error);
 
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar cargo...",
+        "Error interno campos editar estante",
+      );
+    }
+  }
+
+  /**
+   Valida los campos necesarios para editar una carpeta.
+   @function validarCamposEditarCarpeta
+   @param {string} nombre - El nuevo nombre de la carpeta.
+   @param {string} descripcion - La nueva descripción de la carpeta.
+   @param {number} nivel - El nuevo nivel donde estara la carpeta.
+   @param {number} seccion - La nueva seccion donde estara la carpeta.
+   @param {number} id_carpeta - El ID de la carpeta a editar.
+  */
+  static validarCamposEditarCarpeta(
+    nombre,
+    descripcion,
+    nivel,
+    seccion,
+    id_carpeta,
+  ) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarIdCarpeta = this.validarCampoId(id_carpeta, "carpeta");
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarNivel = this.validarCampoNivel(nivel);
+      const validarSeccion = this.validarCampoSeccion(seccion);
+
+      // 2. Verificar si alguna validación falló
+      if (validarIdCarpeta.status === "error") return validarIdCarpeta;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarNivel.status === "error") return validarNivel;
+      if (validarSeccion.status === "error") return validarSeccion;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        id_carpeta: validarIdCarpeta.id,
+        nombre: validarNombre.texto,
+        descripcion: validarDescripcion.texto,
+        nivel: validarNivel.nivel,
+        seccion: validarSeccion.seccion,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos editar carpeta: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos editar carpeta",
       );
     }
   }
@@ -2659,7 +2701,7 @@ export default class ValidarCampos {
       // Retorna una respuesta del error inesperado
       return retornarRespuestaFunciones(
         "error",
-        "Error interno campos editar novedad...",
+        "Error interno campos editar novedad",
       );
     }
   }

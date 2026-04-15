@@ -16,27 +16,22 @@ import SelectOpcion from "@/components/SelectOpcion";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
-
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
-
 import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
 import { fetchCircuitosIdParroquia } from "@/store/features/circuitos/thunks/circuitosIdParroquia";
-
 import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
 import { fetchConsejosIdComuna } from "@/store/features/consejos/thunks/consejosIdComuna";
 import { fetchConsejosIdCircuito } from "@/store/features/consejos/thunks/consejosIdCircuito";
-import { fetchConsejosIdParroquia } from "@/store/features/consejos/thunks/consejosIdParroquia";
 
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
 import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionParroquia";
-
 import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
@@ -218,7 +213,7 @@ export default function ConsejosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [consejos, busqueda, ordenCampo, ordenDireccion]);
 
@@ -379,7 +374,6 @@ export default function ConsejosView() {
                   { id: "circuito", nombre: "circuito" },
                 ]}
                 seleccione={"Seleccione"}
-                indice={1}
               />
 
               {opcionComunaCircuito && (
@@ -454,8 +448,8 @@ export default function ConsejosView() {
                   ? cambiarSeleccionComuna(e, setIdComuna)
                   : cambiarSeleccionCircuito(e, setIdCircuito);
 
-                  setNombreConsejo("");
-                  setDescripcionConsejo("");
+                setNombreConsejo("");
+                setDescripcionConsejo("");
               }}
               opciones={opcionComunaCircuito === "comuna" ? comunas : circuitos}
               seleccione={"Seleccione"}

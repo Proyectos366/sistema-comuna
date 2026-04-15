@@ -29,9 +29,6 @@ export default function CarpetasView({ cambiarRuta, vista }) {
     (state) => state.estantes.estanteActual,
   );
 
-  //console.log(idEstante, nombre, nivel, seccion);
-  
-
   useEffect(() => {
     dispatch(fetchCarpetasIdEstante(idEstante));
     setNombreEstante(nombre);
@@ -42,7 +39,6 @@ export default function CarpetasView({ cambiarRuta, vista }) {
   const [aliasCarpeta, setAliasCarpeta] = useState("");
   const [nivelCarpeta, setNivelCarpeta] = useState("");
   const [seccionCarpeta, setSeccionCarpeta] = useState("");
-  const [cabeceraCarpeta, setCabeceraCarpeta] = useState("");
   const [opcion, setOpcion] = useState("crear");
 
   const [nombreEstante, setNombreEstante] = useState("");
@@ -73,7 +69,6 @@ export default function CarpetasView({ cambiarRuta, vista }) {
     setAlias: setAliasCarpeta,
     setNivel: setNivelCarpeta,
     setSeccion: setSeccionCarpeta,
-    setCabecera: setCabeceraCarpeta,
     setBorradoRestaurado: setBorradoRestauradoCarpeta,
     setOpcion: setOpcion,
   };
@@ -86,12 +81,11 @@ export default function CarpetasView({ cambiarRuta, vista }) {
     alias: aliasCarpeta,
     nivel: nivelCarpeta,
     seccion: seccionCarpeta,
-    cabecera: cabeceraCarpeta,
     borradoRestaurado: borradoRestauradoCarpeta,
     opcion: opcion,
     nombreEstante: nombreEstante,
     nivelEstante: nivel,
-    seccionEstante: seccion
+    seccionEstante: seccion,
   };
 
   const validaciones = {
@@ -129,7 +123,6 @@ export default function CarpetasView({ cambiarRuta, vista }) {
     setDescripcionCarpeta(carpeta.descripcion);
     setNivelCarpeta(carpeta.nivel);
     setSeccionCarpeta(carpeta.seccion);
-    setCabeceraCarpeta(carpeta.cabecera);
 
     dispatch(abrirModal("editar"));
   };
@@ -214,18 +207,3 @@ export default function CarpetasView({ cambiarRuta, vista }) {
     </>
   );
 }
-
-/** 
-import React from "react";
-import { useSelector } from "react-redux";
-
-export default function CarpetasView() {
-  const { id, nombre, nivel, seccion } = useSelector(
-    (state) => state.carpetas.estanteActual,
-  );
-
-  console.log(id, nombre, nivel, seccion);
-
-  return <div>CarpetasView</div>;
-}
-*/

@@ -26,13 +26,22 @@ export default async function validarConsultarTodosEstantes() {
       );
     }
 
-    // 3. Si todas las validaciones son correctas, se consolidan y retornan los datos del usuario.
+    // 3. Verificar si el usuario tiene permisos.
+    if (validaciones.id_rol !== 1) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, usuario no tiene permisos",
+        { codigo: 403 },
+      );
+    }
+
+    // 4. Si todas las validaciones son correctas, se consolidan y retornan los datos del usuario.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       correo: validaciones.correo,
     });
   } catch (error) {
-    // 4. Manejo de errores inesperados.
+    // 5. Manejo de errores inesperados.
     console.log(`Error interno validar consultar todos estantes: ` + error);
 
     // Retorna una respuesta del error inesperado

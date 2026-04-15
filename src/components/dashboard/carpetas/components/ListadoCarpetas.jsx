@@ -26,8 +26,6 @@ export default function ListadoCarpetas({
 
   const { usuarioActivo } = useSelector((state) => state.auth);
 
-  //console.log(carpeta);
-
   return (
     <Div className="bg-white py-2 px-2 sm:px-4 text-sm sm:text-md flex flex-col gap-1 text-black rounded-b-md">
       <Div className="flex items-center justify-between gap-2">
@@ -96,27 +94,29 @@ export default function ListadoCarpetas({
         valor={formatearFecha(carpeta.createdAt)}
       />
 
-      <Div
-        onClick={() => {
-          dispatch(
-            setCarpetaActual({
-              idCarpeta: carpeta.id,
-              nombre: carpeta.nombre,
-              nivel: carpeta.nivel,
-              seccion: carpeta.seccion,
-            }),
-          );
-        }}
-      >
-        <EnlacesBarraLateral
-          id_rol={usuarioActivo.id_rol}
-          cambiarRuta={cambiarRuta}
-          vista={vista}
-          vistaActual={"archivos"}
-          nombre={"Abrir archivo"}
-          indice={1}
-        />
-      </Div>
+      {!carpeta.borrado && (
+        <Div
+          onClick={() => {
+            dispatch(
+              setCarpetaActual({
+                idCarpeta: carpeta.id,
+                nombre: carpeta.nombre,
+                nivel: carpeta.nivel,
+                seccion: carpeta.seccion,
+              }),
+            );
+          }}
+        >
+          <EnlacesBarraLateral
+            id_rol={usuarioActivo.id_rol}
+            cambiarRuta={cambiarRuta}
+            vista={vista}
+            vistaActual={"archivos"}
+            nombre={"Abrir carpeta"}
+            indice={1}
+          />
+        </Div>
+      )}
     </Div>
   );
 }

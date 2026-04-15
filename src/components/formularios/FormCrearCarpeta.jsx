@@ -13,7 +13,6 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { limpiarCampos } from "@/utils/limpiarForm";
-import { cambiarSeleccionCabecera } from "@/utils/dashboard/cambiarSeleccionCabecera";
 import { cambiarSeleccionNivel } from "@/utils/dashboard/cambiarSeleccionNivel";
 import { cambiarSeleccionSeccion } from "@/utils/dashboard/cambiarSeleccionSeccion";
 import { generarItems } from "@/utils/generarItems";
@@ -25,14 +24,8 @@ export default function FormCrearCarpeta({
 }) {
   const dispatch = useDispatch();
 
-  const {
-    setNombre,
-    setDescripcion,
-    setAlias,
-    setNivel,
-    setSeccion,
-    setCabecera,
-  } = acciones;
+  const { setNombre, setDescripcion, setAlias, setNivel, setSeccion } =
+    acciones;
 
   const {
     idEstante,
@@ -41,7 +34,6 @@ export default function FormCrearCarpeta({
     alias,
     nivel,
     seccion,
-    cabecera,
     nivelEstante,
     seccionEstante,
   } = datosCarpeta;
@@ -56,9 +48,6 @@ export default function FormCrearCarpeta({
     validarSecciones,
     setValidarSecciones,
   } = validaciones;
-
-  const nivelFinal = cabecera == 1 || cabecera == "1" ? 0 : nivel;
-  const seccionFinal = cabecera == 1 || cabecera == "1" ? 0 : seccion;
 
   return (
     <Formulario
@@ -83,41 +72,24 @@ export default function FormCrearCarpeta({
         />
 
         <SelectOpcion
-          idOpcion={cabecera}
-          nombre={"Cabecera"}
+          idOpcion={nivel}
+          nombre={"Nivel"}
           handleChange={(e) => {
-            cambiarSeleccionCabecera(e, setCabecera);
+            cambiarSeleccionNivel(e, setNivel);
           }}
-          opciones={[
-            { id: "1", nombre: "Si" },
-            { id: "2", nombre: "No" },
-          ]}
+          opciones={generarItems(nivelEstante, { indice: true })}
           seleccione={"Seleccione"}
         />
 
-        {cabecera !== "1" && (
-          <>
-            <SelectOpcion
-              idOpcion={nivel}
-              nombre={"Niveles"}
-              handleChange={(e) => {
-                cambiarSeleccionNivel(e, setNivel);
-              }}
-              opciones={generarItems(nivelEstante)}
-              seleccione={"Seleccione"}
-            />
-
-            <SelectOpcion
-              idOpcion={seccion}
-              nombre={"Secciones"}
-              handleChange={(e) => {
-                cambiarSeleccionSeccion(e, setSeccion);
-              }}
-              opciones={generarItems(seccionEstante)}
-              seleccione={"Seleccione"}
-            />
-          </>
-        )}
+        <SelectOpcion
+          idOpcion={seccion}
+          nombre={"Sección"}
+          handleChange={(e) => {
+            cambiarSeleccionSeccion(e, setSeccion);
+          }}
+          opciones={generarItems(seccionEstante)}
+          seleccione={"Seleccione"}
+        />
 
         <InputNombreEstante
           value={alias}
@@ -141,9 +113,8 @@ export default function FormCrearCarpeta({
               nombre,
               descripcion,
               alias,
-              nivelFinal,
-              seccionFinal,
-              cabecera,
+              nivel,
+              seccion,
               idEstante,
             }}
           />
@@ -156,7 +127,6 @@ export default function FormCrearCarpeta({
                 setAlias,
                 setNivel,
                 setSeccion,
-                setCabecera,
               });
             }}
             campos={{
@@ -165,7 +135,6 @@ export default function FormCrearCarpeta({
               alias,
               nivel,
               seccion,
-              cabecera,
               idEstante,
             }}
           />

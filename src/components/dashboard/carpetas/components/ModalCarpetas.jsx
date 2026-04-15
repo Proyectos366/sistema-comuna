@@ -46,9 +46,7 @@ export default function ModalCarpetas({
     alias,
     nivel,
     seccion,
-    cabecera,
     borradoRestaurado,
-    opcion,
     nombreEstante,
   } = datosCarpeta;
 
@@ -62,7 +60,6 @@ export default function ModalCarpetas({
         alias: alias,
         nivel: nivel,
         seccion: seccion,
-        cabecera: cabecera,
         idEstante: idEstante,
       };
 
@@ -86,7 +83,6 @@ export default function ModalCarpetas({
         descripcion: descripcion,
         nivel: nivel,
         seccion: seccion,
-        cabecera: cabecera,
         id_carpeta: idCarpeta,
       };
 
@@ -98,7 +94,6 @@ export default function ModalCarpetas({
         }),
       ).unwrap();
     } catch (error) {
-      notify(error);
       console.log(error);
     }
   };
@@ -124,9 +119,6 @@ export default function ModalCarpetas({
     }
   };
 
-  const nivelFinal = cabecera == 1 || cabecera == "1" ? 0 : nivel;
-  const seccionFinal = cabecera == 1 || cabecera == "1" ? 0 : seccion;
-
   return (
     <>
       <ToastContainer />
@@ -143,17 +135,11 @@ export default function ModalCarpetas({
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
           <ModalDatos titulo="Alias" descripcion={alias} />
-          {nivelFinal !== 0 && (
-            <ModalDatos
-              titulo="Nivel"
-              descripcion={nivel ? Number(nivel) : nivel}
-            />
-          )}
-          {seccionFinal !== 0 && (
-            <ModalDatos titulo="Sección" descripcion={seccion} />
-          )}
-
-          <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
+          <ModalDatos
+            titulo="Nivel"
+            descripcion={Number(nivel) === 0 ? "0 (cabecera)" : Number(nivel)}
+          />
+          <ModalDatos titulo="Sección" descripcion={seccion} />
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -170,9 +156,8 @@ export default function ModalCarpetas({
             nombre,
             descripcion,
             alias,
-            nivelFinal,
-            seccionFinal,
-            cabecera,
+            nivel,
+            seccion,
             nombreEstante,
             idEstante,
           }}
@@ -224,9 +209,11 @@ export default function ModalCarpetas({
           <ModalDatos titulo="Nombre estante" descripcion={nombreEstante} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
-          <ModalDatos titulo="Nivel" descripcion={nivel} />
+          <ModalDatos
+            titulo="Nivel"
+            descripcion={Number(nivel) === 0 ? "0 (cabecera)" : Number(nivel)}
+          />
           <ModalDatos titulo="Sección" descripcion={seccion} />
-          <ModalDatos titulo="Cabecera" descripcion={cabecera ? "si" : "no"} />
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -244,7 +231,6 @@ export default function ModalCarpetas({
             descripcion,
             nivel,
             seccion,
-            cabecera,
             idCarpeta,
           }}
         />

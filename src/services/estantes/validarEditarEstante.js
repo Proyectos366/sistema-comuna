@@ -16,7 +16,6 @@ import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // F
  @param {string} descripcion - La nueva descripción del estante.
  @param {string} niveles - Los nuevos niveles del estante.
  @param {string} secciones - Las nuevas secciones del estante.
- @param {string} cabecera - La nueva cabecera del estante.
  @param {number} id_estante - El ID del estante a editar.
  @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación.
 */
@@ -26,7 +25,6 @@ export default async function validarEditarEstante(
   descripcion,
   niveles,
   secciones,
-  cabecera,
   id_estante,
 ) {
   try {
@@ -47,7 +45,6 @@ export default async function validarEditarEstante(
       descripcion,
       niveles,
       secciones,
-      cabecera,
       id_estante,
     );
 
@@ -116,17 +113,16 @@ export default async function validarEditarEstante(
       descripcion: validandoCampos.descripcion,
       niveles: validandoCampos.niveles,
       secciones: validandoCampos.secciones,
-      cabecera: validandoCampos.cabecera,
       id_estante: validandoCampos.id_estante,
     });
   } catch (error) {
     // 10. Manejo de errores inesperados.
-    console.log(`Error interno al editar estante: ` + error);
+    console.log(`Error interno validar editar estante: ` + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno al editar estante",
+      "Error interno validar editar estante",
     );
   }
 }
