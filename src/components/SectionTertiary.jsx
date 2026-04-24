@@ -2,6 +2,8 @@ import Titulos from "@/components/Titulos";
 import Section from "@/components/padres/Section";
 import Div from "@/components/padres/Div";
 import ButtonAdd from "@/components/botones/ButtonAdd";
+import Paginador from "@/components/templates/PlantillaPaginacion";
+import BuscadorOrdenador from "@/components/BuscadorOrdenador";
 
 export default function SectionTertiary({
   children,
@@ -9,6 +11,18 @@ export default function SectionTertiary({
   funcion,
   className,
   indice,
+  first,
+  setFirst,
+  rows,
+  setRows,
+  datos,
+  busqueda,
+  setBusqueda,
+  ordenCampo,
+  setOrdenCampo,
+  ordenDireccion,
+  setOrdenDireccion,
+  opcionesOrden,
 }) {
   const clasePorDefecto = `flex flex-col ${
     nombre ? "gap-4" : ""
@@ -28,7 +42,31 @@ export default function SectionTertiary({
         <Titulos indice={2} titulo={nombre} />
       )}
 
+      {datos?.length !== 0 && (
+        <BuscadorOrdenador
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
+        />
+      )}
+
       {children}
+
+      {datos?.length > 0 && (
+        <Div>
+          <Paginador
+            first={first}
+            setFirst={setFirst}
+            rows={rows}
+            setRows={setRows}
+            totalRecords={datos.length}
+          />
+        </Div>
+      )}
     </Section>
   );
 }

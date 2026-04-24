@@ -14,6 +14,7 @@ import ListadoCarpetas from "@/components/dashboard/carpetas/components/ListadoC
 import ModalCarpetas from "@/components/dashboard/carpetas/components/ModalCarpetas";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
+import Titulos from "@/components/Titulos";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 
@@ -137,27 +138,33 @@ export default function CarpetasView({ cambiarRuta, vista }) {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión carpetas"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={carpetasFiltradasOrdenadas}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {carpetas.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <Div className={`flex flex-col gap-2`}>
             {carpetas?.length === 0 && loading ? (
               <Loader titulo="Cargando carpetas..." />
             ) : (
               <>
+                <Titulos
+                  indice={4}
+                  titulo={nombreEstante}
+                  className={`text-center uppercase`}
+                />
+
                 {carpetasPaginadas?.length !== 0 ? (
                   carpetasPaginadas.map((carpeta, index) => {
                     return (
@@ -191,16 +198,6 @@ export default function CarpetasView({ cambiarRuta, vista }) {
                 )}
               </>
             )}
-          </Div>
-
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={carpetasFiltradasOrdenadas.length}
-            />
           </Div>
         </SectionTertiary>
       </SectionMain>

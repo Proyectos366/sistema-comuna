@@ -24,6 +24,7 @@ import cursosReducer from "@/store/features/cursos/cursosSlices";
 import novedadesReducer from "@/store/features/novedades/novedadesSlices";
 import estantesReducer from "@/store/features/estantes/estantesSlices";
 import carpetasReducer from "@/store/features/carpetas/carpetasSlices";
+import archivosReducer from "@/store/features/archivos/archivosSlices";
 
 // Configurar persistencia solo para estantes
 const persistConfigEstantes = {
@@ -39,13 +40,26 @@ const persistConfigCarpetas = {
   whitelist: ["carpetaActual"], // Solo persiste carpetaActual
 };
 
+// Configurar persistencia solo para archivos
+const persistConfigArchivos = {
+  key: "archivos",
+  storage,
+  whitelist: ["archivoActual"], // Solo persiste archivoActual
+};
+
 const persistedEstantesReducer = persistReducer(
   persistConfigEstantes,
   estantesReducer,
 );
+
 const persistedCarpetasReducer = persistReducer(
   persistConfigCarpetas,
   carpetasReducer,
+);
+
+const persistedArchivosReducer = persistReducer(
+  persistConfigArchivos,
+  archivosReducer,
 );
 
 const store = configureStore({
@@ -72,6 +86,7 @@ const store = configureStore({
     novedades: novedadesReducer,
     estantes: persistedEstantesReducer,
     carpetas: persistedCarpetasReducer,
+    archivos: persistedArchivosReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -24,6 +24,7 @@ import { fetchEstantes } from "@/store/features/estantes/thunks/todosEstantes";
 import { fetchEstantesIdDepartamento } from "@/store/features/estantes/thunks/estantesIdDepartamento";
 import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
 import { fetchEstantesDepartamentoMiembro } from "@/store/features/estantes/thunks/todosEstantesDepartamentoMiembro";
+import { fetchTodosDepartamentosInstitucion } from "@/store/features/departamentos/thunks/todosDepartamentosInstitucion";
 
 export default function EstantesView({ cambiarRuta, vista }) {
   const dispatch = useDispatch();
@@ -35,11 +36,11 @@ export default function EstantesView({ cambiarRuta, vista }) {
   useEffect(() => {
     if (usuarioActivo.id_rol === 1) {
       dispatch(fetchEstantes());
+      dispatch(fetchDepartamentos());
     } else {
       dispatch(fetchEstantesDepartamentoMiembro());
     }
-
-    dispatch(fetchDepartamentos());
+    dispatch(fetchTodosDepartamentosInstitucion());
   }, [dispatch, usuarioActivo]);
 
   const [nombreEstante, setNombreEstante] = useState("");
@@ -134,6 +135,18 @@ export default function EstantesView({ cambiarRuta, vista }) {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión estantes"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={estantesFiltradosOrdenados}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
@@ -147,18 +160,6 @@ export default function EstantesView({ cambiarRuta, vista }) {
               }}
               opciones={departamentos}
               seleccione={"Seleccione"}
-            />
-          )}
-
-          {estantes.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
             />
           )}
 
@@ -199,16 +200,6 @@ export default function EstantesView({ cambiarRuta, vista }) {
                 )}
               </>
             )}
-          </Div>
-
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={estantesFiltradosOrdenados.length}
-            />
           </Div>
         </SectionTertiary>
       </SectionMain>

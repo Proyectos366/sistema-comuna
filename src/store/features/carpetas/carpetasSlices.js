@@ -121,7 +121,7 @@ const carpetasSlice = createSlice({
       .addCase(actualizarCarpeta.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.carpetas.findIndex(
-          (estante) => estante.id === action.payload.id,
+          (carpeta) => carpeta.id === action.payload.id,
         );
         if (index !== -1) {
           state.carpetas[index] = action.payload;
@@ -137,13 +137,13 @@ const carpetasSlice = createSlice({
       })
       .addCase(eliminarRestaurarCarpeta.fulfilled, (state, action) => {
         state.loading = false;
-        const CarpetaActualizado = action.payload;
+        const carpetaActualizada = action.payload;
 
         const index = state.carpetas.findIndex(
-          (u) => u.id === CarpetaActualizado.id,
+          (u) => u.id === carpetaActualizada.id,
         );
         if (index !== -1) {
-          state.carpetas[index] = CarpetaActualizado;
+          state.carpetas[index] = carpetaActualizada;
         }
       })
       .addCase(eliminarRestaurarCarpeta.rejected, (state, action) => {

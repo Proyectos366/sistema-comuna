@@ -1841,6 +1841,47 @@ export default class ValidarCampos {
   }
 
   /**
+   Valida los campos necesarios para crear un nuevo archivo.
+   @function validarCamposCrearArchivo
+   @param {number} idCarpeta - El ID de la carpeta a la que pertenece el archivo.
+   @param {string} nombre - El nombre del archivo.
+   @param {string} descripcion - La descripción del archivo.
+   @param {string} alias - El alias del archivo.
+  */
+  static validarCamposCrearArchivo(idCarpeta, nombre, descripcion, alias) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarIdCarpeta = this.validarCampoId(idCarpeta, "carpeta");
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarAlias = this.validarCampoAlias(alias, 1);
+
+      // 2. Verificar si alguna validación falló
+      if (validarIdCarpeta.status === "error") return validarIdCarpeta;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarAlias.status === "error") return validarAlias;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        id_carpeta: validarIdCarpeta.id,
+        nombre: validarNombre.texto,
+        descripcion: validarDescripcion.texto,
+        alias: validarAlias.alias,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos archivo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos archivo",
+      );
+    }
+  }
+
+  /**
    Valida los campos necesarios para crear una novedad.
    @function validarCamposCrearNovedad
    @param {string} nombre - El nombre o título de la novedad.
@@ -2665,6 +2706,47 @@ export default class ValidarCampos {
       return retornarRespuestaFunciones(
         "error",
         "Error interno campos editar carpeta",
+      );
+    }
+  }
+
+  /**
+   Valida los campos necesarios para editar un archivo.
+   @function validarCamposEditarArchivo
+   @param {string} nombre - El nuevo nombre del archivo.
+   @param {string} descripcion - La nueva descripción del archivo.
+   @param {string} alias - El nuevo alias del archivo.
+   @param {number} id_archivo - El ID del archivo a editar.
+  */
+  static validarCamposEditarArchivo(nombre, descripcion, alias, id_archivo) {
+    try {
+      // 1. Validar cada campo individualmente.
+      const validarIdArchivo = this.validarCampoId(id_archivo, "archivo");
+      const validarNombre = this.validarCampoTexto(nombre);
+      const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarAlias = this.validarCampoAlias(alias);
+
+      // 2. Verificar si alguna validación falló
+      if (validarIdArchivo.status === "error") return validarIdArchivo;
+      if (validarNombre.status === "error") return validarNombre;
+      if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarAlias.status === "error") return validarAlias;
+
+      // 3. Consolidar datos validados y retornar respuesta exitosa
+      return retornarRespuestaFunciones("ok", "Campos validados", {
+        id_archivo: validarIdArchivo.id,
+        nombre: validarNombre.texto,
+        descripcion: validarDescripcion.texto,
+        alias: validarAlias.alias,
+      });
+    } catch (error) {
+      // 4. Manejo de errores inesperados
+      console.log(`Error interno campos editar archivo: ` + error);
+
+      // Retorna una respuesta del error inesperado
+      return retornarRespuestaFunciones(
+        "error",
+        "Error interno campos editar archivo",
       );
     }
   }

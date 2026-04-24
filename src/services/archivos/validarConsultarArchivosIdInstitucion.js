@@ -1,28 +1,27 @@
 /**
- @fileoverview Función utilitaria para validar la identidad del usuario antes de realizar una consulta
- de todos las departamentos por idInstitucion.
- @module services/departamentos/validarConsultarDepartamentosIdInstitucion
+ @fileoverview Función utilitaria para validar la identidad del usuario y un ID de institucion antes
+ de consultar los archivos.
+ @module services/archivos/validarConsultarArchivosIdInstitucion
 */
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
+import ValidarCampos from "@/services/ValidarCampos"; // Clase para validar campos de entrada
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
-import ValidarCampos from "@/services/ValidarCampos";
 
 /**
- Valida la identidad del usuario que intenta consultar todas lss departamentos por institucion.
+ Valida la identidad del usuario y el ID de la institucion para consultar archivos.
  @async
- @function validarConsultarDepartamentosIdInstitucion
- @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
+ @function validarConsultarArchivosIdInstitucion
+ @param {object} request - El objeto de solicitud HTTP que contiene los parámetros de la URL.
+ @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación.
 */
-export default async function validarConsultarDepartamentosIdInstitucion(
-  request,
-) {
+export default async function validarConsultarArchivosIdInstitucion(request) {
   try {
     // 1. Extraer el parámetro 'idInstitucion' de la URL de la solicitud.
     const { searchParams } = new URL(request.url);
     const idInstitucion = searchParams.get("idInstitucion");
 
-    // 2. Obtener y validar los datos del usuario a través del token.
+    // 2. Obtener los datos del usuario activo a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
 
     // 3. Si el token es inválido, se retorna un error.
@@ -33,35 +32,35 @@ export default async function validarConsultarDepartamentosIdInstitucion(
       );
     }
 
-    // 4. Obtener y validar los datos del idInstitucion.
+    // 4. Validar que el 'idInstitucion' sea un ID válido.
     const validarIdInstitucion = ValidarCampos.validarCampoId(
       idInstitucion,
       "institucion",
     );
 
-    // 3. Si el idInstitucion es inválido, se retorna un error.
-    if (validarIdInstitucion.error === "error") {
+    // 5. Si la validación del ID de la institucion falla, se retorna un error.
+    if (validarIdInstitucion.status === "error") {
       return retornarRespuestaFunciones(
         validarIdInstitucion.status,
         validarIdInstitucion.message,
       );
     }
 
-    // 4. Si todas las validaciones son correctas, se retorna la información del usuario.
+    // 6. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       id_institucion: validarIdInstitucion.id,
     });
   } catch (error) {
-    // 5. Manejo de errores inesperados.
+    // 7. Manejo de errores inesperados.
     console.log(
-      "Error interno validar consultar departamentos idInstitucion: " + error,
+      `Error interno validar consultar archivos id institucion: ` + error,
     );
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar consultar departamentos idInstitucion",
+      "Error interno validar consultar archivos id institucion",
     );
   }
 }

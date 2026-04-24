@@ -17,13 +17,13 @@ import { cambiarSeleccionDepartamento } from "@/utils/dashboard/cambiarSeleccion
 
 import { fetchRoles } from "@/store/features/roles/thunks/todosRoles";
 import { fetchTodasInstituciones } from "@/store/features/instituciones/thunks/todasInstituciones";
-import { fetchDepartamentos } from "@/store/features/departamentos/thunks/todosDepartamentos";
 
 import { cambiarDepartamentoUsuario } from "@/store/features/usuarios/thunks/cambiarDepartamentoUsuario";
 import { cambiarRolUsuario } from "@/store/features/usuarios/thunks/cambiarRolUsuario";
 import { crearUsuario } from "@/store/features/usuarios/thunks/crearUsuario";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { asignarDepartamentoUsuario } from "@/store/features/usuarios/thunks/asignarDepartamentoUsuario";
+import { fetchTodosDepartamentosInstitucion } from "@/store/features/departamentos/thunks/todosDepartamentosInstitucion";
 
 export default function ModalUsuarios({
   acciones,
@@ -46,7 +46,7 @@ export default function ModalUsuarios({
 
   useEffect(() => {
     dispatch(fetchRoles());
-    dispatch(fetchDepartamentos());
+    dispatch(fetchTodosDepartamentosInstitucion());
     if (usuarioActivo.id_rol === 1) {
       dispatch(fetchTodasInstituciones());
     }

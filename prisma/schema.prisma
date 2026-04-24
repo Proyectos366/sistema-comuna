@@ -297,6 +297,7 @@ model archivo {
   nombre_sistema  String   @unique
   descripcion     String
   codigo          String?  @unique
+  hash            String   @unique
   alias           String
   extension       String
   tipo            String

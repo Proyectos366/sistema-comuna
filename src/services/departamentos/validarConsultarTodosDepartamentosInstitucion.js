@@ -1,7 +1,7 @@
 /**
  @fileoverview Función utilitaria para validar la identidad del usuario antes de realizar una
- consulta de todos los departamentos disponibles.
- @module services/departamentos/validarConsultarTodosDepartamentos
+ consulta de todos los departamentos disponibles en su institución.
+ @module services/departamentos/validarConsultarTodosDepartamentosInstitucion
 */
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
@@ -10,10 +10,10 @@ import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // F
 /**
  Valida la identidad del usuario que intenta consultar todos los departamentos disponibles.
  @async
- @function validarConsultarTodosDepartamentos
+ @function validarConsultarTodosDepartamentosInstitucion
  @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
 */
-export default async function validarConsultarTodosDepartamentos() {
+export default async function validarConsultarTodosDepartamentosInstitucion() {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -27,7 +27,7 @@ export default async function validarConsultarTodosDepartamentos() {
     }
 
     // 3. Verificar si el usuario tiene permisos.
-    if (validaciones.id_rol !== 1) {
+    if (validaciones.id_rol !== 1 && validaciones.id_rol !== 2) {
       return retornarRespuestaFunciones(
         "error",
         "Error, usuario no tiene permisos",
@@ -43,12 +43,15 @@ export default async function validarConsultarTodosDepartamentos() {
     });
   } catch (erro) {
     // 5. Manejo de errores inesperados.
-    console.log("Error interno validar consultar todos departamentos: " + erro);
+    console.log(
+      "Error interno validar consultar todos departamentos institucion: " +
+        erro,
+    );
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar consultar todos departamentos",
+      "Error interno validar consultar todos departamentos institucion",
     );
   }
 }

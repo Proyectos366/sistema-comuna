@@ -43,6 +43,7 @@ import CambiarClaveView from "@/components/dashboard/cambiar-clave/CambiarClaveV
 import NovedadesView from "@/components/dashboard/novedades/NovedadesView";
 import EstantesView from "@/components/dashboard/estantes/EstantesView";
 import CarpetasView from "@/components/dashboard/carpetas/CarpetasView";
+import ArchivosView from "@/components/dashboard/archivos/ArchivosView";
 
 export default function Dashboard() {
   const { screenSize } = useUser();
@@ -278,7 +279,13 @@ export default function Dashboard() {
                 <EstantesView cambiarRuta={cambiarRuta} vista={vista} />
               )}
 
-              {vista === "carpetas" && <CarpetasView />}
+              {vista === "carpetas" && (
+                <CarpetasView cambiarRuta={cambiarRuta} vista={vista} />
+              )}
+
+              {vista === "archivos" && (
+                <ArchivosView cambiarRuta={cambiarRuta} vista={vista} />
+              )}
             </Main>
 
             <Footer />
