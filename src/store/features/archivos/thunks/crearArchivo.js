@@ -8,7 +8,7 @@ export const crearArchivo = createAsyncThunk(
     try {
       const response = await axios.post(
         "/api/archivos/crear-archivo",
-        data.nuevaArchivo,
+        data.formData,
       );
 
       const archivoCreado = response.data.archivos;

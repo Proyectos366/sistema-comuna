@@ -303,7 +303,7 @@ model archivo {
   tipo            String
   size            Int
   path            String
-  estado          Boolean
+  estado          Boolean  @default(true)
   borrado         Boolean  @default(false)
   id_usuario      Int // Clave foránea hacia usuario
   id_departamento Int // Clave foránea hacia departamento

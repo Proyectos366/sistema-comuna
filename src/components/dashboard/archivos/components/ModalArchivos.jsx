@@ -53,17 +53,17 @@ export default function ModalArchivos({
 
   const handleCrearArchivo = async () => {
     try {
-      const nuevoArchivo = {
-        archivo: archivo,
-        nombre: nombre,
-        descripcion: descripcion,
-        alias: alias,
-        idCarpeta: idCarpeta,
-      };
+      const formData = new FormData();
+
+      formData.append("archivo", archivo);
+      formData.append("nombre", nombre);
+      formData.append("descripcion", descripcion);
+      formData.append("alias", alias);
+      formData.append("idCarpeta", idCarpeta);
 
       await dispatch(
         crearArchivo({
-          nuevoArchivo: nuevoArchivo,
+          formData: formData,
           notify: notify,
           cerrarModal: cerrarModal,
         }),
@@ -116,70 +116,6 @@ export default function ModalArchivos({
     }
   };
 
-
-  /** 
-    const crearArchivo = async () => {
-      try {
-        const formData = new FormData();
-        formData.append("id_usuario", id);
-        formData.append("id_departamento", carpetaActual.id_departamento);
-        formData.append("id_estante", carpetaActual.id_estante);
-        formData.append("id_carpeta", nombreCarpetaAbierta.id);
-        formData.append("nombreArchivo", nombreArchivo);
-        formData.append("archivo", archivo); // Asegúrate de que sea un `File` válido
-        formData.append("descripcionArchivo", descripcionArchivo);
-        formData.append("aliasArchivo", aliasArchivo);
-
-        const response = await axios.post(
-          `/api/archivos/crear-archivo`,
-          formData
-        );
-
-        console.log(response.data);
-
-        if (response.data.status === "ok") {
-          setNuevoArchivo(true);
-          setMensaje(response.data.message);
-
-          setTimeout(() => {
-            setNombreArchivo("");
-            setDescripcionArchivo("");
-            setAliasArchivo("");
-            setArchivo("");
-            setMensaje("");
-            setOpenModalCrearEstante(false);
-          }, 5000);
-        } else {
-          setMensaje(response.data.message);
-
-          setTimeout(() => {
-            setMensaje("");
-          }, 5000);
-        }
-      } catch (error) {
-        console.log("Error al crear archivo: " + error);
-        setMensaje(error?.response?.data?.message);
-
-        setTimeout(() => {
-          setMensaje("");
-        }, 5000);
-      }
-    };
-
-    const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type !== "application/pdf") {
-      alert("Por favor, selecciona un archivo PDF.");
-      event.target.value = ""; // Limpia el input manualmente
-    } else {
-      setArchivo(null); // Reiniciar el estado antes de asignar el nuevo archivo
-      setTimeout(() => setArchivo(file)); // Forzar actualización del estado
-    }
-  };
-  */
-
-
-
   return (
     <>
       <ToastContainer />
@@ -213,7 +149,7 @@ export default function ModalArchivos({
             nombre,
             descripcion,
             alias,
-            idArchivo,
+            idCarpeta,
           }}
         />
       </Modal>

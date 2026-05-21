@@ -35,7 +35,7 @@ export default function ArchivosView({ cambiarRuta, vista }) {
     (state) => state.estantes.estanteActual,
   );
 
-  console.log(nombreEstante, nombre);
+  //console.log(nombreEstante, nombre);
 
   useEffect(() => {
     dispatch(fetchArchivosIdCarpeta(idCarpeta));
@@ -56,6 +56,7 @@ export default function ArchivosView({ cambiarRuta, vista }) {
 
   const [validarNombreArchivo, setValidarNombreArchivo] = useState(false);
   const [validarAliasArchivo, setValidarAliasArchivo] = useState(false);
+  const [validarArchivo, setValidarArchivo] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
@@ -69,6 +70,7 @@ export default function ArchivosView({ cambiarRuta, vista }) {
 
   const acciones = {
     setIdArchivo: setIdArchivo,
+    setArchivo: setArchivo,
     setNombre: setNombreArchivo,
     setDescripcion: setDescripcionArchivo,
     setAlias: setAliasArchivo,
@@ -79,6 +81,7 @@ export default function ArchivosView({ cambiarRuta, vista }) {
   const datosArchivo = {
     idCarpeta: idCarpeta,
     idArchivo: idArchivo,
+    archivo: archivo,
     nombre: nombreArchivo,
     descripcion: descripcionArchivo,
     alias: aliasArchivo,
@@ -92,6 +95,8 @@ export default function ArchivosView({ cambiarRuta, vista }) {
     setValidarNombre: setValidarNombreArchivo,
     validarAlias: validarAliasArchivo,
     setValidarAlias: setValidarAliasArchivo,
+    validarArchivo: validarArchivo,
+    setValidarArchivo: setValidarArchivo,
   };
 
   const archivosFiltradosOrdenados = useMemo(() => {

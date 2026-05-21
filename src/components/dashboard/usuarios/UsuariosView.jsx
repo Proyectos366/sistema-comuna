@@ -12,8 +12,6 @@ import ButtonToggleDetallesUsuario from "@/components/dashboard/usuarios/compone
 import LeyendaUsuarios from "@/components/dashboard/usuarios/components/LeyendaUsuarios";
 import FichaUsuario from "@/components/dashboard/usuarios/components/FichaUsuario";
 import ModalUsuarios from "@/components/dashboard/usuarios/components/ModalUsuarios";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
@@ -73,7 +71,7 @@ export default function UsuariosView() {
     { id: "apellido", nombre: "Apellido" },
   ];
 
-  const usuariosFiltradosYOrdenados = useMemo(() => {
+  const usuariosFiltradosOrdenados = useMemo(() => {
     return filtrarOrdenar(
       usuarios,
       busqueda,
@@ -84,8 +82,8 @@ export default function UsuariosView() {
   }, [usuarios, busqueda, ordenCampo, ordenDireccion]);
 
   const usuariosPaginados = useMemo(() => {
-    return usuariosFiltradosYOrdenados.slice(first, first + rows);
-  }, [usuariosFiltradosYOrdenados, first, rows]);
+    return usuariosFiltradosOrdenados.slice(first, first + rows);
+  }, [usuariosFiltradosOrdenados, first, rows]);
 
   useEffect(() => {
     setFirst(0);
@@ -155,20 +153,22 @@ export default function UsuariosView() {
 
         <SectionTertiary
           nombre={"Gestión usuarios"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={usuarios}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          <BuscadorOrdenador
-            busqueda={busqueda}
-            setBusqueda={setBusqueda}
-            ordenCampo={ordenCampo}
-            setOrdenCampo={setOrdenCampo}
-            ordenDireccion={ordenDireccion}
-            setOrdenDireccion={setOrdenDireccion}
-            opcionesOrden={opcionesOrden}
-          />
-
           <Div className={`flex flex-col gap-2`}>
             {usuarios?.length === 0 && loading ? (
               <Loader titulo="Cargando usuarios..." />
@@ -213,16 +213,6 @@ export default function UsuariosView() {
                 )}
               </>
             )}
-          </Div>
-
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={usuariosFiltradosYOrdenados.length}
-            />
           </Div>
         </SectionTertiary>
       </SectionMain>

@@ -83,7 +83,7 @@ export async function POST(request) {
       try {
         const storagePath = path.join(
           process.cwd(),
-          `storage/instituciones/${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}/${validaciones.nombreEstante}`,
+          `storage/instituciones/${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}/${validaciones.aliasEstante}`,
         );
 
         await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.alias);

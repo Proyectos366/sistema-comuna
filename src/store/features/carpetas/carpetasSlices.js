@@ -25,7 +25,7 @@ const carpetasSlice = createSlice({
   reducers: {
     setCarpetaActual: (state, action) => {
       state.carpetaActual = {
-        idCarpeta: action.payload.id,
+        idCarpeta: action.payload.idCarpeta,
         nombre: action.payload.nombre,
         nivel: action.payload.nivel,
         seccion: action.payload.seccion,

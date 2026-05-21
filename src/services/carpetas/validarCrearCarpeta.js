@@ -150,6 +150,7 @@ export default async function validarCrearCarpeta(
       },
       select: {
         nombre: true,
+        alias: true,
       },
     });
 
@@ -178,6 +179,7 @@ export default async function validarCrearCarpeta(
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
       nombreEstante: nombreEstante.nombre,
+      aliasEstante: nombreEstante.alias,
       id_departamento: validaciones.id_departamento,
       id_estante: validarCampos.id_estante,
     });

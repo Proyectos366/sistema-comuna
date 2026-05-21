@@ -12,6 +12,7 @@ import { formatearFecha } from "@/utils/Fechas";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { setCarpetaActual } from "@/store/features/carpetas/carpetasSlices";
+import { formatFileSize } from "@/utils/formatFileSize";
 
 export default function ListadoCarpetas({
   carpeta,
@@ -67,7 +68,7 @@ export default function ListadoCarpetas({
       <BloqueInfo
         indice={1}
         nombre={"Tamaño total"}
-        valor={carpeta.pesoTotalArchivos}
+        valor={formatFileSize(carpeta.pesoTotal)}
       />
 
       <Div className="flex items-center justify-between">

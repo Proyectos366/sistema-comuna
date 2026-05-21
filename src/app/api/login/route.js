@@ -42,7 +42,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -69,7 +69,7 @@ export async function POST(request) {
     response.cookies.set(
       nombreToken,
       validaciones.token,
-      validaciones.cookieOption
+      validaciones.cookieOption,
     );
     return response; // Retorna la respuesta configurada
   } catch (error) {
@@ -91,7 +91,7 @@ export async function POST(request) {
       "error",
       "Error interno al iniciar sesion",
       {},
-      500
+      500,
     );
   }
 }
@@ -106,84 +106,21 @@ export async function GET(request) {
   try {
     // 1. Recupera las cookies y el token de autenticación
     const cookieStore = await cookies(); // Esperar la llamada a cookies()
-    const token = cookieStore.get(nombreToken)?.value;
 
-    // 2. Descifra el token de autenticación
-    const descifrarToken = AuthTokens.descifrarToken(token);
+    // 7. Elimina el token de las cookies
+    cookieStore.delete(nombreToken);
 
-    // 3. Verifica si el token es válido
-    if (descifrarToken.status === "error") {
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "INTENTO_FALLIDO_TOKEN_LOGOUT",
-        id_objeto: 0,
-        id_usuario: 0,
-        descripcion: "Token invalido para cerrar sesion",
-        datosAntes: null,
-        datosDespues: descifrarToken,
-      });
-
-      return generarRespuesta(
-        descifrarToken.status,
-        descifrarToken.message,
-        {},
-        400
-      );
-    }
-
-    // 4. Consulta el usuario para el cierre de sesión
-    const usuarioLogout = await prisma.usuario.findFirst({
-      where: {
-        correo: descifrarToken.correo,
+    return generarRespuesta(
+      "ok",
+      "Cerrando sesion",
+      {
+        redirect: "/",
       },
-      select: {
-        id: true,
-      },
-    });
-
-    // 5. Condición de error si no se encuentra el usuario
-    if (!usuarioLogout) {
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "ERROR_LOGOUT",
-        id_objeto: 0,
-        id_usuario: 0,
-        descripcion: "No se pudo cerrar sesion",
-        datosAntes: null,
-        datosDespues: null,
-      });
-
-      return generarRespuesta("error", "Error, al cerrar sesion", {}, 400);
-    } else {
-      // 6. Condición de éxito: el cierre de sesión se realiza correctamente
-      await registrarEventoSeguro(request, {
-        tabla: "usuario",
-        accion: "EXITO_LOGOUT",
-        id_objeto: 0,
-        id_usuario: usuarioLogout.id,
-        descripcion: "Cierre de sesion correctamente",
-        datosAntes: null,
-        datosDespues: usuarioLogout,
-      });
-
-      // 7. Elimina el token de las cookies
-      cookieStore.delete(nombreToken);
-
-      return generarRespuesta("ok", "Cerrando sesion", {}, 201);
-    }
+      201,
+    );
   } catch (error) {
     // 8. Manejo de errores inesperados
     console.error("Error interno cerrando sesión:", error);
-
-    await registrarEventoSeguro(request, {
-      tabla: "usuario",
-      accion: "ERROR_INTERNO_LOGOUT",
-      id_objeto: 0,
-      id_usuario: 0,
-      descripcion: "Error inesperado al cerrar sesion",
-      datosAntes: null,
-      datosDespues: error.message,
-    });
 
     // Retorna una respuesta de error con un código de estado 500 (Internal Server Error)
     return generarRespuesta("error", "Error interno cerrando sesión", {}, 500);

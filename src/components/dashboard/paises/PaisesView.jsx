@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoPaises from "@/components/dashboard/paises/components/ListadoPaises";
 import ModalPaises from "@/components/dashboard/paises/components/ModalPaises";
@@ -81,7 +79,7 @@ export default function PaisesView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [paises, busqueda, ordenCampo, ordenDireccion]);
 
@@ -103,20 +101,22 @@ export default function PaisesView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión paises"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={paises}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          <BuscadorOrdenador
-            busqueda={busqueda}
-            setBusqueda={setBusqueda}
-            ordenCampo={ordenCampo}
-            setOrdenCampo={setOrdenCampo}
-            ordenDireccion={ordenDireccion}
-            setOrdenDireccion={setOrdenDireccion}
-            opcionesOrden={opcionesOrden}
-          />
-
           <Div className={`flex flex-col gap-2`}>
             {paises?.length === 0 && loading ? (
               <Loader titulo="Cargando paises..." />
@@ -141,16 +141,6 @@ export default function PaisesView() {
                 )}
               </>
             )}
-          </Div>
-
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={paisesFiltradosOrdenados.length}
-            />
           </Div>
         </SectionTertiary>
       </SectionMain>

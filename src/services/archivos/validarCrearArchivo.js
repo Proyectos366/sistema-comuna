@@ -9,6 +9,8 @@ import prisma from "@/libs/prisma";
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
 import ValidarCampos from "@/services/ValidarCampos";
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken";
+import path from "path";
+import fs from "fs";
 
 const claveSecreta = process.env.CIFRADO_CLAVE;
 const algoritmo = process.env.CIFRADO_ALGORITMO;
@@ -127,7 +129,7 @@ export default async function validarCrearArchivo(request) {
     });
 
     if (archivoDuplicado) {
-      const ubicacion = `${validaciones.nombreInstitucion} > ${validaciones.nombreDepartamento} > ${archivoDuplicado.carpeta.estantes[0].nombre} > ${archivoDuplicado.carpeta.nombre} > ${archivoDuplicado.nombre}`;
+      const ubicacion = `${validaciones.nombreInstitucion} > ${validaciones.nombreDepartamento} > ${archivoDuplicado.carpeta.estantes.nombre} > ${archivoDuplicado.carpeta.nombre} > ${archivoDuplicado.nombre}`;
       return retornarRespuestaFunciones(
         "error",
         `Este archivo ya existe en el sistema. Ubicación original: ${ubicacion}`,
@@ -144,8 +146,9 @@ export default async function validarCrearArchivo(request) {
       select: {
         codigo: true,
         nombre: true,
+        alias: true,
         id_estante: true,
-        estante: { select: { codigo: true, nombre: true } },
+        estantes: { select: { codigo: true, nombre: true, alias: true } },
       },
     });
 
@@ -157,22 +160,6 @@ export default async function validarCrearArchivo(request) {
       );
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     // 16. Generar código único del archivo
     const cantidadArchivos = await prisma.archivo.count();
     const numeroCodigo = String(cantidadArchivos + 1).padStart(10, "0");
@@ -235,11 +222,15 @@ export default async function validarCrearArchivo(request) {
     const iv = randomBytes(16);
     const key = scryptSync(claveSecreta, "salt", 32);
     const cipher = createCipheriv(algoritmo, key, iv);
-    const bufferCifrado = Buffer.concat([
-      iv,
-      cipher.update(buffer),
-      cipher.final(),
-    ]);
+    const bufferCifrado = Buffer.concat([iv, cipher.update(buffer), cipher.final()]);
+
+    // 20.1. Guardar archivo cifrado en carpeta temporal
+    const tempDir = path.join(process.cwd(), "storage", "temp");
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    const rutaTemporal = path.join(tempDir, nombreSistemaFecha);
+    fs.writeFileSync(rutaTemporal, bufferCifrado);
 
     // 21. Si todas las validaciones son correctas, retornar los datos para la creación
     return retornarRespuestaFunciones("ok", "Validación correcta", {
@@ -261,8 +252,11 @@ export default async function validarCrearArchivo(request) {
       ultimaModificacion: ultimaModificacion,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
-      nombreEstante: datosCarpeta.estante.nombre,
+      nombreEstante: datosCarpeta.estantes.nombre,
+      aliasEstante: datosCarpeta.estantes.alias,
       nombreCarpeta: datosCarpeta.nombre,
+      aliasCarpeta: datosCarpeta.alias,
+      rutaTemporal: rutaTemporal,
     });
   } catch (error) {
     // 22. Manejo de errores inesperados
@@ -271,10 +265,354 @@ export default async function validarCrearArchivo(request) {
     return retornarRespuestaFunciones(
       "error",
       "Error interno en validación de archivo",
-      { codigo: 500 },
     );
   }
 }
+
+// /**
+//  @fileoverview Función utilitaria para validar los datos necesarios antes de realizar una operación
+//  de creación de un archivo en la base de datos.
+//  @module services/archivos/validarCrearArchivo
+// */
+
+// import { randomBytes, scryptSync, createCipheriv, createHash } from "crypto";
+// import prisma from "@/libs/prisma";
+// import retornarRespuestaFunciones from "@/utils/respuestasValidaciones";
+// import ValidarCampos from "@/services/ValidarCampos";
+// import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken";
+// import fs from "fs";
+// import path from "path";
+
+// const claveSecreta = process.env.CIFRADO_CLAVE;
+// const algoritmo = process.env.CIFRADO_ALGORITMO;
+// const hash = process.env.CIFRADO_HASH;
+
+// /**
+//  * Guarda un archivo temporalmente en el sistema
+//  */
+// async function guardarArchivoTemporal(bufferCifrado, nombreSistema) {
+//   const tempDir = path.join(process.cwd(), "temp", "uploads");
+
+//   // Crear directorio temporal si no existe
+//   if (!fs.existsSync(tempDir)) {
+//     fs.mkdirSync(tempDir, { recursive: true });
+//   }
+
+//   const rutaTemporal = path.join(tempDir, nombreSistema);
+
+//   // Guardar el archivo cifrado
+//   fs.writeFileSync(rutaTemporal, bufferCifrado);
+
+//   return rutaTemporal;
+// }
+
+// /**
+//  * Mueve el archivo de temporal a destino final
+//  */
+// function moverArchivoDestino(rutaTemporal, rutaDestino) {
+//   // Crear directorio de destino si no existe
+//   const destDir = path.dirname(rutaDestino);
+//   if (!fs.existsSync(destDir)) {
+//     fs.mkdirSync(destDir, { recursive: true });
+//   }
+
+//   // Mover el archivo
+//   fs.renameSync(rutaTemporal, rutaDestino);
+// }
+
+// /**
+//  * Limpia archivo temporal (opcional, puedes usarlo después de mover)
+//  */
+// function limpiarArchivoTemporal(rutaTemporal) {
+//   try {
+//     if (fs.existsSync(rutaTemporal)) {
+//       fs.unlinkSync(rutaTemporal);
+//     }
+//   } catch (error) {
+//     console.error("Error limpiando archivo temporal:", error);
+//   }
+// }
+
+// /**
+//  Valida los campos y la lógica de negocio para crear un nuevo archivo.
+//  @async
+//  @function validarCrearArchivo
+//  @param {Request} request - El objeto Request de Next.js App Router
+// */
+// export default async function validarCrearArchivo(request) {
+//   let rutaTemporal = null;
+
+//   try {
+//     // 1. Obtener y validar los datos del usuario a través del token.
+//     const validaciones = await obtenerDatosUsuarioToken();
+
+//     // 2. Si el token es inválido, se retorna un error.
+//     if (validaciones.status === "error") {
+//       return retornarRespuestaFunciones(
+//         validaciones.status,
+//         validaciones.message,
+//       );
+//     }
+
+//     // 3. Validar variables de entorno de cifrado
+//     if (!claveSecreta || !algoritmo || !hash) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "Error variables de entorno de cifrado no configuradas",
+//         {
+//           id_usuario: validaciones.id_usuario,
+//           codigo: 500,
+//         },
+//       );
+//     }
+
+//     // 4. Obtener formData del request (App Router)
+//     const formData = await request.formData();
+
+//     // 5. Extraer campos del formData
+//     const nombre = formData.get("nombre");
+//     const descripcion = formData.get("descripcion");
+//     const alias = formData.get("alias");
+//     const archivo = formData.get("archivo");
+//     const idCarpeta = formData.get("idCarpeta");
+
+//     // 6. Validar que el archivo exista
+//     if (!archivo || archivo.size === 0) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "No se ha proporcionado ningún archivo",
+//         { codigo: 400 },
+//       );
+//     }
+
+//     // 7. Validar los campos de entrada utilizando la clase ValidarCampos.
+//     const validarCampos = ValidarCampos.validarCamposCrearArchivo(
+//       idCarpeta,
+//       nombre,
+//       descripcion,
+//       alias,
+//     );
+
+//     // 8. Si los campos no son válidos, se retorna un error.
+//     if (validarCampos.status === "error") {
+//       return retornarRespuestaFunciones(
+//         validarCampos.status,
+//         validarCampos.message,
+//       );
+//     }
+
+//     // 9. Extraer metadatos del archivo
+//     const nombreOriginal = archivo.name;
+//     const tipo = archivo.type;
+//     const size = archivo.size;
+//     const ultimaModificacion = new Date(archivo.lastModified);
+
+//     // 10. Obtener extensión de forma segura
+//     const extension = nombreOriginal.split(".").pop()?.toLowerCase();
+
+//     const nombreSinExtension = nombreOriginal.substring(
+//       0,
+//       nombreOriginal.lastIndexOf("."),
+//     );
+
+//     // 11. Generar nombre de sistema con fecha y hora + hash corto para evitar colisiones
+//     const timestamp = Date.now();
+//     const randomSufix = Math.random().toString(36).substring(2, 8);
+//     const nombreSistema = `${nombreSinExtension}_${timestamp}_${randomSufix}.${extension}`;
+
+//     // 12. Convertir el archivo a Buffer
+//     const bytes = await archivo.arrayBuffer();
+//     const buffer = Buffer.from(bytes);
+
+//     // 13. CALCULAR HASH (para detectar duplicados por contenido)
+//     const hashe = createHash(hash).update(buffer).digest("hex");
+
+//     // 14. VERIFICAR SI EL ARCHIVO YA EXISTE EN CUALQUIER UBICACIÓN (por hash)
+//     const archivoDuplicado = await prisma.archivo.findUnique({
+//       where: { hash: hashe },
+//       select: {
+//         nombre: true,
+//         path: true,
+//         id_carpeta: true,
+//         carpeta : {
+//           select: {
+//             nombre: true,
+//             estantes: {
+//               select: {
+//                 nombre: true,
+//               },
+//             },
+//           },
+//         },
+//       },
+//     });
+
+//     if (archivoDuplicado) {
+//       const ubicacion = `${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}/${archivoDuplicado.carpeta.estantes[0].nombre}/${archivoDuplicado.carpeta.nombre}/${archivoDuplicado.nombre}`;
+//       return retornarRespuestaFunciones(
+//         "error",
+//         `Este archivo ya existe en el sistema. Ubicación original: ${ubicacion}`,
+//         {
+//           codigo: 409,
+//           hash_duplicado: hashe,
+//         },
+//       );
+//     }
+
+//     // 15. Verificar si la carpeta existe
+//     const datosCarpeta = await prisma.carpeta.findFirst({
+//       where: { id: validarCampos.id_carpeta },
+//       select: {
+//         codigo: true,
+//         nombre: true,
+//         id_estante: true,
+//         estantes: {
+//           select: {
+//             codigo: true,
+//             nombre: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!datosCarpeta) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "La carpeta especificada no existe",
+//         { codigo: 404 },
+//       );
+//     }
+
+//     // 16. Generar código único del archivo
+//     const cantidadArchivos = await prisma.archivo.count();
+//     const numeroCodigo = String(cantidadArchivos + 1).padStart(10, "0");
+//     const codigoNuevo = `${datosCarpeta.codigo.toUpperCase()}-ARCH-${numeroCodigo}`;
+
+//     // 17. Verificar que el código no exista (por seguridad, aunque debería ser único)
+//     const archivoCodigoExistente = await prisma.archivo.findUnique({
+//       where: { codigo: codigoNuevo },
+//     });
+
+//     if (archivoCodigoExistente) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "Error generando código único, intente nuevamente",
+//         { codigo: 500 },
+//       );
+//     }
+
+//     // 18. Verificar si el nombre del archivo ya existe en la misma carpeta
+//     const nombreRepetido = await prisma.archivo.findFirst({
+//       where: {
+//         id_carpeta: validarCampos.id_carpeta,
+//         nombre: validarCampos.nombre,
+//         borrado: false,
+//       },
+//     });
+
+//     if (nombreRepetido) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "Ya existe un archivo con este nombre en la carpeta actual",
+//         {
+//           id_usuario: validaciones.id_usuario,
+//           codigo: 409,
+//         },
+//       );
+//     }
+
+//     // 19. Verificar si el alias ya existe en la misma carpeta
+//     const aliasRepetido = await prisma.archivo.findFirst({
+//       where: {
+//         id_carpeta: validarCampos.id_carpeta,
+//         alias: validarCampos.alias,
+//         borrado: false,
+//       },
+//     });
+
+//     if (aliasRepetido) {
+//       return retornarRespuestaFunciones(
+//         "error",
+//         "Ya existe un archivo con este alias en la carpeta actual",
+//         {
+//           id_usuario: validaciones.id_usuario,
+//           codigo: 409,
+//         },
+//       );
+//     }
+
+//     // 20. 🔒 Cifrar archivo
+//     const iv = randomBytes(16);
+//     const key = scryptSync(claveSecreta, "salt", 32);
+//     const cipher = createCipheriv(algoritmo, key, iv);
+//     const bufferCifrado = Buffer.concat([
+//       iv,
+//       cipher.update(buffer),
+//       cipher.final(),
+//     ]);
+
+//     // 21. Guardar archivo cifrado en TEMPORAL
+//     rutaTemporal = await guardarArchivoTemporal(bufferCifrado, nombreSistema);
+
+//     // 22. Construir ruta de destino final
+//     const rutaDestino = path.join(
+//       process.cwd(),
+//       "storage",
+//       "instituciones",
+//       validaciones.nombreInstitucion,
+//       validaciones.nombreDepartamento,
+//       datosCarpeta.estantes.nombre,
+//       datosCarpeta.nombre,
+//       nombreSistema,
+//     );
+
+//     // 23. Mover archivo de temporal a destino final
+//     moverArchivoDestino(rutaTemporal, rutaDestino);
+
+//     // 24. Limpiar archivo temporal (ya se movió, pero por seguridad)
+//     limpiarArchivoTemporal(rutaTemporal);
+
+//     // 25. Si todas las validaciones son correctas, retornar los datos para la creación
+//     return retornarRespuestaFunciones("ok", "Validación correcta", {
+//       id_usuario: validaciones.id_usuario,
+//       id_departamento: validaciones.id_departamento,
+//       id_estante: datosCarpeta.id_estante,
+//       id_carpeta: validarCampos.id_carpeta,
+//       nombre: validarCampos.nombre,
+//       nombreOriginal: nombreOriginal,
+//       nombreSistema: nombreSistema,
+//       hash: hashe,
+//       codigo: codigoNuevo,
+//       alias: validarCampos.alias,
+//       descripcion: validarCampos.descripcion,
+//       extension: extension,
+//       tipo: tipo.split("/")[0], // "image", "video", "application", etc.
+//       size: size,
+//       // No retornamos el buffer cifrado aquí porque ya está en el disco
+//       // archivoCifrado: bufferCifrado, // Esto ya no es necesario
+//       rutaArchivo: rutaDestino, // Retornamos la ruta donde se guardó
+//       ultimaModificacion: ultimaModificacion,
+//       nombreInstitucion: validaciones.nombreInstitucion,
+//       nombreDepartamento: validaciones.nombreDepartamento,
+//       nombreEstante: datosCarpeta.estantes.nombre,
+//       nombreCarpeta: datosCarpeta.nombre,
+//     });
+//   } catch (error) {
+//     // 26. Si hay error y existe archivo temporal, limpiarlo
+//     if (rutaTemporal && fs.existsSync(rutaTemporal)) {
+//       limpiarArchivoTemporal(rutaTemporal);
+//     }
+
+//     // 27. Manejo de errores inesperados
+//     console.error("Error interno validar crear archivo:", error);
+
+//     return retornarRespuestaFunciones(
+//       "error",
+//       "Error interno en validación de archivo: " + error.message,
+//       { codigo: 500 },
+//     );
+//   }
+// }
 
 // /**
 //  @fileoverview Función utilitaria para validar los datos necesarios antes de realizar una operación

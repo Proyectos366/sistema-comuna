@@ -12,6 +12,7 @@ import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 
 import { limpiarCampos } from "@/utils/limpiarForm";
+import InputFile from "@/components/inputs/InputFile";
 
 export default function FormCrearArchivo({
   acciones,
@@ -24,7 +25,11 @@ export default function FormCrearArchivo({
 
   const { idCarpeta, archivo, nombre, descripcion, alias } = datosArchivo;
 
-  const { validarAlias, setValidarAlias } = validaciones;
+  const { validarArchivo, setValidarArchivo, validarAlias, setValidarAlias } = validaciones;
+
+
+  
+  
 
   return (
     <Formulario
@@ -38,6 +43,13 @@ export default function FormCrearArchivo({
           setValue={setNombre}
           nombre={"Nombre"}
           placeholder={"expediente n° 001 - 1998"}
+        />
+
+        <InputFile
+          value={archivo}
+          setValue={setArchivo}
+          validarArchivo={validarArchivo}
+          setValidarArchivo={setValidarArchivo}
         />
 
         <InputDescripcion

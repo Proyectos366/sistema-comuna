@@ -12,6 +12,7 @@ import { formatearFecha } from "@/utils/Fechas";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { setEstanteActual } from "@/store/features/estantes/estantesSlices";
+import { formatFileSize } from "@/utils/formatFileSize";
 
 export default function ListadoEstantes({
   estante,
@@ -70,7 +71,7 @@ export default function ListadoEstantes({
       <BloqueInfo
         indice={1}
         nombre={"Tamaño total"}
-        valor={estante.pesoTotalEstante}
+        valor={formatFileSize(estante.pesoTotalEstante)}
       />
 
       <Div className="flex items-center justify-between">
