@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoEstados from "@/components/dashboard/estados/components/ListadoEstados";
@@ -50,8 +48,8 @@ export default function EstadosView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffect(() => {
     if (idPais) {
@@ -99,7 +97,7 @@ export default function EstadosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [estados, busqueda, ordenCampo, ordenDireccion]);
 
@@ -121,22 +119,22 @@ export default function EstadosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión estados"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={estados}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {estados.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <SelectOpcion
             idOpcion={idPais}
             nombre={"Paises"}
@@ -147,48 +145,37 @@ export default function EstadosView() {
           />
 
           {idPais && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {estados?.length === 0 && loading ? (
-                  <Loader titulo="Cargando estados..." />
-                ) : (
-                  <>
-                    {estadosPaginados?.length !== 0 ? (
-                      estadosPaginados.map((estado, index) => {
-                        return (
-                          <FichaDetalles
-                            key={estado.id}
+            <Div className={`flex flex-col gap-2`}>
+              {estados?.length === 0 && loading ? (
+                <Loader titulo="Cargando estados..." />
+              ) : (
+                <>
+                  {estadosPaginados?.length !== 0 ? (
+                    estadosPaginados.map((estado, index) => {
+                      return (
+                        <FichaDetalles
+                          key={estado.id}
+                          dato={estado}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={estado}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={estado}
-                              setExpanded={setExpanded}
-                            />
+                            setExpanded={setExpanded}
+                          />
 
-                            {expanded === estado.id && (
-                              <ListadoEstados estado={estado} />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={estados} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={estadosFiltradosOrdenados.length}
-                />
-              </Div>
-            </>
+                          {expanded === estado.id && (
+                            <ListadoEstados estado={estado} />
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={estados} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

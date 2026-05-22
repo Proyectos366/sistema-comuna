@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoDepartamentos from "@/components/dashboard/departamentos/components/ListadoDepartamentos";
@@ -27,7 +25,7 @@ export default function DepartamentosView() {
   const dispatch = useDispatch();
   const { instituciones } = useSelector((state) => state.instituciones);
   const { departamentos, loading } = useSelector(
-    (state) => state.departamentos
+    (state) => state.departamentos,
   );
 
   useEffect(() => {
@@ -44,14 +42,15 @@ export default function DepartamentosView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreInstitucion, setValidarNombreInstitucion] = useState(false);
+  const [validarNombreInstitucion, setValidarNombreInstitucion] =
+    useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   const camposBusqueda = ["nombre"];
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
@@ -89,7 +88,7 @@ export default function DepartamentosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [departamentos, busqueda, ordenCampo, ordenDireccion]);
 
@@ -127,23 +126,23 @@ export default function DepartamentosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión departamentos"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={departamentos}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
             resetearValores();
           }}
         >
-          {departamentos.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <SelectOpcion
             idOpcion={idInstitucion}
             nombre={"Instituciones"}
@@ -156,52 +155,40 @@ export default function DepartamentosView() {
           />
 
           {idInstitucion && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {departamentos?.length === 0 && loading ? (
-                  <Loader titulo="Cargando departamentos..." />
-                ) : (
-                  <>
-                    {departamentosPaginados?.length !== 0 ? (
-                      departamentosPaginados.map((departamento, index) => {
-                        return (
-                          <FichaDetalles
-                            key={departamento.id}
+            <Div className={`flex flex-col gap-2`}>
+              {departamentos?.length === 0 && loading ? (
+                <Loader titulo="Cargando departamentos..." />
+              ) : (
+                <>
+                  {departamentosPaginados?.length !== 0 ? (
+                    departamentosPaginados.map((departamento, index) => {
+                      return (
+                        <FichaDetalles
+                          key={departamento.id}
+                          dato={departamento}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={departamento}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={departamento}
-                              setExpanded={setExpanded}
+                            setExpanded={setExpanded}
+                          />
+
+                          {expanded === departamento.id && (
+                            <ListadoDepartamentos
+                              departamento={departamento}
+                              editarDepartamento={editarDepartamento}
                             />
-
-                            {expanded === departamento.id && (
-                              <ListadoDepartamentos
-                                departamento={departamento}
-                                editarDepartamento={editarDepartamento}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={departamentos} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={departamentosFiltradasOrdenadas.length}
-                />
-              </Div>
-            </>
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={departamentos} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

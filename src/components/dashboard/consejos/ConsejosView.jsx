@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoConsejos from "@/components/dashboard/consejos/components/ListadoConsejos";
@@ -35,7 +33,6 @@ import { cambiarSeleccionParroquia } from "@/utils/dashboard/cambiarSeleccionPar
 import { cambiarSeleccionComuna } from "@/utils/dashboard/cambiarSeleccionComuna";
 import { cambiarSeleccionCircuito } from "@/utils/dashboard/cambiarSeleccionCircuito";
 import { cambiarSeleccionComunaCircuito } from "@/utils/dashboard/cambiarSeleccionComunaCircuito";
-import { limpiarCampos } from "@/utils/limpiarForm";
 
 export default function ConsejosView() {
   const dispatch = useDispatch();
@@ -254,23 +251,22 @@ export default function ConsejosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión consejos comunales"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={consejos}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
-            limpiarCampos({ setNombreConsejo, setDescripcionConsejo });
           }}
         >
-          {consejos.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           {usuarioActivo.id_rol === 1 ? (
             <>
               <SelectOpcion
@@ -462,51 +458,40 @@ export default function ConsejosView() {
           )}
 
           {(opcionComunaCircuito === "comuna" ? idComuna : idCircuito) && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {consejos?.length === 0 && loading ? (
-                  <Loader titulo="Cargando consejos comunales..." />
-                ) : (
-                  <>
-                    {consejosPaginados?.length !== 0 ? (
-                      consejosPaginados.map((consejo, index) => {
-                        return (
-                          <FichaDetalles
-                            key={consejo.id}
+            <Div className={`flex flex-col gap-2`}>
+              {consejos?.length === 0 && loading ? (
+                <Loader titulo="Cargando consejos comunales..." />
+              ) : (
+                <>
+                  {consejosPaginados?.length !== 0 ? (
+                    consejosPaginados.map((consejo, index) => {
+                      return (
+                        <FichaDetalles
+                          key={consejo.id}
+                          dato={consejo}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={consejo}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={consejo}
-                              setExpanded={setExpanded}
-                            />
+                            setExpanded={setExpanded}
+                          />
 
-                            {expanded === consejo.id && (
-                              <ListadoConsejos
-                                consejo={consejo}
-                                editarConsejo={editarConsejo}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={consejos} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={consejosFiltradosOrdenados.length}
-                />
-              </Div>{" "}
-            </>
+                          {expanded === consejo.id && (
+                            <ListadoConsejos
+                              consejo={consejo}
+                              editarConsejo={editarConsejo}
+                            />
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={consejos} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

@@ -11,6 +11,7 @@ import InputEdad from "@/components/inputs/InputEdad";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputTelefono from "@/components/inputs/InputTelefono";
 import InputCorreo from "@/components/inputs/InputCorreo";
+import InputFecha from "@/components/inputs/InputFecha";
 import SelectOpcion from "@/components/SelectOpcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
 import BotonLimpiarCampos from "@/components/botones/BotonLimpiarCampos";
@@ -21,7 +22,6 @@ import { limpiarCampos } from "@/utils/limpiarForm";
 import { cambiarSeleccionGenero } from "@/utils/dashboard/cambiarSeleccionGenero";
 import { cambiarSeleccionCargo } from "@/utils/dashboard/cambiarSeleccionCargo";
 import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
-import InputFecha from "../inputs/InputFecha";
 
 export default function FormCrearVocero({
   acciones,

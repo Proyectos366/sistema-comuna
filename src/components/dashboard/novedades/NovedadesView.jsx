@@ -1,3 +1,13 @@
+export default function NovedadesView() {
+
+  return (
+    <div className="flex items-center justify-center border border-red-500 h-full">
+      <h6 className="text-lg font-bold">Novedades</h6>
+    </div>
+  )
+}
+
+/**
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -111,22 +121,22 @@ export default function NovedadesView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión Novedades"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={novedades}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {novedades.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <Div className={`flex flex-col gap-2`}>
             {novedades?.length === 0 && loading ? (
               <Loader titulo="Cargando Novedades..." />
@@ -162,17 +172,9 @@ export default function NovedadesView() {
             )}
           </Div>
 
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={novedadesFiltradasOrdenadas.length}
-            />
-          </Div>
         </SectionTertiary>
       </SectionMain>
     </>
   );
 }
+*/

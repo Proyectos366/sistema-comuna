@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoCargos from "@/components/dashboard/cargos/components/ListadoCargos";
@@ -41,8 +39,8 @@ export default function CargosView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   const camposBusqueda = ["nombre"];
   const opcionesOrden = [{ id: "nombre", nombre: "Nombre" }];
@@ -70,7 +68,7 @@ export default function CargosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [cargos, busqueda, ordenCampo, ordenDireccion]);
 
@@ -100,22 +98,22 @@ export default function CargosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión Cargos"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={cargos}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {cargos.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <Div className={`flex flex-col gap-2`}>
             {cargos?.length === 0 && loading ? (
               <Loader titulo="Cargando cargos..." />
@@ -145,16 +143,6 @@ export default function CargosView() {
                 )}
               </>
             )}
-          </Div>
-
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={cargosFiltradosOrdenados.length}
-            />
           </Div>
         </SectionTertiary>
       </SectionMain>

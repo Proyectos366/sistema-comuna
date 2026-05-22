@@ -176,8 +176,7 @@ export default function UsuariosView() {
               <>
                 {usuariosPaginados?.length !== 0 ? (
                   usuariosPaginados.map((usuario, index) => {
-                    const departamentoActual =
-                      usuario?.MiembrosDepartamentos?.[0];
+                    const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
 
                     return (
                       <FichaUsuario

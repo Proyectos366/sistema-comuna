@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoComunas from "@/components/dashboard/comunas/components/ListadoComunas";
@@ -15,8 +13,6 @@ import ModalComunas from "@/components/dashboard/comunas/components/ModalComunas
 import SelectOpcion from "@/components/SelectOpcion";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
-
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
@@ -26,6 +22,7 @@ import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/p
 import { fetchComunasIdParroquia } from "@/store/features/comunas/thunks/comunasIdParroquia";
 import { fetchParroquias } from "@/store/features/parroquias/thunks/todasParroquias";
 
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
@@ -80,8 +77,8 @@ export default function ComunasView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffect(() => {
     if (idPais && usuarioActivo.id_rol === 1) {
@@ -171,20 +168,13 @@ export default function ComunasView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [comunas, busqueda, ordenCampo, ordenDireccion]);
 
   const comunasPaginadas = useMemo(() => {
     return comunasFiltradasOrdenadas.slice(first, first + rows);
   }, [comunasFiltradasOrdenadas, first, rows]);
-
-  const resetearValores = () => {
-    setIdPais("");
-    setIdEstado("");
-    setIdMunicipio("");
-    setIdParroquia("");
-  };
 
   useEffect(() => {
     setFirst(0);
@@ -216,47 +206,44 @@ export default function ComunasView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión comunas"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={comunas}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
-            //resetearValores();
           }}
         >
-          {comunas.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           {usuarioActivo.id_rol === 1 ? (
-            <>
-              <SelectOpcion
-                idOpcion={idPais}
-                nombre={"Paises"}
-                handleChange={(e) => {
-                  cambiarSeleccionPais(e, setIdPais);
-                  if (idEstado) {
-                    setIdEstado("");
-                  }
+            <SelectOpcion
+              idOpcion={idPais}
+              nombre={"Paises"}
+              handleChange={(e) => {
+                cambiarSeleccionPais(e, setIdPais);
+                if (idEstado) {
+                  setIdEstado("");
+                }
 
-                  if (idMunicipio) {
-                    setIdMunicipio("");
-                  }
+                if (idMunicipio) {
+                  setIdMunicipio("");
+                }
 
-                  if (idParroquia) {
-                    setIdParroquia("");
-                  }
-                }}
-                opciones={paises}
-                seleccione={"Seleccione"}
-                setNombre={setNombrePais}
-              />
-            </>
+                if (idParroquia) {
+                  setIdParroquia("");
+                }
+              }}
+              opciones={paises}
+              seleccione={"Seleccione"}
+              setNombre={setNombrePais}
+            />
           ) : (
             <SelectOpcion
               idOpcion={idParroquia}
@@ -320,51 +307,40 @@ export default function ComunasView() {
           )}
 
           {idParroquia && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {comunas?.length === 0 && loading ? (
-                  <Loader titulo="Cargando comunas..." />
-                ) : (
-                  <>
-                    {comunasPaginadas?.length !== 0 ? (
-                      comunasPaginadas.map((comuna, index) => {
-                        return (
-                          <FichaDetalles
-                            key={comuna.id}
+            <Div className={`flex flex-col gap-2`}>
+              {comunas?.length === 0 && loading ? (
+                <Loader titulo="Cargando comunas..." />
+              ) : (
+                <>
+                  {comunasPaginadas?.length !== 0 ? (
+                    comunasPaginadas.map((comuna, index) => {
+                      return (
+                        <FichaDetalles
+                          key={comuna.id}
+                          dato={comuna}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={comuna}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={comuna}
-                              setExpanded={setExpanded}
-                            />
+                            setExpanded={setExpanded}
+                          />
 
-                            {expanded === comuna.id && (
-                              <ListadoComunas
-                                comuna={comuna}
-                                editarComuna={editarComuna}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={comunas} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={comunasFiltradasOrdenadas.length}
-                />
-              </Div>{" "}
-            </>
+                          {expanded === comuna.id && (
+                            <ListadoComunas
+                              comuna={comuna}
+                              editarComuna={editarComuna}
+                            />
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={comunas} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

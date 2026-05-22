@@ -7,24 +7,20 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
-
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
-
 import ListadoParroquias from "@/components/dashboard/parroquias/components/ListadoParroquias";
 import ModalParroquias from "@/components/dashboard/parroquias/components/ModalParroquias";
 import SelectOpcion from "@/components/SelectOpcion";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
@@ -59,8 +55,8 @@ export default function ParroquiasView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffect(() => {
     if (idPais) {
@@ -116,7 +112,7 @@ export default function ParroquiasView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [parroquias, busqueda, ordenCampo, ordenDireccion]);
 
@@ -144,23 +140,23 @@ export default function ParroquiasView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión parroquias"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={parroquias}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
             resetearValores();
           }}
         >
-          {parroquias.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <SelectOpcion
             idOpcion={idPais}
             nombre={"Paises"}
@@ -209,51 +205,40 @@ export default function ParroquiasView() {
           )}
 
           {idMunicipio && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {parroquias?.length === 0 && loading ? (
-                  <Div className="flex items-center gap-4">
-                    <BounceLoader color="#082158" size={50} /> Cargando
-                    parroquias...
-                  </Div>
-                ) : (
-                  <>
-                    {parroquiasPaginados?.length !== 0 ? (
-                      parroquiasPaginados.map((parroquia, index) => {
-                        return (
-                          <FichaDetalles
-                            key={parroquia.id}
+            <Div className={`flex flex-col gap-2`}>
+              {parroquias?.length === 0 && loading ? (
+                <Div className="flex items-center gap-4">
+                  <BounceLoader color="#082158" size={50} /> Cargando
+                  parroquias...
+                </Div>
+              ) : (
+                <>
+                  {parroquiasPaginados?.length !== 0 ? (
+                    parroquiasPaginados.map((parroquia, index) => {
+                      return (
+                        <FichaDetalles
+                          key={parroquia.id}
+                          dato={parroquia}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={parroquia}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={parroquia}
-                              setExpanded={setExpanded}
-                            />
+                            setExpanded={setExpanded}
+                          />
 
-                            {expanded === parroquia.id && (
-                              <ListadoParroquias parroquia={parroquia} />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={parroquias} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={parroquiasFiltradasOrdenadas.length}
-                />
-              </Div>{" "}
-            </>
+                          {expanded === parroquia.id && (
+                            <ListadoParroquias parroquia={parroquia} />
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={parroquias} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

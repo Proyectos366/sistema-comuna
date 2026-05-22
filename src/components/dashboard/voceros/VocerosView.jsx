@@ -4,12 +4,9 @@ import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { useEffectVocerosViews } from "@/components/dashboard/voceros/functions/useEffectVocerosViews";
-
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoVoceros from "@/components/dashboard/voceros/components/ListadoVoceros";
@@ -19,7 +16,6 @@ import Loader from "@/components/Loader";
 import OpcionesVocero from "@/components/dashboard/voceros/components/OpcionesVocero";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
-import { limpiarCampos } from "@/utils/limpiarForm";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
@@ -75,8 +71,8 @@ export default function VocerosView() {
   const [idComuna, setIdComuna] = useState("");
   const [idCircuito, setIdCircuito] = useState("");
   const [idConsejo, setIdConsejo] = useState("");
-  const [idCargo, setIdCargo] = useState([]);
-  const [idFormacion, setIdFormacion] = useState([]);
+  const [idCargo, setIdCargo] = useState("");
+  const [idFormacion, setIdFormacion] = useState("");
   const [idVocero, setIdVocero] = useState("");
 
   const [expanded, setExpanded] = useState("");
@@ -99,8 +95,8 @@ export default function VocerosView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffectVocerosViews({
     idPais,
@@ -278,26 +274,19 @@ export default function VocerosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión voceros"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={voceros}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
-            limpiarCampos({
-              setCedulaVocero,
-              setNombreVocero,
-              setNombreDosVocero,
-              setApellidoVocero,
-              setApellidoDosVocero,
-              setGeneroVocero,
-              setEdadVocero,
-              setTelefonoVocero,
-              setCorreoVocero,
-              setLaboralVocero,
-              setOpcion,
-              setIdParroquia,
-              setIdComuna,
-              setIdCircuito,
-              setIdConsejo,
-              setFecha,
-            });
-
             dispatch(abrirModal("crear"));
             setSeleccionado(10);
           }}
@@ -309,69 +298,45 @@ export default function VocerosView() {
             setIdParroquia={setIdParroquia}
           />
 
-          {voceros.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           {voceros && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {voceros?.length === 0 && loading ? (
-                  <Loader titulo="Cargando voceros..." />
-                ) : (
-                  <>
-                    {vocerosPaginados?.length !== 0 ? (
-                      vocerosPaginados.map((vocero, index) => {
-                        return (
-                          <FichaDetalles
-                            key={vocero.id}
+            <Div className={`flex flex-col gap-2`}>
+              {voceros?.length === 0 && loading ? (
+                <Loader titulo="Cargando voceros..." />
+              ) : (
+                <>
+                  {vocerosPaginados?.length !== 0 ? (
+                    vocerosPaginados.map((vocero, index) => {
+                      return (
+                        <FichaDetalles
+                          key={vocero.id}
+                          dato={vocero}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={vocero}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={vocero}
-                              setExpanded={setExpanded}
+                            setExpanded={setExpanded}
+                          />
+
+                          {expanded === vocero.id && (
+                            <ListadoVoceros
+                              vocero={vocero}
+                              editarVocero={editarVocero}
                             />
-
-                            {expanded === vocero.id && (
-                              <ListadoVoceros
-                                vocero={vocero}
-                                editarVocero={editarVocero}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacioVocero
-                        dato={voceros}
-                        loading={loading}
-                        seleccionado={seleccionado}
-                      />
-                    )}
-                  </>
-                )}
-              </Div>
-
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={vocerosFiltradosOrdenados.length}
-                />
-              </Div>
-            </>
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacioVocero
+                      dato={voceros}
+                      loading={loading}
+                      seleccionado={seleccionado}
+                    />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

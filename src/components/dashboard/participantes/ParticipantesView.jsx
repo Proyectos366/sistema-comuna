@@ -6,36 +6,32 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
+import FichaDetallesVocero from "@/components/dashboard/participantes/components/FichaDetallesVocero";
+import ButtonToggleDetallesVocero from "@/components/dashboard/participantes/components/ButtonToggleDetallesVocero";
 import ListadoParticipantes from "@/components/dashboard/participantes/components/ListadoParticipantes";
-import ModalParticipantes from "./components/ModalParticipantes";
-
+import ModalParticipantes from "@/components/dashboard/participantes/components/ModalParticipantes";
+import SelectOpcion from "@/components/SelectOpcion";
 import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
+import Titulos from "@/components/Titulos";
+import DivOrdenVoceros from "@/components/dashboard/participantes/components/DivOrdenVoceros";
+import opcionOrden from "@/components/dashboard/participantes/function/opcionOrden";
+import EstadisticasParticipantes from "@/components/dashboard/participantes/components/estadisticas/EstadisticasParticipantes";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-
 import { fetchFormacionesInstitucion } from "@/store/features/formaciones/thunks/formacionesInstitucion";
 import { fetchFormaciones } from "@/store/features/formaciones/thunks/todasFormaciones";
-import SelectOpcion from "@/components/SelectOpcion";
-import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
-
 import { fetchParticipantes } from "@/store/features/participantes/thunks/todosParticipantes";
+import { fetchParticipantesIdFormacion } from "@/store/features/participantes/thunks/participantesIdFormacion";
+import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
+
+import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
 import {
   obtenerParticipantesFiltradosAgrupados,
   obtenerParticipantesFiltradosOrdenados,
   opcionesOrden,
 } from "@/utils/filtrarOrdenarVocerosFormaciones";
-import FichaDetallesVocero from "@/components/dashboard/participantes/components/FichaDetallesVocero";
-import ButtonToggleDetallesVocero from "./components/ButtonToggleDetallesVocero";
-import { fetchParticipantesIdFormacion } from "@/store/features/participantes/thunks/participantesIdFormacion";
-import Titulos from "@/components/Titulos";
-import DivOrdenVoceros from "./components/DivOrdenVoceros";
 import { formatoTituloSimple } from "@/utils/formatearTextCapitalice";
-import { opcionOrden } from "@/components/dashboard/participantes/function/opcionOrden";
-import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsuariosNombres";
-import EstadisticasParticipantes from "./components/estadisticas/EstadisticasParticipantes";
 
 export default function ParticipantesView() {
   const dispatch = useDispatch();
@@ -46,17 +42,6 @@ export default function ParticipantesView() {
   const { participantes, loading } = useSelector(
     (state) => state.participantes,
   );
-
-  useEffect(() => {
-    if (usuarioActivo.id_rol === 1) {
-      dispatch(fetchFormaciones());
-      dispatch(fetchParticipantes());
-    } else {
-      dispatch(fetchFormacionesInstitucion());
-    }
-
-    dispatch(fetchUsuariosNombres());
-  }, [dispatch]);
 
   const [idFormacion, setIdFormacion] = useState("");
   const [nombreFormacion, setNombreFormacion] = useState("");
@@ -72,6 +57,17 @@ export default function ParticipantesView() {
   const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
   const [opcion, setOpcion] = useState("");
   const [verificarCertificar, setVerificarCertificar] = useState([]);
+
+  useEffect(() => {
+    if (usuarioActivo.id_rol === 1) {
+      dispatch(fetchFormaciones());
+      dispatch(fetchParticipantes());
+    } else {
+      dispatch(fetchFormacionesInstitucion());
+    }
+
+    dispatch(fetchUsuariosNombres());
+  }, [idFormacion, dispatch]);
 
   useEffect(() => {
     if (usuarioActivo.id_rol !== 1 && idFormacion) {
@@ -136,6 +132,18 @@ export default function ParticipantesView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión participantes"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={participantes}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("confirmar"));
           }}
@@ -152,22 +160,12 @@ export default function ParticipantesView() {
             setNombre={setNombreFormacion}
           />
 
-          <BuscadorOrdenador
-            busqueda={busqueda}
-            setBusqueda={setBusqueda}
-            ordenCampo={ordenCampo}
-            setOrdenCampo={setOrdenCampo}
-            ordenDireccion={ordenDireccion}
-            setOrdenDireccion={setOrdenDireccion}
-            opcionesOrden={opcionesOrden}
-          />
-
           <Div className="flex flex-col gap-2">
             {participantes?.length === 0 && loading ? (
               <Loader titulo="Cargando participantes..." />
             ) : (
               <>
-                {ordenCampo && participantesFinales ? (
+                {ordenCampo && participantesFinales?.length > 0 ? (
                   Object.entries(participantesFinales).map(
                     ([titulo, lista]) => {
                       return (
@@ -218,20 +216,12 @@ export default function ParticipantesView() {
             )}
           </Div>
 
-          <Div>
-            <Paginador
-              first={first}
-              setFirst={setFirst}
-              rows={rows}
-              setRows={setRows}
-              totalRecords={participantesFiltradosOrdenados.length}
+          {participantes?.length !== 0 && (
+            <EstadisticasParticipantes
+              registrosFiltrados={participantesFiltradosOrdenados}
+              idFormacion={idFormacion}
             />
-          </Div>
-
-          <EstadisticasParticipantes
-            registrosFiltrados={participantesFiltradosOrdenados}
-            idFormacion={idFormacion}
-          />
+          )}
         </SectionTertiary>
       </SectionMain>
     </>

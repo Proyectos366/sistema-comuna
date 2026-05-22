@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // localStorage
+import { persistReducer } from "redux-persist";
 
 import rolesReducer from "@/store/features/roles/rolesSlices";
 import usuariosReducer from "@/store/features/usuarios/usuariosSlices";
@@ -25,6 +24,27 @@ import novedadesReducer from "@/store/features/novedades/novedadesSlices";
 import estantesReducer from "@/store/features/estantes/estantesSlices";
 import carpetasReducer from "@/store/features/carpetas/carpetasSlices";
 import archivosReducer from "@/store/features/archivos/archivosSlices";
+
+const createNoopStorage = () => ({
+  getItem: async () => null,
+  setItem: async () => undefined,
+  removeItem: async () => undefined,
+});
+
+const createWebStorage = (type) => {
+  const storageType = `${type}Storage`;
+  const storage =
+    typeof self !== "undefined" && storageType in self ? self[storageType] : null;
+
+  return {
+    getItem: (key) => Promise.resolve(storage?.getItem(key)),
+    setItem: (key, item) => Promise.resolve(storage?.setItem(key, item)),
+    removeItem: (key) => Promise.resolve(storage?.removeItem(key)),
+  };
+};
+
+const storage =
+  typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
 
 // Configurar persistencia solo para estantes
 const persistConfigEstantes = {
@@ -94,7 +114,6 @@ const store = configureStore({
     }),
 });
 
-export const persistor = persistStore(store);
 export default store;
 
 // import { configureStore } from "@reduxjs/toolkit";

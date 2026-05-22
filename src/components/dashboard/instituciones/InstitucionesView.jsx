@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoInstituciones from "@/components/dashboard/instituciones/components/ListadoInstituciones";
@@ -17,13 +15,13 @@ import EstadoMsjVacio from "@/components/mensaje/EstadoMsjVacio";
 import Loader from "@/components/Loader";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
-import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
 import { fetchEstadosIdPais } from "@/store/features/estados/thunks/estadosIdPais";
 import { fetchMunicipiosIdEstado } from "@/store/features/municipios/thunks/municipiosIdEstado";
 import { fetchParroquiasIdMunicipio } from "@/store/features/parroquias/thunks/parroquiasIdMunicipio";
 import { fetchInstitucionesIdMunicipio } from "@/store/features/instituciones/thunks/institucionesIdMunicipio";
 
+import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 import { cambiarSeleccionPais } from "@/utils/dashboard/cambiarSeleccionPais";
 import { cambiarSeleccionEstado } from "@/utils/dashboard/cambiarSeleccionEstado";
 import { cambiarSeleccionMunicipio } from "@/utils/dashboard/cambiarSeleccionMunicipio";
@@ -36,7 +34,7 @@ export default function InstitucionesView() {
   const { municipios } = useSelector((state) => state.municipios);
   const { parroquias } = useSelector((state) => state.parroquias);
   const { instituciones, loading } = useSelector(
-    (state) => state.instituciones
+    (state) => state.instituciones,
   );
 
   useEffect(() => {
@@ -62,15 +60,16 @@ export default function InstitucionesView() {
 
   const [expanded, setExpanded] = useState("");
 
-  const [validarNombreInstitucion, setValidarNombreInstitucion] = useState(false);
+  const [validarNombreInstitucion, setValidarNombreInstitucion] =
+    useState(false);
   const [validarRifInstitucion, setValidarRifInstitucion] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffect(() => {
     if (idPais) {
@@ -144,7 +143,7 @@ export default function InstitucionesView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [instituciones, busqueda, ordenCampo, ordenDireccion]);
 
@@ -188,23 +187,23 @@ export default function InstitucionesView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión instituciones"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={instituciones}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
             resetearValores();
           }}
         >
-          {instituciones.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           <SelectOpcion
             idOpcion={idPais}
             nombre={"Paises"}
@@ -277,51 +276,40 @@ export default function InstitucionesView() {
           )}
 
           {idParroquia && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {instituciones?.length === 0 && loading ? (
-                  <Loader titulo="Cargando instituciones..." />
-                ) : (
-                  <>
-                    {institucionesPaginadas?.length !== 0 ? (
-                      institucionesPaginadas.map((institucion, index) => {
-                        return (
-                          <FichaDetalles
-                            key={institucion.id}
+            <Div className={`flex flex-col gap-2`}>
+              {instituciones?.length === 0 && loading ? (
+                <Loader titulo="Cargando instituciones..." />
+              ) : (
+                <>
+                  {institucionesPaginadas?.length !== 0 ? (
+                    institucionesPaginadas.map((institucion, index) => {
+                      return (
+                        <FichaDetalles
+                          key={institucion.id}
+                          dato={institucion}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={institucion}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={institucion}
-                              setExpanded={setExpanded}
-                            />
+                            setExpanded={setExpanded}
+                          />
 
-                            {expanded === institucion.id && (
-                              <ListadoInstituciones
-                                institucion={institucion}
-                                editarInstitucion={editarInstitucion}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={instituciones} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={institucionesFiltradasOrdenadas.length}
-                />
-              </Div>{" "}
-            </>
+                          {expanded === institucion.id && (
+                            <ListadoInstituciones
+                              institucion={institucion}
+                              editarInstitucion={editarInstitucion}
+                            />
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={instituciones} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>

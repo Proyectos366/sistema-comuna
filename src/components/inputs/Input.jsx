@@ -15,6 +15,7 @@ export default function Input({
   max,
   onKeyDown,
   title,
+  onClick,
 }) {
   const clasePorDefecto = `${
     indice === "clave" || indice === "clave2" ? "" : "uppercase"
@@ -43,6 +44,7 @@ export default function Input({
       max={max}
       onKeyDown={onKeyDown}
       title={readOnly ? "Este campo es de solo lectura" : title}
+      onClick={onClick}
     />
   );
 }

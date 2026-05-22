@@ -1,4 +1,4 @@
-export const opcionOrden = (nombreCampo) => {
+const opcionOrden = (nombreCampo) => {
   switch (nombreCampo) {
     case "cedula":
     case "nombre":
@@ -8,6 +8,8 @@ export const opcionOrden = (nombreCampo) => {
       return false;
 
     default:
-      return true; // o lo que quieras devolver si no coincide
+      return true;
   }
 };
+
+export default opcionOrden;

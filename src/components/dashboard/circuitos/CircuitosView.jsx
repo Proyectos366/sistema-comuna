@@ -6,8 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Div from "@/components/padres/Div";
 import SectionMain from "@/components/SectionMain";
 import SectionTertiary from "@/components/SectionTertiary";
-import BuscadorOrdenador from "@/components/BuscadorOrdenador";
-import Paginador from "@/components/templates/PlantillaPaginacion";
 import FichaDetalles from "@/components/FichaDetalles";
 import ButtonToggleDetalles from "@/components/botones/ButtonToggleDetalles";
 import ListadoCircuitos from "@/components/dashboard/circuitos/components/ListadoCircuitos";
@@ -77,8 +75,8 @@ export default function CircuitosView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
   useEffect(() => {
     if (idPais && usuarioActivo.id_rol === 1) {
@@ -163,7 +161,7 @@ export default function CircuitosView() {
       busqueda,
       ordenCampo,
       ordenDireccion,
-      camposBusqueda
+      camposBusqueda,
     );
   }, [circuitos, busqueda, ordenCampo, ordenDireccion]);
 
@@ -200,47 +198,45 @@ export default function CircuitosView() {
       <SectionMain>
         <SectionTertiary
           nombre={"Gestión circuitos"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={circuitos}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
           funcion={() => {
             dispatch(abrirModal("crear"));
           }}
         >
-          {circuitos.length !== 0 && (
-            <BuscadorOrdenador
-              busqueda={busqueda}
-              setBusqueda={setBusqueda}
-              ordenCampo={ordenCampo}
-              setOrdenCampo={setOrdenCampo}
-              ordenDireccion={ordenDireccion}
-              setOrdenDireccion={setOrdenDireccion}
-              opcionesOrden={opcionesOrden}
-            />
-          )}
-
           {usuarioActivo.id_rol === 1 ? (
-            <>
-              <SelectOpcion
-                idOpcion={idPais}
-                nombre={"Paises"}
-                handleChange={(e) => {
-                  cambiarSeleccionPais(e, setIdPais);
-                  if (idEstado) {
-                    setIdEstado("");
-                  }
+            <SelectOpcion
+              idOpcion={idPais}
+              nombre={"Paises"}
+              handleChange={(e) => {
+                cambiarSeleccionPais(e, setIdPais);
+                if (idEstado) {
+                  setIdEstado("");
+                }
 
-                  if (idMunicipio) {
-                    setIdMunicipio("");
-                  }
+                if (idMunicipio) {
+                  setIdMunicipio("");
+                }
 
-                  if (idParroquia) {
-                    setIdParroquia("");
-                  }
-                }}
-                opciones={paises}
-                seleccione={"Seleccione"}
-                setNombre={setNombrePais}
-                indice={1}
-              />
-            </>
+                if (idParroquia) {
+                  setIdParroquia("");
+                }
+              }}
+              opciones={paises}
+              seleccione={"Seleccione"}
+              setNombre={setNombrePais}
+              indice={1}
+            />
           ) : (
             <SelectOpcion
               idOpcion={idParroquia}
@@ -251,7 +247,6 @@ export default function CircuitosView() {
               opciones={parroquias}
               seleccione={"Seleccione"}
               setNombre={setNombreParroquia}
-              indice={1}
             />
           )}
 
@@ -308,52 +303,40 @@ export default function CircuitosView() {
           )}
 
           {idParroquia && (
-            <>
-              <Div className={`flex flex-col gap-2`}>
-                {circuitos?.length === 0 && loading ? (
-                  <Loader titulo="Cargando circuitos..." />
-                ) : (
-                  <>
-                    {circuitosPaginados?.length !== 0 ? (
-                      circuitosPaginados.map((circuito, index) => {
-                        return (
-                          <FichaDetalles
-                            key={circuito.id}
+            <Div className={`flex flex-col gap-2`}>
+              {circuitos?.length === 0 && loading ? (
+                <Loader titulo="Cargando circuitos..." />
+              ) : (
+                <>
+                  {circuitosPaginados?.length !== 0 ? (
+                    circuitosPaginados.map((circuito, index) => {
+                      return (
+                        <FichaDetalles
+                          key={circuito.id}
+                          dato={circuito}
+                          index={index}
+                        >
+                          <ButtonToggleDetalles
+                            expanded={expanded}
                             dato={circuito}
-                            index={index}
-                          >
-                            <ButtonToggleDetalles
-                              expanded={expanded}
-                              dato={circuito}
-                              setExpanded={setExpanded}
+                            setExpanded={setExpanded}
+                          />
+
+                          {expanded === circuito.id && (
+                            <ListadoCircuitos
+                              circuito={circuito}
+                              editarCircuito={editarCircuito}
                             />
-
-                            {expanded === circuito.id && (
-                              <ListadoCircuitos
-                                circuito={circuito}
-                                editarCircuito={editarCircuito}
-                              />
-                            )}
-                          </FichaDetalles>
-                        );
-                      })
-                    ) : (
-                      <EstadoMsjVacio dato={circuitos} loading={loading} />
-                    )}
-                  </>
-                )}
-              </Div>
-
-              <Div>
-                <Paginador
-                  first={first}
-                  setFirst={setFirst}
-                  rows={rows}
-                  setRows={setRows}
-                  totalRecords={circuitosFiltradosOrdenados.length}
-                />
-              </Div>
-            </>
+                          )}
+                        </FichaDetalles>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio dato={circuitos} loading={loading} />
+                  )}
+                </>
+              )}
+            </Div>
           )}
         </SectionTertiary>
       </SectionMain>
