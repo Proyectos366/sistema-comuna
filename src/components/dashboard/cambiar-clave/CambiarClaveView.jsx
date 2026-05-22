@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 import SectionMain from "@/components/SectionMain";
-import SectionTertiary from "@/components/SectionTertiary";
 import ModalCambiarClave from "@/components/dashboard/cambiar-clave/components/ModalPerfil";
 import FormEditarClaveUsuario from "@/components/formularios/FormEditarClaveUsuario";
+import SectionQuaternary from "@/components/SectionQuaternary";
 
 export default function CambiarClaveView() {
   const [claveVieja, setClaveVieja] = useState("");
@@ -26,7 +26,7 @@ export default function CambiarClaveView() {
       />
 
       <SectionMain>
-        <SectionTertiary
+        <SectionQuaternary
           indice={1}
           nombre={"Gestión de claves"}
           funcion={() => {}}
@@ -41,7 +41,7 @@ export default function CambiarClaveView() {
             validarClave={validarClave}
             setValidarClave={setValidarClave}
           />
-        </SectionTertiary>
+        </SectionQuaternary>
       </SectionMain>
     </>
   );

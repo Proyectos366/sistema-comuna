@@ -26,7 +26,7 @@ export default function SectionTertiary({
 }) {
   const clasePorDefecto = `flex flex-col ${
     nombre ? "gap-4" : ""
-  } w-full max-w-2xl py-2 bg-white bg-opacity-90 backdrop-blur-md rounded-md shadow-xl px-1 sm:px-6`;
+  } w-full max-w-2xl py-2 bg-[#ffffff] bg-opacity-90 backdrop-blur-md rounded-md shadow-xl px-1 sm:px-6`;
   const nuevaClase = className
     ? `${clasePorDefecto} ${className}`
     : clasePorDefecto;

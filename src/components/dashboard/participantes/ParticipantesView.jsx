@@ -51,10 +51,10 @@ export default function ParticipantesView() {
   const [rows, setRows] = useState(25);
 
   const [busqueda, setBusqueda] = useState("");
-  const [ordenCampo, setOrdenCampo] = useState("nombre"); // o 'cedula'
-  const [ordenDireccion, setOrdenDireccion] = useState("asc"); // 'asc' o 'desc'
+  const [ordenCampo, setOrdenCampo] = useState("nombre");
+  const [ordenDireccion, setOrdenDireccion] = useState("asc");
 
-  const [datosActualizar, setDatosActualizar] = useState([]); // Estado solo para fecha
+  const [datosActualizar, setDatosActualizar] = useState([]);
   const [opcion, setOpcion] = useState("");
   const [verificarCertificar, setVerificarCertificar] = useState([]);
 
@@ -165,7 +165,8 @@ export default function ParticipantesView() {
               <Loader titulo="Cargando participantes..." />
             ) : (
               <>
-                {ordenCampo && participantesFinales?.length > 0 ? (
+                {ordenCampo &&
+                Object.keys(participantesFinales || {}).length > 0 ? (
                   Object.entries(participantesFinales).map(
                     ([titulo, lista]) => {
                       return (

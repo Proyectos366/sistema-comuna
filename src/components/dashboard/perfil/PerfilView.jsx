@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import SectionMain from "@/components/SectionMain";
-import SectionTertiary from "@/components/SectionTertiary";
+import SectionQuaternary from "@/components/SectionQuaternary";
 import Div from "@/components/padres/Div";
 import ModalPerfil from "@/components/dashboard/perfil/components/ModalPerfil";
 import DetallesEmpleado from "@/components/dashboard/perfil/components/DetallesEmpleado";
@@ -44,7 +44,7 @@ export default function PerfilView({}) {
       />
 
       <SectionMain>
-        <SectionTertiary
+        <SectionQuaternary
           indice={1}
           nombre={"Perfil empleado"}
           funcion={() => {}}
@@ -66,7 +66,7 @@ export default function PerfilView({}) {
 
             <DetallesEmpleado usuarios={usuarios} />
           </Div>
-        </SectionTertiary>
+        </SectionQuaternary>
       </SectionMain>
     </>
   );
