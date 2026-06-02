@@ -6,8 +6,8 @@
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
-import ValidarCampos from "../ValidarCampos"; // Utilidad para validar campos individuales
-import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
+import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar campos individuales
+import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
  Valida la identidad del usuario y los datos requeridos para crear un nuevo departamento.
@@ -21,7 +21,7 @@ import obtenerDatosUsuarioToken from "../obtenerDatosUsuarioToken"; // Función 
 export default async function validarCrearDepartamento(
   nombre,
   descripcion,
-  id_institucion
+  id_institucion,
 ) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
@@ -31,7 +31,7 @@ export default async function validarCrearDepartamento(
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -39,14 +39,14 @@ export default async function validarCrearDepartamento(
     const validarCampos = ValidarCampos.validarCamposCrearDepartamento(
       nombre,
       descripcion,
-      id_institucion
+      id_institucion,
     );
 
     // 4. Si los campos son inválidos, se retorna un error.
     if (validarCampos.status === "error") {
       return retornarRespuestaFunciones(
         validarCampos.status,
-        validarCampos.message
+        validarCampos.message,
       );
     }
 
@@ -62,10 +62,29 @@ export default async function validarCrearDepartamento(
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, departamento ya existe...",
+        "Error, nombre de departamento ya existe",
         {
           id_usuario: validarCampos.id_usuario,
-        }
+        },
+      );
+    }
+
+    // 5. Verificar si ya existe un departamento con el mismo nombre en la misma institución.
+    const aliasRepetido = await prisma.departamento.findFirst({
+      where: {
+        alias: validarCampos.alias,
+        id_institucion: validarCampos.id_institucion,
+      },
+    });
+
+    // 6. Si el alias ya está en uso, se retorna un error.
+    if (aliasRepetido) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error, alias de departamento ya existe",
+        {
+          id_usuario: validarCampos.id_usuario,
+        },
       );
     }
 
@@ -73,17 +92,51 @@ export default async function validarCrearDepartamento(
     const nombreInstitucion = await prisma.institucion.findFirst({
       where: {
         id: validarCampos.id_institucion,
-      }, select: { nombre: true }
+      },
+      select: { nombre: true },
     });
 
     // 8. Si no se encuentra la institución, se retorna un error.
     if (!nombreInstitucion) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, nombre institución...",
+        "Error, nombre institución no encontrado",
         {
           id_usuario: validarCampos.id_usuario,
-        }
+        },
+      );
+    }
+
+    // crear codigo del departamento
+    const cantidadDepartamentos = await prisma.departamento.count({
+      where: {
+        id_institucion: validaciones.id_institucion,
+      },
+    });
+
+    const numeroCodigo = String(
+      cantidadDepartamentos ? cantidadDepartamentos + 1 : cantidadDepartamentos,
+    ).padStart(6, "0");
+    const codigoNuevo =
+      validaciones.codInst.toUpperCase() + "-dpto-" + numeroCodigo;
+
+    // Verificar si el departamento ya existe
+    const departamentoExistente = await prisma.departamento.findFirst({
+      where: {
+        codigo: codigoNuevo,
+        id_institucion: validaciones.id_institucion,
+      },
+    });
+
+    // 6. Si se encuentra un departamento con el mismo nombre, se retorna un error.
+    if (departamentoExistente) {
+      return retornarRespuestaFunciones(
+        "error",
+        "Error código generado ya existe, intente nuevamente",
+        {
+          id_usuario: validaciones.id_usuario,
+          codigo: 409,
+        },
       );
     }
 
@@ -92,6 +145,7 @@ export default async function validarCrearDepartamento(
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
+      codigo: codigoNuevo,
       id_institucion: validarCampos.id_institucion,
       nombreInstitucion: nombreInstitucion.nombre,
     });
@@ -102,7 +156,7 @@ export default async function validarCrearDepartamento(
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar crear departamento"
+      "Error interno validar crear departamento",
     );
   }
 }

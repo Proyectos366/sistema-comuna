@@ -36,7 +36,7 @@ export default async function obtenerDatosUsuarioToken() {
         cedula: true,
         nombre: true,
         MiembrosInstitucion: {
-          select: { id: true, nombre: true, id_municipio: true },
+          select: { id: true, nombre: true, id_municipio: true, codigo: true },
         },
         MiembrosDepartamentos: {
           select: { id: true, nombre: true, codigo: true },
@@ -63,6 +63,7 @@ export default async function obtenerDatosUsuarioToken() {
       id_departamento: datosUsuario?.MiembrosDepartamentos?.[0]?.id,
       nombreInstitucion: datosUsuario?.MiembrosInstitucion?.[0]?.nombre,
       nombreDepartamento: datosUsuario?.MiembrosDepartamentos?.[0]?.nombre,
+      codInst: datosUsuario?.MiembrosInstitucion?.[0]?.codigo,
       codDepa: datosUsuario?.MiembrosDepartamentos?.[0]?.codigo,
     });
   } catch (error) {

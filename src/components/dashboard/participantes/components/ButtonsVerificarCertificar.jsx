@@ -22,7 +22,7 @@ export default function ButtonsVerificarCertificar({
               ? "Puede verificar"
               : "Ya está verificado"
         }
-        disabled={participante.estaVerificado && !participante.puedeCertificar}
+        disabled={participante.estaVerificado || !participante.puedeVerificar}
         onClick={() => {
           dispatch(abrirModal("confirmar"));
           setOpcion("verificar");
@@ -47,7 +47,7 @@ export default function ButtonsVerificarCertificar({
               ? "Puede certificar"
               : "Ya está certificado"
         }
-        disabled={participante.estaCulminado}
+        disabled={participante.estaCertificado || !participante.puedeCertificar}
         onClick={() => {
           dispatch(abrirModal("confirmar"));
           setOpcion("certificar");
