@@ -17,6 +17,7 @@ import { textRegex } from "@/utils/regex/textRegex";
 import { fechaFormatoIsoRegex } from "@/utils/regex/fechaFormatoIsoRegex";
 import { estanteRegex } from "@/utils/regex/nombreEstanteRegex";
 import { carpetaRegex } from "@/utils/regex/nombreCarpetaRegex";
+import { regexGeneral } from "@/utils/regex/regexGeneral";
 
 /**
  Clase que agrupa métodos estáticos para validar campos individuales. Cada método retorna una
@@ -151,23 +152,48 @@ export default class ValidarCampos {
         return retornarRespuestaFunciones("error", "Error, campo alias vacío");
       }
 
-      // 2. Expresión regular para validar el formato
-      if (!indice ? !estanteRegex.test(alias) : !carpetaRegex.test(alias)) {
+      // 2. Mapeo de índices a expresiones regulares (fácil de extender)
+      const regexMap = {
+        0: estanteRegex, // Estantes
+        1: carpetaRegex, // Carpetas (requiere números)
+        2: regexGeneral, // Nombres simples
+        // Futuras opciones:
+        // 3: regexArchivo,
+        // 4: regexDirectorio,
+        // 5: regexRutaCompleta
+      };
+
+      // 3. Normalizar índice: null, undefined, "" se tratan como 0
+      const indiceNormalizado =
+        indice === null || indice === undefined || indice === "" ? 0 : indice;
+
+      // 4. Obtener el regex correspondiente
+      const regex = regexMap[indiceNormalizado];
+
+      // 5. Validar que el índice exista en el mapa
+      if (!regex) {
+        return retornarRespuestaFunciones(
+          "error",
+          `Error, índice ${indice} no válido. Opciones disponibles: ${Object.keys(regexMap).join(", ")}`,
+        );
+      }
+
+      // 6. Validar formato
+      if (!regex.test(alias)) {
         return retornarRespuestaFunciones(
           "error",
           "Error, formato de alias inválido",
         );
       }
 
-      // 3. Normaliza el alias (opcional - puedes elegir qué formato prefieres)
+      // 7. Normaliza el alias
       const aliasNormalizado = alias.toLowerCase();
 
-      // 4. Retorna respuesta exitosa con el alias validado
+      // 8. Retorna respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campo alias correcto", {
         alias: aliasNormalizado,
       });
     } catch (error) {
-      // 5. Manejo de errores inesperados
       console.log(`Error interno campo alias: ` + error);
       return retornarRespuestaFunciones("error", "Error interno campo alias");
     }
@@ -1274,11 +1300,17 @@ export default class ValidarCampos {
    Valida los campos necesarios para crear un departamento. Verifica nombre y descripción.
    @function validarCamposCrearDepartamento
   */
-  static validarCamposCrearDepartamento(nombre, descripcion, id_institucion) {
+  static validarCamposCrearDepartamento(
+    nombre,
+    descripcion,
+    alias,
+    id_institucion,
+  ) {
     try {
       // 1. Validar cada campo individualmente
       const validarNombre = this.validarCampoNombre(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
+      const validarAlias = this.validarCampoAlias(alias, 2);
       const validarIdInstitucion = this.validarCampoId(
         id_institucion,
         "institución",
@@ -1287,12 +1319,14 @@ export default class ValidarCampos {
       // 2. Verificar si alguna validación falló
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
+      if (validarAlias.status === "error") return validarAlias;
       if (validarIdInstitucion.status === "error") return validarIdInstitucion;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados...", {
         nombre: validarNombre.nombre,
         descripcion: validarDescripcion.texto,
+        alias: validarAlias.alias,
         id_institucion: validarIdInstitucion.id,
       });
     } catch (error) {
@@ -2715,29 +2749,25 @@ export default class ValidarCampos {
    @function validarCamposEditarArchivo
    @param {string} nombre - El nuevo nombre del archivo.
    @param {string} descripcion - La nueva descripción del archivo.
-   @param {string} alias - El nuevo alias del archivo.
    @param {number} id_archivo - El ID del archivo a editar.
   */
-  static validarCamposEditarArchivo(nombre, descripcion, alias, id_archivo) {
+  static validarCamposEditarArchivo(nombre, descripcion, id_archivo) {
     try {
       // 1. Validar cada campo individualmente.
       const validarIdArchivo = this.validarCampoId(id_archivo, "archivo");
       const validarNombre = this.validarCampoTexto(nombre);
       const validarDescripcion = this.validarCampoTexto(descripcion);
-      const validarAlias = this.validarCampoAlias(alias);
 
       // 2. Verificar si alguna validación falló
       if (validarIdArchivo.status === "error") return validarIdArchivo;
       if (validarNombre.status === "error") return validarNombre;
       if (validarDescripcion.status === "error") return validarDescripcion;
-      if (validarAlias.status === "error") return validarAlias;
 
       // 3. Consolidar datos validados y retornar respuesta exitosa
       return retornarRespuestaFunciones("ok", "Campos validados", {
         id_archivo: validarIdArchivo.id,
         nombre: validarNombre.texto,
         descripcion: validarDescripcion.texto,
-        alias: validarAlias.alias,
       });
     } catch (error) {
       // 4. Manejo de errores inesperados
@@ -2795,8 +2825,7 @@ export default class ValidarCampos {
    @param {string} fecha - La fecha en que se valida el modulo en asistencia.
    @param {number} id_asistencia - El ID de la asitencia a validar.
    @param {number} id_formador - El ID del usuario que dio la formacion.
-   @param {string} descripcion - La nueva descripción de la novedad.
-   
+   @param {string} descripcion - La nueva descripción de la novedad.   
   */
   static validarCamposAsistenciaModulo(
     modulo,
@@ -2846,3 +2875,34 @@ export default class ValidarCampos {
     }
   }
 }
+
+/** 
+  static validarCampoAlias(alias, indice) {
+    try {
+      // 1. Verifica si el campo está vacío
+      if (!alias) {
+        return retornarRespuestaFunciones("error", "Error, campo alias vacío");
+      }
+
+      // 2. Expresión regular para validar el formato
+      if (!indice ? !estanteRegex.test(alias) : !carpetaRegex.test(alias)) {
+        return retornarRespuestaFunciones(
+          "error",
+          "Error, formato de alias inválido",
+        );
+      }
+
+      // 3. Normaliza el alias (opcional - puedes elegir qué formato prefieres)
+      const aliasNormalizado = alias.toLowerCase();
+
+      // 4. Retorna respuesta exitosa con el alias validado
+      return retornarRespuestaFunciones("ok", "Campo alias correcto", {
+        alias: aliasNormalizado,
+      });
+    } catch (error) {
+      // 5. Manejo de errores inesperados
+      console.log(`Error interno campo alias: ` + error);
+      return retornarRespuestaFunciones("error", "Error interno campo alias");
+    }
+  }
+*/

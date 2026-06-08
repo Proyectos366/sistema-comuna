@@ -14,7 +14,9 @@ import { CrearCarpetasStorage } from "@/utils/crearRutaCarpetasStorage";
 import path from "path";
 /**
   Maneja las solicitudes HTTP POST para crear un nuevo departamento.
-  @async@function POST@param {Request} request - Objeto de la solicitud que contiene los detalles del departamento a crear.
+  @async
+  @function POST
+  @param {Request} request - Objeto de la solicitud que contiene los detalles del departamento a crear.
   @returns {Promise<object>} - Una respuesta HTTP en formato JSON con el resultado de la operación o un error.
 */
 
@@ -24,13 +26,14 @@ export async function POST(request) {
     const crearRutasCarpetas = new CrearCarpetasStorage();
 
     // 2. Extrae datos de la solicitud JSON
-    const { nombre, descripcion, id_institucion } = await request.json();
+    const { nombre, descripcion, alias, id_institucion } = await request.json();
 
     // 3. Valida la información utilizando el servicio correspondiente
     const validaciones = await validarCrearDepartamento(
       nombre,
       descripcion,
-      id_institucion
+      alias,
+      id_institucion,
     );
 
     // 4. Condición de validación fallida
@@ -49,7 +52,7 @@ export async function POST(request) {
         validaciones.status,
         validaciones.message,
         {},
-        400
+        400,
       );
     }
 
@@ -59,6 +62,8 @@ export async function POST(request) {
         data: {
           nombre: validaciones.nombre,
           descripcion: validaciones.descripcion,
+          alias: validaciones.alias,
+          codigo: validaciones.codigo,
           id_usuario: validaciones.id_usuario,
           id_institucion: validaciones.id_institucion,
         },
@@ -68,14 +73,14 @@ export async function POST(request) {
       try {
         const storagePath = path.join(
           process.cwd(),
-          `storage/instituciones/${validaciones.nombreInstitucion}`
+          `storage/instituciones/${validaciones.nombreInstitucion}`,
         );
 
         await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.nombre);
       } catch (error) {
         // Si falla la carpeta, lanzamos error para que se revierta la transacción
         throw new Error(
-          "Error al crear carpeta de departamento: " + error.message
+          "Error al crear carpeta de departamento: " + error.message,
         );
       }
 
@@ -96,9 +101,9 @@ export async function POST(request) {
 
       return generarRespuesta(
         "error",
-        "Error, no se creo el departamento...",
+        "Error, no se creo el departamento",
         {},
-        400
+        400,
       );
     }
 
@@ -116,11 +121,11 @@ export async function POST(request) {
     // 8. Si todas las validaciones son correctas, se retorna la información consolidada.
     return generarRespuesta(
       "ok",
-      "Departamento creado...",
+      "Departamento creado con exito",
       {
         departamentos: nuevoDepartamento,
       },
-      201
+      201,
     );
   } catch (error) {
     // 9. Manejo de errores inesperados

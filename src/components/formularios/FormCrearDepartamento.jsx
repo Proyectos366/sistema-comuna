@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Formulario from "@/components/Formulario";
 import DivScroll from "@/components/DivScroll";
-import AgruparCamposForm from "../AgruparCamposForm";
-import SelectOpcion from "../SelectOpcion";
+import AgruparCamposForm from "@/components/AgruparCamposForm";
+import SelectOpcion from "@/components/SelectOpcion";
+import InputNombreEstante from "@/components/inputs/InputNombreEstante";
 import InputNombre from "@/components/inputs/InputNombre";
 import InputDescripcion from "@/components/inputs/InputDescripcion";
 import BotonAceptarCancelar from "@/components/botones/BotonAceptarCancelar";
@@ -16,6 +17,7 @@ import { cambiarSeleccionInstitucion } from "@/utils/dashboard/cambiarSeleccionI
 
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { resetForm } from "@/store/features/formularios/formSlices";
+
 
 export default function FormCrearDepartamento({
   acciones,
@@ -30,16 +32,23 @@ export default function FormCrearDepartamento({
     (state) => state.forms.reiniciarForm.departamentoForm,
   );
 
-  const { setIdInstitucion, setNombre, setDescripcion, setNombreInstitucion } =
-    acciones;
+  const {
+    setIdInstitucion,
+    setNombre,
+    setDescripcion,
+    setNombreInstitucion,
+    setAlias,
+  } = acciones;
 
-  const { idInstitucion, nombre, descripcion } = datosDepartamento;
+  const { idInstitucion, nombre, descripcion, alias } = datosDepartamento;
 
-  const { validarNombre, setValidarNombre } = validaciones;
+  const { validarNombre, setValidarNombre, validarAlias, setValidarAlias } =
+    validaciones;
 
   useEffect(() => {
     if (mostrarCrear) {
       setNombre("");
+      setAlias("");
       setDescripcion("");
     }
   }, [reiniciarForm, mostrarCrear]);
@@ -79,6 +88,16 @@ export default function FormCrearDepartamento({
               rows={6}
               max={500}
               autoComplete="off"
+            />
+
+            <InputNombreEstante
+              value={alias}
+              setValue={setAlias}
+              validarEstante={validarAlias}
+              setValidarEstante={setValidarAlias}
+              placeholder={'departamento de finanzas'}
+              nombre={"Alias"}
+              indice="carpeta2"
             />
 
             <AgruparCamposForm>

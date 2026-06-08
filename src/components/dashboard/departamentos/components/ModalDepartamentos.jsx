@@ -39,6 +39,7 @@ export default function ModalDepartamentos({
     idDepartamento,
     nombre,
     descripcion,
+    alias,
     nombreInstitucion,
   } = datosDepartamento;
 
@@ -52,6 +53,7 @@ export default function ModalDepartamentos({
     try {
       const nuevoDepartamento = {
         nombre: nombre,
+        alias: alias,
         descripcion: descripcion,
         id_institucion: idInstitucion,
       };
@@ -104,6 +106,7 @@ export default function ModalDepartamentos({
           <ModalDatos titulo="Institución" descripcion={nombreInstitucion} />
           <ModalDatos titulo="Nombre" descripcion={nombre} />
           <ModalDatos titulo="Descripción" descripcion={descripcion} />
+          <ModalDatos titulo="Alias" descripcion={alias} />
         </ModalDatosContenedor>
 
         <BotonesModal
@@ -119,8 +122,8 @@ export default function ModalDepartamentos({
           campos={{
             nombre,
             descripcion,
+            alias,
             idInstitucion,
-            idDepartamento,
           }}
         />
       </Modal>

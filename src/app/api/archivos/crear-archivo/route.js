@@ -111,6 +111,7 @@ export async function POST(request) {
           extension: true,
           tipo: true,
           size: true,
+          borrado: true,
           createdAt: true,
         },
       });

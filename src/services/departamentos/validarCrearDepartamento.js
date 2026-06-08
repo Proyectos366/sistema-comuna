@@ -21,6 +21,7 @@ import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // F
 export default async function validarCrearDepartamento(
   nombre,
   descripcion,
+  alias,
   id_institucion,
 ) {
   try {
@@ -39,6 +40,7 @@ export default async function validarCrearDepartamento(
     const validarCampos = ValidarCampos.validarCamposCrearDepartamento(
       nombre,
       descripcion,
+      alias,
       id_institucion,
     );
 
@@ -117,8 +119,7 @@ export default async function validarCrearDepartamento(
     const numeroCodigo = String(
       cantidadDepartamentos ? cantidadDepartamentos + 1 : cantidadDepartamentos,
     ).padStart(6, "0");
-    const codigoNuevo =
-      validaciones.codInst.toUpperCase() + "-dpto-" + numeroCodigo;
+    const codigoNuevo = validaciones.codInst + "-dpto-" + numeroCodigo;
 
     // Verificar si el departamento ya existe
     const departamentoExistente = await prisma.departamento.findFirst({

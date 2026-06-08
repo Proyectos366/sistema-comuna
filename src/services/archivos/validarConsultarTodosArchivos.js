@@ -1,19 +1,19 @@
 /**
  @fileoverview Función utilitaria para validar la identidad del usuario antes de realizar una consulta
- de todos las carpetas disponibles. @module services/carpetas/validarConsultarTodasCarpetas
+ de todos los archivos disponibles. @module services/archivos/validarConsultarTodosArchivos
 */
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo
 
 /**
- Valida la identidad del usuario que intenta consultar todas las carpetas disponibles.
+ Valida la identidad del usuario que intenta consultar todos los archivos disponibles.
  @async
- @function validarConsultarTodasCarpetas
+ @function validarConsultarTodosArchivos
  @returns {Promise<Response>} Respuesta estructurada con el resultado de la validación.
 */
 
-export default async function validarConsultarTodasCarpetas() {
+export default async function validarConsultarTodosArchivos() {
   try {
     // 1. Obtener y validar el correo del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -42,12 +42,12 @@ export default async function validarConsultarTodasCarpetas() {
     });
   } catch (error) {
     // 5. Manejo de errores inesperados.
-    console.log(`Error interno validar consultar todos carpetas: ` + error);
+    console.log(`Error interno validar consultar todos archivos: ` + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar consultar todos carpetas",
+      "Error interno validar consultar todos archivos",
     );
   }
 }

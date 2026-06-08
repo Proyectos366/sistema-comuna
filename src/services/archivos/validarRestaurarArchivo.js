@@ -1,7 +1,7 @@
 /**
- @fileoverview Función utilitaria para validar la identidad de la carpeta, sus permisos
- y los parámetros necesarios antes de eliminar (desactivar) una carpeta en el sistema.
- @module services/carpetas/validarEliminarCarpeta
+ @fileoverview Función utilitaria para validar la identidad del archivo, sus permisos
+ y los parámetros necesarios antes de restaurar (activar) un archivo en el sistema.
+ @module services/archivos/validarRestaurarArchivo
 */
 
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
@@ -9,16 +9,15 @@ import ValidarCampos from "@/services/ValidarCampos"; // Utilidad para validar c
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo a través del token de autenticación
 
 /**
- Valida la identidad de la carpeta, sus permisos y los parámetros requeridos para eliminar
- (desactivar) otra carpeta. Verifica que el estado sea booleano y que el ID de la carpeta
- objetivo sea válido.
+ Valida la identidad del archivo, sus permisos y los parámetros requeridos para restaurar (activar)
+ otro archivo. Verifica que el estado sea booleano y que el ID del archivo objetivo sea válido.
  @async
- @function validarEliminarCarpeta
- @param {boolean} estado - Estado booleano que indica si se debe eliminar.
- @param {string|number} idCarpeta - Identificador único de la carpeta a eliminar.
+ @function validarRestaurarArchivo
+ @param {boolean} estado - Estado booleano que indica si se debe restaurar.
+ @param {string|number} idArchivo - Identificador único del archivo a restaurar.
  @returns {Promise<Object>} Respuesta estructurada con el resultado de la validación.
 */
-export default async function validarEliminarCarpeta(estado, idCarpeta) {
+export default async function validarRestaurarArchivo(estado, idArchivo) {
   try {
     // 1. Obtener y validar los datos del usuario a través del token.
     const validaciones = await obtenerDatosUsuarioToken();
@@ -32,11 +31,14 @@ export default async function validarEliminarCarpeta(estado, idCarpeta) {
     }
 
     // 3. Verificar si el usuario tiene permisos.
-    if (validaciones.id_rol !== 1 && validaciones.id_rol !== 2) {
+    if (
+      validaciones.id_rol !== 1 &&
+      validaciones.id_rol !== 2 &&
+      validaciones.id_rol !== 3
+    ) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, usuario no tiene permisos",
-        { codigo: 403 },
+        "Error usuario no tiene permisos",
       );
     }
 
@@ -48,31 +50,31 @@ export default async function validarEliminarCarpeta(estado, idCarpeta) {
       );
     }
 
-    // 5. Validar que el ID de la carpeta objetivo sea válido.
-    const validarIdCarpeta = ValidarCampos.validarCampoId(idCarpeta, "carpeta");
+    // 5. Validar que el ID del archivo objetivo sea válido.
+    const validarIdArchivo = ValidarCampos.validarCampoId(idArchivo, "archivo");
 
     // 6. Si el ID es inválido, retornar error.
-    if (validarIdCarpeta.status === "error") {
+    if (validarIdArchivo.status === "error") {
       return retornarRespuestaFunciones(
-        validarIdCarpeta.status,
-        validarIdCarpeta.message,
+        validarIdArchivo.status,
+        validarIdArchivo.message,
       );
     }
 
     // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
-      borrado: true,
-      id_carpeta: validarIdCarpeta.id,
+      borrado: false,
+      id_archivo: validarIdArchivo.id,
     });
   } catch (error) {
     // 8. Manejo de errores inesperados.
-    console.log("Error interno validar eliminar carpeta: " + error);
+    console.log("Error interno validar restaurar archivo: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar eliminar carpeta",
+      "Error interno validar restaurar archivo",
     );
   }
 }

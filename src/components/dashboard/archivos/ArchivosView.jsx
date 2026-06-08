@@ -117,10 +117,10 @@ export default function ArchivosView({ cambiarRuta, vista }) {
     setFirst(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
-  const editarArchivo = (carpeta) => {
-    setIdArchivo(carpeta.id);
-    setNombreArchivo(carpeta.nombre);
-    setDescripcionArchivo(carpeta.descripcion);
+  const editarArchivo = (archivo) => {
+    setIdArchivo(archivo.id);
+    setNombreArchivo(archivo.nombre);
+    setDescripcionArchivo(archivo.descripcion);
     dispatch(abrirModal("editar"));
   };
 

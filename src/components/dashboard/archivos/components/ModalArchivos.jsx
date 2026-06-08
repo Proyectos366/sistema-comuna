@@ -80,7 +80,7 @@ export default function ModalArchivos({
         nombre: nombre,
         descripcion: descripcion,
         alias: alias,
-        id_carpeta: idCarpeta,
+        id_archivo: idArchivo,
       };
 
       await dispatch(

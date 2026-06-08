@@ -36,6 +36,7 @@ export default function DepartamentosView() {
 
   const [nombreDepartamento, setNombreDepartamento] = useState("");
   const [descripcionDepartamento, setDescripcionDepartamento] = useState("");
+   const [aliasDepartamento, setAliasDepartamento] = useState("");
 
   const [idInstitucion, setIdInstitucion] = useState("");
   const [idDepartamento, setIdDepartamento] = useState("");
@@ -43,6 +44,9 @@ export default function DepartamentosView() {
   const [expanded, setExpanded] = useState("");
 
   const [validarNombreInstitucion, setValidarNombreInstitucion] =
+    useState(false);
+
+  const [validarAliasInstitucion, setValidarAliasInstitucion] =
     useState(false);
 
   const [first, setFirst] = useState(0);
@@ -67,6 +71,7 @@ export default function DepartamentosView() {
     setNombreInstitucion: setNombreInstitucion,
     setNombre: setNombreDepartamento,
     setDescripcion: setDescripcionDepartamento,
+    setAlias: setAliasDepartamento,
   };
 
   const datosDepartamento = {
@@ -75,11 +80,14 @@ export default function DepartamentosView() {
     nombreInstitucion: nombreInstitucion,
     nombre: nombreDepartamento,
     descripcion: descripcionDepartamento,
+    alias: aliasDepartamento,
   };
 
   const validaciones = {
     validarNombre: validarNombreInstitucion,
     setValidarNombre: setValidarNombreInstitucion,
+    validarAlias: validarAliasInstitucion,
+    setValidarAlias: setValidarAliasInstitucion,
   };
 
   const departamentosFiltradasOrdenadas = useMemo(() => {
