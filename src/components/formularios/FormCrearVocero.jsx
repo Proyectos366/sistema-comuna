@@ -239,7 +239,9 @@ export default function FormCrearVocero({
                 validarCorreo={validarCorreo}
                 setValidarCorreo={setValidarCorreo}
               />
+            </AgruparCamposForm>
 
+            <AgruparCamposForm>
               <InputNombre
                 indice="nombre"
                 nombre={"Actividad laboral"}
@@ -249,9 +251,7 @@ export default function FormCrearVocero({
                 setValidarNombre={setValidarLaboral}
                 placeholder={"Ejemplo: contraloria social"}
               />
-            </AgruparCamposForm>
 
-            <AgruparCamposForm>
               <InputFecha
                 nombre={"Fecha de atendido"}
                 value={fecha}
