@@ -16,6 +16,7 @@ import Loader from "@/components/Loader";
 import OpcionesVocero from "@/components/dashboard/voceros/components/OpcionesVocero";
 
 import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
+import { limpiarCampos } from "@/utils/limpiarForm";
 
 import { abrirModal } from "@/store/features/modal/slicesModal";
 import { fetchPaises } from "@/store/features/paises/thunks/todosPaises";
@@ -262,6 +263,25 @@ export default function VocerosView() {
     dispatch(abrirModal("editar"));
   };
 
+  const resetField = () => {
+    limpiarCampos({
+      setCedulaVocero,
+      setEdadVocero,
+      setNombreVocero,
+      setNombreDosVocero,
+      setApellidoVocero,
+      setApellidoDosVocero,
+      setGeneroVocero,
+      setTelefonoVocero,
+      setCorreoVocero,
+      setLaboralVocero,
+      setFecha,
+      setIdComuna,
+      setIdCircuito,
+      setIdConsejo,
+    });
+  };
+
   return (
     <>
       <ModalVoceros
@@ -269,6 +289,7 @@ export default function VocerosView() {
         datosVocero={datosVocero}
         validaciones={validaciones}
         seleccionado={seleccionado}
+        resetField={resetField}
       />
 
       <SectionMain>
@@ -289,6 +310,7 @@ export default function VocerosView() {
           funcion={() => {
             dispatch(abrirModal("crear"));
             setSeleccionado(10);
+            resetField();
           }}
         >
           <OpcionesVocero

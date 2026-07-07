@@ -29,6 +29,7 @@ export default function ModalVoceros({
   datosVocero,
   validaciones,
   seleccionado,
+  resetField
 }) {
   const dispatch = useDispatch();
 
@@ -130,6 +131,8 @@ export default function ModalVoceros({
           cerrarModal: cerrarModal,
         }),
       ).unwrap();
+
+      resetField();
     } catch (error) {
       console.log(error);
     }
@@ -354,6 +357,7 @@ export default function ModalVoceros({
         isVisible={mostrarCrear}
         onClose={() => {
           dispatch(cerrarModal("crear"));
+          resetField();
         }}
         titulo={"¿Crear vocero?"}
       >

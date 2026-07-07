@@ -27,7 +27,7 @@ import { fetchUsuariosNombres } from "@/store/features/usuarios/thunks/todosUsua
 
 import { cambiarSeleccionFormacion } from "@/utils/dashboard/cambiarSeleccionFormacion";
 import {
-  obtenerParticipantesFiltradosAgrupados,
+  agruparParticipantes,
   obtenerParticipantesFiltradosOrdenados,
   opcionesOrden,
 } from "@/utils/filtrarOrdenarVocerosFormaciones";
@@ -85,37 +85,17 @@ export default function ParticipantesView() {
     );
   }, [participantes, usuarios, busqueda, ordenCampo, ordenDireccion]);
 
+  const participantesPaginados = useMemo(() => {
+    return participantesFiltradosOrdenados.slice(first, first + rows);
+  }, [participantesFiltradosOrdenados, first, rows]);
+
   const participantesFinales = useMemo(() => {
     if (ordenCampo) {
-      return obtenerParticipantesFiltradosAgrupados(
-        participantes,
-        usuarios,
-        busqueda,
-        ordenCampo,
-        ordenDireccion,
-        ordenCampo,
-      );
+      return agruparParticipantes(participantesPaginados, ordenCampo);
     }
 
-    const filtradosOrdenados = obtenerParticipantesFiltradosOrdenados(
-      participantes,
-      usuarios,
-      busqueda,
-      ordenCampo,
-      ordenDireccion,
-    );
-
-    return filtradosOrdenados.slice(first, first + rows);
-  }, [
-    participantes,
-    usuarios,
-    busqueda,
-    ordenCampo,
-    ordenDireccion,
-    ordenCampo,
-    first,
-    rows,
-  ]);
+    return participantesPaginados;
+  }, [participantesPaginados, ordenCampo]);
 
   useEffect(() => {
     setFirst(0);
@@ -136,7 +116,7 @@ export default function ParticipantesView() {
           setFirst={setFirst}
           rows={rows}
           setRows={setRows}
-          datos={participantes}
+          datos={participantesFiltradosOrdenados}
           busqueda={busqueda}
           setBusqueda={setBusqueda}
           ordenCampo={ordenCampo}
@@ -211,7 +191,10 @@ export default function ParticipantesView() {
                     },
                   )
                 ) : (
-                  <EstadoMsjVacio dato={participantes} loading={loading} />
+                  <EstadoMsjVacio
+                    dato={participantesFiltradosOrdenados}
+                    loading={loading}
+                  />
                 )}
               </>
             )}
