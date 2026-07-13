@@ -275,7 +275,6 @@ export default function VocerosView() {
       setTelefonoVocero,
       setCorreoVocero,
       setLaboralVocero,
-      setFecha,
       setIdComuna,
       setIdCircuito,
       setIdConsejo,
