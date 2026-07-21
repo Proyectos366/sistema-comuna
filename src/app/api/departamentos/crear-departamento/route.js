@@ -64,6 +64,7 @@ export async function POST(request) {
           descripcion: validaciones.descripcion,
           alias: validaciones.alias,
           codigo: validaciones.codigo,
+          path: validaciones.path,
           id_usuario: validaciones.id_usuario,
           id_institucion: validaciones.id_institucion,
         },

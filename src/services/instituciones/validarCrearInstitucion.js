@@ -34,7 +34,7 @@ export default async function validarCrearInstitucion(
   id_pais,
   id_estado,
   id_municipio,
-  id_parroquia
+  id_parroquia,
 ) {
   try {
     // 1. Validar identidad del usuario mediante el token.
@@ -44,7 +44,7 @@ export default async function validarCrearInstitucion(
     if (validaciones.status === "error") {
       return retornarRespuestaFunciones(
         validaciones.status,
-        validaciones.message
+        validaciones.message,
       );
     }
 
@@ -58,7 +58,7 @@ export default async function validarCrearInstitucion(
       id_pais,
       id_estado,
       id_municipio,
-      id_parroquia
+      id_parroquia,
     );
 
     // 4. Si los campos son inválidos, retornar error.
@@ -66,7 +66,7 @@ export default async function validarCrearInstitucion(
       return retornarRespuestaFunciones(
         validarCampos.status,
         validarCampos.message,
-        { id_usuario: validaciones.id_usuario }
+        { id_usuario: validaciones.id_usuario },
       );
     }
 
@@ -74,7 +74,7 @@ export default async function validarCrearInstitucion(
     if (validaciones.id_rol !== 1) {
       return retornarRespuestaFunciones(
         "error",
-        "Error, usuario no tiene permisos..."
+        "Error, usuario no tiene permisos...",
       );
     }
 
@@ -103,11 +103,17 @@ export default async function validarCrearInstitucion(
         "Error, institución ya existe...",
         {
           id_usuario: validaciones.id_usuario,
-        }
+        },
       );
     }
 
-    // 8. Retornar respuesta con los datos validados.
+    // 8. Path como firma o direccion de una carpeta de institucion.
+    const path = `/storage/instituciones/${validarCampos.nombre}`;
+
+    // Falta agregar aqui el codigo para la institucion
+    // Falta crear la funcion para generar dicho codigo
+
+    // 9. Retornar respuesta con los datos validados.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
@@ -115,19 +121,20 @@ export default async function validarCrearInstitucion(
       rif: validarCampos.rif,
       sector: validarCampos.sector,
       direccion: validarCampos.direccion,
+      path: path,
       id_pais: validarCampos.id_pais,
       id_estado: validarCampos.id_estado,
       id_municipio: validarCampos.id_municipio,
       id_parroquia: validarCampos.id_parroquia,
     });
   } catch (error) {
-    // 8. Manejo de errores inesperados.
+    // 10. Manejo de errores inesperados.
     console.log("Error interno validar crear institución: " + error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(
       "error",
-      "Error interno validar crear institución"
+      "Error interno validar crear institución",
     );
   }
 }

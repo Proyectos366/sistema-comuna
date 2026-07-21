@@ -71,7 +71,7 @@ export default async function validarCrearDepartamento(
       );
     }
 
-    // 5. Verificar si ya existe un departamento con el mismo nombre en la misma institución.
+    // 7. Verificar si ya existe un departamento con el mismo nombre en la misma institución.
     const aliasRepetido = await prisma.departamento.findFirst({
       where: {
         alias: validarCampos.alias,
@@ -79,7 +79,7 @@ export default async function validarCrearDepartamento(
       },
     });
 
-    // 6. Si el alias ya está en uso, se retorna un error.
+    // 8. Si el alias ya está en uso, se retorna un error.
     if (aliasRepetido) {
       return retornarRespuestaFunciones(
         "error",
@@ -90,15 +90,15 @@ export default async function validarCrearDepartamento(
       );
     }
 
-    // 7. Obtener el nombre de la institución para usar en la creación de la carpeta.
+    // 9. Obtener el nombre de la institución para usar en la creación de la carpeta.
     const nombreInstitucion = await prisma.institucion.findFirst({
       where: {
         id: validarCampos.id_institucion,
       },
-      select: { nombre: true },
+      select: { nombre: true, path: true },
     });
 
-    // 8. Si no se encuentra la institución, se retorna un error.
+    // 10. Si no se encuentra la institución, se retorna un error.
     if (!nombreInstitucion) {
       return retornarRespuestaFunciones(
         "error",
@@ -109,7 +109,7 @@ export default async function validarCrearDepartamento(
       );
     }
 
-    // crear codigo del departamento
+    // 11.Crear codigo del departamento
     const cantidadDepartamentos = await prisma.departamento.count({
       where: {
         id_institucion: validaciones.id_institucion,
@@ -121,7 +121,7 @@ export default async function validarCrearDepartamento(
     ).padStart(6, "0");
     const codigoNuevo = validaciones.codInst + "-dpto-" + numeroCodigo;
 
-    // Verificar si el departamento ya existe
+    // 12.Verificar si el departamento ya existe
     const departamentoExistente = await prisma.departamento.findFirst({
       where: {
         codigo: codigoNuevo,
@@ -129,7 +129,7 @@ export default async function validarCrearDepartamento(
       },
     });
 
-    // 6. Si se encuentra un departamento con el mismo nombre, se retorna un error.
+    // 13. Si se encuentra un departamento con el mismo nombre, se retorna un error.
     if (departamentoExistente) {
       return retornarRespuestaFunciones(
         "error",
@@ -141,12 +141,16 @@ export default async function validarCrearDepartamento(
       );
     }
 
-    // 9. Si todas las validaciones son correctas, se retorna la información consolidada.
+    // 14. Generar el path del departamento
+    const path = `${nombreInstitucion.path}/${validarCampos.nombre}`;
+
+    // 15. Si todas las validaciones son correctas, se retorna la información consolidada.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
       descripcion: validarCampos.descripcion,
       codigo: codigoNuevo,
+      path: path,
       id_institucion: validarCampos.id_institucion,
       nombreInstitucion: nombreInstitucion.nombre,
     });

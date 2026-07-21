@@ -17,28 +17,28 @@ const archivosSlice = createSlice({
     error: null,
     archivoActual: {
       idArchivo: null,
-      nombre: null,
-      nombre_original: null,
-      nombre_sistema: null,
+      nameArchivo: null,
+      name_original: null,
+      name_sistema: null,
       codigo: null,
     },
   },
   reducers: {
     setArchivoActual: (state, action) => {
       state.archivoActual = {
-        idArchivo: action.payload.id,
-        nombre: action.payload.nombre,
-        nombre_original: action.payload.nombre_original,
-        nombre_sistema: action.payload.nombre_sistema,
+        idArchivo: action.payload.idArchivo,
+        nameArchivo: action.payload.nameArchivo,
+        name_original: action.payload.name_original,
+        name_sistema: action.payload.name_sistema,
         codigo: action.payload.codigo,
       };
     },
     clearArchivoActual: (state) => {
       state.archivoActual = {
         idArchivo: null,
-        nombre: null,
-        nombre_original: null,
-        nombre_sistema: null,
+        nameArchivo: null,
+        name_original: null,
+        name_sistema: null,
         codigo: null,
       };
     },

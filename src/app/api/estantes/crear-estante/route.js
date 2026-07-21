@@ -71,6 +71,7 @@ export async function POST(request) {
           nivel: validaciones.niveles,
           seccion: validaciones.secciones,
           codigo: validaciones.codigo,
+          path: validaciones.path,
           id_institucion: validaciones.id_institucion,
           id_departamento: validaciones.id_departamento,
           id_usuario: validaciones.id_usuario,

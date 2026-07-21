@@ -98,12 +98,12 @@ export default function ListadoArchivos({
           onClick={() => {
             dispatch(
               setArchivoActual({
-                idarchivo: archivo.id,
-                nombre: archivo.nombre,
-                nivel: archivo.nivel,
-                seccion: archivo.seccion,
+                idArchivo: archivo.id,
+                nameArchivo: archivo.nombre,
               }),
             );
+
+            dispatch(abrirModal("mostrarArchivo"));
           }}
         >
           <EnlacesBarraLateral

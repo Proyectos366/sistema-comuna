@@ -9,6 +9,7 @@ const initialState = {
     confirmarCambios: false,
     consultar: false,
     confirmarEliminarRestaurar: false,
+    mostrarArchivo: false,
   },
 };
 

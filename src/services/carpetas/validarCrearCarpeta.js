@@ -106,9 +106,7 @@ export default async function validarCrearCarpeta(
       where: {
         id: validarCampos.id_estante,
       },
-      select: {
-        codigo: true,
-      },
+      select: { codigo: true, nombre: true, alias: true, path: true },
     });
 
     // 10. Crear código de la carpeta
@@ -166,6 +164,8 @@ export default async function validarCrearCarpeta(
       );
     }
 
+    const pathEstante = `${codigoEstante.path}/${validarCampos.alias}`;
+
     // 15. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
@@ -176,6 +176,7 @@ export default async function validarCrearCarpeta(
       seccion: validarCampos.seccion,
       cabecera: validarCampos.cabecera,
       codigo: codigoNuevo,
+      path: pathEstante,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
       nombreEstante: nombreEstante.nombre,

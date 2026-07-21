@@ -75,6 +75,7 @@ export async function POST(request) {
           rif: validaciones.rif,
           sector: validaciones.sector,
           direccion: validaciones.direccion,
+          path: validaciones.path,
           id_pais: validaciones.id_pais,
           id_estado: validaciones.id_estado,
           id_municipio: validaciones.id_municipio,

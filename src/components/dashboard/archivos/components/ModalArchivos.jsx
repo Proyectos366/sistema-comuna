@@ -11,17 +11,25 @@ import ModalDatos from "@/components/modales/ModalDatos";
 import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
+import ModalMostrarArchivo from "@/components/modales/ModalMostrarArchivo";
 
 import { crearArchivo } from "@/store/features/archivos/thunks/crearArchivo";
 import { actualizarArchivo } from "@/store/features/archivos/thunks/actualizarArchivo";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { eliminarRestaurarArchivo } from "@/store/features/archivos/thunks/eliminarRestaurarArchivo";
 
+import { formatoTituloSimple, capitalizarTitulo } from "@/utils/formatearTextCapitalice";
+import MarcaAgua from "@/components/MarcaAgua";
+
 export default function ModalArchivos({
   acciones,
   datosArchivo,
   validaciones,
 }) {
+  const { nameArchivo } = useSelector(
+    (state) => state.archivos.archivoActual,
+  );
+  
   const dispatch = useDispatch();
 
   const mostrarConfirmar = useSelector(
@@ -37,6 +45,7 @@ export default function ModalArchivos({
 
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
+  const mostrarFile = useSelector((state) => state.modal.modales.mostrarArchivo);
 
   const {
     idArchivo,
@@ -250,6 +259,62 @@ export default function ModalArchivos({
           />
         </ModalDatosContenedor>
       </ModalPrincipal>
+
+
+
+
+
+      <ModalMostrarArchivo
+        isVisible={mostrarFile}
+        onClose={() => {
+          dispatch(cerrarModal("mostrarArchivo"));
+        }}
+        titulo={capitalizarTitulo(nameArchivo)}
+      >
+        <ModalDatosContenedor>
+          {<MarcaAgua />}
+          <div
+            className="relative w-full rounded-lg overflow-hidden shadow-lg bg-white p-4"
+            onContextMenu={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => e.preventDefault()}
+          >
+            <iframe
+              id="miIframe"
+              className=""
+              src={'/img/aprobado.png'}
+            />
+            <div
+              className="absolute ms-[42%] top-0 left-0 w-[60%] h-5 sm:h-14 bg-black"
+              onContextMenu={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
+            ></div>
+
+            <div
+              className="absolute sm:top-14 left-0 w-[98%] h-full bg-[#ddddd7] opacity-10"
+              onContextMenu={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
+            ></div>
+          </div>
+        </ModalDatosContenedor>
+
+        <BotonesModal
+          aceptar={handleCrearArchivo}
+          cancelar={() => {
+            dispatch(cerrarModal("confirmar"));
+            dispatch(abrirModal("crear"));
+          }}
+          indiceUno="crear"
+          indiceDos="cancelar"
+          nombreUno="Eliminar"
+          nombreDos="Cerrar"
+          campos={{
+            nombre,
+          }}
+        />
+      </ModalMostrarArchivo>
     </>
   );
 }

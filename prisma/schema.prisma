@@ -198,7 +198,8 @@ model institucion {
   sector       String
   direccion    String
   codigo       String?  @unique
-  sub_nombre     String?  @default("")
+  sub_nombre   String?  @default("")
+  path         String?
   borrado      Boolean  @default(false)
   id_usuario   Int
   id_pais      Int
@@ -229,6 +230,7 @@ model departamento {
   alias          String?
   codigo         String?  @unique
   borrado        Boolean  @default(false)
+  path           String?
   sub_nombre     String?  @default("")
   id_usuario     Int
   id_institucion Int
@@ -257,6 +259,8 @@ model estante {
   nivel           Int
   seccion         Int
   codigo          String?  @unique
+  path            String?
+  sub_nombre      String?  @default("")
   borrado         Boolean  @default(false)
   id_usuario      Int
   id_institucion  Int
@@ -280,6 +284,8 @@ model carpeta {
   codigo          String?  @unique
   nivel           Int
   seccion         Int
+  path            String?
+  sub_nombre      String?  @default("")
   borrado         Boolean  @default(false)
   id_usuario      Int
   id_departamento Int
@@ -308,6 +314,7 @@ model archivo {
   size            Int
   path            String
   estado          Boolean  @default(true)
+  sub_nombre      String?  @default("")
   borrado         Boolean  @default(false)
   id_usuario      Int // Clave foránea hacia usuario
   id_departamento Int // Clave foránea hacia departamento
@@ -445,7 +452,7 @@ model proyecto {
   fecha_creado DateTime @default(now())
   borrado      Boolean  @default(false)
   id_usuario   Int
-  id_vocero   Int
+  id_vocero    Int
   estatus      String
   updatedAt    DateTime @default(now())
   createdAt    DateTime @default(now())

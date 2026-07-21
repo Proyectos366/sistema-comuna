@@ -96,7 +96,7 @@ export default async function validarCrearEstante(
       );
     }
 
-    // crear codigo del departamento
+    // 9. Crear codigo del departamento
     const cantidadEstantes = await prisma.estante.count({
       where: {
         id_departamento: validaciones.id_departamento,
@@ -109,7 +109,7 @@ export default async function validarCrearEstante(
     const codigoNuevo =
       validaciones.codDepa.toUpperCase() + "-EST-" + numeroCodigo;
 
-    // Verificar si el departamento ya existe
+    // 10. Verificar si el departamento ya existe
     const estanteExistente = await prisma.estante.findFirst({
       where: {
         AND: [
@@ -121,13 +121,24 @@ export default async function validarCrearEstante(
       },
     });
 
-    // 6. Si se encuentra un estante con el mismo nombre, se retorna un error.
+    // 11. Si se encuentra un estante con el mismo nombre, se retorna un error.
     if (estanteExistente) {
       return retornarRespuestaFunciones("error", "Error estante existente", {
         id_usuario: validaciones.id_usuario,
         codigo: 409,
       });
     }
+
+    // 12. Verificar si el nombre del estante ya existe en la base de datos.
+    const pathDepartamento = await prisma.departamento.findFirst({
+      where: {
+        id: validaciones.id_departamento,
+      },
+      select: { id: true, nombre: true, path: true}
+    });
+
+    const path = `${pathDepartamento.path}/${validarCampos.alias}`;
+
 
     // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
@@ -138,6 +149,7 @@ export default async function validarCrearEstante(
       niveles: validarCampos.niveles,
       secciones: validarCampos.secciones,
       codigo: codigoNuevo,
+      path: path,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
       id_institucion: validaciones.id_institucion,
