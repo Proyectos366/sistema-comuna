@@ -8,6 +8,7 @@ import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la ba
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import ValidarCampos from "@/services/ValidarCampos"; // Clase para validar campos de entrada
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo
+import { generarCodigoSecuencial } from "@/utils/codigo/codigoSecuencial";
 
 /**
  Valida los campos y la lógica de negocio para crear un nuevo estante.
@@ -96,24 +97,25 @@ export default async function validarCrearEstante(
       );
     }
 
-    // 9. Crear codigo del departamento
+    // 9. Consultar estantes para general el codigo
     const cantidadEstantes = await prisma.estante.count({
       where: {
         id_departamento: validaciones.id_departamento,
       },
     });
 
-    const numeroCodigo = String(
-      cantidadEstantes ? cantidadEstantes + 1 : cantidadEstantes,
-    ).padStart(4, "0");
-    const codigoNuevo =
-      validaciones.codDepa.toUpperCase() + "-EST-" + numeroCodigo;
+    // 10. Crear codigo del departamento
+    const codigoEstante = generarCodigoSecuencial(
+      validaciones.codDepa,
+      "EST",
+      cantidadEstantes,
+    );
 
-    // 10. Verificar si el departamento ya existe
+    // 11. Verificar si el departamento ya existe
     const estanteExistente = await prisma.estante.findFirst({
       where: {
         AND: [
-          { codigo: codigoNuevo },
+          { codigo: codigoEstante },
           { nombre: validarCampos.nombre },
           { alias: validarCampos.alias },
         ],
@@ -121,7 +123,7 @@ export default async function validarCrearEstante(
       },
     });
 
-    // 11. Si se encuentra un estante con el mismo nombre, se retorna un error.
+    // 12. Si se encuentra un estante con el mismo nombre, se retorna un error.
     if (estanteExistente) {
       return retornarRespuestaFunciones("error", "Error estante existente", {
         id_usuario: validaciones.id_usuario,
@@ -129,18 +131,17 @@ export default async function validarCrearEstante(
       });
     }
 
-    // 12. Verificar si el nombre del estante ya existe en la base de datos.
-    const pathDepartamento = await prisma.departamento.findFirst({
+    // 13. Verificar si el nombre del estante ya existe en la base de datos.
+    const codigoDepartamento = await prisma.departamento.findFirst({
       where: {
         id: validaciones.id_departamento,
       },
-      select: { id: true, nombre: true, path: true}
+      select: { id: true, nombre: true, path: true },
     });
 
-    const path = `${pathDepartamento.path}/${validarCampos.alias}`;
+    const pathDepa = `${codigoDepartamento.path}`;
 
-
-    // 7. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
+    // 14. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
@@ -148,15 +149,15 @@ export default async function validarCrearEstante(
       alias: validarCampos.alias,
       niveles: validarCampos.niveles,
       secciones: validarCampos.secciones,
-      codigo: codigoNuevo,
-      path: path,
+      codigo: codigoEstante,
+      path: pathDepa,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
       id_institucion: validaciones.id_institucion,
       id_departamento: validaciones.id_departamento,
     });
   } catch (error) {
-    // 8. Manejo de errores inesperados.
+    // 15. Manejo de errores inesperados.
     console.log(`Error interno validar crear estante: ` + error);
 
     // Retorna una respuesta del error inesperado

@@ -68,7 +68,6 @@ export default function ModalEstantes({
         }),
       ).unwrap();
     } catch (error) {
-      notify(error);
       console.log(error);
     }
   };
@@ -111,7 +110,6 @@ export default function ModalEstantes({
 
       dispatch(cerrarModal("confirmarEliminarRestaurar"));
     } catch (error) {
-      notify(error);
       console.log(error);
     }
   };

@@ -73,6 +73,7 @@ export async function POST(request) {
           nivel: validaciones.nivel,
           seccion: validaciones.seccion,
           codigo: validaciones.codigo,
+          path: validaciones.path,
           id_departamento: validaciones.id_departamento,
           id_estante: validaciones.id_estante,
           id_usuario: validaciones.id_usuario,
@@ -81,10 +82,7 @@ export async function POST(request) {
 
       // 5.2. Intentar crear la carpeta física
       try {
-        const storagePath = path.join(
-          process.cwd(),
-          `storage/instituciones/${validaciones.nombreInstitucion}/${validaciones.nombreDepartamento}/${validaciones.aliasEstante}`,
-        );
+        const storagePath = path.join(process.cwd(), `${validaciones.path}`);
 
         await crearRutasCarpetas.crearCarpeta(storagePath, validaciones.alias);
       } catch (error) {

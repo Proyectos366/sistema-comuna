@@ -8,6 +8,7 @@ import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la ba
 import retornarRespuestaFunciones from "@/utils/respuestasValidaciones"; // Utilidad para generar respuestas estandarizadas
 import ValidarCampos from "@/services/ValidarCampos"; // Clase para validar campos de entrada
 import obtenerDatosUsuarioToken from "@/services/obtenerDatosUsuarioToken"; // Función para obtener los datos del usuario activo
+import { generarCodigoSecuencial } from "@/utils/codigo/codigoSecuencial";
 
 /**
  Valida los campos y la lógica de negocio para crear una nueva carpeta.
@@ -109,23 +110,25 @@ export default async function validarCrearCarpeta(
       select: { codigo: true, nombre: true, alias: true, path: true },
     });
 
-    // 10. Crear código de la carpeta
+    // 10. Consultar cantidad de carpetas para generar el código
     const cantidadCarpetas = await prisma.carpeta.count({
       where: {
         id_estante: validarCampos.id_estante,
       },
     });
-    const numeroCodigo = String(
-      cantidadCarpetas ? cantidadCarpetas + 1 : cantidadCarpetas,
-    ).padStart(7, "0");
-    const codigoNuevo =
-      codigoEstante.codigo.toUpperCase() + "-CARP-" + numeroCodigo;
 
-    // 11. Verificar si la carpeta ya existe
+    // 11. Crear codigo de la carpeta
+    const codigoCarpeta = generarCodigoSecuencial(
+      codigoEstante.codigo,
+      "CARP",
+      cantidadCarpetas,
+    );
+
+    // 12. Verificar si la carpeta ya existe
     const carpetaExistente = await prisma.carpeta.findFirst({
       where: {
         AND: [
-          { codigo: codigoNuevo },
+          { codigo: codigoCarpeta },
           { nombre: validarCampos.nombre },
           { alias: validarCampos.alias },
         ],
@@ -133,7 +136,7 @@ export default async function validarCrearCarpeta(
       },
     });
 
-    // 12. Si se encuentra una carpeta con el mismo nombre, se retorna un error.
+    // 13. Si se encuentra una carpeta con el mismo nombre, se retorna un error.
     if (carpetaExistente) {
       return retornarRespuestaFunciones("error", "Error carpeta existente", {
         id_usuario: validaciones.id_usuario,
@@ -141,10 +144,10 @@ export default async function validarCrearCarpeta(
       });
     }
 
-    // 13. Obtener nombre de estante
+    // 14. Obtener nombre de estante
     const nombreEstante = await prisma.estante.findFirst({
       where: {
-        id_estante: validaciones.id_estante,
+        id: validaciones.id_estante,
       },
       select: {
         nombre: true,
@@ -152,7 +155,7 @@ export default async function validarCrearCarpeta(
       },
     });
 
-    // 14. Si no se encuentra el nombre del estante, se retorna un error.
+    // 15. Si no se encuentra el nombre del estante, se retorna un error.
     if (!nombreEstante) {
       return retornarRespuestaFunciones(
         "error",
@@ -164,9 +167,9 @@ export default async function validarCrearCarpeta(
       );
     }
 
-    const pathEstante = `${codigoEstante.path}/${validarCampos.alias}`;
+    const pathEstante = `${codigoEstante.path}`;
 
-    // 15. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
+    // 16. Si todas las validaciones son correctas, se consolidan y retornan los datos para la creación.
     return retornarRespuestaFunciones("ok", "Validacion correcta", {
       id_usuario: validaciones.id_usuario,
       nombre: validarCampos.nombre,
@@ -175,7 +178,7 @@ export default async function validarCrearCarpeta(
       nivel: validarCampos.nivel,
       seccion: validarCampos.seccion,
       cabecera: validarCampos.cabecera,
-      codigo: codigoNuevo,
+      codigo: codigoCarpeta,
       path: pathEstante,
       nombreInstitucion: validaciones.nombreInstitucion,
       nombreDepartamento: validaciones.nombreDepartamento,
@@ -185,7 +188,7 @@ export default async function validarCrearCarpeta(
       id_estante: validarCampos.id_estante,
     });
   } catch (error) {
-    // 16. Manejo de errores inesperados.
+    // 17. Manejo de errores inesperados.
     console.log(`Error interno validar crear carpeta: ` + error);
 
     // Retorna una respuesta del error inesperado
