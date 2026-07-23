@@ -34,6 +34,10 @@ export async function GET(request) {
       return generarRespuesta("error", "Error no hay archivo", {}, 400);
     }
 
+
+    // Vamos a trabajar desde aqui
+    //sdlkjhaosd
+
     // 3. Construye la ruta absoluta del archivo en el sistema con la institución
     const fullPath = path.join(
       process.cwd(),
