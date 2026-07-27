@@ -64,6 +64,7 @@ export async function POST(request) {
 
     // 5. Crea una nueva carpeta en la base de datos utilizando Prisma
     const nuevaCarpeta = await prisma.$transaction(async (tx) => {
+      const pathCarpeta = `${validaciones.path}/${validaciones.alias}`;
       // 5.1. Función para crear la carpeta
       const carpeta = await tx.carpeta.create({
         data: {
@@ -73,7 +74,7 @@ export async function POST(request) {
           nivel: validaciones.nivel,
           seccion: validaciones.seccion,
           codigo: validaciones.codigo,
-          path: validaciones.path,
+          path: pathCarpeta,
           id_departamento: validaciones.id_departamento,
           id_estante: validaciones.id_estante,
           id_usuario: validaciones.id_usuario,

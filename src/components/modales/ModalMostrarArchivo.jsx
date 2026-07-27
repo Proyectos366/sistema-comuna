@@ -10,9 +10,11 @@ export default function ModalMostrarArchivo({
   children,
   titulo,
 }) {
-  const { idArchivo, nameArchivo } = useSelector((state) => state.archivos.archivoActual);
+  const { idArchivo, nameArchivo, path } = useSelector(
+    (state) => state.archivos.archivoActual,
+  );
 
-  console.log(idArchivo, nameArchivo);
+  console.log(path);
   
 
   useEffect(() => {

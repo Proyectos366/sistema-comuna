@@ -21,6 +21,7 @@ const archivosSlice = createSlice({
       name_original: null,
       name_sistema: null,
       codigo: null,
+      path: null,
     },
   },
   reducers: {
@@ -31,6 +32,7 @@ const archivosSlice = createSlice({
         name_original: action.payload.name_original,
         name_sistema: action.payload.name_sistema,
         codigo: action.payload.codigo,
+        path: action.payload.path,
       };
     },
     clearArchivoActual: (state) => {
@@ -40,6 +42,7 @@ const archivosSlice = createSlice({
         name_original: null,
         name_sistema: null,
         codigo: null,
+        path: null,
       };
     },
   },

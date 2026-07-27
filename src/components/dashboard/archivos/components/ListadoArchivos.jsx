@@ -100,6 +100,7 @@ export default function ListadoArchivos({
               setArchivoActual({
                 idArchivo: archivo.id,
                 nameArchivo: archivo.nombre,
+                path: archivo.path,
               }),
             );
 

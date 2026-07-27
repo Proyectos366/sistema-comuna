@@ -62,6 +62,7 @@ export async function POST(request) {
 
     // 5. Crea un nuevo estante en la base de datos utilizando Prisma
     const nuevoEstante = await prisma.$transaction(async (tx) => {
+      const pathEstante = `${validaciones.path}/${validaciones.alias}`;
       // 5.1 Funcion para crear el estante
       const estante = await tx.estante.create({
         data: {
@@ -71,7 +72,7 @@ export async function POST(request) {
           nivel: validaciones.niveles,
           seccion: validaciones.secciones,
           codigo: validaciones.codigo,
-          path: `${validaciones.path}/${validaciones.alias}`,
+          path: pathEstante,
           id_institucion: validaciones.id_institucion,
           id_departamento: validaciones.id_departamento,
           id_usuario: validaciones.id_usuario,

@@ -81,6 +81,7 @@ export async function PATCH(request) {
           nombre_sistema: true,
           codigo: true,
           hash: true,
+          path: true,
           extension: true,
           tipo: true,
           size: true,

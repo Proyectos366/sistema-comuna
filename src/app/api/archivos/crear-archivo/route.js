@@ -52,12 +52,7 @@ export async function POST(request) {
       // 4.1. Definir ruta definitiva del archivo
       const rutaDefinitiva = path.join(
         process.cwd(),
-        "storage",
-        "instituciones",
-        validaciones.nombreInstitucion,
-        validaciones.nombreDepartamento,
-        validaciones.aliasEstante,
-        validaciones.aliasCarpeta,
+        validaciones.path,
         validaciones.nombreSistema,
       );
 
@@ -70,6 +65,7 @@ export async function POST(request) {
       // 4.3. Mover el archivo de temp a destino definitivo
       fs.renameSync(validaciones.rutaTemporal, rutaDefinitiva);
 
+      const pathArchivo = `${validaciones.path}/${validaciones.nombreSistema}`;
       // 4.4. Crear el registro del archivo en la base de datos
       const archivo = await tx.archivo.create({
         data: {
@@ -83,7 +79,7 @@ export async function POST(request) {
           extension: validaciones.extension,
           tipo: validaciones.tipo,
           size: validaciones.size,
-          path: rutaDefinitiva,
+          path: pathArchivo,
           estado: true,
           borrado: false,
           id_departamento: validaciones.id_departamento,
@@ -108,6 +104,7 @@ export async function POST(request) {
           nombre_sistema: true,
           codigo: true,
           hash: true,
+          path: true,
           extension: true,
           tipo: true,
           size: true,

@@ -129,10 +129,9 @@ export default async function validarCrearArchivo(request) {
     });
 
     if (archivoDuplicado) {
-      const ubicacion = `${validaciones.nombreInstitucion} > ${validaciones.nombreDepartamento} > ${archivoDuplicado.carpeta.estantes.nombre} > ${archivoDuplicado.carpeta.nombre} > ${archivoDuplicado.nombre}`;
       return retornarRespuestaFunciones(
         "error",
-        `Este archivo ya existe en el sistema. Ubicación original: ${ubicacion}`,
+        `Este archivo ya existe en el sistema`,
         {
           codigo: 409,
           hash_duplicado: hashe,
@@ -148,6 +147,7 @@ export default async function validarCrearArchivo(request) {
         nombre: true,
         alias: true,
         id_estante: true,
+        path: true,
         estantes: { select: { codigo: true, nombre: true, alias: true } },
       },
     });
@@ -190,7 +190,7 @@ export default async function validarCrearArchivo(request) {
     if (nombreRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Ya existe un archivo con este nombre en la carpeta actual",
+        "Ya existe un archivo con este nombre",
         {
           id_usuario: validaciones.id_usuario,
           codigo: 409,
@@ -210,7 +210,7 @@ export default async function validarCrearArchivo(request) {
     if (aliasRepetido) {
       return retornarRespuestaFunciones(
         "error",
-        "Ya existe un archivo con este alias en la carpeta actual",
+        "Ya existe un archivo con este alias",
         {
           id_usuario: validaciones.id_usuario,
           codigo: 409,
@@ -222,7 +222,11 @@ export default async function validarCrearArchivo(request) {
     const iv = randomBytes(16);
     const key = scryptSync(claveSecreta, "salt", 32);
     const cipher = createCipheriv(algoritmo, key, iv);
-    const bufferCifrado = Buffer.concat([iv, cipher.update(buffer), cipher.final()]);
+    const bufferCifrado = Buffer.concat([
+      iv,
+      cipher.update(buffer),
+      cipher.final(),
+    ]);
 
     // 20.1. Guardar archivo cifrado en carpeta temporal
     const tempDir = path.join(process.cwd(), "storage", "temp");
@@ -232,6 +236,8 @@ export default async function validarCrearArchivo(request) {
     const rutaTemporal = path.join(tempDir, nombreSistemaFecha);
     fs.writeFileSync(rutaTemporal, bufferCifrado);
 
+    const pathArchivo = datosCarpeta.path;
+
     // 21. Si todas las validaciones son correctas, retornar los datos para la creación
     return retornarRespuestaFunciones("ok", "Validación correcta", {
       id_usuario: validaciones.id_usuario,
@@ -239,13 +245,13 @@ export default async function validarCrearArchivo(request) {
       id_estante: datosCarpeta.id_estante,
       id_carpeta: validarCampos.id_carpeta,
       nombre: validarCampos.nombre,
-      nombreOriginal: nombreOriginal,
-      nombreSistema: nombreSistemaFecha,
+      nombreOriginal: nombreOriginal.toLowerCase(),
+      nombreSistema: nombreSistemaFecha.toLowerCase(),
       hash: hashe,
-      codigo: codigoNuevo,
+      codigo: codigoNuevo.toLowerCase(),
       alias: validarCampos.alias,
       descripcion: validarCampos.descripcion,
-      extension: extension,
+      extension: extension.toLowerCase(),
       tipo: tipo.split("/")[0], // "image", "video", "application", etc.
       size: size,
       archivoCifrado: bufferCifrado,
@@ -257,10 +263,11 @@ export default async function validarCrearArchivo(request) {
       nombreCarpeta: datosCarpeta.nombre,
       aliasCarpeta: datosCarpeta.alias,
       rutaTemporal: rutaTemporal,
+      path: pathArchivo.toLowerCase(),
     });
   } catch (error) {
     // 22. Manejo de errores inesperados
-    console.error("Error interno validar crear archivo:", error);
+    console.log("Error interno validar crear archivo:", error);
 
     return retornarRespuestaFunciones(
       "error",

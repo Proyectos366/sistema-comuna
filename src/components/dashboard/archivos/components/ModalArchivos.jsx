@@ -18,18 +18,22 @@ import { actualizarArchivo } from "@/store/features/archivos/thunks/actualizarAr
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { eliminarRestaurarArchivo } from "@/store/features/archivos/thunks/eliminarRestaurarArchivo";
 
-import { formatoTituloSimple, capitalizarTitulo } from "@/utils/formatearTextCapitalice";
+import {
+  formatoTituloSimple,
+  capitalizarTitulo,
+} from "@/utils/formatearTextCapitalice";
 import MarcaAgua from "@/components/MarcaAgua";
+import MostrarArchivo from "./MostrarArchivo";
 
 export default function ModalArchivos({
   acciones,
   datosArchivo,
   validaciones,
 }) {
-  const { nameArchivo } = useSelector(
+  const { nameArchivo, path } = useSelector(
     (state) => state.archivos.archivoActual,
   );
-  
+
   const dispatch = useDispatch();
 
   const mostrarConfirmar = useSelector(
@@ -45,7 +49,9 @@ export default function ModalArchivos({
 
   const mostrarEditar = useSelector((state) => state.modal.modales.editar);
   const mostrarCrear = useSelector((state) => state.modal.modales.crear);
-  const mostrarFile = useSelector((state) => state.modal.modales.mostrarArchivo);
+  const mostrarFile = useSelector(
+    (state) => state.modal.modales.mostrarArchivo,
+  );
 
   const {
     idArchivo,
@@ -260,44 +266,18 @@ export default function ModalArchivos({
         </ModalDatosContenedor>
       </ModalPrincipal>
 
-
-
-
-
       <ModalMostrarArchivo
         isVisible={mostrarFile}
         onClose={() => {
           dispatch(cerrarModal("mostrarArchivo"));
         }}
-        titulo={capitalizarTitulo(nameArchivo)}
+        titulo={nameArchivo ? capitalizarTitulo(nameArchivo) : ""}
       >
         <ModalDatosContenedor>
-          {<MarcaAgua />}
-          <div
-            className="relative w-full rounded-lg overflow-hidden shadow-lg bg-white p-4"
-            onContextMenu={(e) => e.preventDefault()}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={(e) => e.preventDefault()}
-          >
-            <iframe
-              id="miIframe"
-              className=""
-              src={'/img/aprobado.png'}
-            />
-            <div
-              className="absolute ms-[42%] top-0 left-0 w-[60%] h-5 sm:h-14 bg-black"
-              onContextMenu={(e) => e.preventDefault()}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => e.preventDefault()}
-            ></div>
-
-            <div
-              className="absolute sm:top-14 left-0 w-[98%] h-full bg-[#ddddd7] opacity-10"
-              onContextMenu={(e) => e.preventDefault()}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => e.preventDefault()}
-            ></div>
-          </div>
+          {/* {<MarcaAgua />} */}
+          <MostrarArchivo
+            url={`/api/archivos/mostrar-archivo?path=${path.replace(/^\/+/, "")}`}
+          />
         </ModalDatosContenedor>
 
         <BotonesModal

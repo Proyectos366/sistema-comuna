@@ -46,6 +46,7 @@ export async function GET(request) {
         nombre_sistema: true,
         codigo: true,
         hash: true,
+        path: true,
         extension: true,
         tipo: true,
         size: true,
