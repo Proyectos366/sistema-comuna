@@ -90,7 +90,7 @@ export default async function validarCrearCarpeta(
       },
     });
 
-    // 8. Si se encuentra un carpeta con el mismo alias, se retorna un error.
+    // 8. Si se encuentra una carpeta con el mismo alias, se retorna un error.
     if (aliasRepetido) {
       return retornarRespuestaFunciones(
         "error",
