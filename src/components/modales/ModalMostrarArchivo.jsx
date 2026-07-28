@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import Titulos from "@/components/Titulos";
 import Div from "@/components/padres/Div";
 import Button from "@/components/padres/Button";
-import { useSelector } from "react-redux";
 
 export default function ModalMostrarArchivo({
   isVisible,
@@ -10,13 +9,6 @@ export default function ModalMostrarArchivo({
   children,
   titulo,
 }) {
-  const { idArchivo, nameArchivo, path } = useSelector(
-    (state) => state.archivos.archivoActual,
-  );
-
-  console.log(path);
-  
-
   useEffect(() => {
     if (isVisible) {
       document.body.classList.add("overflow-hidden");

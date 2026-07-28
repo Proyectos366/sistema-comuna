@@ -42,12 +42,15 @@ export default function ListadoVoceros({ vocero, editarVocero }) {
           </Div>
         </Button>
       </Div>
-      <BloqueInfo indice={1} nombre={"Edad"} valor={vocero.edad} />
+
+      <BloqueInfo indice={1} nombre={"Edad"} valor={`${vocero.edad} años`} />
+
       <BloqueInfo
         indice={1}
         nombre={"Genero"}
         valor={vocero.genero ? "Masculino" : "Femenino"}
       />
+
       <BloqueInfo indice={1} nombre={"Teléfono"} valor={vocero.telefono} />
 
       <BloqueInfo indice={1} nombre={"Correo"} valor={vocero.correo} />
@@ -104,7 +107,7 @@ export default function ListadoVoceros({ vocero, editarVocero }) {
               eliminarRestaurarVocero({
                 estado: vocero.borrado,
                 id_vocero: vocero.id,
-              })
+              }),
             );
           }}
         />
