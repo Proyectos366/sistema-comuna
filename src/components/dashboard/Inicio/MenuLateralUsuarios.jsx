@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import Div from "@/components/padres/Div";
@@ -7,6 +8,21 @@ import EnlacesBarraLateral from "@/components/dashboard/Inicio/EnlacesBarraLater
 
 export default function MenuLateralUsuario({ abrirPanel, cambiarRuta, vista }) {
   const { usuarioActivo, departamento } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (abrirPanel) {
+      setTimeout(() => {
+        // Buscar el botón activo por la clase que usa cuando está seleccionado
+        const activo = document.querySelector(".bg-\\[\\#E61C45\\]");
+        if (activo) {
+          activo.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }, 300);
+    }
+  }, [abrirPanel, vista]);
 
   return (
     <Div

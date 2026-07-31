@@ -12,28 +12,19 @@ import ModalDatosContenedor from "@/components/modales/ModalDatosContenedor";
 import AvisoAdvertencia from "@/components/dashboard/participantes/components/AvisoAdvertencia";
 import ModalPrincipal from "@/components/modales/ModalPrincipal";
 import ModalMostrarArchivo from "@/components/modales/ModalMostrarArchivo";
+import MostrarArchivo from "@/components/dashboard/archivos/components/MostrarArchivo";
+import MarcaAgua from "@/components/MarcaAgua";
 
 import { crearArchivo } from "@/store/features/archivos/thunks/crearArchivo";
 import { actualizarArchivo } from "@/store/features/archivos/thunks/actualizarArchivo";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { eliminarRestaurarArchivo } from "@/store/features/archivos/thunks/eliminarRestaurarArchivo";
 
-import {
-  formatoTituloSimple,
-  capitalizarTitulo,
-} from "@/utils/formatearTextCapitalice";
-import MarcaAgua from "@/components/MarcaAgua";
-import MostrarArchivo from "./MostrarArchivo";
-
 export default function ModalArchivos({
   acciones,
   datosArchivo,
   validaciones,
 }) {
-  const { nameArchivo, path } = useSelector(
-    (state) => state.archivos.archivoActual,
-  );
-
   const dispatch = useDispatch();
 
   const mostrarConfirmar = useSelector(
@@ -271,13 +262,10 @@ export default function ModalArchivos({
         onClose={() => {
           dispatch(cerrarModal("mostrarArchivo"));
         }}
-        titulo={nameArchivo ? capitalizarTitulo(nameArchivo) : ""}
       >
         <ModalDatosContenedor>
           {/* {<MarcaAgua />} */}
-          <MostrarArchivo
-            url={`/api/archivos/mostrar-archivo?path=${path.replace(/^\/+/, "")}`}
-          />
+          <MostrarArchivo />
         </ModalDatosContenedor>
 
         <BotonesModal

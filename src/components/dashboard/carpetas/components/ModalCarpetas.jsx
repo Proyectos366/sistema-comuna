@@ -71,7 +71,6 @@ export default function ModalCarpetas({
         }),
       ).unwrap();
     } catch (error) {
-      //notify(error);
       console.log(error);
     }
   };
@@ -137,9 +136,9 @@ export default function ModalCarpetas({
           <ModalDatos titulo="Alias" descripcion={alias} />
           <ModalDatos
             titulo="Nivel"
-            descripcion={Number(nivel) === 0 ? "0 (cabecera)" : Number(nivel)}
+            descripcion={Number(nivel) === 0 ? "cabecera" : Number(nivel)}
           />
-          <ModalDatos titulo="Sección" descripcion={seccion} />
+          <ModalDatos titulo="Sección" descripcion={Number(seccion)} />
         </ModalDatosContenedor>
 
         <BotonesModal
