@@ -57,18 +57,6 @@ export default function ListadoArchivos({
       <BloqueInfo indice={1} nombre={"Alias"} valor={archivo.alias} />
       <BloqueInfo indice={1} nombre={"Código"} valor={archivo.codigo} />
 
-      {/* <BloqueInfo
-        indice={1}
-        nombre={"Archivos"}
-        valor={archivo._count?.archivos}
-      />
-
-      <BloqueInfo
-        indice={1}
-        nombre={"Tamaño total"}
-        valor={archivo.pesoTotalArchivos}
-      /> */}
-
       <Div className="flex items-center justify-between">
         <BloqueInfo
           indice={!archivo.borrado ? 3 : 2}
