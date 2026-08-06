@@ -19,6 +19,7 @@ import { crearArchivo } from "@/store/features/archivos/thunks/crearArchivo";
 import { actualizarArchivo } from "@/store/features/archivos/thunks/actualizarArchivo";
 import { abrirModal, cerrarModal } from "@/store/features/modal/slicesModal";
 import { eliminarRestaurarArchivo } from "@/store/features/archivos/thunks/eliminarRestaurarArchivo";
+import { descargarArchivo } from "@/store/features/archivos/thunks/descargarArchivos";
 
 export default function ModalArchivos({
   acciones,
@@ -121,6 +122,34 @@ export default function ModalArchivos({
       console.log(error);
     }
   };
+
+
+
+
+
+
+
+
+
+
+  const handleDescargarArchivo = async () => {
+    try {
+      await dispatch(
+        descargarArchivo({
+          notify: notify,
+          cerrarModal: cerrarModal,
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+
+
+
 
   return (
     <>
@@ -269,18 +298,16 @@ export default function ModalArchivos({
         </ModalDatosContenedor>
 
         <BotonesModal
-          aceptar={handleCrearArchivo}
+          aceptar={handleDescargarArchivo}
           cancelar={() => {
             dispatch(cerrarModal("confirmar"));
             dispatch(abrirModal("crear"));
           }}
           indiceUno="crear"
           indiceDos="cancelar"
-          nombreUno="Eliminar"
+          nombreUno="Descargar"
           nombreDos="Cerrar"
-          campos={{
-            nombre,
-          }}
+          campos={{}}
         />
       </ModalMostrarArchivo>
     </>

@@ -8,6 +8,7 @@ import { fetchArchivosIdInstitucion } from "@/store/features/archivos/thunks/arc
 import { fetchArchivosIdDepartamento } from "@/store/features/archivos/thunks/archivosIdDepartamento";
 import { fetchArchivosIdEstante } from "@/store/features/archivos/thunks/archivosIdEstante";
 import { fetchArchivosIdCarpeta } from "@/store/features/archivos/thunks/archivosIdCarpeta";
+import { descargarArchivo } from "@/store/features/archivos/thunks/descargarArchivos";
 
 const archivosSlice = createSlice({
   name: "archivos",
@@ -155,6 +156,18 @@ const archivosSlice = createSlice({
       .addCase(eliminarRestaurarArchivo.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(descargarArchivo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(descargarArchivo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.archivos = action.payload;
+      })
+      .addCase(descargarArchivo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });
