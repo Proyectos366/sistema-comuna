@@ -80,7 +80,7 @@ export default function ArchivosView({ cambiarRuta, vista }) {
 
   const datosArchivo = {
     idCarpeta: idCarpeta,
-    idArchivo: idArchivo,
+    idArch: idArchivo,
     archivo: archivo,
     nombre: nombreArchivo,
     descripcion: descripcionArchivo,

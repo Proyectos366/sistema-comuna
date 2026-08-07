@@ -161,13 +161,12 @@ const archivosSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(descargarArchivo.fulfilled, (state, action) => {
+      .addCase(descargarArchivo.fulfilled, (state) => {
         state.loading = false;
-        state.archivos = action.payload;
       })
       .addCase(descargarArchivo.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       });
   },
 });

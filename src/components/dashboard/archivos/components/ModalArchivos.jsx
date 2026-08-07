@@ -26,6 +26,8 @@ export default function ModalArchivos({
   datosArchivo,
   validaciones,
 }) {
+  const { idArchivo } = useSelector((state) => state.archivos.archivoActual);
+
   const dispatch = useDispatch();
 
   const mostrarConfirmar = useSelector(
@@ -46,7 +48,7 @@ export default function ModalArchivos({
   );
 
   const {
-    idArchivo,
+    idArch,
     idCarpeta,
     archivo,
     nombre,
@@ -87,7 +89,7 @@ export default function ModalArchivos({
         nombre: nombre,
         descripcion: descripcion,
         alias: alias,
-        id_archivo: idArchivo,
+        id_archivo: idArch,
       };
 
       await dispatch(
@@ -105,7 +107,7 @@ export default function ModalArchivos({
   const handleBorrarRestaurarArchivo = async () => {
     try {
       const deleteArchivo = {
-        id_archivo: idArchivo,
+        id_archivo: idArch,
         estado: borradoRestaurado,
       };
 
@@ -123,19 +125,11 @@ export default function ModalArchivos({
     }
   };
 
-
-
-
-
-
-
-
-
-
   const handleDescargarArchivo = async () => {
     try {
       await dispatch(
         descargarArchivo({
+          idArchivo: idArchivo,
           notify: notify,
           cerrarModal: cerrarModal,
         }),
@@ -144,12 +138,6 @@ export default function ModalArchivos({
       console.log(error);
     }
   };
-
-
-
-
-
-
 
   return (
     <>
@@ -217,7 +205,7 @@ export default function ModalArchivos({
           nombreUno="Aceptar"
           nombreDos="Cancelar"
           campos={{
-            idArchivo,
+            idArch,
             borradoRestaurado,
           }}
         />

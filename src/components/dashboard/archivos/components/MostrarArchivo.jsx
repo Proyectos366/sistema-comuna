@@ -18,7 +18,9 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export default function MostrarArchivo({ id }) {
-  const { path } = useSelector((state) => state.archivos.archivoActual);
+  const { path, idArchivo } = useSelector(
+    (state) => state.archivos.archivoActual,
+  );
 
   const { screenSize } = useUser();
 
@@ -116,7 +118,7 @@ export default function MostrarArchivo({ id }) {
       <Div className="overflow-y-auto bg-[#fffbeb] h-[calc(100vh-255px)] no-scrollbar w-full overflow-auto flex justify-center items-start py-10">
         <Div className="w-full max-w-full overflow-hidden flex justify-center min-h-full">
           <Document
-            file={`/api/archivos/mostrar-archivo?path=${path.replace(/^\/+/, "")}`}
+            file={`/api/archivos/mostrar-archivo?idArchivo=${idArchivo}`}
             onLoadSuccess={onDocumentLoadSuccess}
             loading={
               <Div className="flex items-center justify-center h-96">
