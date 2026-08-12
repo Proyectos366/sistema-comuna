@@ -295,6 +295,8 @@ export default function ModalArchivos({
           indiceDos="cancelar"
           nombreUno="Descargar"
           nombreDos="Cerrar"
+          icono1={'descarga'}
+          icono2={'limpiar'}
           campos={{}}
         />
       </ModalMostrarArchivo>
