@@ -296,7 +296,7 @@ export default function ModalArchivos({
           nombreUno="Descargar"
           nombreDos="Cerrar"
           icono1={'descarga'}
-          icono2={'limpiar'}
+          icono2={'escoba'}
           campos={{}}
         />
       </ModalMostrarArchivo>
