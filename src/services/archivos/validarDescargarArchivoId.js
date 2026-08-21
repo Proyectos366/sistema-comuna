@@ -132,7 +132,7 @@ export default async function validarDescargarArchivoId(request) {
     const bufferDesencriptado = CifrarDescifrarArchivo.desencriptarArchivo(
       bufferEncriptado,
       claveSecreta,
-      algorithm,
+      algoritmo,
     );
 
     // 13. Mapear y determinar el tipo MIME correcto según la extensión del archivo
