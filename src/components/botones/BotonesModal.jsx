@@ -13,7 +13,7 @@ export default function BotonesModal({
   icono2,
 }) {
   return (
-    <Div className="w-full md:w-1/2 flex justify-between space-x-4">
+    <Div className="w-full md:px-10 flex justify-between gap-4">
       <BotonAceptarCancelar
         aceptar={aceptar}
         campos={campos}

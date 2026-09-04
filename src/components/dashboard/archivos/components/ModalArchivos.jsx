@@ -26,6 +26,7 @@ export default function ModalArchivos({
   datosArchivo,
   validaciones,
 }) {
+  const { usuarioActivo } = useSelector((state) => state.auth);
   const { idArchivo } = useSelector((state) => state.archivos.archivoActual);
 
   const dispatch = useDispatch();
@@ -281,22 +282,30 @@ export default function ModalArchivos({
         }}
       >
         <ModalDatosContenedor>
-          {/* {<MarcaAgua />} */}
+          <MarcaAgua
+            texto={`${usuarioActivo.cedula}`}
+            opacidad={0.08}
+            tamano={80}
+            color="#000000"
+            rotacion={-20}
+            anchoCanvas={400}
+            altoCanvas={300}
+            escalaRepeticion={0.4}
+          />
           <MostrarArchivo />
         </ModalDatosContenedor>
 
         <BotonesModal
           aceptar={handleDescargarArchivo}
           cancelar={() => {
-            dispatch(cerrarModal("confirmar"));
-            dispatch(abrirModal("crear"));
+            dispatch(cerrarModal("mostrarArchivo"));
           }}
           indiceUno="crear"
           indiceDos="cancelar"
           nombreUno="Descargar"
           nombreDos="Cerrar"
-          icono1={'descarga'}
-          icono2={'escoba'}
+          icono1={"descarga"}
+          icono2={"escoba"}
           campos={{}}
         />
       </ModalMostrarArchivo>

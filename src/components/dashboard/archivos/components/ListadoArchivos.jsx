@@ -54,7 +54,6 @@ export default function ListadoArchivos({
         </Button>
       </Div>
 
-      <BloqueInfo indice={1} nombre={"Alias"} valor={archivo.alias} />
       <BloqueInfo indice={1} nombre={"Código"} valor={archivo.codigo} />
 
       <Div className="flex items-center justify-between">

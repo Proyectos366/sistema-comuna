@@ -64,21 +64,21 @@ export default async function validarInicioSesion(correo, clave) {
 
     // 4. Verificar si el usuario existe
     if (!datosInicioSesion) {
-      return retornarRespuestaFunciones("error", "Error usuario no existe...", {
+      return retornarRespuestaFunciones("error", "Error usuario no existe", {
         correo: validandoCampos.correo,
       });
     }
 
     // 5. Verificar si el usuario está validado
     if (!datosInicioSesion.validado) {
-      return retornarRespuestaFunciones("error", "Usuario no autorizado...");
+      return retornarRespuestaFunciones("error", "Usuario no autorizado");
     }
 
     // 6. Verificar si el usuario está eliminado o suspendido
     if (datosInicioSesion.borrado) {
       return retornarRespuestaFunciones(
         "error",
-        "Usuario eliminado o suspendido..."
+        "Usuario eliminado o suspendido"
       );
     }
 
@@ -131,7 +131,7 @@ export default async function validarInicioSesion(correo, clave) {
     });
   } catch (error) {
     // 14. Manejo de errores inesperados
-    console.error(`Error interno validar inicio sesion: ` + error);
+    console.log(`Error interno validar inicio sesion:`, error);
 
     // Retorna una respuesta del error inesperado
     return retornarRespuestaFunciones(

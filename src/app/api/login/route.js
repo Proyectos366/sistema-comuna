@@ -1,19 +1,17 @@
 /**
-@fileoverview Controlador de API para el inicio de sesión de usuarios. Este archivo maneja la
-lógica para autenticar a un usuario a través de una solicitud POST y el archivo tambien contiene
-una peticion GET para el cierre de sesion. Utiliza Prisma para la interacción con la base de datos,
-un servicio de validación para asegurar la validez de los datos, y un sistema de registro de eventos
-para la auditoría.@module
+  @fileoverview Controlador de API para el inicio de sesión de usuarios. Este archivo maneja la
+  lógica para autenticar a un usuario a través de una solicitud POST y el archivo tambien contiene
+  una peticion GET para el cierre de sesion. Utiliza Prisma para la interacción con la base de datos,
+  un servicio de validación para asegurar la validez de los datos, y un sistema de registro de eventos
+  para la auditoría.@module
 */
-// Importaciones de módulos y librerías
+
 import { NextResponse } from "next/server"; // Importa la respuesta para Next.js.
 import { cookies } from "next/headers"; // Módulo para gestionar cookies en las solicitudes.
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para estandarizar las respuestas de la API.
 import nombreToken from "@/utils/nombreToken"; // Utilidad para obtener el nombre del token de autenticación.
 import validarInicioSesion from "@/services/validarInicioSesion"; // Servicio para validar el inicio de sesión del usuario.
 import registrarEventoSeguro from "@/libs/trigget"; // Función para registrar eventos de seguridad.
-import prisma from "@/libs/prisma"; // Cliente de Prisma para la conexión a la base de datos.
-import AuthTokens from "@/libs/AuthTokens"; // Servicio para manejar la lógica de autenticación de tokens.
 
 /**
 Maneja las solicitudes HTTP POST para el inicio de sesión de usuarios.@async@function POST@param {Request} request - Objeto de la solicitud que contiene los credenciales del usuario.@returns {Promise<object>} - Una respuesta HTTP en formato JSON que indica el resultado de la operación (exito o error).

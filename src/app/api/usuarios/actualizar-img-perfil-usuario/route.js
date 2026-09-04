@@ -7,8 +7,8 @@
 */
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
-import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import registrarEventoSeguro from "@/libs/trigget"; // Servicio para registrar eventos de auditoría
+import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
 import validarCrearCambiarImgPerfil from "@/services/usuarios/validarCrearCambiarImgPerfil"; // Servicio para validar datos de imagen de perfil
 
 /**
@@ -134,7 +134,7 @@ export async function POST(request) {
       accion: "UPDATE_IMAGEN_PERFIL",
       id_objeto: usuarioActualizado.id,
       id_usuario: validaciones?.id_usuario,
-      descripcion: `La imagen del perfil se actualizo con exito...`,
+      descripcion: `La imagen del perfil se actualizo con exito`,
       datosAntes: validaciones.usuarioAntes,
       datosDespues: usuarioActualizado,
     });
@@ -147,7 +147,7 @@ export async function POST(request) {
     );
   } catch (error) {
     // 6. Manejo de errores inesperados
-    console.log("Error interno actualizar imagen de perfil:", +error);
+    console.log("Error interno actualizar imagen de perfil:", error);
 
     await registrarEventoSeguro(request, {
       tabla: "usuario",
