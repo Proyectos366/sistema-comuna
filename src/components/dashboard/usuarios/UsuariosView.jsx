@@ -19,6 +19,7 @@ import { filtrarOrdenar } from "@/utils/filtrarOrdenar";
 
 import { fetchUsuarios } from "@/store/features/usuarios/thunks/todosUsuarios";
 import { abrirModal } from "@/store/features/modal/slicesModal";
+import SectionQuaternary from "@/components/SectionQuaternary";
 
 export default function UsuariosView() {
   const dispatch = useDispatch();
@@ -146,13 +147,13 @@ export default function UsuariosView() {
         datosUsuario={datosUsuario}
         validaciones={validaciones}
       />
-      <SectionMain>
+      <SectionMain indice={1}>
         <SectionPrimary nombre={"Representación usuarios"}>
           <LeyendaUsuarios />
         </SectionPrimary>
 
         <SectionTertiary
-          nombre={"Gestión usuarios"}
+          nombre={"Gestión usuarios activos"}
           first={first}
           setFirst={setFirst}
           rows={rows}
@@ -214,6 +215,69 @@ export default function UsuariosView() {
             )}
           </Div>
         </SectionTertiary>
+
+
+        <SectionQuaternary
+          nombre={"Gestión usuarios inactivos"}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          datos={usuarios}
+          busqueda={busqueda}
+          setBusqueda={setBusqueda}
+          ordenCampo={ordenCampo}
+          setOrdenCampo={setOrdenCampo}
+          ordenDireccion={ordenDireccion}
+          setOrdenDireccion={setOrdenDireccion}
+          opcionesOrden={opcionesOrden}
+          estatus={1}
+        >
+          <Div className={`flex flex-col gap-2`}>
+            {usuarios?.length === 0 && loading ? (
+              <Loader titulo="Cargando usuarios..." />
+            ) : (
+              <>
+                {usuariosPaginados?.length !== 0 ? (
+                  usuariosPaginados.map((usuario, index) => {
+                    const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
+
+                    return (
+                      <FichaUsuario
+                        key={usuario.id}
+                        usuario={usuario}
+                        index={index}
+                      >
+                        <ButtonToggleDetallesUsuario
+                          expanded={expanded}
+                          usuario={usuario}
+                          setExpanded={setExpanded}
+                        />
+
+                        {expanded === usuario.id && (
+                          <ListadoUsuarios
+                            usuario={usuario}
+                            departamentoActual={departamentoActual}
+                            abrirModal={abrirModal}
+                            setAccion={setAccion}
+                            setNombreUsuario={setNombreUsuario}
+                            setNombreDepartamento={setNombreDepartamento}
+                            setIdDepartamento={setIdDepartamento}
+                            setIdUsuario={setIdUsuario}
+                            setIdRol={setIdRol}
+                            setNombreRol={setNombreRol}
+                          />
+                        )}
+                      </FichaUsuario>
+                    );
+                  })
+                ) : (
+                  <EstadoMsjVacio dato={usuarios} loading={loading} />
+                )}
+              </>
+            )}
+          </Div>
+        </SectionQuaternary>
       </SectionMain>
     </>
   );

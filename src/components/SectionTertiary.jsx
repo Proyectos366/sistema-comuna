@@ -23,6 +23,7 @@ export default function SectionTertiary({
   ordenDireccion,
   setOrdenDireccion,
   opcionesOrden,
+  estatus,
 }) {
   const clasePorDefecto = `flex flex-col ${
     nombre ? "gap-4" : ""
@@ -35,11 +36,19 @@ export default function SectionTertiary({
     <Section className={nuevaClase}>
       {nombre && !indice ? (
         <Div className="w-full flex justify-between items-center">
-          <Titulos indice={2} titulo={nombre} />
+          <Titulos
+            indice={2}
+            titulo={nombre}
+            className={`${estatus ? "text-[#E61C45]" : "text-[#101828]"}`}
+          />
           <ButtonAdd onClick={funcion} />
         </Div>
       ) : (
-        <Titulos indice={2} titulo={nombre} />
+        <Titulos
+          indice={2}
+          titulo={nombre}
+          className={`${estatus ? "text-[#E61C45]" : "text-[#101828]"}`}
+        />
       )}
 
       {datos?.length !== 0 && (
