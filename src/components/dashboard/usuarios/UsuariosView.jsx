@@ -49,7 +49,8 @@ export default function UsuariosView() {
   const [expanded, setExpanded] = useState("");
   const [accion, setAccion] = useState("");
 
-  const [first, setFirst] = useState(0);
+  const [firstActivos, setFirstActivos] = useState(0);
+  const [firstInactivos, setFirstInactivos] = useState(0);
   const [rows, setRows] = useState(25);
 
   const [validarCedulaUsuario, setValidarCedulaUsuario] = useState(false);
@@ -72,22 +73,53 @@ export default function UsuariosView() {
     { id: "apellido", nombre: "Apellido" },
   ];
 
-  const usuariosFiltradosOrdenados = useMemo(() => {
+  const usuariosActivos = useMemo(
+    () => usuarios.filter((usuario) => usuario.borrado === false),
+    [usuarios],
+  );
+
+  const usuariosInactivos = useMemo(
+    () => usuarios.filter((usuario) => usuario.borrado === true),
+    [usuarios],
+  );
+
+  const usuariosActivosFiltradosOrdenados = useMemo(() => {
     return filtrarOrdenar(
-      usuarios,
+      usuariosActivos,
       busqueda,
       ordenCampo,
       ordenDireccion,
       camposBusqueda,
     );
-  }, [usuarios, busqueda, ordenCampo, ordenDireccion]);
+  }, [usuariosActivos, busqueda, ordenCampo, ordenDireccion]);
 
-  const usuariosPaginados = useMemo(() => {
-    return usuariosFiltradosOrdenados.slice(first, first + rows);
-  }, [usuariosFiltradosOrdenados, first, rows]);
+  const usuariosInactivosFiltradosOrdenados = useMemo(() => {
+    return filtrarOrdenar(
+      usuariosInactivos,
+      busqueda,
+      ordenCampo,
+      ordenDireccion,
+      camposBusqueda,
+    );
+  }, [usuariosInactivos, busqueda, ordenCampo, ordenDireccion]);
+
+  const usuariosActivosPaginados = useMemo(() => {
+    return usuariosActivosFiltradosOrdenados.slice(
+      firstActivos,
+      firstActivos + rows,
+    );
+  }, [usuariosActivosFiltradosOrdenados, firstActivos, rows]);
+
+  const usuariosInactivosPaginados = useMemo(() => {
+    return usuariosInactivosFiltradosOrdenados.slice(
+      firstInactivos,
+      firstInactivos + rows,
+    );
+  }, [usuariosInactivosFiltradosOrdenados, firstInactivos, rows]);
 
   useEffect(() => {
-    setFirst(0);
+    setFirstActivos(0);
+    setFirstInactivos(0);
   }, [busqueda, ordenCampo, ordenDireccion]);
 
   const acciones = {
@@ -154,11 +186,11 @@ export default function UsuariosView() {
 
         <SectionTertiary
           nombre={"Gestión usuarios activos"}
-          first={first}
-          setFirst={setFirst}
+          first={firstActivos}
+          setFirst={setFirstActivos}
           rows={rows}
           setRows={setRows}
-          datos={usuarios}
+          datos={usuariosActivosFiltradosOrdenados}
           busqueda={busqueda}
           setBusqueda={setBusqueda}
           ordenCampo={ordenCampo}
@@ -175,9 +207,10 @@ export default function UsuariosView() {
               <Loader titulo="Cargando usuarios..." />
             ) : (
               <>
-                {usuariosPaginados?.length !== 0 ? (
-                  usuariosPaginados.map((usuario, index) => {
-                    const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
+                {usuariosActivosPaginados?.length !== 0 ? (
+                  usuariosActivosPaginados.map((usuario, index) => {
+                    const departamentoActual =
+                      usuario?.MiembrosDepartamentos?.[0];
 
                     return (
                       <FichaUsuario
@@ -209,75 +242,83 @@ export default function UsuariosView() {
                     );
                   })
                 ) : (
-                  <EstadoMsjVacio dato={usuarios} loading={loading} />
+                  <EstadoMsjVacio
+                    dato={usuariosActivosFiltradosOrdenados}
+                    loading={loading}
+                  />
                 )}
               </>
             )}
           </Div>
         </SectionTertiary>
 
+        {usuariosInactivos?.length !== 0 && (
+          <SectionQuaternary
+            nombre={"Gestión usuarios inactivos"}
+            first={firstInactivos}
+            setFirst={setFirstInactivos}
+            rows={rows}
+            setRows={setRows}
+            datos={usuariosInactivosFiltradosOrdenados}
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
+            ordenCampo={ordenCampo}
+            setOrdenCampo={setOrdenCampo}
+            ordenDireccion={ordenDireccion}
+            setOrdenDireccion={setOrdenDireccion}
+            opcionesOrden={opcionesOrden}
+            estatus={1}
+          >
+            <Div className={`flex flex-col gap-2`}>
+              {usuarios?.length === 0 && loading ? (
+                <Loader titulo="Cargando usuarios..." />
+              ) : (
+                <>
+                  {usuariosInactivosPaginados?.length !== 0 ? (
+                    usuariosInactivosPaginados.map((usuario, index) => {
+                      const departamentoActual =
+                        usuario?.MiembrosDepartamentos?.[0];
 
-        <SectionQuaternary
-          nombre={"Gestión usuarios inactivos"}
-          first={first}
-          setFirst={setFirst}
-          rows={rows}
-          setRows={setRows}
-          datos={usuarios}
-          busqueda={busqueda}
-          setBusqueda={setBusqueda}
-          ordenCampo={ordenCampo}
-          setOrdenCampo={setOrdenCampo}
-          ordenDireccion={ordenDireccion}
-          setOrdenDireccion={setOrdenDireccion}
-          opcionesOrden={opcionesOrden}
-          estatus={1}
-        >
-          <Div className={`flex flex-col gap-2`}>
-            {usuarios?.length === 0 && loading ? (
-              <Loader titulo="Cargando usuarios..." />
-            ) : (
-              <>
-                {usuariosPaginados?.length !== 0 ? (
-                  usuariosPaginados.map((usuario, index) => {
-                    const departamentoActual = usuario?.MiembrosDepartamentos?.[0];
-
-                    return (
-                      <FichaUsuario
-                        key={usuario.id}
-                        usuario={usuario}
-                        index={index}
-                      >
-                        <ButtonToggleDetallesUsuario
-                          expanded={expanded}
+                      return (
+                        <FichaUsuario
+                          key={usuario.id}
                           usuario={usuario}
-                          setExpanded={setExpanded}
-                        />
-
-                        {expanded === usuario.id && (
-                          <ListadoUsuarios
+                          index={index}
+                        >
+                          <ButtonToggleDetallesUsuario
+                            expanded={expanded}
                             usuario={usuario}
-                            departamentoActual={departamentoActual}
-                            abrirModal={abrirModal}
-                            setAccion={setAccion}
-                            setNombreUsuario={setNombreUsuario}
-                            setNombreDepartamento={setNombreDepartamento}
-                            setIdDepartamento={setIdDepartamento}
-                            setIdUsuario={setIdUsuario}
-                            setIdRol={setIdRol}
-                            setNombreRol={setNombreRol}
+                            setExpanded={setExpanded}
                           />
-                        )}
-                      </FichaUsuario>
-                    );
-                  })
-                ) : (
-                  <EstadoMsjVacio dato={usuarios} loading={loading} />
-                )}
-              </>
-            )}
-          </Div>
-        </SectionQuaternary>
+
+                          {expanded === usuario.id && (
+                            <ListadoUsuarios
+                              usuario={usuario}
+                              departamentoActual={departamentoActual}
+                              abrirModal={abrirModal}
+                              setAccion={setAccion}
+                              setNombreUsuario={setNombreUsuario}
+                              setNombreDepartamento={setNombreDepartamento}
+                              setIdDepartamento={setIdDepartamento}
+                              setIdUsuario={setIdUsuario}
+                              setIdRol={setIdRol}
+                              setNombreRol={setNombreRol}
+                            />
+                          )}
+                        </FichaUsuario>
+                      );
+                    })
+                  ) : (
+                    <EstadoMsjVacio
+                      dato={usuariosInactivosFiltradosOrdenados}
+                      loading={loading}
+                    />
+                  )}
+                </>
+              )}
+            </Div>
+          </SectionQuaternary>
+        )}
       </SectionMain>
     </>
   );
