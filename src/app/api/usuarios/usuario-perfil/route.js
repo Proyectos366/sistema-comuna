@@ -4,7 +4,7 @@
  incluyendo su rol, departamento e imagen más reciente, y retorna una respuesta estructurada.
  Utiliza Prisma como ORM y servicios personalizados para validación y respuesta estandarizada.
  @module api/usuarios/consultarUsuarioPerfil
-*/
+*/ 
 
 import prisma from "@/libs/prisma"; // Cliente Prisma para interactuar con la base de datos
 import { generarRespuesta } from "@/utils/respuestasAlFront"; // Utilidad para generar respuestas HTTP estandarizadas
